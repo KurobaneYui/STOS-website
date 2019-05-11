@@ -25,7 +25,7 @@ else { // 没有登陆但是cookie中存有登陆信息
 $connection_temp = new STOS_MySQL_data();
 if(isset($person)) {
 	$courses_array = array(); // 查课教室数组，二维
-	$sql = "SELECT * FROM `查课排班` WHERE `查课组员`='{$person->xuehao}';";
+	$sql = "SELECT * FROM `查课排班` WHERE `日期` BETWEEN '2019-05-13' AND '2019-05-19' AND `查课组员`='{$person->xuehao}';";
 	if($results = $connection_temp->execute_query($sql)) {
 		while($course = $results->fetch_assoc()) {
 			array_push($courses_array,$course);
@@ -70,9 +70,8 @@ if(isset($person)) {
 					"教室数据"=>$jiaoshishuju,
 					"提交者"=>$person->xuehao
 				);
-				try {
-					$connection_temp->insert("查课数据",$data_array);
-					$conditions = array
+				
+				$conditions = array
 					(
 						"日期"=>$i['日期'],
 						"时段与上课周"=>$i['时段与上课周'],
@@ -80,19 +79,12 @@ if(isset($person)) {
 						"区号"=>$i['区号'],
 						"教室编号"=>$i['教室编号']
 					);
+				if($connection_temp->search("查课数据",false,$conditions,false)->fetch_assoc()) {
 					$connection_temp->update("查课数据",$data_array,$conditions,false);
 					$connection_temp->get_conn()->commit();
 				}
-				catch(Exception $e) {
-					$conditions = array
-					(
-						"日期"=>$i['日期'],
-						"时段与上课周"=>$i['时段与上课周'],
-						"教学楼"=>$i['教学楼'],
-						"区号"=>$i['区号'],
-						"教室编号"=>$i['教室编号']
-					);
-					$connection_temp->update("查课数据",$data_array,$conditions,false);
+				else {
+					$connection_temp->insert("查课数据",$data_array);
 					$connection_temp->get_conn()->commit();
 				}
 			}

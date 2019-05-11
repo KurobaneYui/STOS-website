@@ -55,6 +55,7 @@ if(isset($_POST["记名表"]) and $_POST["记名表"]=="yes") {
 				case "周五":$queqinbiaoriqi=getWeekRange(time(), 1)[2][4];break;
 				case "周六":$queqinbiaoriqi=getWeekRange(time(), 1)[2][5];break;
 				case "周日":$queqinbiaoriqi=getWeekRange(time(), 1)[2][6];break;
+				default:exit;
 			}
 			$data_array = array(
 				"日期"=>$queqinbiaoriqi,
@@ -72,12 +73,12 @@ if(isset($_POST["记名表"]) and $_POST["记名表"]=="yes") {
 				"教室编号"=>$data_array["教室编号"]
 			);
 			if($connection_temp->search("缺勤人员名单",false,$conditions,false)->fetch_assoc()){
-				
-				$connection_temp->update("缺勤人员名单",$data_array,$conditions,false);
+				$sql = "DELETE FROM `缺勤人员名单` WHERE `日期`='{$data_array["日期"]}'";
+				$sql = $sql." AND `教学楼`='{$data_array['教学楼']}' AND `区号`='{$data_array['区号']}'";
+				$sql = $sql." AND `教室编号`='{$data_array['教室编号']}';";
+				$connection_temp->execute_query($sql);
 			}
-			else {
-				$connection_temp->insert("缺勤人员名单",$data_array);
-			}
+			$connection_temp->insert("缺勤人员名单",$data_array);
 		}
 	}
 }
