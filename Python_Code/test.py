@@ -3,29 +3,28 @@
 
 import TencentCloud_php, datetime
 
-import pandas as pd
-from openpyxl import Workbook
+#************************早自习相关函数******************************************************
 
-search_mission = TencentCloud_php.STOS_DB_conn("-p","config.json",(True,0))
-update_mission = TencentCloud_php.STOS_DB_conn("-p","config.json",(True,1))
+zaozixi = TencentCloud_php.zaozixi()
 
-wb = Workbook(write_only=True)
-ws = wb.create_sheet()
-ws.append(['姓名','学号','编号'])
+zaozixi.download("C:/desktop/") # 下载人数和缺勤数据到指定文件夹下
 
-exe = pd.read_excel(r'G:\OtherThings\大学\学风督导队\队长\2019上\数据\第十三周\第13周查课安排.xlsx')
-count = 1
-for col in range(1,6):
-    for row in range(0,3):
-        a = exe.iloc[row,col]
-        i_s = a.split('、')[:-1]
-        for i in i_s:
-            d = i.split('(')[0].split(' ')[0]
-            sql = "SELECT `学号` FROM `成员信息` WHERE `姓名` LIKE '%{}%';".format(d)
-            ws.append([d,search_mission.execute_query(sql)[0][0],count].copy())
+zaozixi.work_info(r"C:\desktop\早自习教室.xlsx") # 导入早自习教室安排
 
-            sql = "UPDATE `查课排班` SET `组员姓名`='{}',`查课组员`='{}' WHERE `日期` BETWEEN '2019-05-20' AND '2019-05-26' AND `编号` = {};".format(d,search_mission.execute_query(sql)[0][0],count)
-            update_mission.execute_query(sql)
+ # 一下两种方式二选一，建议第一个                                                                                                                                         **
+zaozixi.work_schedule_auto() # 自动生成排班数据，并导入
+zaozixi.work_schedule_manuel(r"c:\desktop\早自习排班.xlsx") # 根据excel格式的排班信息进行排班
 
-            count += 1
-wb.save("d.xlsx")
+#************************早自习相关函数******************************************************
+
+
+#************************查课相关函数********************************************************
+
+chake = TencentCloud_php.chake()
+
+chake.download("C:/desktop/") # 下载教室数据到指定文件夹下
+
+chake.work_info(r"C:\desktop\早自习教室.xlsx") # ******暂时用不了，嘿嘿~****** 导入查课教室安排
+chake.work_schedule(r"c:\desktop\早自习排班.xlsx") # 根据excel格式的排班信息进行排班
+
+#************************查课相关函数********************************************************

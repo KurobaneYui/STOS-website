@@ -95,7 +95,7 @@ set_order：元组：第一个元素：bool型，为True时，使用第二个元
     def clean_query_list(self): # 清空待执行的sql语句
         self.querys_list = []
 
-class zaozixi:
+class zaozixi: # 早自习类，提供相关数据的上传和下载
     def __init__(self):
         self.con_info = STOS_DB_conn("-p", "./config.json", (True,0))
         self.con_data = STOS_DB_conn("-p", "./config.json", (True,1))
@@ -104,7 +104,7 @@ class zaozixi:
         del self.con_info
         del self.con_data
 
-    def work_info(self, path):
+    def work_info(self, path): # 导入教室数据
         work_info = pd.read_excel(path)
 
         print("数据标题为：")
@@ -117,14 +117,21 @@ class zaozixi:
         yingdaorenshu = work_info.iloc[:,3]
 
         zhoushu = input("请输入导入数据为第几周，例如：第十一周\n")
-        zhouqishiriqi = input("请输入该周周一对应的日期，例如：2019-05-06\n")
+        print("请输入该周周一对应的日期，例如：2019-05-06")
+        while(1):
+            try:
+                time_start = datetime.datetime.strptime(input(),"%Y-%m-%d")
+                break
+            except:
+                print("日期错误，请重新输入")
+        print("已设定起始日期为：{}".format(time_start))
 
         sql = "INSERT INTO `查早排班`(`教学楼`, `区号`, `教室编号`, `学院`, `应到人数`, `周数`, `周起始日期`) VALUES ('品学楼','{}','{}','{}','{}','{}','{}');"
         for i in range(qvhao_jiaoshibianhao.count()):
-            self.con_data.push_query_list(sql.format(qvhao_jiaoshibianhao.iloc[i][0], qvhao_jiaoshibianhao.iloc[i][1:], xueyuan.iloc[i], yingdaorenshu.iloc[i], zhoushu, zhouqishiriqi))
+            self.con_data.push_query_list(sql.format(qvhao_jiaoshibianhao.iloc[i][0], qvhao_jiaoshibianhao.iloc[i][1:], xueyuan.iloc[i], yingdaorenshu.iloc[i], zhoushu, time_start))
         self.con_data.commit_query_list()
 
-    def work_schedule_manuel(self, path):
+    def work_schedule_manuel(self, path): # 手动导入查早排班
         work_info = pd.read_excel(path)
 
         print("数据标题为：")
@@ -138,15 +145,29 @@ class zaozixi:
         qvhao = work_info.iloc[:,3]
         jiaoshibianhao = work_info.iloc[:,4]
 
-        zhouqishiriqi = input("请输入该周周一对应的日期，例如：2019-05-06\n")
+        print("请输入该周周一对应的日期，例如：2019-05-06")
+        while(1):
+            try:
+                time_start = datetime.datetime.strptime(input(),"%Y-%m-%d")
+                break
+            except:
+                print("日期错误，请重新输入")
+        print("已设定起始日期为：{}".format(time_start))
 
         sql = "UPDATE `查早排班` SET `查早组员`='{}',`姓名`='{}' WHERE `教学楼`='{}' AND `区号`='{}' AND `教室编号`='{}' AND `周起始日期`='{}';"
         for i in range(jiaoshibianhao.count()):
-            self.con_data.push_query_list(sql.format(xuehao.iloc[i], xingming.iloc[i], jiaoxuelou.iloc[i], qvhao.iloc[i], jiaoshibianhao.iloc[i], zhouqishiriqi))
+            self.con_data.push_query_list(sql.format(xuehao.iloc[i], xingming.iloc[i], jiaoxuelou.iloc[i], qvhao.iloc[i], jiaoshibianhao.iloc[i], time_start))
         self.con_data.commit_query_list()
 
-    def work_schedule_auto(self):
-        zhouqishiriqi = input("请输入该周周一对应的日期，例如：2019-05-06\n")
+    def work_schedule_auto(self): # 自动导入查早排班
+        print("请输入该周周一对应的日期，例如：2019-05-06")
+        while(1):
+            try:
+                time_start = datetime.datetime.strptime(input(),"%Y-%m-%d")
+                break
+            except:
+                print("日期错误，请重新输入")
+        print("已设定起始日期为：{}".format(time_start))
 
         if os.path.exists('./group_sequence.json'):
             with open('./group_sequence.json','r') as f:
@@ -185,7 +206,7 @@ class zaozixi:
          ('品学楼', 'B', 103, 82),
          ('品学楼', 'B', 401, 90)]
         '''
-        sql = "SELECT `教学楼`, `区号`, `教室编号` FROM `查早排班` WHERE `周起始日期`='{}';".format(zhouqishiriqi)
+        sql = "SELECT `教学楼`, `区号`, `教室编号` FROM `查早排班` WHERE `周起始日期`='{}';".format(time_start)
         class_room = self.con_data.execute_query(sql)
         temp=sorted(class_room,key=lambda x:x[2],reverse=True)
         class_room=sorted(temp,key=lambda x:x[1]=='B' and int(x[2]))
@@ -206,10 +227,10 @@ class zaozixi:
             xingming = self.con_info.execute_query(sql)[0][0]
 
             sql = "UPDATE `查早排班` SET `查早组员`='{}',`姓名`='{}' WHERE `教学楼`='{}' AND `区号`='{}' AND `教室编号`='{}' AND `周起始日期`='{}';"
-            self.con_data.push_query_list(sql.format(i[0],xingming,i[1],i[2],i[3],zhouqishiriqi))
+            self.con_data.push_query_list(sql.format(i[0],xingming,i[1],i[2],i[3],time_start))
         self.con_data.commit_query_list()
 
-    def download(self, path):
+    def download(self, path): # 下载数据
         print("开始导出早自习缺勤表")
         self._download_queqin(path)
         print("导出早自习缺勤表完成")
@@ -218,7 +239,7 @@ class zaozixi:
         self._download_renshu(path)
         print("导出早自习人数表完成")
 
-    def _download_renshu(self, path):
+    def _download_renshu(self, path): # 下载早自习教室人数数据
         path = os.path.join(path,"早自习人数数据.xlsx")
         print("请输入导出数据的起始日期，例如：2019-05-06")
         while(1):
@@ -241,6 +262,7 @@ class zaozixi:
                 except:
                     print("日期错误，请重新输入")
         print("已设定结束日期为：{}".format(time_end))
+
         sql = "SELECT `日期`,`教学楼`,`区号`,`教室编号`,`教室数据`,`提交者` FROM `查早数据` WHERE `日期` BETWEEN '{}' AND '{}' ORDER BY `教学楼`,`区号`,`教室编号`,`日期` ASC;".format(time_start,time_end)
         results = self.con_data.execute_query(sql)
         wb = Workbook(write_only = True)
@@ -276,7 +298,7 @@ class zaozixi:
 
         wb.save(path)
 
-    def _download_queqin(self, path):
+    def _download_queqin(self, path):# 下载早自习教室缺勤数据
         path = os.path.join(path,"早自习缺勤数据.xlsx")
         print("请输入导出数据的起始日期，例如：2019-05-06")
         while(1):
@@ -299,6 +321,7 @@ class zaozixi:
                 except:
                     print("日期错误，请重新输入")
         print("已设定结束日期为：{}".format(time_end))
+
         sql = "SELECT `日期`,`教学楼`,`区号`,`教室编号`,`缺勤名单`,`提交者` FROM `缺勤人员名单` WHERE `日期` BETWEEN '{}' AND '{}' ORDER BY `教学楼`,`区号`,`教室编号`,`日期` ASC;".format(time_start,time_end)
         results = self.con_data.execute_query(sql)
         wb = Workbook(write_only = True)
@@ -328,12 +351,106 @@ class zaozixi:
 
         wb.save(path)
 
-class chake:
-    def work_info(self):
+class chake: # 查课类，提供相关数据的上传和下载
+    def __init__(self):
+        self.con_info = STOS_DB_conn("-p", "./config.json", (True,0))
+        self.con_data = STOS_DB_conn("-p", "./config.json", (True,1))
+
+    def __del__(self):
+        del self.con_info
+        del self.con_data
+
+    def work_info(self, path):
         pass
 
-    def work_schedule(self):
-        pass
+    def work_schedule(self, path):
+        print("请输入该周周一对应的日期，例如：2019-05-06")
+        while(1):
+            try:
+                time_start = datetime.datetime.strptime(input(),"%Y-%m-%d")
+                break
+            except:
+                print("日期错误，请重新输入")
+        print("已设定起始日期为：{}".format(time_start))
+        time_end = time_start+datetime.timedelta(days=6)
+        print("已设定结束日期为：{}".format(time_end))
 
-    def download(self):
-        pass
+        wb = Workbook(write_only=True)
+        ws = wb.create_sheet()
+        ws.append(['姓名','学号','编号'])
+
+        exe = pd.read_excel(path)
+        count = 1
+        for col in range(1,6):
+            for row in range(0,3):
+                names_group_str = exe.iloc[row,col].split('、')[:-1]
+                for name_group in names_group_str:
+                    name = name_group.split('(')[0].split(' ')[0]
+                    sql = "SELECT `学号` FROM `成员信息` WHERE `姓名` LIKE '%{}%';".format(name)
+                    ID = self.con_info.execute_query(sql)[0][0]
+                    ws.append([name,ID,count].copy())
+
+                    sql = "UPDATE `查课排班` SET `组员姓名`='{}',`查课组员`='{}' WHERE `日期` BETWEEN '{}' AND '{}' AND `编号` = {};".format(name,ID,time_start,time_end,count)
+                    self.con_data.push_query_list(sql)
+
+                    count += 1
+
+        self.con_data.commit_query_list(sql)
+        wb.save("_schedule.xlsx")
+
+    def download(self, path):
+        path = os.path.join(path,"查课数据.xlsx")
+        print("请输入导出数据的起始日期，例如：2019-05-06")
+        while(1):
+            try:
+                time_start = datetime.datetime.strptime(input(),"%Y-%m-%d")
+                break
+            except:
+                print("日期错误，请重新输入")
+        print("已设定起始日期为：{}".format(time_start))
+        print("请输入导出数据的结束日期，例如：2019-05-06\n直接回车不输入日期则默认导出一周数据")
+        while(1):
+            a = input()
+            if a=="":
+                time_end = time_start+datetime.timedelta(days=6)
+                break
+            else:
+                try:
+                    time_end = datetime.datetime.strptime(a,"%Y-%m-%d")
+                    break
+                except:
+                    print("日期错误，请重新输入")
+        print("已设定结束日期为：{}".format(time_end))
+
+        sql = "SELECT `日期`,`时段与上课周`,`教学楼`,`区号`,`教室编号`,`教室数据`,`提交者`,`编号` FROM `查课数据` WHERE `日期` BETWEEN '{}' AND '{}' ORDER BY `日期`,`编号`,`教学楼`,`区号`,`教室编号` ASC;".format(time_start,time_end)
+        results = self.con_data.execute_query(sql)
+        wb = Workbook(write_only = True)
+        ws = wb.create_sheet()
+        ws.append(['日期与时段','课程名称','教室','应到人数','第一次出勤','第二次出勤','第一次违纪','第二次违纪','备注','年级','学院','查课组员','组员姓名'])
+        for result in results:
+            result = list(result)
+            data_temp = [0 for i in range(13)]
+            data_temp[0] = result[0]+result[1] # 日期、时段与上课周
+            data_temp[2] = result[2]+result[3]+result[4] # 教室
+            data_temp[4] = result[5] # json数据
+            
+            sql = "SELECT `课程名称`,`年级`,`学院`,`应到人数`,`查课组员`,`姓名`, FROM `查课排班` WHERE `编号` = '{}' AND `教学楼` = '{}' AND `区号` = '{}' AND `教室编号` = '{}' ORDER BY `教学楼`,`区号`,`教室编号` ASC;".format(result[7],result[2],result[3],result[4])
+            result = self.con_data.execute_query(sql)[0]
+            data_temp[1] = result[0] # 课程名称
+            data_temp[3] = result[3] # 应到人数
+
+            unjson = json.loads(data_temp[4])
+            data_temp[4] = unjson["第一次出勤"] # 第一次出勤
+            data_temp[5] = unjson["第二次出勤"] # 第二次出勤
+            data_temp[6] = unjson["第一次违纪"] # 第一次违纪
+            data_temp[7] = unjson["第二次违纪"] # 第二次违纪
+            data_temp[8] = unjson["备注"] # 备注
+
+            data_temp[9] = result[1] # 年级
+            data_temp[10] = result[2] # 学院
+            data_temp[11] = result[4] # 查课组员
+            data_temp[12] = result[5] # 组员姓名
+
+            ws.append(data_temp.copy())
+
+        wb.save(path)
