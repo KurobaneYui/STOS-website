@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import tqdm, json, time, random, os, datetime
+import json, time, random, os, datetime
 import pandas as pd
 from mysql import connector
 from openpyxl import Workbook
@@ -429,12 +429,13 @@ class chake: # 查课类，提供相关数据的上传和下载
         ws.append(['日期与时段','课程名称','教室','应到人数','第一次出勤','第二次出勤','第一次违纪','第二次违纪','备注','年级','学院','查课组员','组员姓名'])
         for result in results:
             result = list(result)
+
             data_temp = [0 for i in range(13)]
-            data_temp[0] = result[0]+result[1] # 日期、时段与上课周
+            data_temp[0] = datetime.datetime.strftime(result[0],"%Y-%m-%d")+result[1] # 日期、时段与上课周
             data_temp[2] = result[2]+result[3]+result[4] # 教室
             data_temp[4] = result[5] # json数据
             
-            sql = "SELECT `课程名称`,`年级`,`学院`,`应到人数`,`查课组员`,`姓名`, FROM `查课排班` WHERE `编号` = '{}' AND `教学楼` = '{}' AND `区号` = '{}' AND `教室编号` = '{}' ORDER BY `教学楼`,`区号`,`教室编号` ASC;".format(result[7],result[2],result[3],result[4])
+            sql = "SELECT `课程名称`,`年级`,`学院`,`应到人数`,`查课组员`,`组员姓名` FROM `查课排班` WHERE `编号` = '{}' AND `教学楼` = '{}' AND `区号` = '{}' AND `教室编号` = '{}' ORDER BY `教学楼`,`区号`,`教室编号` ASC;".format(result[7],result[2],result[3],result[4])
             result = self.con_data.execute_query(sql)[0]
             data_temp[1] = result[0] # 课程名称
             data_temp[3] = result[3] # 应到人数
