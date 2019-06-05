@@ -361,7 +361,79 @@ class chake: # 查课类，提供相关数据的上传和下载
         del self.con_data
 
     def work_info(self, path):
-        pass
+        print("请输入该周周一对应的日期，例如：2019-05-06")
+        while(1):
+            try:
+                time_start = datetime.datetime.strptime(input(),"%Y-%m-%d")
+                break
+            except:
+                print("日期错误，请重新输入")
+        print("已设定起始日期为：{}".format(time_start))
+
+        excel = pd.read_excel(path)
+        print("数据标题为：")
+        print(list(excel.columns))
+        if(input("是否使用此文件？（y/N）：")!="y"):
+            return
+
+        def zhou2data(zhou):
+            if zhou=="星期一":
+                return time_start
+            elif zhou=="星期二":
+                return time_start+datetime.timedelta(days=1)
+            elif zhou=="星期三":
+                return time_start+datetime.timedelta(days=2)
+            elif zhou=="星期四":
+                return time_start+datetime.timedelta(days=3)
+            elif zhou=="星期五":
+                return time_start+datetime.timedelta(days=4)
+            elif zhou=="星期六":
+                return time_start+datetime.timedelta(days=5)
+            elif zhou=="星期日":
+                return time_start+datetime.timedelta(days=6)
+            else:
+                raise "错误的日期表述："+zhou+"\n（注意，请将周日表述为“星期日”）"
+
+        for i in range(excel.count()[0]):
+            riqi = zhou2data(excel.iloc[i,0][:3]) # 日期
+            shiduanyvshangkezhou = excel.iloc[i,0][3:] # 时段与上课周
+            jiaoxuelou = excel.iloc[i,2][:3] # 教学楼
+            qvhao = excel.iloc[i,2][3] # 区号
+            jiaoshibianhao = excel.iloc[i,2][4:].replace('-','') # 教室编号
+            kechengmingcheng = excel.iloc[i,1] # 课程名称
+            xueyuan = excel.iloc[i,11] # 学院
+            nianji = excel.iloc[i,10] # 年级
+            yingdaorenshu = excel.iloc[i,3] # 应到人数
+            bianhao = excel.iloc[i,12] # 编号
+
+            sql = "INSERT INTO `查课排班`(`日期`,`时段与上课周`,`教学楼`,`区号`,`教室编号`,`课程名称`,`学院`,`年级`,`应到人数`,`编号`) VALUES ('{}','{}','{}','{}','{}','{}','{}','{}','{}','{}');"
+            sql = sql.format(riqi,shiduanyvshangkezhou,jiaoxuelou,qvhao,jiaoshibianhao,kechengmingcheng,xueyuan,nianji,yingdaorenshu,bianhao)
+            #print(sql)
+            self.con_data.push_query_list(sql)
+        self.con_data.commit_query_list();
+
+    def download_kongkebiao(self, path):
+        path = [os.path.join(path,"Group"+str(i)+".xlsx") for i in range(1,7)] # 生成现场组一组到六组的空课表文件
+        for file in path:
+            if(os.path.splitext(file)[0][-1] == "1"):zuming = "现场组一组"
+            elif(os.path.splitext(file)[0][-1] == "2"):zuming = "现场组二组"
+            elif(os.path.splitext(file)[0][-1] == "3"):zuming = "现场组三组"
+            elif(os.path.splitext(file)[0][-1] == "4"):zuming = "现场组四组"
+            elif(os.path.splitext(file)[0][-1] == "5"):zuming = "现场组五组"
+            elif(os.path.splitext(file)[0][-1] == "6"):zuming = "现场组六组"
+            else: raise "***Error!!文件名有误，无法生成现场组组号";return
+            wb = Workbook(write_only=True)
+            sql = "SELECT `姓名`,`成员岗位`.`学号`,`周一空课`,`周二空课`,`周三空课`,`周四空课`,`周五空课` FROM `成员岗位` LEFT OUTER JOIN `成员信息` ON `成员岗位`.`学号`=`成员信息`.`学号` WHERE `成员岗位`.`所属组`='{}' AND `成员岗位`.`岗位`='组员';"
+            sql = sql.format(zuming)
+            kongkes = self.con_info.execute_query(sql)
+            for kongke in kongkes:
+                ws = wb.create_sheet(title = kongke[0])
+                ws.append( [ kongke[1], "周一", "周二", "周三", "周四", "周五" ] )
+                ws.append( [ "1-2节", kongke[2][0], kongke[3][0], kongke[4][0], kongke[5][0], kongke[6][0] ] )
+                ws.append( [ "3-4节", kongke[2][1], kongke[3][1], kongke[4][1], kongke[5][1], kongke[6][1] ] )
+                ws.append( [ "5-6节", kongke[2][2], kongke[3][2], kongke[4][2], kongke[5][2], kongke[6][2] ] )
+                ws.append( [ "7-8节", kongke[2][3], kongke[3][3], kongke[4][3], kongke[5][3], kongke[6][3] ] )
+            wb.save(file)
 
     def work_schedule(self, path):
         print("请输入该周周一对应的日期，例如：2019-05-06")
@@ -395,7 +467,7 @@ class chake: # 查课类，提供相关数据的上传和下载
 
                     count += 1
 
-        self.con_data.commit_query_list(sql)
+        self.con_data.commit_query_list()
         wb.save("_schedule.xlsx")
 
     def download(self, path):
