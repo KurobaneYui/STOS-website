@@ -16,7 +16,7 @@ else { // 没有登陆
 $connection_temp = new STOS_MySQL_data();
 if(isset($person)) {
 	$courses_array = array(); // 查课教室数组，二维
-	$sql = "SELECT * FROM `查课排班` WHERE `日期` BETWEEN '2019-05-20' AND '2019-05-26' AND `查课组员`='{$person->xuehao}' ORDER BY `教学楼`,`区号`,`教室编号` ASC;";
+	$sql = "SELECT * FROM `查课排班` WHERE `日期` BETWEEN '2019-06-03' AND '2019-06-09' AND `查课组员`='{$person->xuehao}' ORDER BY `教学楼`,`区号`,`教室编号` ASC;";
 	if($results = $connection_temp->execute_query($sql)) {
 		while($course = $results->fetch_assoc()) {
 			array_push($courses_array,$course);
@@ -59,7 +59,7 @@ if(isset($person)) {
 					"区号"=>$i['区号'],
 					"教室编号"=>$i['教室编号'],
 					"教室数据"=>$jiaoshishuju,
-					"提交者"=>$person->xuehao
+					"提交者"=>$person->xuehao,
 				);
 				
 				$conditions = array
@@ -75,6 +75,7 @@ if(isset($person)) {
 					$connection_temp->get_conn()->commit();
 				}
 				else {
+					$data_array["编号"]=$connection_temp->search("查课排班",false,$conditions,false)->fetch_assoc()["编号"];
 					$connection_temp->insert("查课数据",$data_array);
 					$connection_temp->get_conn()->commit();
 				}
@@ -167,6 +168,8 @@ if(isset($person)) {
                         <div class="alert alert-danger alert-dismissible">
                             <button type="button" class="close" data-dismiss="alert">&times;</button>
                             <strong>注意!</strong> 每节课的数据分开提交，不然数据就飞走了(～o￣3￣)～
+							<hr/>
+							小建议：如果是录第一遍数据，可以先把第二次出勤和第二次违纪都补0，然后就可以提交了，第二遍录的时候改过来就好啦~
                         </div>
                     </div>
                 </div>
@@ -230,7 +233,7 @@ if(isset($person)) {
                             <div class="card-block">
                                 <h2 class="card-title" style="text-align:center">查课教室</h2>
                                 <h4 id="chazaojiaoshi" class="card-subtitle" style="text-align:center">
-									查课日期及时段：<?php echo($courses_array[0]["日期"].' '.substr($courses_array[0]["时段与上课周"],0,3)); ?>节，表编号：<?php echo($courses_array[0]["编号"]); ?>
+									查课日期及时段：<?php echo($courses_array[0]["日期"].' '.substr($courses_array[0]["时段与上课周"],0,4)); ?>节，表编号：<?php echo($courses_array[0]["编号"]); ?>
 								</h4>
                                 <div class="table-responsive">
                                     <table class="table">

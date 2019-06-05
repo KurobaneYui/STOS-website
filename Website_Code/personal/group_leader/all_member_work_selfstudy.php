@@ -5,7 +5,7 @@ require("../../frame/Person_Class_frame.php");
 if ( isset( $_SESSION[ 'islogin' ] )and isset( $_SESSION[ 'username' ] ) ) { // 如果已经登陆
     $connection = new STOS_MySQL(); // 建立数据库连接
     $person = new person_all_info( $_SESSION[ "username" ] ); // 获取个人信息
-	if($person->work_info()["权限"]!=3) header( 'refresh:0; url=../../log/logout.php' ); // 如果不是队长，强制登出
+	if($person->work_info()["权限"]!=2) header( 'refresh:0; url=../../log/logout.php' ); // 如果不是队长，强制登出
 }
 else { // 没有登陆
     header( 'refresh:0; url=../../log/login.php' ); // 返回登陆页面

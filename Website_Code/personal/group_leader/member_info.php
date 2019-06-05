@@ -5,6 +5,7 @@ require("../../frame/Person_Class_frame.php");
 if ( isset( $_SESSION[ 'islogin' ] )and isset( $_SESSION[ 'username' ] ) ) { // 如果已经登陆
     $connection = new STOS_MySQL(); // 建立数据库连接
     $person = new person_all_info( $_SESSION[ "username" ] ); // 获取个人信息
+	require("../../frame/empty_time.php");
 	if($person->work_info()["权限"]!=2) header( 'refresh:0; url=../../log/logout.php' ); // 如果不是组长，强制登出
 }
 else { // 没有登陆
@@ -105,7 +106,7 @@ if(isset($_POST["重置密码"])) {
                         <div class="card">
                             <div class="card-block">
                         <?php
-                        foreach($person->work_info()["管理组"] as $value) {
+                        if($value = $person->work_info()["管理组"][0]) {
                             echo("<h4 class='card-title'>{$value} 成员信息</h4>");
 
                             if($value=="早餐组") {
@@ -169,6 +170,138 @@ if(isset($_POST["重置密码"])) {
                         </div>
                     </div>
                 </div>
+				
+				<h2>空课表调整</h2>
+				<h4>点击小圆点就可以啦~<?php echo get_color_pic("green"); ?>=>有空 <?php echo get_color_pic("red"); ?>=>没空</h4>
+				<div class="row">
+					<?php
+					if($value = $person->work_info()["管理组"][0]) {
+						$group_memberID = $connection->personal_group($value);
+						while($memberID = $group_memberID->fetch_assoc()) {
+							$info = new person_all_info($memberID["学号"]);
+							$kongke = array (
+								"0" => $info->work_info()['周一空课'],
+								"1" => $info->work_info()['周二空课'],
+								"2" => $info->work_info()['周三空课'],
+								"3" => $info->work_info()['周四空课'],
+								"4" => $info->work_info()['周五空课']
+								);
+							echo("
+					<div class='col-md-6'>
+						<div class='card'>
+							<div class='card-block'>
+								<h4 class='card-title'>{$info->xinming}<span id='badge-{$info->xuehao}' class='badge badge-info'></span></h4>
+								<ul class='nav nav-tabs' id='OE-tab' role='tablist'>
+									<li class='nav-item'><a href='#O-{$info->xuehao}' class='nav-link active' id='O-{$info->xuehao}-tab' data-toggle='tab' role='tab' aria-controls='O-{$info->xuehao}' aria-selected='true'>单周</a></li>
+									<li class='nav-item'><a href='#E-{$info->xuehao}' class='nav-link' id='E-{$info->xuehao}-tab' data-toggle='tab' role='tab' aria-controls='E-{$info->xuehao}' aria-selected='false'>双周</a></li>
+								</ul>
+								<div class='tab-content' id='OE-{$info->xuehao}-content'>
+									<div class='tab-pane fade show active' id='O-{$info->xuehao}' role='tabpanel' aria-labelledby='O-{$info->xuehao}-tab'>
+										<div class='table-responsive'>
+											<table class='table'>
+												<thead>
+													<tr>
+														<th>周一</th>
+														<th>周二</th>
+														<th>周三</th>
+														<th>周四</th>
+														<th>周五</th>
+													</tr>
+												</thead>
+												<tbody>
+						");
+												for($i=0;$i<4;$i++) {
+													echo("<tr>");
+													
+													if(intval($kongke[0][$i])%2) {
+														echo("<td onClick='change_color(this)' weekday=0>".get_color_pic("green")."</td>");
+													}
+													else{ echo("<td onClick='change_color(this)' weekday=0>".get_color_pic("red")."</td>"); }
+													
+													if(intval($kongke[1][$i])%2) {
+														echo("<td onClick='change_color(this)' weekday=1>".get_color_pic("green")."</td>");
+													}
+													else{ echo("<td onClick='change_color(this)' weekday=1>".get_color_pic("red")."</td>"); }
+													
+													if(intval($kongke[2][$i])%2) {
+														echo("<td onClick='change_color(this)' weekday=2>".get_color_pic("green")."</td>");
+													}
+													else{ echo("<td onClick='change_color(this)' weekday=2>".get_color_pic("red")."</td>"); }
+													
+													if(intval($kongke[3][$i])%2) {
+														echo("<td onClick='change_color(this)' weekday=3>".get_color_pic("green")."</td>");
+													}
+													else{ echo("<td onClick='change_color(this)' weekday=3>".get_color_pic("red")."</td>"); }
+													
+													if(intval($kongke[4][$i])%2) {
+														echo("<td onClick='change_color(this)' weekday=4>".get_color_pic("green")."</td>");
+													}
+													else{ echo("<td onClick='change_color(this)' weekday=4>".get_color_pic("red")."</td>"); }
+													
+													echo("</tr>");
+												}
+						echo("
+												</tbody>
+											</table>
+										</div>
+									</div>
+									<div class='tab-pane fade' id='E-{$info->xuehao}' role='tabpanel' aria-labelledby='E-{$info->xuehao}-tab'>
+										<div class='table-responsive'>
+											<table class='table'>
+												<thead>
+													<tr>
+														<th>周一</th>
+														<th>周二</th>
+														<th>周三</th>
+														<th>周四</th>
+														<th>周五</th>
+													</tr>
+												</thead>
+												<tbody>
+						");
+												for($i=0;$i<4;$i++) {//s
+													echo("<tr>");
+													if(intval($kongke[0][$i])>1) {
+														echo("<td onClick='change_color(this)' weekday=0>".get_color_pic("green")."</td>");
+													}
+													else{ echo("<td onClick='change_color(this)' weekday=0>".get_color_pic("red")."</td>"); }
+													
+													if(intval($kongke[1][$i])>1) {
+														echo("<td onClick='change_color(this)' weekday=1>".get_color_pic("green")."</td>");
+													}
+													else{ echo("<td onClick='change_color(this)' weekday=1>".get_color_pic("red")."</td>"); }
+													
+													if(intval($kongke[2][$i])>1) {
+														echo("<td onClick='change_color(this)' weekday=2>".get_color_pic("green")."</td>");
+													}
+													else{ echo("<td onClick='change_color(this)' weekday=2>".get_color_pic("red")."</td>"); }
+													
+													if(intval($kongke[3][$i])>1) {
+														echo("<td onClick='change_color(this)' weekday=3>".get_color_pic("green")."</td>");
+													}
+													else{ echo("<td onClick='change_color(this)' weekday=3>".get_color_pic("red")."</td>"); }
+													
+													if(intval($kongke[4][$i])>1) {
+														echo("<td onClick='change_color(this)' weekday=4>".get_color_pic("green")."</td>");
+													}
+													else{ echo("<td onClick='change_color(this)' weekday=4>".get_color_pic("red")."</td>"); }
+													
+													echo("</tr>");
+												}
+						echo("
+												</tbody>
+											</table>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+							");
+						}
+					}
+					?>
+				</div>
             </div>
             <!-- ============================================================== -->
             <!-- End Container fluid  -->
@@ -188,6 +321,89 @@ if(isset($_POST["重置密码"])) {
     </div>
     <!-- ============================================================== -->
     <!-- End Wrapper -->
+    <!-- ============================================================== -->
+    <!-- ============================================================== -->
+    <!-- Costum JS -->
+    <!-- ============================================================== -->
+	<script>
+		function change_color(tdFORimg) {
+			var kongkediv = tdFORimg.parentElement.parentElement.parentElement.parentElement.parentElement;
+			if(tdFORimg.children[0].getAttribute("alt")=="green") {
+				tdFORimg.innerHTML="<?php echo(get_color_pic("red")); ?>";
+			}
+			else {
+				tdFORimg.innerHTML="<?php echo(get_color_pic("green")); ?>";
+			}
+			
+			var xmlhttp;
+			var jsonstr;
+			var str;
+			if (window.XMLHttpRequest) {
+				// IE7+, Firefox, Chrome, Opera, Safari 浏览器执行代码
+				xmlhttp=new XMLHttpRequest();
+			}
+			else {
+				// IE
+				try {
+					xmlhttp=new ActiveXObject("Msxml2.XMLHTTP");
+				}
+				catch (e) {
+					try {
+						xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+					}
+					catch (e) {
+						alert("您的浏览器不支持AJAX！");
+						return false;
+					}
+				}
+			}
+			
+			var xuehao = kongkediv.id.split("-")[1];
+			var weekday = tdFORimg.getAttribute("weekday");
+			var O_kongketbody = document.getElementById("O-"+xuehao).getElementsByTagName("tbody")[0];
+			var E_kongketbody = document.getElementById("E-"+xuehao).getElementsByTagName("tbody")[0];
+			var N_S = "";
+			for(var i=0;i<4;i++) {
+				var N = 0;
+				if(O_kongketbody.children[i].children[weekday].children[0].getAttribute("alt")=="green") {
+					N += 1;
+				}
+				if(E_kongketbody.children[i].children[weekday].children[0].getAttribute("alt")=="green") {
+					N += 2;
+				}
+				N_S += N.toString();
+			}
+			
+			xmlhttp.onreadystatechange=function() {
+				if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+					jsonstr = xmlhttp.responseText;
+					str = JSON.parse(jsonstr);
+					if(str["status"]=="true") {
+						var notice = document.getElementById("badge-"+xuehao);
+						if(notice.innerHTML=="成功") {
+							notice.innerHTML = "成功 · 2";
+						}
+						else if(notice.innerHTML.split(" · ").length==2) {
+							var num = Number(notice.innerHTML.split(" · ")[1])+1;
+							notice.innerHTML = "成功 · "+String(num);
+						}
+						else {
+							notice.innerHTML = "成功";
+						}
+					}
+					else {
+						alert("错误！！："+str["content"]);
+						window.location.reload();
+					}
+				}
+			}
+			xmlhttp.open("POST","http://132.232.231.109/ajax/personal/group_leader/member_info.php",true);
+			xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
+			xmlhttp.send("修改空课=yes"+"&组员学号="+xuehao+"&空课周="+weekday+"&空课字符串="+N_S);
+		}
+	</script>
+    <!-- ============================================================== -->
+    <!-- End Costum JS -->
     <!-- ============================================================== -->
     <!-- ============================================================== -->
     <!-- All Jquery -->

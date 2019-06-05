@@ -108,7 +108,7 @@ else { // 没有登陆但是cookie中存有登陆信息
                     <div class="col-12">
                         <div class="alert alert-info alert-dismissible">
                             <button type="button" class="close" data-dismiss="alert">&times;</button>
-                            <strong>注意!</strong> 空课时间如有错误（目前暂未展示），请及时联系组长对数据进行更正，否则会影响查课排班。
+                            <strong>注意!</strong> 空课时间如有错误，请及时联系组长对数据进行更正，否则会影响查课排班。
                         </div>
                     </div>
                 </div>

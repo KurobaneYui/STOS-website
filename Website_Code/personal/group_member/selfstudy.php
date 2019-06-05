@@ -45,7 +45,7 @@ else { // 没有登陆
     <![endif]-->
 </head>
 
-<body class="fix-header fix-sidebar card-no-border"  onload="auto_fill()">
+<body class="fix-header fix-sidebar card-no-border" onload="auto_fill()">
     <!-- ============================================================== -->
     <!-- Preloader - style you can find in spinners.css -->
     <!-- ============================================================== -->

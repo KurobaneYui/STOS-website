@@ -23,6 +23,7 @@
                             <?php if($person->work_info()["权限"]!=2) echo("<!--"); ?>
 							<hr/>
                             <li> <a class="waves-effect waves-dark" href="/personal/group_leader/member_info.php" aria-expanded="false"><i class="mdi mdi-account-multiple"></i><span class="hide-menu">组员信息</span></a></li>
+							<li> <a class="waves-effect waves-dark" href="/personal/group_leader/set_work_helper.php" aria-expanded="false"><i class="mdi mdi-account-multiple"></i><span class="hide-menu">代查系统</span></a></li>
 							<hr/>
                             <li> <a class="waves-effect waves-dark" href="/personal/group_leader/member_work_selfstudy.php" aria-expanded="false"><i class="mdi mdi-table-large"></i><span class="hide-menu">组员查早数据</span></a></li>
 							<li> <a class="waves-effect waves-dark" href="/personal/group_leader/member_work_courses.php" aria-expanded="false"><i class="mdi mdi-table-large"></i><span class="hide-menu">组员查课数据</span></a></li>

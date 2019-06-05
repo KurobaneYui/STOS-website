@@ -5,7 +5,7 @@ require("../../frame/Person_Class_frame.php");
 if ( isset( $_SESSION[ 'islogin' ] )and isset( $_SESSION[ 'username' ] ) ) { // 如果已经登陆
     $connection = new STOS_MySQL(); // 建立数据库连接
     $person = new person_all_info( $_SESSION[ "username" ] ); // 获取个人信息
-	if($person->work_info()["权限"]!=3) header( 'refresh:0; url=../../log/logout.php' ); // 如果不是队长，强制登出
+	if($person->work_info()["权限"]!=2) header( 'refresh:0; url=../../log/logout.php' ); // 如果不是队长，强制登出
 }
 else { // 没有登陆
     header( 'refresh:0; url=../../log/login.php' ); // 返回登陆页面
@@ -90,15 +90,15 @@ else { // 没有登陆
                             <a href="#" class="btn waves-effect waves-light btn-danger pull-right hidden-sm-down"> Upgrade to Pro</a>
                         </div> -->
                 </div>
-                <!-- <div class="row">
-                    <div class="col-lg-12">
-                        <div class="card">
-                            <div class="card-block"> -->
+                <div class="raw">
+                    <div id="txtHint" class="col-lg-12 col-md-12">
+                        </div>
+                </div>
                 <?php
 				$conn_temp = new STOS_MySQL_data();
-                foreach(array("现场组一组","现场组二组","现场组三组","现场组四组","现场组五组","现场组六组") as $value) {
+                foreach(array("现场组一组","现场组二组","现场组三组","现场组四组","现场组五组","现场组六组",) as $value) {
                     //echo("<h3 class='card-title'>{$value} 工作数据（仅供现场组）</h3>");
-                    
+					
 					echo("<h3>{$value}</h3>");
                     $group_memberID = $connection->personal_group($value);
 					$memberIDs = array();
@@ -108,14 +108,19 @@ else { // 没有登陆
 					$all_days = getWeekRange(time(),1)[2]; // 获取本周七天的日期
 					
 					$paibans = array();
-					$sql = "SELECT * FROM `查早排班` WHERE `周起始日期`='{$all_days[0]}' and `查早组员` IN ('".join('\',\'',$memberIDs)."') ORDER BY `查早组员` ASC;";
+					$sql = "SELECT * FROM `查课排班` WHERE `日期` IN ('".join('\',\'',$all_days)."') and `查课组员` IN ('".join('\',\'',$memberIDs)."') ORDER BY `日期`,`编号`,`教学楼`,`区号`,`教室编号` ASC;";
 					if($re = $conn_temp->execute_query($sql)) {
 						while($re_ = $re->fetch_assoc()) {
-							$paibans[$re_["查早组员"]] = $re_;
+							if(isset($paibans[$re_["查课组员"]])) {
+								array_push($paibans[$re_["查课组员"]],$re_);
+							}
+							else {
+								$paibans[$re_["查课组员"]] = array($re_);
+							}
 						}
 					}
 					$jiaoshishujus = array();
-					$sql = "SELECT * FROM `查早数据` WHERE `日期` IN ('".join('\',\'',$all_days)."') and `提交者` IN ('".join('\',\'',$memberIDs)."') ORDER BY `提交者`,`日期` ASC;";
+					$sql = "SELECT * FROM `查课数据` WHERE `日期` IN ('".join('\',\'',$all_days)."') and `提交者` IN ('".join('\',\'',$memberIDs)."') ORDER BY `日期`,`编号`,`教学楼`,`区号`,`教室编号` ASC;";
 					if($re = $conn_temp->execute_query($sql)) {
 						while($re_ = $re->fetch_assoc()) {
 							if(isset($jiaoshishujus[$re_["提交者"]])) {
@@ -126,57 +131,64 @@ else { // 没有登陆
 							}
 						}
 					}
-
 					foreach($memberIDs as $memberID) {
 						$temp = new person_all_info($memberID);
                         echo("<div class='row'>
                                 <div class='col-lg-12'>
                                     <div class='card'>
                                         <div class='card-block'>");
-                        echo("<h4 class='card-title'>{$temp->xinming} </h4>");
-                        echo("<h5 class = 'card-title'>{$paibans[$memberID]['教学楼']}{$paibans[$memberID]['区号']}{$paibans[$memberID]['教室编号']}  {$paibans[$memberID]["学院"]}</h5>");
+                        echo("<h4 class='card-title'>{$temp->xinming}</h4>");
+                        echo("<h5 class = 'card-title'>日期：{$paibans[$memberID][0]['日期']}<br/>时段与上课时周：{$paibans[$memberID][0]['时段与上课周']}<br/>查课表编号：{$paibans[$memberID][0]["编号"]}");
                         $temp->__destruct();
                         echo("
                         <div class='table-responsive'>
-                            <table class='table'>
+                            <table id='table{$memberID}' class='table'>
                                 <thead>
                                     <tr>
-                                        <th>日期</th>
+                                        <th>课程名称</th>
+                                        <th>上课教室</th>
                                         <th>应到人数</th>
-                                        <th>迟到人数</th>
+										<th>学院年级</th>
                                         <th>第一次出勤</th>
-                                        <th>违纪人数</th>
+
+                                        <th>第一次违纪</th>
                                         <th>第二次出勤</th>
-                                        <th>早退人数</th>
-										<th>请假人数</th>
+                                        <th>第二次违纪</th>
                                         <th>备注</th>
                                     </tr>
                                 </thead>
                                 <tbody> 
                         ");
-                        $zhou = array("周一","周二","周三","周四","周五","周六","周日");
-                        foreach($zhou as $key=>$value) {
-							$jiaoshishuju = json_decode($jiaoshishujus[$memberID][$key]['教室数据'],true);
-                            echo("<tr><td>{$value}</td>");
-                            echo("<td>{$paibans[$memberID]["应到人数"]}</td>");
-                            echo("<td>{$jiaoshishuju['迟到人数']}</td>");
-                            echo("<td>{$jiaoshishuju['第一次出勤']}</td>");
-                            echo("<td>{$jiaoshishuju['违纪人数']}</td>");
-                            echo("<td>{$jiaoshishuju['第二次出勤']}</td>");
-                            echo("<td>{$jiaoshishuju['早退人数']}</td>");
-							echo("<td>{$jiaoshishuju['请假人数']}</td>");
-                            echo("<td>{$jiaoshishuju['备注']}</td>");
-                            echo("</tr>");
+						$key = 0;
+                        foreach($paibans[$memberID] as $paiban) {
+							echo("<tr>");
+							echo("<td>{$paiban["课程名称"]}</td>");
+							echo("<td>{$paiban["时段与上课周"]}{$paiban["教学楼"]}{$paiban["区号"]}{$paiban["教室编号"]}</td>");
+							echo("<td>{$paiban['应到人数']}</td>");
+							echo("<td>{$paiban['学院']}{$paiban['年级']}</td>");
+							
+							if($paiban['日期']==$jiaoshishujus[$memberID][$key]['日期'] and $paiban['时段与上课周']==$jiaoshishujus[$memberID][$key]['时段与上课周'] and $paiban['教学楼']==$jiaoshishujus[$memberID][$key]['教学楼'] and $paiban['区号']==$jiaoshishujus[$memberID][$key]['区号'] and $paiban['教室编号']==$jiaoshishujus[$memberID][$key]['教室编号']) {
+								$jiaoshishuju = json_decode($jiaoshishujus[$memberID][$key]['教室数据'],true);
+								echo("<td>{$jiaoshishuju['第一次出勤']}</td>");
+								echo("<td>{$jiaoshishuju['第一次违纪']}</td>");
+								echo("<td>{$jiaoshishuju['第二次出勤']}</td>");
+								echo("<td>{$jiaoshishuju['第二次违纪']}</td>");
+								echo("<td>{$jiaoshishuju['备注']}</td>");
+								echo("</tr>");
+								$key++;
+							}
+							echo("</tr>");
                         }
                         echo("
                                         </tbody>
                                     </table>
                                 </div>
-                            </div>
+								");
+						echo("
+							</div>
                         </div>
                     </div>
-                </div>
-                        ");
+                </div>");
                     }
                 }?>
                             <!-- </div>
@@ -206,7 +218,65 @@ else { // 没有登陆
     <!-- ============================================================== -->
     <!-- All Jquery -->
     <!-- ============================================================== -->
+	<!-- ============================================================== -->
+    <!-- Custom script -->
+    <!-- ============================================================== -->
+	<script>
+		function get_queqin_data(day,memberID){
+            var xmlhttp;
+            var re;
+            if (window.XMLHttpRequest)
+            {
+                // IE7+, Firefox, Chrome, Opera, Safari 浏览器执行代码
+                xmlhttp=new XMLHttpRequest();
+            }
+            else
+            {
+                // IE6, IE5 浏览器执行代码
+                xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+            }
+            xmlhttp.onreadystatechange=function()
+            {
+                if (xmlhttp.readyState==4 && xmlhttp.status==200)
+                {
+					document.getElementById("btn"+memberID).setAttribute("data-content",xmlhttp.responseText);
+                }
+            }
+            xmlhttp.open("GET","http://132.232.231.109/ajax/personal/group_leader/member_work.php?day="+day+"&memberID="+memberID,true);
+            xmlhttp.send();
+        }
+    </script>
+    <script>
+        var week = new Date().getDay();
+        var flag = 0;
+        var innerstring='<div class="alert alert-danger alert-dismissible" ><button type="button" class="close" data-dismiss="alert">&times;</button>以下组员今天没有录入查早信息：';
+        if(week==0){
+            week = 6;
+        }
+        else{
+            week = week -1;
+        }
+        var a = a=document.getElementsByClassName('card-block');
+        for(var i =0;i<a.length;i++){
+            var b =a[i].getElementsByTagName('tbody')[0];
+            if (b.children[week].children[4].innerText==""){
+                innerstring = innerstring+a[i].getElementsByTagName('h4')[0].innerHTML+' ';
+                flag=1;
+            }
+        }
+        innerstring = innerstring+"</div>";
+        if (flag==1){
+            document.getElementById("txtHint").innerHTML=innerstring;
+        }
+    </script>
+	<!-- ============================================================== -->
+    <!-- End Custom script -->
+    <!-- ============================================================== -->
     <script src="../../assets/plugins/jquery/jquery.min.js"></script>
+    <script src="../../bootstrap-4.0.0/js/bootstrap.bundle.min.js"></script>
+    <script>$(function () {
+    $('[data-toggle="popover"]').popover()
+    })</script>
     <!-- Bootstrap tether Core JavaScript -->
     <script src="../../assets/plugins/bootstrap/js/tether.min.js"></script>
     <script src="../../assets/plugins/bootstrap/js/bootstrap.min.js"></script>
