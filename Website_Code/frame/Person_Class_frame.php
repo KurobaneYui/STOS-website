@@ -47,7 +47,9 @@ class person_all_info{ // 个人信息
     public $qinshi_yuan; // 寝室_苑
     public $qinshi_lou; // 寝室_楼
     public $qinshi_hao; // 寝室_号
-    public $yinhangkahao; // 银行卡号
+    public $gongzishenqingshiyinhangkahao; // 工资申请时银行卡号
+    public $gongzishenqingshixingming; // 工资申请时姓名
+    public $gongzishenqingshixuehao; // 工资申请时学号
     public $mima; // 密码
 
     function __construct($xuehao) { // 构造函数
@@ -78,7 +80,9 @@ class person_all_info{ // 个人信息
             $this->jiguan = $result["籍贯"];
             $this->dianhua = $result["电话"];
             $this->QQ = $result["QQ"];
-            $this->yinhangkahao = $result["银行卡号"];
+            $this->gongzishenqingshiyinhangkahao = $result["工资申请时银行卡号"];
+            $this->gongzishenqingshixingming = $result["工资申请时姓名"];
+            $this->gongzishenqingshixuehao = $result["工资申请时学号"];
             $this->qinshi_yuan = explode("-", $result["寝室号"])[0];
             $this->qinshi_lou = explode("-", $result["寝室号"])[1];
             $this->qinshi_hao = explode("-", $result["寝室号"])[2];
@@ -169,7 +173,9 @@ class person_all_info{ // 个人信息
                              $this->qinshi_hao // 寝室_号
                          )
                         ),
-                    "银行卡号"=>$this->yinhangkahao // 银行卡号
+                    "工资申请时银行卡号"=>$this->gongzishenqingshiyinhangkahao, // 工资申请时银行卡号
+                    "工资申请时姓名"=>$this->gongzishenqingshixingming,
+                    "工资申请时学号"=>$this->gongzishenqingshixuehao
                 );
             if($this->upload_method["info"]=="insert") // 判断提交方式
             {
@@ -405,10 +411,16 @@ class person_all_info{ // 个人信息
                 "filter"=>FILTER_CALLBACK,
                 "options"=>"dormitory_num_filter"
             ),
-            "银行卡号" => array
+            "工资申请时银行卡号" => array
             (
                 "filter"=>FILTER_CALLBACK,
                 "options"=>"bank_filter"
+            ),
+            "工资申请时姓名" => FILTER_SANITIZE_STRING,
+            "工资申请时学号" => array
+            (
+                "filter"=>FILTER_CALLBACK,
+                "options"=>"studentID_filter"
             ),
             "学号" => array
             (
@@ -486,7 +498,9 @@ class person_all_info{ // 个人信息
             "寝室_苑" => $this->qinshi_yuan, // 寝室_苑
             "寝室_楼" => $this->qinshi_lou, // 寝室_楼
             "寝室_号" => $this->qinshi_hao, // 寝室_号
-            "银行卡号"=>$this->yinhangkahao // 银行卡号
+            "工资申请时银行卡号"=>$this->gongzishenqingshiyinhangkahao, // 工资申请时银行卡号
+            "工资申请时姓名"=>$this->gongzishenqingshixingming, // 工资申请时姓名
+            "工资申请时学号"=>$this->gongzishenqingshixuehao // 工资申请时学号
         );
         $result = filter_var_array($data, $filters_info);
         $this->can_upload["info"] = true;
@@ -557,7 +571,6 @@ class person_all_info{ // 个人信息
             "工资"=>$this->gongzi, // 工资
             "备注"=>$this->beizhu, // 备注
             "管理组"=>$this->guanlizu, // 管理组
-            "备注"=>$this->beizhu, // 备注
             "权限"=>$this->quanxian // 权限
         );
         return ($data);

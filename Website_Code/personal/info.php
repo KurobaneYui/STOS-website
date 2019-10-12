@@ -37,7 +37,9 @@ if(isset($_POST["修改"]) and $_POST["修改"]=="yes") { // 如果有提交注�
     $person->qinshi_yuan = $_POST["寝室_苑"];
     $person->qinshi_lou = $_POST["寝室_楼"];
     $person->qinshi_hao = $_POST["寝室_号"];
-    $person->yinhangkahao = $_POST["银行卡号"];
+    $person->gongzishenqingshiyinhangkahao = $_POST["工资申请时银行卡号"];
+    $person->gongzishenqingshixuehao = $_POST["工资申请时学号"];
+    $person->gongzishenqingshixingming = $_POST["工资申请时姓名"];
     $person->mima = $_POST["密码"];
 
     if($person->check_data()===true) {
@@ -271,10 +273,30 @@ if(isset($_POST["修改"]) and $_POST["修改"]=="yes") { // 如果有提交注�
                                             </div> -->
                                         </div>
                                     </div>
+                                    <hr/>
+                                    <h3 class ="card-title">工资申请所需信息</h3>
                                     <div class="form-group">
                                         <div class="col-md-12">
-                                            <label for="bankID">银行卡号</label>
-                                            <input type="text" class="form-control form-control-line" id="bankID" placeholder="银行卡号" name="银行卡号" <?php echo("value={$person->yinhangkahao}"); ?> required>
+                                            <label for="shenqingzheName">申请者姓名</label>
+                                            <input type="text" class="form-control form-control-line" id="shenqingzheName" placeholder="" name="工资申请时姓名" <?php echo("value='{$person->gongzishenqingshixingming}'"); ?>required>
+                                            <!-- <div class="invalid-feedback" style="width: 100%;">
+                                                需要填写有效银行卡号
+                                            </div> -->
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-md-12">
+                                            <label for="shenqingzheID">申请者学号</label>
+                                            <input type="text" class="form-control form-control-line" id="shenqingzheID" placeholder="" name="工资申请时学号" <?php echo("value='{$person->gongzishenqingshixuehao}'"); ?>required>
+                                            <!-- <div class="invalid-feedback" style="width: 100%;">
+                                                需要填写有效银行卡号
+                                            </div> -->
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-md-12">
+                                            <label for="bankID">申请者银行卡号</label>
+                                            <input type="text" class="form-control form-control-line" id="bankID" placeholder="银行卡号" name="工资申请时银行卡号" <?php echo("value='{$person->gongzishenqingshiyinhangkahao}'"); ?>required>
                                             <!-- <div class="invalid-feedback" style="width: 100%;">
                                                 需要填写有效银行卡号
                                             </div> -->

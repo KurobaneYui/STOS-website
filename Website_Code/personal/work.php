@@ -174,7 +174,7 @@ else { // 没有登陆但是cookie中存有登陆信息
                                     <table class="table table-striped table-sm">
                                         <thead class="text-center">
                                             <tr class="text-center">
-                                                <th class="text-primary">单</th>
+                                                <th class="text-primary"><strong>单</strong></th>
                                                 <th>周一</th>
                                                 <th>周二</th>
                                                 <th>周三</th>
@@ -228,7 +228,7 @@ else { // 没有登陆但是cookie中存有登陆信息
                                     <table class="table table-striped table-sm">
                                         <thead class="text-center">
                                             <tr>
-                                                <th class="text-primary">双</th>
+                                                <th class="text-primary"><strong>双</strong></th>
                                                 <th>周一</th>
                                                 <th>周二</th>
                                                 <th>周三</th>

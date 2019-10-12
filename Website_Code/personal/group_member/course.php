@@ -16,7 +16,7 @@ else { // 没有登陆
 $connection_temp = new STOS_MySQL_data();
 if(isset($person)) {
 	$courses_array = array(); // 查课教室数组，二维
-	$sql = "SELECT * FROM `查课排班` WHERE `日期` BETWEEN '2019-06-03' AND '2019-06-09' AND `查课组员`='{$person->xuehao}' ORDER BY `教学楼`,`区号`,`教室编号` ASC;";
+	$sql = "SELECT * FROM `查课排班` WHERE `日期` BETWEEN '2019-06-10' AND '2019-06-16' AND `查课组员`='{$person->xuehao}' ORDER BY `教学楼`,`区号`,`教室编号` ASC;";
 	if($results = $connection_temp->execute_query($sql)) {
 		while($course = $results->fetch_assoc()) {
 			array_push($courses_array,$course);

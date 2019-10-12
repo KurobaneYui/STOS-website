@@ -205,7 +205,7 @@ if(isset($_POST["接受申请"]) and $_POST["接受申请"]=="yes") {
 										</thead>
 										<tbody>
 											<?php
-											$sql = "SELECT * FROM `代查安排` WHERE `代查日期` BETWEEN '2019-06-03' and '2019-06-09' ORDER BY `代查日期` DESC;";
+											$sql = "SELECT * FROM `代查安排` WHERE `代查日期` BETWEEN '2019-10-08' and '2019-10-30' ORDER BY `代查日期` DESC;";
 											$daicha_paibans = $connection_data->execute_query($sql);
 											
 											while($daicha_single = $daicha_paibans->fetch_assoc()) {

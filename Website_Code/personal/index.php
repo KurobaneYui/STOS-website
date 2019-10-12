@@ -108,7 +108,7 @@ else { // 没有登陆但是cookie中存有登陆信息
 							<div class="card-block">
 								<h2 class="card-title">通知中心</h2>
 								<h4 class="card-subtitle">没事儿就用一下 (●'◡'●)</h4>
-								<h4 class="card-text">1.空天学院周一不用检查早自习，查空天的同学可以休息啦~（抱歉这么迟通知，我也是才知道的╮(╯▽╰)╭）。</h4>
+								<h4 style="color: red" class="card-text">1.大家第一天查早自习，请进行一下简单的介绍，介绍一下督导队的工作，并且向班委、导生或辅导员询问本班级每日应到人数，填写在备注里</h4>
 								<h4 class="card-text">2.如果没有班委可以确定缺勤学生，请直接让班级同学提供，一个班的同学，而且座位也是按学号顺序，如果还是不知道，那就直接手机拍下来教室人员情况，第二天再写名单。</h4>
 								<h4 class="card-text">3.部分学院缺勤人数较多，可以不录入，比如格拉斯哥学院，已经联系学院书记。如果缺勤人数大于班级人数的一半，就不用录那个班的缺勤了，直接备注一下xx班缺勤人数过多就好了（班级可以直接用学号的前10位表示）。</h4>
 							</div>
@@ -234,7 +234,7 @@ else { // 没有登陆但是cookie中存有登陆信息
                                         <tbody id="body1">
                                             <?php
 											$temp_connection = new STOS_MySQL_data();
-											$sql = "SELECT * FROM `查早排班` WHERE `查早组员`='{$person->xuehao}' ORDER BY `周起始日期` ASC;";
+											$sql = "SELECT * FROM `查早排班` WHERE `查早组员`='{$person->xuehao}' ORDER BY `周起始日期` DESC;";
 											if($temp = $temp_connection->execute_query($sql)) {
 												while($t = $temp->fetch_assoc()) {
 													echo("<tr>");

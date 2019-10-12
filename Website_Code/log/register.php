@@ -6,7 +6,7 @@ $yicunzai = false; // 信息已存在
 $info_error = false; // 信息存在错误，没有错误false，存在错误返回错误数组
 $upload_success = false; // 信息提交成功
 
-if(/*isset($_POST["注册"]) and $_POST["注册"]=="yes"*/false) { // 如果有提交注册信息
+if(isset($_POST["注册"]) and $_POST["注册"]=="yes"/*false*/) { // 如果有提交注册信息
     $person = new person_all_info($_POST["学号"]);
     if($person->already_had()) {
         $yicunzai = true;
@@ -23,7 +23,9 @@ if(/*isset($_POST["注册"]) and $_POST["注册"]=="yes"*/false) { // 如果有�
         $person->qinshi_yuan = $_POST["寝室_苑"];
         $person->qinshi_lou = $_POST["寝室_楼"];
         $person->qinshi_hao = $_POST["寝室_号"];
-        $person->yinhangkahao = $_POST["银行卡号"];
+        $person->gongzishenqingshiyinhangkahao = $_POST["工资申请时银行卡号"];
+        $person->gongzishenqingshixingming = $person->xinming;
+        $person->gongzishenqingshixuehao = $person->xuehao;
         $person->mima = $_POST["密码"];
         
         $person->init_authentic_work_info();
@@ -89,7 +91,7 @@ if(/*isset($_POST["注册"]) and $_POST["注册"]=="yes"*/false) { // 如果有�
             
         <?php if(isset($_POST["注册"]) and $_POST["注册"]=="yes") echo("<!--"); ?>
             <div class="py-5 text-center">
-                <h2>个人信息注册<br/><span style="color: red">注册已关闭</span></h2>
+                <h2>个人信息注册</h2>
                 <p class="lead">
                     本页信息中，除必要联系方式信息展示给组长外，所有信息不会展示给其他队员。<br/>由于部分信息涉及工资申报，请在信息发生变动时及时在<strong>个人中心</strong>修改。
                 </p>
@@ -202,13 +204,13 @@ if(/*isset($_POST["注册"]) and $_POST["注册"]=="yes"*/false) { // 如果有�
                         <div class="row">
                             <div class="col-md-7 mb-3">
                                 <label for="bankID">银行卡号</label>
-                                <input type="text" class="form-control" id="bankID" placeholder="银行卡号" name="银行卡号" required>
+                                <input type="text" class="form-control" id="bankID" placeholder="银行卡号" name="工资申请时银行卡号" required>
                                 <div class="invalid-feedback">
                                     需要填写有效银行卡号
                                 </div>
                             </div>
                         </div>
-                        
+
                         <hr class="mb-4">
 
                         <div class="row">
@@ -222,7 +224,7 @@ if(/*isset($_POST["注册"]) and $_POST["注册"]=="yes"*/false) { // 如果有�
                         </div>
                         
                         <hr class="mb-4">
-                        <button class="btn btn-primary btn-lg btn-block" type="button" name="注册" value="yes">提交信息</button>
+                        <button class="btn btn-primary btn-lg btn-block" type="submit" name="注册" value="yes">提交信息</button>
                     </form>
                     <br/>
                 </div>
