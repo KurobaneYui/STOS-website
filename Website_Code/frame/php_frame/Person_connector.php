@@ -2,56 +2,44 @@
 require ('/var/www/html/ROOT_PATH.php');
 require (ROOT_PATH.'/frame/php_frame/Database_connector.php');
 require (ROOT_PATH.'/frame/php_frame/DateTools.php');
-require (ROOT_PATH.'/frame/php_frame/AuthorizationTools.php');
 
 if (!class_exists('Person_connector')) {
     class Person_connector
     {
-        private $STOS_DATABASE_INFORMATION; // database connection
-        private $STOS_DATABASE_COLLECTION_DATA; // database connection
+        private $STOS_DATABASE_INFORMATION;
+        private $STOS_DATABASE_COLLECTION_DATA;
 
-        private $informationValid = array(
-            'all' => false,
-            'basic' => false,
-            'work' => false,
-            'password' => false,
-            '$authorization' => false
-        ); // check if personal information is all valid
-        private $invalid_infos = array(); // show the information which is invalid
-        private $existInDatabase = false; // show if this person already exists in the database
+        private $InformationValid = false;
+        public $invalid_infos = array();
 
-        // 岗位信息
-        private $groupBelonging; // 所属组
-        private $work; // 岗位
-        private $wage = 0; // 工资
-        private $groupManagement = array(); // 管理组（一位副队同时管理早餐组，故设此变量记录除职位外的管理身份）
+        private $GroupBelonging; // 所属组
+        private $Work; // 岗位
+        private $Wage = 0; // 工资
+        private $Authorization; // 权限
+        private $GroupManagement = array(); // 管理组（一位副队同时管理早餐组，故设此变量记录除职位外的管理身份）
         private $MondayEmptyTime; // 周一空课
         private $TuesdayEmptyTime; // 周二空课
         private $WednesdayEmptyTime; // 周三空课
         private $ThursdayEmptyTime; // 周四空课
         private $FridayEmptyTime; // 周五空课
-        private $remark = array(); // 备注
-        // 个人信息
-        private $name; // 姓名
-        private $campus; // 校区
-        private $school; // 学院
-        private $studentID; // 学号
-        private $gender; // 性别
-        private $peoples; // 民族
-        private $hometown; // 籍贯
-        private $phoneNumber; // 电话
-        private $QQ; // QQ号
-        private $dormitory_yuan; // 寝室_苑
-        private $dormitory_lou; // 寝室_楼
-        private $dormitory_hao; // 寝室_号
-        // 工资申报信息
-        private $bankIDForWage; // 工资申请时银行卡号
-        private $nameForWage; // 工资申请时姓名
-        private $studentIDForWage; // 工资申请时学号
-        private $subsidyDossier; // 建档立卡
-        // 密码与权限
-        private $password; // 密码
-        private $authorization; // 权限
+        private $Remark = ''; // 备注
+        //个人信息
+        public $name; // 姓名
+        public $campus; // 校区
+        public $school; // 学院
+        public $studentID; // 学号
+        public $gender; // 性别
+        public $peoples; // 民族
+        public $hometown; // 籍贯
+        public $phoneNumber; // 电话
+        public $QQ; // QQ号
+        public $dormitory_yuan; // 寝室_苑
+        public $dormitory_lou; // 寝室_楼
+        public $dormitory_hao; // 寝室_号
+        public $bankIDForWage; // 工资申请时银行卡号
+        public $nameForWage; // 工资申请时姓名
+        public $studentIDForWage; // 工资申请时学号
+        public $password; // 密码
 
         /**
          * Person_connector constructor.
@@ -62,7 +50,7 @@ if (!class_exists('Person_connector')) {
             $this->STOS_DATABASE_COLLECTION_DATA = new Database_connector(ROOT_PATH.'/config/DataBase_CollectionData.conf');
 
             if($studentID!==''){
-                $this->existInDatabase = $this->informationValid = $this->InitWithStudentID($studentID);
+                $this->InformationValid = $this->InitWithStudentID($studentID);
             }
         }
 
@@ -77,31 +65,16 @@ if (!class_exists('Person_connector')) {
          */
         public function InitWithStudentID(string $studentID): bool {
             $this->studentID = $studentID;
-            $this->existInDatabase = $this->informationValid = $this->fetch_all_personal_info();
-            return $this->informationValid;
+            $this->InformationValid = $this->get_personal_info();
+            return $this->InformationValid;
         }
 
         // public function: use name prop to get all personal information
         /**
          * @return bool
          */
-        public function fetch_all_personal_info(): bool {
-            $this->informationValid['all']
-                = $this->fetch_basic_info()
-                and $this->fetch_work_info()
-                and $this->fetch_password_info()
-                and $this->fetch_authorization_info();
-
-            $this->existInDatabase = $this->informationValid['all'];
-            return $this->informationValid['all'];
-        }
-
-        // public function: use name prop to get personal basic information
-        /**
-         * @return bool
-         */
-        public function fetch_basic_info(): bool {
-            $this->informationValid['basic'] = false;
+        public function get_personal_info(): bool {
+            $this->InformationValid = false;
 
             $result = $this->STOS_DATABASE_INFORMATION->search('成员信息',array(),array('学号'=>$this->studentID));
             if($result = $result->fetch_assoc()) {
@@ -119,21 +92,18 @@ if (!class_exists('Person_connector')) {
                 $this->dormitory_yuan = explode('-', $result['寝室号'])[0];
                 $this->dormitory_lou = explode('-', $result['寝室号'])[1];
                 $this->dormitory_hao = explode('-', $result['寝室号'])[2];
-
-                $this->informationValid['basic'] = true;
-                return true;
+            }
+            else {
+                return false;
             }
 
-            $this->informationValid['all'] = false;
-            return false;
-        }
-
-        // public function: use name prop to get personal work information
-        /**
-         * @return bool
-         */
-        public function fetch_work_info(): bool {
-            $this->informationValid['work'] = false;
+            $result = $this->STOS_DATABASE_INFORMATION->search('登录信息',array('密码'),array('学号'=>$this->studentID));
+            if ($result = $result->fetch_assoc()) {
+                $this->password = $result['密码'];
+            }
+            else {
+                return false;
+            }
 
             $result = $this->STOS_DATABASE_INFORMATION->search('成员岗位',array(),array('学号'=>$this->studentID));
             if ($result = $result->fetch_assoc()) {
@@ -142,73 +112,44 @@ if (!class_exists('Person_connector')) {
                 $this->WednesdayEmptyTime = $result['周三空课'];
                 $this->ThursdayEmptyTime = $result['周四空课'];
                 $this->FridayEmptyTime = $result['周五空课'];
-                $this->groupBelonging = $result['所属组'];
-                $this->work = $result['岗位'];
-                $this->wage = $result['工资'];
-                $this->remark = json_decode($result['备注'], true);
-
-                $result = $this->STOS_DATABASE_INFORMATION->search('部门信息', array('部门','组长'), array('组长' =>$this->studentID));
-                $this->groupManagement = array();
-                while($result = $result->fetch_assoc()) {
-                    $this->groupManagement[] = $result['部门'];
-                    if($this->groupBelonging === '队长' && $result['部门'] !== '队长') {
-                        $this->groupManagement[] = '队长';
-                    }
-                }
-
-                $this->informationValid['work'] = true;
-                return true;
+                $this->GroupBelonging = $result['所属组'];
+                $this->Work = $result['岗位'];
+                $this->Wage = $result['工资'];
+                $this->Remark = $result['备注'];
             }
-
-            $this->informationValid['all'] = false;
-            return false;
-        }
-
-        // public function: use name prop to get personal password information
-        /**
-         * @return bool
-         */
-        public function fetch_password_info(): bool {
-            $this->informationValid['password'] = false;
-
-            $result = $this->STOS_DATABASE_INFORMATION->search('登录信息',array('密码'),array('学号'=>$this->studentID));
-            if ($result = $result->fetch_assoc()) {
-                $this->password = $result['密码'];
-
-                $this->informationValid['password'] = true;
-                return true;
+            else {
+                return false;
             }
-
-            $this->informationValid['all'] = false;
-            return false;
-        }
-
-        // public function: use name prop to get personal authorization information
-        /**
-         * @return bool
-         */
-        public function fetch_authorization_info(): bool {
-            $this->informationValid['authorization'] = false;
 
             $result = $this->STOS_DATABASE_INFORMATION->search('权限信息', array('权限'), array('学号'=>$this->studentID));
             if($result = $result->fetch_assoc()) {
-                $this->authorization = $result['权限'];
-
-                $this->informationValid['authorization'] = true;
-                return true;
+                $this->Authorization = $result['权限'];
+            }
+            else {
+                return false;
             }
 
-            $this->informationValid['all'] = false;
-            return false;
+            $result = $this->STOS_DATABASE_INFORMATION->search('部门信息', array('部门','组长'), array('组长' =>$this->studentID));
+            if($result = $result->fetch_assoc()) {
+                $this->GroupManagement[] = $result['部门'];
+                if($this->GroupBelonging === '队长' && $result['部门'] !== '队长') {
+                    $this->GroupManagement[] = '队长';
+                }
+            }
+            else {
+                return false;
+            }
+
+            $this->InformationValid = true;
+            return $this->InformationValid;
         }
 
         // private function: check if personal information are valid
         // ！！！！ “学院、民族、籍贯、备注” 只去除特殊标签和字符； “权限” 未检测！！！
         /**
-         * @param string $range: only "all","basic","password","work","authorization" are available
          * @return void
          */
-        private function check_data(string $range='all'): void { // check all information
+        private function check_data(): void { // check all information
             $result = $this->STOS_DATABASE_INFORMATION->search('部门信息',array('部门'));
             $GLOBALS['DEPARTMENTS'] = array();
             while($s = $result->fetch_assoc()['部门']) {
@@ -357,18 +298,6 @@ if (!class_exists('Person_connector')) {
                 }
             }
 
-            if (!function_exists('subsidy_filter')) { // 建档立卡项过滤器
-                function gender_filter($gender) // 性别过滤器
-                {
-                    $pattern = '/^是|否$/u';
-                    if(preg_match($pattern,$gender)) {
-                        return $gender;
-                    }
-
-                    return false;
-                }
-            }
-
             $filters = array
             (
                 '姓名' => FILTER_SANITIZE_STRING,
@@ -467,11 +396,6 @@ if (!class_exists('Person_connector')) {
                 '备注' => array
                 (
                     'filter' =>FILTER_SANITIZE_STRING
-                ),
-                '建档立卡' => array
-                (
-                    'filter' =>FILTER_CALLBACK,
-                    'options' => 'subsidy_filter'
                 )
             );
 
@@ -492,33 +416,32 @@ if (!class_exists('Person_connector')) {
                 '工资申请时银行卡号' =>$this->bankIDForWage, // 工资申请时银行卡号
                 '工资申请时姓名' =>$this->nameForWage, // 工资申请时姓名
                 '工资申请时学号' =>$this->studentIDForWage, // 工资申请时学号
-                '建档立卡' =>$this->subsidyDossier, // 建档立卡
                 '密码' =>$this->password, // 密码
                 '周一空课' =>$this->MondayEmptyTime, // 周一空课
                 '周二空课' =>$this->TuesdayEmptyTime, // 周二空课
                 '周三空课' =>$this->WednesdayEmptyTime, // 周三空课
                 '周四空课' =>$this->ThursdayEmptyTime, // 周四空课
                 '周五空课' =>$this->FridayEmptyTime, // 周五空课
-                '所属组' =>$this->groupBelonging, // 所属组
-                '管理组' =>$this->groupManagement, // 管理组
-                '岗位' =>$this->work, // 岗位
-                '工资' =>$this->wage, // 工资
-                '备注' =>$this->remark // 备注
+                '所属组' =>$this->GroupBelonging, // 所属组
+                '管理组' =>$this->GroupManagement, // 管理组
+                '岗位' =>$this->Work, // 岗位
+                '工资' =>$this->Wage, // 工资
+                '备注' =>$this->Remark // 备注
                 );
             $result = filter_var_array($data, $filters);
             $this->invalid_infos = array();
             foreach($result as $key=>$value) {
                 if (!$value) {
-                    $this->informationValid = false;
+                    $this->InformationValid = false;
                     $this->invalid_infos[$key] = $value;
                 }
             }
             if(empty($invalid_infos)) {
-                $this->informationValid = true;
+                $this->InformationValid = true;
                 $this->invalid_infos = array();
             }
             else{
-                $this->informationValid = false;
+                $this->InformationValid = false;
             }
         }
 
@@ -526,25 +449,10 @@ if (!class_exists('Person_connector')) {
         /**
          * @return bool
          */
-        public function commit_all_personal_information(): bool {
-            if($this->informationValid['all']) {
-                return $this->commit_basic_information()
-                    and $this->commit_work_information()
-                    and $this->commit_authorization_information()
-                    and $this->commit_password_information();
-            }
+        public function commit_information(): bool {
+            $this->check_data();
 
-            return false;
-        }
-
-        // public function: commit personal basic information to database
-        /**
-         * @return bool
-         */
-        public function commit_basic_information(): bool {
-            $this->check_data('basic');
-
-            if($this->informationValid['basic']) {
+            if($this->InformationValid) {
                 $data = array
                 (
                     '姓名' =>$this->name, // 姓名
@@ -560,31 +468,15 @@ if (!class_exists('Person_connector')) {
                     '寝室_号' => $this->dormitory_hao, // 寝室_号
                     '工资申请时银行卡号' =>$this->bankIDForWage, // 工资申请时银行卡号
                     '工资申请时姓名' =>$this->nameForWage, // 工资申请时姓名
-                    '工资申请时学号' =>$this->studentIDForWage, // 工资申请时学号
-                    '建档立卡' =>$this->subsidyDossier // 建档立卡
+                    '工资申请时学号' =>$this->studentIDForWage // 工资申请时学号
                 );
-                if($this->existInDatabase) {
+                try {
                     $this->STOS_DATABASE_INFORMATION->update('成员信息', $data,array('学号' =>$this->studentID));
-                }
-                else{
+                } catch (Exception $e) {
                     $data['学号'] = $this->studentID;
                     $this->STOS_DATABASE_INFORMATION->insert('成员信息', $data);
                 }
 
-                return true;
-            }
-
-            return false;
-        }
-
-        // public function: commit personal work information to database
-        /**
-         * @return bool
-         */
-        public function commit_work_information(): bool {
-            $this->check_data('work');
-
-            if($this->informationValid['work']) {
                 $data = array
                 (
                     '周一空课' =>$this->MondayEmptyTime, // 周一空课
@@ -592,73 +484,39 @@ if (!class_exists('Person_connector')) {
                     '周三空课' =>$this->WednesdayEmptyTime, // 周三空课
                     '周四空课' =>$this->ThursdayEmptyTime, // 周四空课
                     '周五空课' =>$this->FridayEmptyTime, // 周五空课
-                    '所属组' =>$this->groupBelonging, // 所属组
-                    '管理组' =>$this->groupManagement, // 管理组
-                    '岗位' =>$this->work, // 岗位
-                    '工资' =>$this->wage, // 工资
-                    '备注' =>json_encode( // 备注
-                        str_replace(array("\n", "\r"), array("\\n", "\\r"), $this->remark),
-                        JSON_UNESCAPED_UNICODE
-                    )
+                    '所属组' =>$this->GroupBelonging, // 所属组
+                    '管理组' =>$this->GroupManagement, // 管理组
+                    '岗位' =>$this->Work, // 岗位
+                    '工资' =>$this->Wage, // 工资
+                    '备注' =>$this->Remark // 备注
                 );
-                if($this->existInDatabase) {
+                try {
                     $this->STOS_DATABASE_INFORMATION->update('成员岗位', $data,array('学号' =>$this->studentID));
-                }
-                else{
+                } catch (Exception $e) {
                     $data['学号'] = $this->studentID;
                     $this->STOS_DATABASE_INFORMATION->insert('成员岗位', $data);
                 }
 
-                return true;
-            }
+                $data = array
+                (
+                    '权限' =>$this->Authorization // 权限
+                );
+                try {
+                    $this->STOS_DATABASE_INFORMATION->update('权限信息', $data,array('学号' =>$this->studentID));
+                } catch (Exception $e) {
+                    $data['学号'] = $this->studentID;
+                    $this->STOS_DATABASE_INFORMATION->insert('权限信息', $data);
+                }
 
-            return false;
-        }
-
-        // public function: commit personal password information to database
-        /**
-         * @return bool
-         */
-        public function commit_password_information(): bool {
-            $this->check_data('password');
-
-            if($this->informationValid['password']) {
                 $data = array
                 (
                     '密码' =>$this->password // 密码
                 );
-                if($this->existInDatabase) {
+                try {
                     $this->STOS_DATABASE_INFORMATION->update('登录信息', $data,array('学号' =>$this->studentID));
-                }
-                else{
+                } catch (Exception $e) {
                     $data['学号'] = $this->studentID;
                     $this->STOS_DATABASE_INFORMATION->insert('登录信息', $data);
-                }
-
-                return true;
-            }
-
-            return false;
-        }
-
-        // public function: commit personal authorization information to database
-        /**
-         * @return bool
-         */
-        public function commit_authorization_information(): bool {
-            $this->check_data('authorization');
-
-            if($this->informationValid['authorization']) {
-                $data = array
-                (
-                    '权限' =>$this->authorization // 权限
-                );
-                if($this->existInDatabase) {
-                    $this->STOS_DATABASE_INFORMATION->update('权限信息', $data,array('学号' =>$this->studentID));
-                }
-                else{
-                    $data['学号'] = $this->studentID;
-                    $this->STOS_DATABASE_INFORMATION->insert('权限信息', $data);
                 }
 
                 return true;
@@ -672,7 +530,7 @@ if (!class_exists('Person_connector')) {
          * @return bool
          */
         public function exist(): bool { // 返回是否已经在数据库中存在
-            return $this->existInDatabase;
+            return $this->InformationValid;
         }
 
         // public function: provide personal work information
@@ -682,7 +540,7 @@ if (!class_exists('Person_connector')) {
         public function work_info(): array { // 返回工作岗位信息
             $data = array();
 
-            if ($this->informationValid) {
+            if ($this->InformationValid) {
                 $data = array
                 (
                     '周一空课' =>$this->MondayEmptyTime, // 周一空课
@@ -690,118 +548,16 @@ if (!class_exists('Person_connector')) {
                     '周三空课' =>$this->WednesdayEmptyTime, // 周三空课
                     '周四空课' =>$this->ThursdayEmptyTime, // 周四空课
                     '周五空课' =>$this->FridayEmptyTime, // 周五空课
-                    '所属组' =>$this->groupBelonging, // 所属组
-                    '岗位' =>$this->work, // 岗位
-                    '工资' =>$this->wage, // 工资
-                    '备注' =>$this->remark, // 备注
-                    '管理组' =>$this->groupManagement // 管理组
+                    '所属组' =>$this->GroupBelonging, // 所属组
+                    '岗位' =>$this->Work, // 岗位
+                    '工资' =>$this->Wage, // 工资
+                    '备注' =>$this->Remark, // 备注
+                    '管理组' =>$this->GroupManagement, // 管理组
+                    '权限' =>$this->Authorization // 权限
                 );
             }
 
             return ($data);
-        }
-
-        // public function: provide personal basic information
-        /**
-         * @return array
-         */
-        public function basic_info(): array { // 返回基本信息
-            $data = array();
-
-            if ($this->informationValid) {
-                $data = array
-                (
-                    '姓名' =>$this->name, // 姓名
-                    '校区' =>$this->campus, // 校区
-                    '学院' =>$this->school, // 学院
-                    '性别' =>$this->gender, // 性别
-                    '民族' =>$this->peoples, // 民族
-                    '籍贯' =>$this->hometown, // 籍贯
-                    '电话' =>$this->phoneNumber, // 电话
-                    'QQ' =>$this->QQ, // QQ号
-                    '寝室_苑' => $this->dormitory_yuan, // 寝室_苑
-                    '寝室_楼' => $this->dormitory_lou, // 寝室_楼
-                    '寝室_号' => $this->dormitory_hao, // 寝室_号
-                    '工资申请时银行卡号' =>$this->bankIDForWage, // 工资申请时银行卡号
-                    '工资申请时姓名' =>$this->nameForWage, // 工资申请时姓名
-                    '工资申请时学号' =>$this->studentIDForWage, // 工资申请时学号
-                    '建档立卡' =>$this->subsidyDossier // 建档立卡
-                );
-            }
-
-            return ($data);
-        }
-
-        // public function: provide personal authorization
-        /**
-         * @return array
-         */
-        public function authorization_info(): array { // 返回权限信息
-            $data = array();
-
-            if ($this->informationValid) {
-                $data = array
-                (
-                    '权限' =>$this->authorization // 权限
-                );
-            }
-
-            return ($data);
-        }
-
-        // public function: check user password
-        /**
-         * @param string $test_password: the password which need correction test
-         * @return bool
-         */
-        public function password_check(string $test_password): bool { // 测试密码是否为数据库中的本人密码
-            return $test_password===$this->password;
-        }
-
-        // public function: set personal information
-        /**
-         * @param array $info_pairs: the information need to set, please give array of key-value pairs of information
-         * @return bool
-         */
-        public function set_info(array $info_pairs): bool {
-            foreach ($info_pairs as $key=>$value) {
-                switch ($key) {
-                    // 岗位信息
-                    case 'groupBelonging': $this->groupBelonging = $value;break; // 所属组
-                    case 'work': $this->work = $value;break; // 岗位
-                    case 'wage': $this->wage = $value;break; // 工资
-                    case 'groupManagement': $this->groupManagement = $value;break; // 管理组（一位副队同时管理早餐组，故设此变量记录除职位外的管理身份）
-                    case 'MondayEmptyTime': $this->MondayEmptyTime = $value;break; // 周一空课
-                    case 'TuesdayEmptyTime': $this->TuesdayEmptyTime = $value;break; // 周二空课
-                    case 'WednesdayEmptyTime': $this->WednesdayEmptyTime = $value;break; // 周三空课
-                    case 'ThursdayEmptyTime': $this->ThursdayEmptyTime = $value;break; // 周四空课
-                    case 'FridayEmptyTime': $this->FridayEmptyTime = $value;break; // 周五空课
-                    case 'remark': $this->remark = $value;break; // 备注
-                    // 个人信息
-                    case 'name': $this->name = $value;break; // 姓名
-                    case 'campus': $this->campus = $value;break; // 校区
-                    case 'school': $this->school = $value;break; // 学院
-                    case 'studentID': $this->studentID = $value;break; // 学号
-                    case 'gender': $this->gender = $value;break; // 性别
-                    case 'peoples': $this->peoples = $value;break; // 民族
-                    case 'hometown': $this->hometown = $value;break; // 籍贯
-                    case 'phoneNumber': $this->phoneNumber = $value;break; // 电话
-                    case 'QQ': $this->QQ = $value;break; // QQ号
-                    case 'dormitory_yuan': $this->dormitory_yuan = $value;break; // 寝室_苑
-                    case 'dormitory_lou': $this->dormitory_lou = $value;break; // 寝室_楼
-                    case 'dormitory_hao': $this->dormitory_hao = $value;break; // 寝室_号
-                    // 工资申报信息
-                    case 'bankIDForWage': $this->bankIDForWage = $value;break; // 工资申请时银行卡号
-                    case 'nameForWage': $this->nameForWage = $value;break; // 工资申请时姓名
-                    case 'studentIDForWage': $this->studentIDForWage = $value;break; // 工资申请时学号
-                    case 'subsidyDossier': $this->subsidyDossier = $value;break; // 建档立卡
-                    // 密码与权限
-                    case 'password': $this->password = $value;break; // 密码
-                    case 'authorization': $this->authorization = $value;break; // 权限
-                    default: return false;
-                }
-            }
-            return true;
         }
     }
 }
