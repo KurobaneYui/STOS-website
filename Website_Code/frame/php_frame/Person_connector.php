@@ -62,9 +62,7 @@ if (!class_exists('Person_connector')) {
             $this->STOS_DATABASE_COLLECTION_DATA = new Database_connector(ROOT_PATH.'/config/DataBase_CollectionData.conf');
 
             if($studentID!==''){
-                $this->existInDatabase = $this->InitWithStudentID($studentID);
-                $this->informationValid['all'] = $this->informationValid['basic'] = $this->informationValid['work'] =
-                $this->informationValid['password'] = $this->informationValid['authorization'] = $this->existInDatabase;
+                $this->existInDatabase = $this->informationValid = $this->InitWithStudentID($studentID);
             }
         }
 
@@ -79,10 +77,8 @@ if (!class_exists('Person_connector')) {
          */
         public function InitWithStudentID(string $studentID): bool {
             $this->studentID = $studentID;
-            $this->existInDatabase = $this->fetch_all_personal_info();
-            $this->informationValid['all'] = $this->informationValid['basic'] = $this->informationValid['work'] =
-            $this->informationValid['password'] = $this->informationValid['authorization'] = $this->existInDatabase;
-            return $this->existInDatabase;
+            $this->existInDatabase = $this->informationValid = $this->fetch_all_personal_info();
+            return $this->informationValid;
         }
 
         // public function: use name prop to get all personal information
@@ -686,7 +682,7 @@ if (!class_exists('Person_connector')) {
         public function work_info(): array { // 返回工作岗位信息
             $data = array();
 
-            if ($this->informationValid)['work'] {
+            if ($this->informationValid) {
                 $data = array
                 (
                     '周一空课' =>$this->MondayEmptyTime, // 周一空课
@@ -712,7 +708,7 @@ if (!class_exists('Person_connector')) {
         public function basic_info(): array { // 返回基本信息
             $data = array();
 
-            if ($this->informationValid['basic']) {
+            if ($this->informationValid) {
                 $data = array
                 (
                     '姓名' =>$this->name, // 姓名
@@ -743,27 +739,10 @@ if (!class_exists('Person_connector')) {
         public function authorization_info(): array { // 返回权限信息
             $data = array();
 
-            if ($this->informationValid['authorization']) {
+            if ($this->informationValid) {
                 $data = array
                 (
                     '权限' =>$this->authorization // 权限
-                );
-            }
-
-            return ($data);
-        }
-
-        // public function: provide personal password
-        /**
-         * @return array
-         */
-        public function password_info(): array { // 返回密码
-            $data = array();
-
-            if ($this->informationValid['password']) {
-                $data = array
-                (
-                    '密码' =>$this->password // 密码
                 );
             }
 
@@ -784,40 +763,41 @@ if (!class_exists('Person_connector')) {
          * @param array $info_pairs: the information need to set, please give array of key-value pairs of information
          * @return bool
          */
-        public function change_info(array $info_pairs): bool {
+        public function set_info(array $info_pairs): bool {
             foreach ($info_pairs as $key=>$value) {
                 switch ($key) {
                     // 岗位信息
-                    case '所属组': $this->groupBelonging = $value;break; // 所属组
-                    case '岗位': $this->work = $value;break; // 岗位
-                    case '工资': $this->wage = $value;break; // 工资
-                    case '管理组': $this->groupManagement = $value;break; // 管理组（一位副队同时管理早餐组，故设此变量记录除职位外的管理身份）
-                    case '周一空课': $this->MondayEmptyTime = $value;break; // 周一空课
-                    case '周二空课': $this->TuesdayEmptyTime = $value;break; // 周二空课
-                    case '周三空课': $this->WednesdayEmptyTime = $value;break; // 周三空课
-                    case '周四空课': $this->ThursdayEmptyTime = $value;break; // 周四空课
-                    case '周五空课': $this->FridayEmptyTime = $value;break; // 周五空课
-                    case '备注': $this->remark = $value;break; // 备注
+                    case 'groupBelonging': $this->groupBelonging = $value;break; // 所属组
+                    case 'work': $this->work = $value;break; // 岗位
+                    case 'wage': $this->wage = $value;break; // 工资
+                    case 'groupManagement': $this->groupManagement = $value;break; // 管理组（一位副队同时管理早餐组，故设此变量记录除职位外的管理身份）
+                    case 'MondayEmptyTime': $this->MondayEmptyTime = $value;break; // 周一空课
+                    case 'TuesdayEmptyTime': $this->TuesdayEmptyTime = $value;break; // 周二空课
+                    case 'WednesdayEmptyTime': $this->WednesdayEmptyTime = $value;break; // 周三空课
+                    case 'ThursdayEmptyTime': $this->ThursdayEmptyTime = $value;break; // 周四空课
+                    case 'FridayEmptyTime': $this->FridayEmptyTime = $value;break; // 周五空课
+                    case 'remark': $this->remark = $value;break; // 备注
                     // 个人信息
-                    case '姓名': $this->name = $value;break; // 姓名
-                    case '校区': $this->campus = $value;break; // 校区
-                    case '学院': $this->school = $value;break; // 学院
-                    case '性别': $this->gender = $value;break; // 性别
-                    case '民族': $this->peoples = $value;break; // 民族
-                    case '籍贯': $this->hometown = $value;break; // 籍贯
-                    case '电话': $this->phoneNumber = $value;break; // 电话
-                    case 'QQ': $this->QQ = $value;break; // QQ
-                    case '寝室_苑': $this->dormitory_yuan = $value;break; // 寝室_苑
-                    case '寝室_楼': $this->dormitory_lou = $value;break; // 寝室_楼
-                    case '寝室_号': $this->dormitory_hao = $value;break; // 寝室_号
+                    case 'name': $this->name = $value;break; // 姓名
+                    case 'campus': $this->campus = $value;break; // 校区
+                    case 'school': $this->school = $value;break; // 学院
+                    case 'studentID': $this->studentID = $value;break; // 学号
+                    case 'gender': $this->gender = $value;break; // 性别
+                    case 'peoples': $this->peoples = $value;break; // 民族
+                    case 'hometown': $this->hometown = $value;break; // 籍贯
+                    case 'phoneNumber': $this->phoneNumber = $value;break; // 电话
+                    case 'QQ': $this->QQ = $value;break; // QQ号
+                    case 'dormitory_yuan': $this->dormitory_yuan = $value;break; // 寝室_苑
+                    case 'dormitory_lou': $this->dormitory_lou = $value;break; // 寝室_楼
+                    case 'dormitory_hao': $this->dormitory_hao = $value;break; // 寝室_号
                     // 工资申报信息
-                    case '工资申请时银行卡号': $this->bankIDForWage = $value;break; // 工资申请时银行卡号
-                    case '工资申请时姓名': $this->nameForWage = $value;break; // 工资申请时姓名
-                    case '工资申请时学号': $this->studentIDForWage = $value;break; // 工资申请时学号
-                    case '建档立卡': $this->subsidyDossier = $value;break; // 建档立卡
+                    case 'bankIDForWage': $this->bankIDForWage = $value;break; // 工资申请时银行卡号
+                    case 'nameForWage': $this->nameForWage = $value;break; // 工资申请时姓名
+                    case 'studentIDForWage': $this->studentIDForWage = $value;break; // 工资申请时学号
+                    case 'subsidyDossier': $this->subsidyDossier = $value;break; // 建档立卡
                     // 密码与权限
-                    case '密码': $this->password = $value;break; // 密码
-                    case '权限': $this->authorization = $value;break; // 权限
+                    case 'password': $this->password = $value;break; // 密码
+                    case 'authorization': $this->authorization = $value;break; // 权限
                     default: return false;
                 }
             }
