@@ -40,6 +40,7 @@ if(isset($_POST["修改"]) and $_POST["修改"]=="yes") { // 如果有提交注�
     $person->gongzishenqingshiyinhangkahao = $_POST["工资申请时银行卡号"];
     $person->gongzishenqingshixuehao = $_POST["工资申请时学号"];
     $person->gongzishenqingshixingming = $_POST["工资申请时姓名"];
+    $person->recorder = $_POST["建档立卡"];
     $person->mima = $_POST["密码"];
 
     if($person->check_data()===true) {
@@ -302,6 +303,17 @@ if(isset($_POST["修改"]) and $_POST["修改"]=="yes") { // 如果有提交注�
                                             </div> -->
                                         </div>
                                     </div>
+                                    <div class="form-group">
+                                        <label for="recorder" class="col-md-12">建档立卡</label>
+                                        <div class="col-md-12 custom-control custom-radi" id="recorder">
+                                            <input class="form-control" id="yes" name="建档立卡" value="是" type="radio" <?php if($person->recorder=="是")echo("checked"); ?> required>
+                                            <label class="custom-control-label" for="yes">是</label>
+                                        </div>
+                                        <div class="col-md-12 custom-control custom-radi">
+                                            <input class="form-control" id="no" name="建档立卡" value="否" type="radio" <?php if($person->recorder=="否")echo("checked"); ?> required>
+                                            <label class="custom-control-label" for="no">否</label>
+                                        </div>
+                                    </div>
                                     
                                     <h3 class ="card-title">密码修改</h3>
                                     <hr class="mb-12">
@@ -320,9 +332,6 @@ if(isset($_POST["修改"]) and $_POST["修改"]=="yes") { // 如果有提交注�
                                         </div>
                                     </div>
                                 </form>
-
-                                <?php if(isset($_POST["修改"]) and $_POST["修改"]=="yes") echo("-->"); ?>
-    
                             </div>
                         </div>
                     </div>

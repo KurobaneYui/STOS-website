@@ -50,6 +50,7 @@ class person_all_info{ // 个人信息
     public $gongzishenqingshiyinhangkahao; // 工资申请时银行卡号
     public $gongzishenqingshixingming; // 工资申请时姓名
     public $gongzishenqingshixuehao; // 工资申请时学号
+    public $recorder; // 建档立卡
     public $mima; // 密码
 
     function __construct($xuehao) { // 构造函数
@@ -83,6 +84,7 @@ class person_all_info{ // 个人信息
             $this->gongzishenqingshiyinhangkahao = $result["工资申请时银行卡号"];
             $this->gongzishenqingshixingming = $result["工资申请时姓名"];
             $this->gongzishenqingshixuehao = $result["工资申请时学号"];
+            $this->recorder = $result["建档立卡"];
             $this->qinshi_yuan = explode("-", $result["寝室号"])[0];
             $this->qinshi_lou = explode("-", $result["寝室号"])[1];
             $this->qinshi_hao = explode("-", $result["寝室号"])[2];
@@ -175,7 +177,8 @@ class person_all_info{ // 个人信息
                         ),
                     "工资申请时银行卡号"=>$this->gongzishenqingshiyinhangkahao, // 工资申请时银行卡号
                     "工资申请时姓名"=>$this->gongzishenqingshixingming,
-                    "工资申请时学号"=>$this->gongzishenqingshixuehao
+                    "工资申请时学号"=>$this->gongzishenqingshixuehao,
+                    "建档立卡"=>$this->recorder
                 );
             if($this->upload_method["info"]=="insert") // 判断提交方式
             {
@@ -297,7 +300,16 @@ class person_all_info{ // 个人信息
             else
                 return false;
         }}
-        
+
+        if (!function_exists("recorder_filter")){ function recorder_filter($recorder) // 建档立卡过滤器
+        {
+            $pattern = "/^是|否$/";
+            if(preg_match_all($pattern,$recorder))
+                return $recorder;
+            else
+                return false;
+        }}
+
         if (!function_exists("studentID_filter")){ function studentID_filter($studentID) { // 学号过滤器
             $pattern = "/^20[1-3]\d[a-zA-Z0-9]{8,9}$/";
             if(preg_match_all($pattern,$studentID))
@@ -422,6 +434,11 @@ class person_all_info{ // 个人信息
                 "filter"=>FILTER_CALLBACK,
                 "options"=>"studentID_filter"
             ),
+            "建档立卡" => array
+            (
+                "filter"=>FILTER_CALLBACK,
+                "options"=>"recorder_filter"
+            ),
             "学号" => array
             (
                 "filter"=>FILTER_CALLBACK,
@@ -500,7 +517,8 @@ class person_all_info{ // 个人信息
             "寝室_号" => $this->qinshi_hao, // 寝室_号
             "工资申请时银行卡号"=>$this->gongzishenqingshiyinhangkahao, // 工资申请时银行卡号
             "工资申请时姓名"=>$this->gongzishenqingshixingming, // 工资申请时姓名
-            "工资申请时学号"=>$this->gongzishenqingshixuehao // 工资申请时学号
+            "工资申请时学号"=>$this->gongzishenqingshixuehao, // 工资申请时学号
+            "建档立卡"=>$this->recorder // 建档立卡
         );
         $result = filter_var_array($data, $filters_info);
         $this->can_upload["info"] = true;
