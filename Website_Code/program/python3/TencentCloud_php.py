@@ -10,7 +10,6 @@ import pandas as pd
 from mysql import connector
 from openpyxl import Workbook
 
-
 class DataBaseForSTOS:
     def __init__(self, set_code, set_config, set_order=(False, 0)):
         """
@@ -222,6 +221,7 @@ class ZaoZiXi:  # 早自习类，提供相关数据的上传和下载
          ('品学楼', 'B', 103, 82),
          ('品学楼', 'B', 401, 90)]
         '''
+
         sql = "SELECT `教学楼`, `区号`, `教室编号` FROM `学风督导队_数据库`.`查早排班` "\
               "WHERE `周起始日期`='{}';".format(time_start)
         class_room = self.con_data.execute_query(sql)
