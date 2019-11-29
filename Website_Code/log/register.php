@@ -26,6 +26,7 @@ if(isset($_POST["注册"]) and $_POST["注册"]=="yes"/*false*/) { // 如果有�
         $person->gongzishenqingshiyinhangkahao = $_POST["工资申请时银行卡号"];
         $person->gongzishenqingshixingming = $person->xinming;
         $person->gongzishenqingshixuehao = $person->xuehao;
+        $person->recorder = '否';
         $person->mima = $_POST["密码"];
         
         $person->init_authentic_work_info();

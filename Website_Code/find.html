@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh, en">
+<html lang="zh, en" xmlns="http://www.w3.org/1999/html">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -39,8 +39,8 @@
                     <ul class="list-group">
 						<!--li class="list-group-item list-group-item-danger">周汇总时，请假学生计入总应到人数，故和每日汇总结果有一定偏差，望知晓<br/>本页展示的每日数据均为原始数据，每周末会对存在问题的数据（如：数据缺失）进行处理。处理后的数据会和每日数据有一定不同</li-->
                         <li class="list-group-item list-group-item-info">当天的数据请在9:00后查看，确保督导队组员录入完毕</li>
-                        <li class="list-group-item list-group-item-info">当日出勤率：<br/>出勤率=(出勤1+出勤2)/2/(应到人数-请假人数)<br/>出勤1为7:35统计的人数<br/>出勤2为8:00统计的人数</li>
-                        <li class="list-group-item list-group-item-info">若数据存在问题请尽快与督导队联系</li>
+                        <li class="list-group-item list-group-item-info">当日出勤率：<br/>出勤率=(出勤1+出勤2)/2/应到人数<br/>出勤1为7:35统计的人数<br/>出勤2为8:00统计的人数</li>
+                        <li class="list-group-item list-group-item-info">出勤率为程序自动生成，如果教室数据存在特殊情况，出勤率并不准确，请不用担心，周末我们会对特殊教室统一处理<br/>若数据存在问题请尽快与督导队联系</li>
                     </ul>
                 </div>
             </div>
@@ -99,7 +99,36 @@
                 <!-- </div>
             </div> -->
         </div>
-
+        <!--br/><hr/><br/>
+        <div-- class="container">
+            <div class="card">
+                <div class="card-body">
+                    <h3>意见与建议</h3>
+                    <hr/>
+                    <div class="row">
+                        <div class="col-12">
+                            <form id="CAS" action="">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label for="area_group">请选择教学楼区域</label>
+                                        <div class="form-group" id="area_group">
+                                            <label><input type="radio" name="area" id="area_A" class="form-control"/>A</label>
+                                            <label><input type="radio" name="area" id="area__B" class="form-control"/>B</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label>请输入教室编号<input type="text" name="numbering" id="numbering" class="form-control"/></label>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label>请提供您的意见和建议<textarea type="width:100% height:100%" name="CommentsAndSuggestions" id="CommentsAndSuggestions" class="form-control"></textarea></label>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div-->
 		<!-- /container -->
     </main>
     <br>
@@ -194,7 +223,7 @@
                             innerstring=innerstring+"<td>"+rejson[i].备注+"</td>";
                             innerstring+="</tr>";
                             fenzi = fenzi+(parseInt(rejson[i].第一次出勤)/2+parseInt(rejson[i].第二次出勤)/2);
-                            fenmu = fenmu+(parseInt(rejson[i].应到人数-rejson[i].请假人数));
+                            fenmu = fenmu+(parseInt(rejson[i].应到人数));
                         }
                         innerstring+="</tbody></table></div>";
                         chuqin = (fenzi/fenmu)*100;

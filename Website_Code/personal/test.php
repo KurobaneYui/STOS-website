@@ -1,12 +1,12 @@
 <?php
 session_start();
 require ('../ROOT_PATH.php');
-require (ROOT_PATH.'frame/php_frame/Database_connector.php');
-require (ROOT_PATH.'/frame/php_frame/Person_connector.php');
+require(ROOT_PATH . '/frame/php/Database_connector.php');
+require(ROOT_PATH . '/frame/php/Person.php');
 
 if ( isset( $_SESSION[ 'islogin' ] )and isset( $_SESSION[ 'username' ] ) ) { // 如果已经登陆
     $connection = new Database_connector(ROOT_PATH.'/config/DataBase_CollectionData.conf'); // 建立数据库连接
-    $person = new Person_connector( $_SESSION[ "username" ] ); // 获取个人信息
+    $person = new Person( $_SESSION[ "username" ] ); // 获取个人信息
 }
 else { // 没有登陆但是cookie中存有登陆信息
     //检查cookie
@@ -15,7 +15,7 @@ else { // 没有登陆但是cookie中存有登陆信息
         $_SESSION[ 'islogin' ] = 1;
 
         $connection = new Database_connector(ROOT_PATH.'/config/DataBase_CollectionData.conf'); // 建立数据库连接
-        $person = new Person_connector( $_SESSION[ "username" ] ); // 获取个人信息
+        $person = new Person( $_SESSION[ "username" ] ); // 获取个人信息
     }
     else
         header( 'refresh:0; url=../log/login.php' ); // 返回登陆页面
@@ -24,17 +24,18 @@ else { // 没有登陆但是cookie中存有登陆信息
 
 <?php
 //一些用于反馈注册结果的变量
-$info_error = false; // 信息存在错误，没有错误false，存在错误返回错误数组
+$info_error = array(); // 信息存在错误，没有错误是空数组，存在错误返回错误数组
 $upload_success = false; // 信息提交成功
 
 if(isset($_POST["修改"]) and $_POST["修改"]=="yes") { // 如果有提交注册信息
     // 写入个人信息
     $person->change_info(
         array(
-            'name'=>$_POST["姓名"]
+            '姓名'=>$_POST["姓名"]
         )
     );
     $upload_success = $person->commit_basic_information();
+    $info_error = array();
 }
 ?>
 
@@ -148,10 +149,10 @@ if(isset($_POST["修改"]) and $_POST["修改"]=="yes") { // 如果有提交注�
                             <div class="card">
                                 <div class="card-block">
                                     <?php
-                                    if(!($info_error===false)) { echo("<h2>提交的信息有误</h2><p>本次提交我们不会修改你的个人信息，请检查后重新填写</p><br/>"); foreach($info_error as $key=>$value) { echo("<p>{$key}：{$value}</p>"); } }
+                                    if(!empty($info_error)) { echo("<h2>提交的信息有误</h2><p>本次提交我们不会修改你的个人信息，请检查后重新填写</p><br/>"); foreach($info_error as $key=>$value) { echo("<p>{$key}：{$value}</p>"); } }
                                     elseif($upload_success===true) { echo("<h2>信息提交成功</h2><p>个人信息已修改，你可以刷新本页查看修改后信息</p>"); }
                                     ?>
-                                    <form class="form-horizontal form-material needs-validation" id="myform" novalidate action="info.php" method="post">
+                                    <form class="form-horizontal form-material needs-validation" id="myform" novalidate action="test.php" method="post">
                                         <h3 class ="card-title">基本信息</h3>
                                         <hr class="mb-12">
                                         <div class="form-group">
@@ -302,9 +303,6 @@ if(isset($_POST["修改"]) and $_POST["修改"]=="yes") { // 如果有提交注�
                                             </div>
                                         </div>
                                     </form>
-
-                                    <?php if(isset($_POST["修改"]) and $_POST["修改"]=="yes") echo("-->"); ?>
-
                                 </div>
                             </div>
                         </div>

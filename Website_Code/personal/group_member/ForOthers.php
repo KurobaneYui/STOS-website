@@ -120,7 +120,7 @@ else { // 没有登陆
 										</thead>
 										<tbody>
 											<?php
-											$sql = "SELECT * FROM `代查安排` WHERE `代查日期` BETWEEN '2019-10-08' and '2019-10-30' ORDER BY `代查日期` DESC;";
+											$sql = "SELECT * FROM `代查安排` WHERE `代查日期` BETWEEN '2019-11-10' and '2019-12-10' ORDER BY `代查日期` DESC;";
 											$daicha_paibans = $connection_data->execute_query($sql);
 											
 											while($daicha_single = $daicha_paibans->fetch_assoc()) {

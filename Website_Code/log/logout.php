@@ -7,7 +7,7 @@ else
     $logouted = 1;
 $_SESSION = array();
 session_destroy();
-header( 'refresh:3; url=/index.html' );
+header( 'refresh:3; url=/index.html5' );
 ?>
 
 <!doctype html>

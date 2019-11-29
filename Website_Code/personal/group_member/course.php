@@ -6,6 +6,9 @@ if ( isset( $_SESSION[ 'islogin' ] )and isset( $_SESSION[ 'username' ] ) ) { // 
     $connection = new STOS_MySQL(); // 建立数据库连接
     $person = new person_all_info( $_SESSION[ "username" ] ); // 获取个人信息
     $self_study_classroom = new self_study_data_set($person->xuehao, time()); // 获取查早教室信息
+
+    $all_days = getWeekRange(time(),1)[2]; // 获取本周七天的日期
+
 	if($person->work_info()["权限"]!=1) header( 'refresh:0; url=../../log/logout.php' ); // 如果不是组员，强制登出
 }
 else { // 没有登陆
@@ -16,7 +19,7 @@ else { // 没有登陆
 $connection_temp = new STOS_MySQL_data();
 if(isset($person)) {
 	$courses_array = array(); // 查课教室数组，二维
-	$sql = "SELECT * FROM `查课排班` WHERE `日期` BETWEEN '2019-06-10' AND '2019-06-16' AND `查课组员`='{$person->xuehao}' ORDER BY `教学楼`,`区号`,`教室编号` ASC;";
+	$sql = "SELECT * FROM `查课排班` WHERE `日期` IN ('".join('\',\'',$all_days)."') AND `查课组员`='{$person->xuehao}' ORDER BY `教学楼`,`区号`,`教室编号` ASC;";
 	if($results = $connection_temp->execute_query($sql)) {
 		while($course = $results->fetch_assoc()) {
 			array_push($courses_array,$course);
