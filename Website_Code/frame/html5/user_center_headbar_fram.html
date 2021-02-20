@@ -1,22 +1,22 @@
-<header class="topbar">
-    <nav class="navbar top-navbar navbar-toggleable-sm navbar-light">
+<!-- ============================================================== -->
+<!-- Topbar header - style you can find in pages.scss -->
+<!-- ============================================================== -->
+    <nav class="navbar top-navbar navbar-expand-md navbar-light">
         <!-- ============================================================== -->
         <!-- Logo -->
         <!-- ============================================================== -->
         <div class="navbar-header">
-            <a class="navbar-brand" href="/index.html">
+            <a class="navbar-brand" href="../../index.html">
                 <!-- Logo icon --><b>
                 <!--You can put here icon as well // <i class="wi wi-sunset"></i> //-->
-                <!-- Light Logo icon -->
-                <img src="/assets/images/STOS.png" alt="homepage" class="light-logo" />
-                <!-- <img src="./assets/images/logo-light-icon.png" alt="homepage" class="light-logo" /> -->
+                <img src="/assets/images/STSA.png" alt="homepage"/>
             </b>
                 <!--End Logo icon -->
-                <!-- Logo text --><span style="color:aliceblue">
-
-				 <!-- Light Logo text -->  学风督导队
-                <!-- <img src="./assets/images/logo-light-text.png" class="light-logo" alt="homepage" /> -->
-				</span> </a>
+                <!-- Logo text -->
+                <span class="bold text-themecolor">
+                    学风督导队
+                </span>
+            </a>
         </div>
         <!-- ============================================================== -->
         <!-- End Logo -->
@@ -25,13 +25,14 @@
             <!-- ============================================================== -->
             <!-- toggle and nav items -->
             <!-- ============================================================== -->
-            <ul class="navbar-nav mr-auto mt-md-0">
+            <ul class="navbar-nav mr-auto">
                 <!-- This is  -->
-                <li class="nav-item"> <a class="nav-link nav-toggler hidden-md-up text-muted waves-effect waves-dark" href="javascript:void(0)"><i class="mdi mdi-menu"></i></a> </li>
+                <li class="nav-item"> <a class="nav-link nav-toggler hidden-md-up waves-effect waves-dark" href="javascript:void(0)"><i class="sl-icon-menu"></i></a> </li>
+                <li class="nav-item"> <a class="nav-link sidebartoggler hidden-sm-down waves-effect waves-dark" href="javascript:void(0)"><i class="sl-icon-menu"></i></a> </li>
                 <!-- ============================================================== -->
                 <!-- Search -->
                 <!-- ============================================================== -->
-                <li class="nav-item hidden-sm-down search-box"> <a class="nav-link hidden-sm-down text-muted waves-effect waves-dark" href="javascript:void(0)"><i class="ti-search"></i></a>
+                <li class="nav-item hidden-xs-down search-box"> <a class="nav-link hidden-sm-down waves-effect waves-dark" href="javascript:void(0)"><i class="icon-Magnifi-Glass2"></i></a>
                     <form class="app-search">
                         <input type="text" class="form-control" placeholder="Search & enter"> <a class="srh-btn"><i class="ti-close"></i></a> </form>
                 </li>
@@ -41,20 +42,89 @@
             <!-- ============================================================== -->
             <ul class="navbar-nav my-lg-0">
                 <!-- ============================================================== -->
-                <!-- Profile -->
+                <!-- Comment -->
                 <!-- ============================================================== -->
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle text-muted waves-effect waves-dark" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" onClick="logout_confirm()"><?php echo $person->xinming; ?></a>
+                    <a class="nav-link dropdown-toggle waves-effect waves-dark" href="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="icon-Bell"></i>
+                        <div class="notify"> <span class="heartbit"></span> <span class="point"></span> </div>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right mailbox animated bounceInDown">
+                        <ul>
+                            <li>
+                                <div class="drop-title">队伍手册</div>
+                            </li>
+                            <li>
+                                <div class="message-center">
+                                    <!-- Message -->
+                                    <a href="#">
+                                        <div class="btn btn-danger btn-circle"><i class="fa fa-link"></i></div>
+                                        <div class="mail-contnet">
+                                            <h5>队伍手册</h5> <span class="mail-desc">督导队队伍规范，不定期更新</span> </div>
+                                    </a>
+                                    <!-- Message -->
+                                    <a href="#">
+                                        <div class="btn btn-success btn-circle"><i class="ti-calendar"></i></div>
+                                        <div class="mail-contnet">
+                                            <h5>网站使用指南</h5> <span class="mail-desc">网站使用说明</span> </div>
+                                    </a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <!-- ============================================================== -->
+                <!-- End Comment -->
+                <!-- ============================================================== -->
+                <!-- ============================================================== -->
+                <!-- mega menu -->
+                <!-- ============================================================== -->
+                <li class="nav-item dropdown mega-dropdown"> <a class="nav-link dropdown-toggle waves-effect waves-dark" href="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="icon-Box-Close"></i></a>
+                    <div class="dropdown-menu animated bounceInDown">
+                        <h4 class="m-b-20">反馈收集</h4>
+                        <!-- Contact -->
+                        <form>
+                            <div class="row">
+                                <div class="form-group col-md-4">
+                                    <input type="text" class="form-control" id="exampleInputname1" placeholder="Enter Name"> </div>
+                                <div class="form-group col-md-4">
+                                    <input type="email" class="form-control" placeholder="Enter email"> </div>
+                                <div class="form-group col-md-4">
+                                    <textarea class="form-control" id="exampleTextarea" rows="3" placeholder="Message"></textarea>
+                                </div>
+                                <button type="submit" class="btn btn-info">Submit</button>
+                            </div>
+                        </form>
+                    </div>
+                </li>
+                <!-- ============================================================== -->
+                <!-- End mega menu -->
+                <!-- ============================================================== -->
+                <!-- ============================================================== -->
+                <!-- Profile -->
+                <!-- ============================================================== -->
+                <li class="nav-item dropdown u-pro">
+                    <a class="nav-link dropdown-toggle waves-effect waves-dark profile-pic" href="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span class="hidden-md-down" style="font-size: 1em">姓名&nbsp;<i class="fa fa-angle-down"></i></span></a>
+                    <div class="dropdown-menu dropdown-menu-right animated flipInY">
+                        <ul class="dropdown-user">
+                            <li>
+                                <div class="dw-user-box">
+                                    <div class="u-text">
+                                        <h3>姓名</h3>
+                                        <p class="text-muted" style="font-size: 1em">xxx组-组员/组长</p></div>
+                                </div>
+                            </li>
+                            <li role="separator" class="divider"></li>
+                            <li><a href="/user/userCenter/person-info.html"><i class="ti-user"></i> 个人信息</a></li>
+                            <li><a href="/user/userCenter/person-work.html"><i class="ti-wallet"></i> 岗位信息</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li><a href="#" onclick="f()"><i class="fa fa-power-off"></i> Logout</a></li>
+                            <script>function f(){$.post("/ajax/user/logout.php");swal("已登出");setTimeout(function(){$(window).attr('location','/user/authentication/login.html');},1000);}</script>
+                        </ul>
+                    </div>
                 </li>
             </ul>
         </div>
     </nav>
-</header>
-<script>
-    function logout_confirm(){
-        if(confirm("要登出吗？是：登出；否：返回个人主页"))
-            window.location.href="/log/logout.php";
-        else
-            window.location.href="/personal/index.php";
-    }
-</script>
+<!-- ============================================================== -->
+<!-- End Topbar header -->
+<!-- ============================================================== -->

@@ -1,79 +1,15 @@
 /*
-Template Name: Material Pro Admin
-Author: Themedesigner
+Template Name: Admin Pro Admin
+Author: Wrappixel
 Email: niravjoshi87@gmail.com
 File: js
 */
-$(function() {
+$(function () {
     "use strict";
     // ============================================================== 
-    // Sales overview
+    // Our Visitor
     // ============================================================== 
-    var chart2 = new Chartist.Bar('.amp-pxl', {
-        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-        series: [
-            [9, 5, 3, 7, 5, 10, 3],
-            [6, 3, 9, 5, 4, 6, 4]
-        ]
-    }, {
-        axisX: {
-            // On the x-axis start means top and end means bottom
-            position: 'end',
-            showGrid: false
-        },
-        axisY: {
-            // On the y-axis start means left and end means right
-            position: 'start'
-        },
-        high: '12',
-        low: '0',
-        plugins: [
-            Chartist.plugins.tooltip()
-        ]
-    });
-
-    var chart = [chart2];
-
-    // ============================================================== 
-    // This is for the animation
-    // ==============================================================
-
-    for (var i = 0; i < chart.length; i++) {
-        chart[i].on('draw', function(data) {
-            if (data.type === 'line' || data.type === 'area') {
-                data.element.animate({
-                    d: {
-                        begin: 500 * data.index,
-                        dur: 500,
-                        from: data.path.clone().scale(1, 0).translate(0, data.chartRect.height()).stringify(),
-                        to: data.path.clone().stringify(),
-                        easing: Chartist.Svg.Easing.easeInOutElastic
-                    }
-                });
-            }
-            if (data.type === 'bar') {
-                data.element.animate({
-                    y2: {
-                        dur: 500,
-                        from: data.y1,
-                        to: data.y2,
-                        easing: Chartist.Svg.Easing.easeInOutElastic
-                    },
-                    opacity: {
-                        dur: 500,
-                        from: 0,
-                        to: 1,
-                        easing: Chartist.Svg.Easing.easeInOutElastic
-                    }
-                });
-            }
-        });
-    }
-
-    // ============================================================== 
-    // Our visitor
-    // ============================================================== 
-
+    
     var chart = c3.generate({
         bindto: '#visitor',
         data: {
@@ -83,33 +19,218 @@ $(function() {
                 ['Tablet', 40],
                 ['Mobile', 50],
             ],
-
-            type: 'donut',
-            onclick: function(d, i) { console.log("onclick", d, i); },
-            onmouseover: function(d, i) { console.log("onmouseover", d, i); },
-            onmouseout: function(d, i) { console.log("onmouseout", d, i); }
+            
+            type : 'donut',
+            onclick: function (d, i) { console.log("onclick", d, i); },
+            onmouseover: function (d, i) { console.log("onmouseover", d, i); },
+            onmouseout: function (d, i) { console.log("onmouseout", d, i); }
         },
         donut: {
             label: {
                 show: false
-            },
-            title: "Our visitor",
-            width: 20,
-
+              },
+            title:"Visits",
+            width:20,
+            
         },
-
+        
         legend: {
-            hide: true
-                //or hide: 'data1'
-                //or hide: ['data1', 'data2']
+          hide: true
+          //or hide: 'data1'
+          //or hide: ['data1', 'data2']
         },
         color: {
-            pattern: ['#eceff1', '#745af2', '#26c6da', '#1e88e5']
+              pattern: ['#eceff1', '#24d2b5', '#6772e5', '#20aee3']
         }
     });
+    // ============================================================== 
+    // Our Income
+    // ==============================================================
+    var chart = c3.generate({
+        bindto: '#income',
+        data: {
+            columns: [
+                ['Growth Income', 100, 200, 100, 300],
+                ['Net Income', 130, 100, 140, 200]
+            ],
+            type: 'bar'
+        },
+         bar: {
+            space: 0.2,
+            // or
+            width: 15 // this makes bar width 100px
+        },
+        axis: {
+            y: {
+            tick: {
+                count : 4,
+                
+                outer: false
+                }
+            }
+        },
+        legend: {
+          hide: true
+          //or hide: 'data1'
+          //or hide: ['data1', 'data2']
+        },
+        grid: {
+        x: {
+            show: false
+        },
+        y: {
+            show: true
+        }
+    },
+        size: {
+            height: 290
+        },
+        color: {
+              pattern: [ '#24d2b5', '#20aee3']
+        }
+    });
+    
+    // ============================================================== 
+    // Sales Different
+    // ============================================================== 
+    
+    var chart = c3.generate({
+        bindto: '#sales',
+        data: {
+            columns: [
+                ['One+', 50],
+                ['T', 60],
+                ['Samsung', 20],
+                
+            ],
+            
+            type : 'donut',
+            onclick: function (d, i) { console.log("onclick", d, i); },
+            onmouseover: function (d, i) { console.log("onmouseover", d, i); },
+            onmouseout: function (d, i) { console.log("onmouseout", d, i); }
+        },
+        donut: {
+            label: {
+                show: false
+              },
+            title:"",
+            width:18,
+            
+        },
+        size: {
+            height: 150
+        },
+        legend: {
+          hide: true
+          //or hide: 'data1'
+          //or hide: ['data1', 'data2']
+        },
+        color: {
+              pattern: ['#eceff1', '#24d2b5', '#6772e5', '#20aee3']
+        }
+    });
+    // ============================================================== 
+    // Sales Prediction
+    // ============================================================== 
+    
+    var chart = c3.generate({
+        bindto: '#prediction',
+        data: {
+            columns: [
+                ['data', 91.4]
+            ],
+            type: 'gauge',
+            onclick: function (d, i) { console.log("onclick", d, i); },
+            onmouseover: function (d, i) { console.log("onmouseover", d, i); },
+            onmouseout: function (d, i) { console.log("onmouseout", d, i); }
+        },
 
+        color: {
+            pattern: ['#ff9041', '#20aee3', '#24d2b5', '#6772e5'], // the three color levels for the percentage values.
+            threshold: {
+    //            unit: 'value', // percentage is default
+    //            max: 200, // 100 is default
+                values: [30, 60, 90, 100]
+            }
+        },
+        gauge: {
+            width:22,      
+        },
+        size: {
+            height: 120,
+            width:150
+        }
+        });
+    
+    // ============================================================== 
+    // Sales chart
+    // ============================================================== 
+    Morris.Area({
+        element: 'sales-chart',
+        data: [{
+                period: '2011',
+                Sales: 50,
+                Earning: 80,
+                Marketing: 20
+            }, {
+                period: '2012',
+                Sales: 130,
+                Earning: 100,
+                Marketing: 80
+            }, {
+                period: '2013',
+                Sales: 80,
+                Earning: 60,
+                Marketing: 70
+            }, {
+                period: '2014',
+                Sales: 70,
+                Earning: 200,
+                Marketing: 140
+            }, {
+                period: '2015',
+                Sales: 180,
+                Earning: 150,
+                Marketing: 140
+            }, {
+                period: '2016',
+                Sales: 105,
+                Earning: 100,
+                Marketing: 80
+            },
+            {
+                period: '2017',
+                Sales: 250,
+                Earning: 150,
+                Marketing: 200
+            }
+        ],
+        xkey: 'period',
+        ykeys: ['Sales', 'Earning', 'Marketing'],
+        labels: ['Site A', 'Site B', 'Site C'],
+        pointSize: 0,
+        fillOpacity: 0,
+        pointStrokeColors: ['#20aee3', '#24d2b5', '#6772e5'],
+        behaveLikeLine: true,
+        gridLineColor: '#e0e0e0',
+        lineWidth: 3,
+        hideHover: 'auto',
+        lineColors: ['#20aee3', '#24d2b5', '#6772e5'],
+        resize: true
 
+    });
 
-
-
+    // ============================================================== 
+    // This is for the popup message while page load
+    // ============================================================== 
+        $.toast({
+            heading: 'Welcome to Adminwrap',
+            text: 'Most powerfull and elegant design with tons of elements.',
+            position: 'top-right',
+            loaderBg: '#f33c49',
+            icon: 'info',
+            hideAfter: 6000,
+            stack: 6
+        })
+    
 });

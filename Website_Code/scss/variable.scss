@@ -1,44 +1,46 @@
 /*
-Template Name: Material Pro Admin
-Author: Themedesigner
+Template Name: Admin Pro Admin
+Author: Wrappixel
 Email: niravjoshi87@gmail.com
 File: scss
 */
 // Variables
-@import url('https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700');
 
-$bodyfont:'Poppins', sans-serif;
-$headingfont:'Poppins', sans-serif; 
+
+$bodyfont:'Montserrat', sans-serif;
+$headingfont:'Montserrat', sans-serif;
 
 
 /*Theme Colors*/
 
-$topbar: #2196f3;
+$topbar: #1976d2;
 $sidebar: #fff;
 $sidebar-white: #e5edef;
-$sidebar-alt:#f2f6f8;
-$bodycolor: #eef5f9;
+$sidebar-alt:#edf0f5;
+$bodycolor: #f6f9fa; 
 $headingtext: #455a64;
 $bodytext: #67757c; 
-$sidebar-text: #607d8b;
-$sidebar-icons: #99abb4 ;
+$sidebar-text: #8d97ad;
+$sidebar-icons: #787f91; 
 
 $light-text: #a6b7bf;
-$themecolor: #009efb;
+$themecolor: #20aee3;
 $themecolor-alt: #26c6da;
 $themecolor-dark: #028ee1;
 
 /*bootstrap Color*/
-$danger: #fc4b6c;
-$success: #26c6da;
-$warning: #ffb22b;
-$primary: #7460ee;
-$info: #1e88e5;
+$danger: #ff5c6c;
+$success: #24d2b5;
+$warning: #ff9041;
+$primary: #6772e5;
+$info: #20aee3; 
 $inverse: #2f3d4a;
-$muted: #99abb4;
+$secondary: #cccccc;
+$muted: #bcc3d3;
 $dark: #263238;
-$light: #f2f4f8;
+$light: #e9edf2;
 $extra-light: #ebf3f5;
+$bglight:rgba(0, 0, 0, 0.02);
 
 /*Light colors*/
 $light-danger: #f9e7eb;
@@ -52,10 +54,10 @@ $light-megna: #e0f2f4;
 
 
 $danger-dark: #e6294b;
-$success-dark: #1eacbe;
+$success-dark: #04b381;
 $warning-dark: #e9ab2e;
 $primary-dark: #6352ce;
-$info-dark: #028ee1;
+$info-dark: #1d96c3;
 $red-dark: #d61f1f;
 $inverse-dark: #232a37;
 $dark-transparent:rgba(0, 0, 0, 0.05);
@@ -84,7 +86,7 @@ $red: #fb3a3a;
 $yellow: #a0aec4;
 $purple: #7460ee;
 $blue: #02bec9;
-$megna: #00897b;
+$megna: #56c0d8;
 
 /*Extra Variable*/
 $rgt: right;
@@ -94,19 +96,6 @@ $table-border:#f3f1f1;
 $card-brd:#d7dfe3;
 $dark-text: #848a96;
 $radius: 4px;
-$form-brd: #d9d9d9;
-/*Preloader*/
-.preloader{
-    width: 100%;
-    height: 100%;
-    top:0px;
-    position: fixed;
-    z-index: 99999;
-    background: #fff;
-    .cssload-speeding-wheel{
-        position: absolute;
-        top: calc(50% - 3.5px);
-        left: calc(50% - 3.5px);
-    }
-}
+$form-brd: #b1b8bb;
+
 

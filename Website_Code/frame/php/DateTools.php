@@ -93,34 +93,28 @@ if (!class_exists('DateTools')){
             return false;
         }
 
-        //public function: provide a datetime after given day of given base time
+        //public function: provide a datetime after or before given day of given base time
         /**
          * @param int $delta
          * @param DateTimeImmutable $base_date
          * @return DateTimeImmutable
          */
-        public function date_after(int $delta, DateTimeImmutable $base_date): DateTimeImmutable
+        public function date_delta(int $delta, DateTimeImmutable $base_date): DateTimeImmutable
         {
-            $interval = DateInterval::createFromDateString("{$delta} days");
+            if( $delta<0 )
+            {
+                $delta = (int)abs($delta);
+                $interval = DateInterval::createFromDateString("-{$delta} days");
+            }
+            else
+            {
+                $interval = DateInterval::createFromDateString("{$delta} days");
+            }
             $base_date->add($interval);
 
             return $base_date;
         }
 
-        //public function: provide a datetime before given day of given base time
-        /**
-         * @param int $delta
-         * @param DateTimeImmutable $base_date
-         * @return DateTimeImmutable
-         */
-        public function date_before(int $delta, DateTimeImmutable $base_date): DateTimeImmutable
-        {
-            $interval = DateInterval::createFromDateString("-{$delta} days");
-            $base_date->add($interval);
-
-            return $base_date;
-        }
-//
         // public function: provide all days of last week of base time with format "Y-m-d" like "2019-08-03"
         /**
          * @return bool|array

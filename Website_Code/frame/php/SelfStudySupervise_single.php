@@ -7,8 +7,8 @@ if (!class_exists('SelfStudySupervise_set')) {
     class SelfStudySupervise_single
     {
         // 数据库连接
-        private $STOS_DATABASE_INFORMATION; // database connection
-        private $STOS_DATABASE_COLLECTION_DATA; // database connection
+        private $STSA_DATABASE_INFORMATION; // database connection
+        private $STSA_DATABASE_COLLECTION_DATA; // database connection
 
         // 时间工具
         private $DATE_TOOL; // date tool
@@ -54,8 +54,8 @@ if (!class_exists('SelfStudySupervise_set')) {
          */
         public function __construct(string $date = '', string $campus = '', string $building = '', string $area = '', string $room = '')
         {
-            $this->STOS_DATABASE_INFORMATION = new Database_connector(ROOT_PATH.'/config/DataBase_Information.conf');
-            $this->STOS_DATABASE_COLLECTION_DATA = new Database_connector(ROOT_PATH.'/config/DataBase_CollectionData.conf');
+            $this->STSA_DATABASE_INFORMATION = new Database_connector(ROOT_PATH.'/config/DataBase_Information.conf');
+            $this->STSA_DATABASE_COLLECTION_DATA = new Database_connector(ROOT_PATH.'/config/DataBase_CollectionData.conf');
             $this->DATE_TOOL = new DateTools();
 
             if ($date === '' || $building === '' || $area === '' || $room === '' || $campus === '') {
@@ -77,7 +77,7 @@ if (!class_exists('SelfStudySupervise_set')) {
                 $this->area = $area;
                 $this->room = $room;
 
-                $result = $this->STOS_DATABASE_COLLECTION_DATA->search(
+                $result = $this->STSA_DATABASE_COLLECTION_DATA->search(
                     '查早数据',
                     array(
                         '校区'=>$this->campus,
@@ -102,7 +102,7 @@ if (!class_exists('SelfStudySupervise_set')) {
                     $this->beLate = $result['迟到人数'];
                     $this->remark = $result['备注'];
 
-//                    $schoolAndNumShouldHave = $this->STOS_DATABASE_COLLECTION_DATA->search(
+//                    $schoolAndNumShouldHave = $this->STSA_DATABASE_COLLECTION_DATA->search(
 //                        '查早排班',
 //                        array('应到人数', '学院'),
 //                        array(
@@ -143,8 +143,8 @@ if (!class_exists('SelfStudySupervise_set')) {
 
         public function __destruct()
         {
-            $this->STOS_DATABASE_INFORMATION->__destruct();
-            $this->STOS_DATABASE_COLLECTION_DATA->__destruct();
+            $this->STSA_DATABASE_INFORMATION->__destruct();
+            $this->STSA_DATABASE_COLLECTION_DATA->__destruct();
             $this->DATE_TOOL->__destruct();
         }
 
@@ -434,7 +434,7 @@ if (!class_exists('SelfStudySupervise_set')) {
                     '备注' => $this->remark // 备注
                 );
 
-                $this->STOS_DATABASE_INFORMATION->insert(
+                $this->STSA_DATABASE_INFORMATION->insert(
                     '查早数据',
                     $data
                 );
@@ -466,7 +466,7 @@ if (!class_exists('SelfStudySupervise_set')) {
                     '备注' => $this->remark // 备注
                 );
                 if ($this->existInDatabase) {
-                    $this->STOS_DATABASE_INFORMATION->update(
+                    $this->STSA_DATABASE_INFORMATION->update(
                         '查早数据',
                         $data,
                         array(
@@ -501,7 +501,7 @@ if (!class_exists('SelfStudySupervise_set')) {
                     '提交者学号' => $this->uploadPersonStudentID // 提交者学号
                 );
                 if ($this->existInDatabase) {
-                    $this->STOS_DATABASE_INFORMATION->update(
+                    $this->STSA_DATABASE_INFORMATION->update(
                         '查早数据',
                         $data,
                         array(

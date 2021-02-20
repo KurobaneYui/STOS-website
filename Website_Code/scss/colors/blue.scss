@@ -1,15 +1,17 @@
 /*
-Template Name: Material Pro Admin
-Author: Themedesigner
+Template Name: Admin Pro Admin
+Author: Wrappixel
 Email: niravjoshi87@gmail.com
 File: scss
 */
 
 @import '../variable';
-$themecolor: #1e88e5;
+$themecolor: #1976d2;
 $themecolor-dark: #028ee1;
-$topbar: #1e88e5;
+$topbar: #1976d2;
+$topbar-alt: #ffffff;
 $themecolor-alt: #26c6da;
+$sidebar-icons: #a6b7bf; 
 
 /*******************
 /*Top bar
@@ -17,22 +19,22 @@ $themecolor-alt: #26c6da;
 
 .topbar {
     background: $topbar;
-    .navbar-header {
-        background: rgba(0, 0, 0, 0.05);
+    .navbar-header{
+        background: $topbar-alt;
     }
-    .top-navbar .navbar-header .navbar-brand .dark-logo {
+    
+    
+    .top-navbar .navbar-header .navbar-brand .light-logo{
         display: none;
-    }
-    .top-navbar .navbar-header .navbar-brand .light-logo {
-        display: inline-block;
-        color: rgba(255, 255, 255, 0.8);
+        color:rgba(255, 255, 255, 0.8);
     }
     .navbar-light .navbar-nav .nav-item > {
         a.nav-link {
+           
             color: $white!important;
             &:hover,
             &:focus {
-                color: rgba(255, 255, 255, 0.8)!important;
+                 color: rgba(255, 255, 255, 0.8)!important;
             }
         }
     }
@@ -42,7 +44,9 @@ $themecolor-alt: #26c6da;
 /*******************
 /*General Elements
 *******************/
-
+.lstick{
+    background: $themecolor;
+}
 a.link {
     &:hover,
     &:focus {
@@ -78,11 +82,9 @@ a.link {
         }
     }
 }
-
-.text-themecolor {
-    color: $themecolor!important;
+.text-themecolor{
+    color:$themecolor!important;
 }
-
 .profile-tab,
 .customtab {
     li {
@@ -124,69 +126,28 @@ a.link {
 /*sidebar navigation
 *******************/
 
-.sidebar-nav {
-    background: $sidebar;
-    ul {
-        li {
-            a {
-                color: $sidebar-text;
-                &.active,
-                &:hover {
-                    color: $themecolor-alt;
-                }
-                &.active {
-                    color: $dark;
-                }
-            }
-            &.nav-small-cap {
-                color: $muted;
-            }
-        }
-    }
-    > ul > li {
-        &.active > a,
-        &.active:hover > a {
-            color: $white;
-            background: $themecolor-alt;
-            i {
-                color: $white;
-            }
-            &:after {
-                border-color: $white;
-            }
-        }
-    }
-    > ul > li > a {
-        &.active,
-        &:hover {
-            i {
-                color: $themecolor-alt;
-            }
-        }
-        i {
-            color: $sidebar-icons;
-        }
-        &.active {
-            font-weight: 400;
-            background: $white;
-            color: $themecolor;
-        }
+.label-themecolor{
+    background:$themecolor; 
+}
+
+.sidebar-nav>ul>li.active>a {
+    color: $themecolor;
+    border-color: $themecolor;
+    i {
+       color: $themecolor; 
     }
 }
 
-.card-no-border {
-    .sidebar-nav {
-        > ul > li >a {
-            &.active {
-                color: $white;
-                background: $themecolor-alt;
-                i {
-                    color: $white;
-                }
-                &:after {
-                    border-color: $white;
-                }
-            }
-        }
+.sidebar-nav ul li a {
+    &.active,
+    &:hover {
+      color: $themecolor;
+      i {
+        color: $themecolor;
+      }    
     }
+}
+
+.sidebar-nav>ul>li>a i{
+    color:$sidebar-icons;
 }

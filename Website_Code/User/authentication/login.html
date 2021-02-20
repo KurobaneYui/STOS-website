@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="zh,en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="电子科技大学学风督导队">
+    <meta name="author" content="罗寅松，学风督导队数据组">
+    <!-- Favicon icon -->
+    <link rel="icon" type="image/png" sizes="16x16" href="../../assets/images/STSA.png">
+    <title>学风督导队-登录</title>
+    <!-- Bootstrap Core CSS -->
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.5.3/css/bootstrap.min.css" rel="stylesheet">
+    <!--  Sweet Alert CSS  -->
+    <!--link href="../../assets/node_modules/sweetalert/sweetalert.css" rel="stylesheet" type="text/css"-->
+    <!-- page css -->
+    <link href="../../css/pages/login-register-lock.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="../../css/style.css" rel="stylesheet">
+    <!-- You can change the theme colors from here -->
+    <link href="../../css/colors/default.css" id="theme" rel="stylesheet">
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+<![endif]-->
+</head>
+
+<body class="card-no-border">
+    <!-- ============================================================== -->
+    <!-- Preloader - style you can find in spinners.css -->
+    <!-- ============================================================== -->
+    <div class="preloader">
+        <div class="loader">
+            <div class="loader__figure"></div>
+            <p class="loader__label">S T S A</p>
+            <p class="loader__label">学风督导队</p>
+            <p class="loader__label">Supervision Team of Study Atmosphere</p>
+        </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- Main wrapper - style you can find in pages.scss -->
+    <!-- ============================================================== -->
+    <section id="wrapper">
+        <div class="login-register" style="overflow: auto">
+            <div class="login-box card">
+                <div class="card-body">
+                    <form class="form-horizontal form-material" id="loginform">
+                        <h3 class="box-title m-b-20">队员登录</h3>
+                        <div class="form-group ">
+                            <div class="col-xs-12">
+                                <label> 用户名：学号
+                                <input class="form-control" type="text" required="" placeholder="Username"> </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-xs-12">
+                                <label> 注册时的密码，未注册点击下方连接注册
+                                <input class="form-control" type="password" required="" placeholder="Password"> </label>
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-md-12">
+                                <div class="checkbox checkbox-info pull-left p-t-0">
+                                    <input id="checkbox-signup" type="checkbox" class="filled-in chk-col-light-blue">
+                                    <label for="checkbox-signup"> Remember me </label>
+                                </div> <a href="javascript:void(0)" id="to-recover" class="text-dark pull-right"><i class="fa fa-lock m-r-5"></i> Forgot pwd?</a>
+                            </div>
+                        </div>
+                        <div id="RememberMeWarning" class="alert alert-danger alert-rounded" style="display: none;">
+                            <i class="fa fa-exclamation-triangle"></i>
+                        </div>
+                        <div class="form-group text-center">
+                            <div class="col-xs-12 p-b-20">
+                                <button class="btn btn-block btn-lg btn-info btn-rounded" type="button" onclick="login()">登录</button>
+                            </div>
+                        </div>
+                        <div class="form-group m-b-0">
+                            <div class="col-sm-12 text-center">
+                                还没有注册？ <a href="register.html" class="text-info m-l-5"><b>注册</b></a>
+                            </div>
+                        </div>
+                    </form>
+                    <form class="form-horizontal" id="recoverform">
+                        <div class="form-group ">
+                            <div class="col-xs-12">
+                                <h3>重置密码</h3>
+                                <p class="text-muted">因为没有短信验证码或者恢复邮件等手段，请填写以下个人信息，匹配后会重置密码为学号</p>
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <div class="col-xs-12">
+                                <label>姓名
+                                    <input class="form-control" type="text" required="" placeholder="姓名"></label>
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <div class="col-xs-12">
+                                <label>学号
+                                    <input class="form-control" type="text" required="" placeholder="学号"></label>
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <div class="col-xs-12">
+                                <label>学院
+                                    <input class="form-control" type="text" required="" placeholder="学院"></label>
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <div class="col-xs-12">
+                                <label>籍贯
+                                    <input class="form-control" type="text" required="" placeholder="籍贯"></label>
+                            </div>
+                        </div>
+                        <div class="form-group ">
+                            <div class="col-xs-12">
+                                <label>银行卡号
+                                    <input class="form-control" type="text" required="" placeholder="银行卡号"></label>
+                            </div>
+                        </div>
+                        <div class="form-group text-center m-t-20">
+                            <div class="col-xs-12">
+                                <button class="btn btn-primary btn-lg btn-block text-uppercase waves-effect waves-light" type="button" onclick="reset_password()">重置</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- ============================================================== -->
+    <!-- End Wrapper -->
+    <!-- ============================================================== -->
+    <!-- ============================================================== -->
+    <!-- All Script -->
+    <!-- ============================================================== -->
+    <!-- jQuery --> 
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- Bootstrap tether Core JavaScript -->
+    <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.5.3/js/bootstrap.bundle.min.js"></script>
+    <!--  Sweet Alert Javascript  -->
+    <script src="https://cdn.bootcdn.net/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+    <!--Custom JavaScript -->
+    <script type="text/javascript">
+        $(function() {
+            $(".preloader").fadeOut();
+        });
+        $(function() {
+            $('[data-toggle="tooltip"]').tooltip()
+        });
+        // ============================================================== 
+        // Login and Recover Password 
+        // ============================================================== 
+        $('#to-recover').on("click", function() {
+            $("#loginform").slideUp();
+            $("#recoverform").fadeIn();
+        });
+    </script>
+    <!-- Page Function JavaScript -->
+    <script type="text/javascript">
+        function remembered() { // 自动补全“记住我”保存的用户名和密码
+            let student = $("input[placeholder='Username']");
+            let password = $("input[placeholder='Password']");
+            let rememberMe = $("#checkbox-signup");
+            let cookie_info = {requestFunction: "getCookie"};
+            $.post("../../ajax/user/authentication.php",
+                cookie_info,
+                function (data, status) {
+                    if (status === 'success') {
+                        let return_data = $.parseJSON(data);
+                        if (return_data['status']===true) {
+                            let return_cookie = $.parseJSON(return_data["results"]);
+                            if (return_cookie['STSA_rm'])
+                                rememberMe.prop('checked', true);
+                            else
+                                rememberMe.prop('checked', false);
+                            password.val(return_cookie['STSA_pd']);
+                            student.val(return_cookie['STSA_un']);
+                        } else {
+                            if (return_data['error_code']==='13')
+                                $('#RememberMeWarning').show().append('Remember Me功能暂时不可用，请联系组长反馈');
+                            if (return_data['error_code']==='30')
+                                $('#RememberMeWarning').show().append('Remember Me功能维护中，暂不可用');
+                        }
+                    } else {
+                        alert('请检查浏览器网络连接，建议刷新后重试');
+                    }
+                });
+        }
+        function login() { // 点击登录按钮的功能
+            let student = $("input[placeholder='Username']").val();
+            let password = $("input[placeholder='Password']").val();
+            let rememberMe = $("#checkbox-signup").prop('checked');
+            let login_info = {
+                requestFunction:"login",
+                StudentID:student,
+                Password:password,
+                RememberMe:rememberMe
+            };
+            $.post("../../ajax/user/authentication.php",
+                login_info,
+                function(data,status){
+                    if (status==='success') {
+                        let return_data = $.parseJSON(data);
+                        if (return_data['status']===true) {
+                            $(window).attr('location','../userCenter/index.html');
+                        } else {
+                            switch (return_data['error_code']) {
+                                case '30': sweetAlert('功能维护中，暂不允许登录'); break;
+                                case '00': sweetAlert(return_data['error_info']); break;
+                                default: sweetAlert('似乎出现了一些问题，请联系组长反馈');
+                            }
+                        }
+                    }
+                    else {
+                        alert('请检查浏览器网络连接，建议刷新后重试');
+                    }
+                });
+        }
+        function reset_password() { // 点击重置按钮的功能
+            let name = $("input[placeholder='姓名']").val();
+            let studentID = $("input[placeholder='学号']").val();
+            let school = $("input[placeholder='学院']").val();
+            let hometown = $("input[placeholder='籍贯']").val();
+            let bankID = $("input[placeholder='银行卡号']").val();
+            let reset_info = {
+                requestFunction:"resetPassword",
+                Name:name,
+                StudentID:studentID,
+                School:school,
+                Hometown:hometown,
+                BankID:bankID
+            };
+            $.post("../../ajax/user/authentication.php",
+                reset_info,
+                function (data, status) {
+                    if (status === 'success') {
+                        let return_data = $.parseJSON(data);
+                        if (return_data['status']===true) {
+                            sweetAlert('密码已重置为学号');
+                            window.location.reload();
+                        } else {
+                            switch (return_data['error_code']) {
+                                case '00': sweetAlert(return_data['error_info']); break;
+                                case '30': sweetAlert('功能维护中，暂不提供此功能'); break;
+                                default: sweetAlert('似乎出现了一些问题，请联系组长反馈');
+                            }
+                        }
+                    } else {
+                        alert('请检查浏览器网络连接，建议刷新后重试');
+                    }
+                });
+        }
+
+        $(document).ready(function () {
+            // 记住密码相关功能函数
+            remembered();
+        });
+    </script>
+</body>
+
+</html>

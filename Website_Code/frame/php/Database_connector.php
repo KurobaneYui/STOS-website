@@ -10,7 +10,7 @@ if (!class_exists('Database_connector')) {
         private $CONNECTION_PASSWORD; // the password for connecting
         private $CONNECTION_DATABASE; // the database name for connecting
 
-        public function __construct($config_file ) {
+        public function __construct($config_file ){
             // Get config from file
             $conf = json_decode(file_get_contents($config_file), true);
             // Setting
@@ -66,7 +66,6 @@ if (!class_exists('Database_connector')) {
         }
 
         // public function: search database
-
         /**
          * @param string $table_name : database table name
          * @param array $keyNames : the keys need for search
@@ -82,7 +81,7 @@ if (!class_exists('Database_connector')) {
                                array $conditions_yes=array(), array $conditions_no=array(),
                                array $conditions_between=array(), array $conditions_in=array(),
                                array $order=array(),
-                               string $other_conditions='')
+                               string $other_conditions=null)
         {
             if (!empty($keyNames)) // if not empty, then implode elements with ',', otherwise use '*' instead
             {
@@ -97,7 +96,13 @@ if (!class_exists('Database_connector')) {
                 $sql_condition_yes = array(); // transform from key-value groups to "key=value" string groups
                 foreach ($conditions_yes as $key=>$value)
                 {
-                    $sql_condition_yes[] = "{$key}='{$value}'";
+                    if ($value===null) {
+                        $sql_condition_yes[] = "{$key} is null";
+                    } elseif ($key==='密码') {
+                        $sql_condition_yes[] = "{$key}=AES_ENCRYPT('{$value}','{$value}')";
+                    } else {
+                        $sql_condition_yes[] = "{$key}='{$value}'";
+                    }
                 }
                 $sql_condition_yes = implode(' and ', $sql_condition_yes); // implode string array with 'and'
             }
@@ -110,7 +115,13 @@ if (!class_exists('Database_connector')) {
                 $sql_condition_no = array(); // transform from key-value groups to "key=value" string groups
                 foreach ($conditions_no as $key=>$value)
                 {
-                    $sql_condition_no[] = "{$key}!='{$value}'";
+                    if ($value===null) {
+                        $sql_condition_no[] = "{$key} is not null";
+                    } elseif ($key==='密码') {
+                        $sql_condition_no[] = "{$key}!=AES_ENCRYPT('{$value}','{$value}')";
+                    } else {
+                        $sql_condition_no[] = "{$key}!='{$value}'";
+                    }
                 }
                 $sql_condition_no = implode(' and ', $sql_condition_no); // implode string array with 'and'
             }
@@ -157,7 +168,7 @@ if (!class_exists('Database_connector')) {
                 $sql_order = '';
             }
 
-            if($other_conditions==='')
+            if($other_conditions===null || $other_conditions==='')
             {
                 $sql_other_conditions = '1';
             }
@@ -169,32 +180,9 @@ if (!class_exists('Database_connector')) {
             return $this->CONNECTION_SESSION->query($sql);
         }
 
-        // public function:insert data into database
-        /**
-         * @param string $table_name: database table name
-         * @param array $key_value_names: value that needed insert and key where insert to
-         * @return bool|mysqli_result: return mysql->query($sql) result
-         */
-        public function insert(string $table_name, array $key_value_names) {
-            foreach($key_value_names as $key=>$value) {
-                if($value!== 'NULL') {
-                    $key_value_names[$key] = "'{$value}'";
-                }
-            }
-            $sql_key = implode(',', array_keys($key_value_names));
-            $sql_value = implode(',', array_values($key_value_names));
-
-            $sql = "INSERT INTO {$table_name} ({$sql_key}) VALUES ({$sql_value});";
-            $returns = $this->CONNECTION_SESSION->query($sql);
-            $this->CONNECTION_SESSION->commit();
-            return $returns;
-        }
-
-        // public function: update data in database
-
+        // public function: delete records indatabase
         /**
          * @param string $table_name : database table name
-         * @param array $key_value_names : value that needed update and key where update
          * @param array $conditions_yes : positive search conditions
          * @param array $conditions_no : negative search conditions
          * @param array $conditions_between : conditions between two value
@@ -202,29 +190,23 @@ if (!class_exists('Database_connector')) {
          * @param string $other_conditions : give other conditions for "where" in string type
          * @return bool|mysqli_result: return mysql->query($sql) result
          */
-        public function update(string $table_name, array $key_value_names,
+        public function delete(string $table_name,
                                array $conditions_yes=array(), array $conditions_no=array(),
                                array $conditions_between=array(), array $conditions_in=array(),
-                               string $other_conditions='')
+                               string $other_conditions=null)
         {
-            $sql_updateDATA = array();
-            foreach($key_value_names as $key=>$value) // transform from key-value groups to "key=value, key=value...."
-            {
-                if($value!== 'NULL') {
-                    $sql_updateDATA[] = "{$key}='{$value}'";
-                }
-                else {
-                    $sql_updateDATA[] = "{$key}={$value}";
-                }
-            }
-            $sql_updateDATA = implode(',', $sql_updateDATA);
-
             if(!empty($conditions_yes))
             {
                 $sql_condition_yes = array(); // transform from key-value groups to "key=value" string groups
                 foreach ($conditions_yes as $key=>$value)
                 {
-                    $sql_condition_yes[] = "{$key}='{$value}'";
+                    if ($value===null) {
+                        $sql_condition_yes[] = "{$key} is null";
+                    } elseif ($key==='密码') {
+                        $sql_condition_yes[] = "{$key}=AES_ENCRYPT('{$value}','{$value}')";
+                    } else {
+                        $sql_condition_yes[] = "{$key}='{$value}'";
+                    }
                 }
                 $sql_condition_yes = implode(' and ', $sql_condition_yes); // implode string array with 'and'
             }
@@ -237,7 +219,13 @@ if (!class_exists('Database_connector')) {
                 $sql_condition_no = array(); // transform from key-value groups to "key=value" string groups
                 foreach ($conditions_no as $key=>$value)
                 {
-                    $sql_condition_no[] = "{$key}!='{$value}'";
+                    if ($value===null) {
+                        $sql_condition_no[] = "{$key} is not null";
+                    } elseif ($key==='密码') {
+                        $sql_condition_no[] = "{$key}!=AES_ENCRYPT('{$value}','{$value}')";
+                    } else {
+                        $sql_condition_no[] = "{$key}!='{$value}'";
+                    }
                 }
                 $sql_condition_no = implode(' and ', $sql_condition_no); // implode string array with 'and'
             }
@@ -271,7 +259,142 @@ if (!class_exists('Database_connector')) {
                 $sql_condition_in = '1';
             }
 
-            if($other_conditions==='')
+            if($other_conditions===null || $other_conditions==='')
+            {
+                $sql_other_conditions = '1';
+            }
+            else {
+                $sql_other_conditions = $other_conditions;
+            }
+
+            $sql = "DELETE FROM {$table_name} WHERE {$sql_condition_yes} and {$sql_condition_no} and {$sql_condition_between} and {$sql_condition_in} and {$sql_other_conditions};";
+            return $this->CONNECTION_SESSION->query($sql);
+        }
+
+        // public function:insert data into database
+        /**
+         * @param string $table_name: database table name
+         * @param array $key_value_names: value that needed insert and key where insert to
+         * @return bool|mysqli_result: return mysql->query($sql) result
+         */
+        public function insert(string $table_name, array $key_value_names) {
+            foreach($key_value_names as $key=>$value) {
+                if($value=== null) {
+                    $key_value_names[$key] = 'null';
+                }
+                elseif ($key==='密码') {
+                    $key_value_names[$key] = "AES_ENCRYPT('{$value}','{$value}')";
+                }
+                else {
+                    $key_value_names[$key] = "'{$value}'";
+                }
+            }
+            $sql_key = implode(',', array_keys($key_value_names));
+            $sql_value = implode(',', array_values($key_value_names));
+
+            $sql = "INSERT INTO {$table_name} ({$sql_key}) VALUES ({$sql_value});";
+            $returns = $this->CONNECTION_SESSION->query($sql);
+            $this->CONNECTION_SESSION->commit();
+            return $returns;
+        }
+
+        // public function: update data in database
+
+        /**
+         * @param string $table_name : database table name
+         * @param array $key_value_names : value that needed update and key where update
+         * @param array $conditions_yes : positive search conditions
+         * @param array $conditions_no : negative search conditions
+         * @param array $conditions_between : conditions between two value
+         * @param array $conditions_in : conditions in an array
+         * @param string $other_conditions : give other conditions for "where" in string type
+         * @return bool|mysqli_result: return mysql->query($sql) result
+         */
+        public function update(string $table_name, array $key_value_names,
+                               array $conditions_yes=array(), array $conditions_no=array(),
+                               array $conditions_between=array(), array $conditions_in=array(),
+                               string $other_conditions=null)
+        {
+            $sql_updateDATA = array();
+            foreach($key_value_names as $key=>$value) // transform from key-value groups to "key=value, key=value...."
+            {
+                if($value=== null) {
+                    $sql_updateDATA[] = "{$key}=null";
+                }
+                elseif ($key==='密码') {
+                    $sql_updateDATA[] = "{$key}=AES_ENCRYPT('{$value}','{$value}')";
+                }
+                else {
+                    $sql_updateDATA[] = "{$key}='{$value}'";
+                }
+            }
+            $sql_updateDATA = implode(',', $sql_updateDATA);
+
+            if(!empty($conditions_yes))
+            {
+                $sql_condition_yes = array(); // transform from key-value groups to "key=value" string groups
+                foreach ($conditions_yes as $key=>$value)
+                {
+                    if ($value===null) {
+                        $sql_condition_yes[] = "{$key} is null";
+                    } elseif ($key==='密码') {
+                        $sql_condition_yes[] = "{$key}=AES_ENCRYPT('{$value}','{$value}')";
+                    } else {
+                        $sql_condition_yes[] = "{$key}='{$value}'";
+                    }
+                }
+                $sql_condition_yes = implode(' and ', $sql_condition_yes); // implode string array with 'and'
+            }
+            else {
+                $sql_condition_yes = '1';
+            }
+
+            if(!empty($conditions_no))
+            {
+                $sql_condition_no = array(); // transform from key-value groups to "key=value" string groups
+                foreach ($conditions_no as $key=>$value)
+                {
+                    if ($value===null) {
+                        $sql_condition_no[] = "{$key} is not null";
+                    } elseif ($key==='密码') {
+                        $sql_condition_no[] = "{$key}!=AES_ENCRYPT('{$value}','{$value}')";
+                    } else {
+                        $sql_condition_no[] = "{$key}!='{$value}'";
+                    }
+                }
+                $sql_condition_no = implode(' and ', $sql_condition_no); // implode string array with 'and'
+            }
+            else {
+                $sql_condition_no = '1';
+            }
+
+            if(!empty($conditions_between))
+            {
+                $sql_condition_between = array(); // transform to "key between value1 and value2" string groups
+                foreach ($conditions_between as $key=>$value)
+                {
+                    $sql_condition_between[] = "`{$key}` between '{$value[0]}' and '{$value[1]}'";
+                }
+                $sql_condition_between = implode(' and ', $sql_condition_between);
+            }
+            else {
+                $sql_condition_between = '1';
+            }
+
+            if(!empty($conditions_in))
+            {
+                $sql_condition_in = array(); // transform to "key in (value...)" string groups
+                foreach ($conditions_in as $key=>$value)
+                {
+                    $sql_condition_in[] = "`{$key}` in ('" . implode("','", $value) . "'')";
+                }
+                $sql_condition_in = implode(' and ', $sql_condition_in); // implode string array with 'and'
+            }
+            else {
+                $sql_condition_in = '1';
+            }
+
+            if($other_conditions==='' || $other_conditions===null)
             {
                 $sql_other_conditions = '1';
             }
