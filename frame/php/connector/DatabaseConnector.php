@@ -3,47 +3,56 @@
 
 if (!isset($__DatabaseConnector__)) {
     $__DatabaseConnector__ = true;
+    require __DIR__ . '/../../../ROOT_PATH.php';
 
     class DatabaseConnector
     {
         private bool $status;
+        private string $errorString;
+
         private mysqli $session;
+
         private string $server;
+        private int $port;
         private string $username;
         private string $password;
-        private string $datebaseName;
+        private string $databaseName;
 
-        public function __construct(string $config_file){
-            $this->connect($config_file);
+        public function __construct(string $config_file = ROOT_PATH.'/config/DataBase_STSA.conf'){
+            $this->status = false;
+            $this->errorString = '';
+
+            $this->newConnect(true,$config_file);
         }
 
         public function __destruct() {
             $this->disconnect();
         }
 
-        public function connect(string $config_file, bool $reconnect = false) {
-            if ($reconnect) {
-                if ($this->status) {
-                    $this->disconnect();
-                }
+        public function newConnect(bool $changeConfig = false, string $config_file = '') {
+            if ($this->status) {
+                $this->disconnect();
             }
-            elseif (!$reconnect) {
+            if ($changeConfig) {
                 // Get config from file
                 $conf = json_decode(file_get_contents($config_file), true, 1024, JSON_THROW_ON_ERROR);
                 // Setting
                 $this->server = $conf['host']??'';
+                $this->port = $conf['port']??0;
                 $this->username = $conf['user']??'';
                 $this->password = $conf['password']??'';
-                $this->datebaseName = $conf['database']??'';
+                $this->databaseName = $conf['database']??'';
             }
 
-            $this->session = new mysqli( $this->server, $this->username, $this->password, $this->datebaseName);
+            $this->session = new mysqli( $this->server, $this->username, $this->password, $this->databaseName,$this->port);
             // Check whether connection established
             if ($this->session->connect_errno) {
+                $this->errorString = $this->session->connect_error;
                 $this->status = false;
             }
             else{
                 $this->status = true;
+                $this->errorString= '';
             }
         }
 
@@ -55,7 +64,7 @@ if (!isset($__DatabaseConnector__)) {
         }
 
         public function getStatus() {
-            return $this->status;
+            return ['status'=>$this->status,'errorString'=>$this->errorString];
         }
 
         public function getErrorList() {
@@ -65,82 +74,27 @@ if (!isset($__DatabaseConnector__)) {
             return array();
         }
 
-        public function query(string $sql){
+        public function query(string $sql): bool|mysqli_result {
             if ($this->status) {
-                $returns = $this->session->query($sql);
                 try{ // if sql query is insert or update, it needs commit operation
-                    $this->session->commit();
-                    return $returns;
+                    return $this->session->query($sql);
                 }
                 catch (Exception $e) { // if sql query is search, it do not need commit operation
-                    return $returns;
+                    return false;
                 }
             }
         }
 
-        /************************* tools function ***************************/
-        public static function pariseConditionsBasic(array $conditionsArray, bool $attitude=true) {
-            if (empty($conditionsArray)) {
-                return $attitude ? 'true' : 'false';
-            }
-
-            $conditions = array();
-            foreach ($conditionsArray as $key=>$value) // transform from key-value groups to "key=value" string groups
-            {
-                if ($value===null) {
-                    $conditions[] = $attitude ? "{$key} is null" : "{$key} is not null";
-                } elseif ($key==='密码') {
-                    $conditions[] = $attitude ? "{$key}=AES_ENCRYPT('{$value}','{$value}')" : "{$key}!=AES_ENCRYPT('{$value}','{$value}')";
-                } else {
-                    $conditions[] = $attitude ? "{$key}='{$value}'" : "{$key}!='{$value}'";
-                }
-            }
-            return implode(' and ', $conditions); // implode string array with 'and'
+        public function commit(){
+            $this->session->commit();
         }
 
-        public static function pariseConditionsBetween(array $conditionsArray, bool $attitude=true) {
-            if (empty($conditionsArray)) {
-                return $attitude ? 'true' : 'false';
-            }
-
-            $conditions=array();
-            foreach ($conditionsArray as $key=>$value) // transform to "key between value1 and value2" string groups
-            {
-                $conditions[] = $attitude ? "`{$key}` between '{$value[0]}' and '{$value[1]}'" : "`{$key}` not between '{$value[0]}' and '{$value[1]}'";
-            }
-            return implode(' and ', $conditions);
+        public function rollback(){
+            $this->session->rollback();
         }
 
-        public static function pariseConditionsIn(array $conditionsArray, bool $attitude=true) {
-            if (empty($conditionsArray)) {
-                return $attitude ? 'true' : 'false';
-            }
-
-            $conditions=array();
-            foreach ($conditionsArray as $key=>$value)  // transform to "key in (value...)" string groups
-            {
-                $conditions[] = $attitude ? "`{$key}` in ('" . implode("','", $value) . "'')" : "`{$key}` not in ('" . implode("','", $value) . "'')";
-            }
-            return implode(' and ', $conditions);
-        }
-
-        public static function pariseCondition(array $conditionsArray) {
-            if (empty($conditionsArray)) {
-                return 'true';
-            }
-        }
-
-        public static function pariseOrder(array $orderArray) {
-            if (empty($orderArray)) {
-                return 'true';
-            }
-
-            $order = array();
-            foreach ($order as $key=>$value) // transform to "order by ... asc ... desc" string groups
-            {
-                $order[] = "`{$key}` {$value}";
-            }
-            return implode(',', $order); // implode string array with ','
+        public function autocommit($mode = 'true'){
+            $this->session->autocommit($mode);
         }
     }
 }

@@ -4,7 +4,7 @@ if (!class_exists('Database_connector')) {
     class Database_connector
     {
         private $CONNECTION_STATUS = false; // whether connection is established
-        private $CONNECTION_SESSION; // connector
+        private $CONNECTION_SESSION; // Connector
         private $CONNECTION_SERVER; // the host for connecting
         private $CONNECTION_USERNAME; // the username for connecting
         private $CONNECTION_PASSWORD; // the password for connecting
