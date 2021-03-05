@@ -25,6 +25,7 @@ function add_table(table_rows, table_cols) {
     return `team-member-info-table`;
 }
 
+
 $("#testbutton").click(function () {
     add_table(5, 8);
 });

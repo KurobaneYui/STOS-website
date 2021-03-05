@@ -5,14 +5,14 @@ if (!isset($__DeviceAndIPDetector__)) {
     $__DeviceAndIPDetector__ = true;
 
     require __DIR__ . '/../../../ROOT_PATH.php';
-    require ROOT_PATH . '/frame/php/ExceptionAndLogger/STSAException.php';
-    require ROOT_PATH . '/frame/php/tools/DateTools.php';
+    require ROOT_PATH . '/frame/php/CustomPackAndLogger/STSAException.php';
+    require ROOT_PATH . '/frame/php/Tools/DateTools.php';
 
     /**
      * Class DeviceAndIPDetector
      * This class detect info of client, including address, browser, IP, language and OS
      * @author LuoYinsong
-     * @package php\tools
+     * @package php\Tools
      */
     class DeviceAndIPDetector
     {

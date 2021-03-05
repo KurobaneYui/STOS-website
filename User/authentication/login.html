@@ -115,12 +115,6 @@
                                     <input class="form-control" type="text" required="" placeholder="籍贯"></label>
                             </div>
                         </div>
-                        <div class="form-group ">
-                            <div class="col-xs-12">
-                                <label>银行卡号
-                                    <input class="form-control" type="text" required="" placeholder="银行卡号"></label>
-                            </div>
-                        </div>
                         <div class="form-group text-center m-t-20">
                             <div class="col-xs-12">
                                 <button class="btn btn-primary btn-lg btn-block text-uppercase waves-effect waves-light" type="button" onclick="reset_password()">重置</button>
@@ -167,7 +161,7 @@
             let password = $("input[placeholder='Password']");
             let rememberMe = $("#checkbox-signup");
             let cookie_info = {requestFunction: "getCookie"};
-            $.post("../../ajax/user/authentication.php",
+            $.post("/ajax/user/authentication.php",
                 cookie_info,
                 function (data, status) {
                     if (status === 'success') {
@@ -201,13 +195,13 @@
                 Password:password,
                 RememberMe:rememberMe
             };
-            $.post("../../ajax/user/authentication.php",
+            $.post("/ajax/user/authentication.php",
                 login_info,
                 function(data,status){
                     if (status==='success') {
                         let return_data = $.parseJSON(data);
                         if (return_data['status']===true) {
-                            $(window).attr('location','../userCenter/index.html');
+                            $(window).attr('location','../UserCenter/index.html');
                         } else {
                             switch (return_data['error_code']) {
                                 case '30': sweetAlert('功能维护中，暂不允许登录'); break;
@@ -226,16 +220,14 @@
             let studentID = $("input[placeholder='学号']").val();
             let school = $("input[placeholder='学院']").val();
             let hometown = $("input[placeholder='籍贯']").val();
-            let bankID = $("input[placeholder='银行卡号']").val();
             let reset_info = {
                 requestFunction:"resetPassword",
                 Name:name,
                 StudentID:studentID,
                 School:school,
                 Hometown:hometown,
-                BankID:bankID
             };
-            $.post("../../ajax/user/authentication.php",
+            $.post("/ajax/user/authentication.php",
                 reset_info,
                 function (data, status) {
                     if (status === 'success') {
