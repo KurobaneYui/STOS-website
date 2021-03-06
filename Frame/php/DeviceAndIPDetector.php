@@ -1,8 +1,8 @@
 <?php
 require __DIR__.'/../../ROOT_PATH.php';
-require ROOT_PATH.'/frame/php/DateTools.php';
-require ROOT_PATH.'/frame/php/Database_connector.php';
-require ROOT_PATH.'/frame/php/Person.php';
+require ROOT_PATH . '/Frame/php/DateTools.php';
+require ROOT_PATH . '/Frame/php/Database_connector.php';
+require ROOT_PATH . '/Frame/php/Person.php';
 
 if (!class_exists('DeviceAndIPDetector')) {
     // 作用取得客户端的ip、地理位置、浏览器、以及访问设备

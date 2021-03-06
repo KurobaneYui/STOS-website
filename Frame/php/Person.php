@@ -1,8 +1,8 @@
 <?php
 require_once __DIR__.'/../../ROOT_PATH.php';
-require_once ROOT_PATH.'/frame/php/Database_connector.php';
-require_once ROOT_PATH.'/frame/php/DateTools.php';
-//require ROOT_PATH.'/frame/php/AuthorizationTools.php';
+require_once ROOT_PATH . '/Frame/php/Database_connector.php';
+require_once ROOT_PATH . '/Frame/php/DateTools.php';
+//require ROOT_PATH.'/Frame/php/AuthorizationTools.php';
 
 class Person
 {

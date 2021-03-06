@@ -1,8 +1,8 @@
 <?php
 session_start();
 require __DIR__. '/../../ROOT_PATH.php';
-require ROOT_PATH.'/frame/php/Person.php';
-require ROOT_PATH.'/frame/php/TransJson.php';
+require ROOT_PATH . '/Frame/php/Person.php';
+require ROOT_PATH . '/Frame/php/TransJson.php';
 
 /**
  * @param string $StudentID

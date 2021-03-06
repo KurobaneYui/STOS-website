@@ -46,7 +46,7 @@ if (!isset($__STSAException__)) {
             return ["returnCode"=>$this->errorCode,"returnString"=>$this->errorString,"showMessage"=>$this->showMessage];
         }
 
-        public function setFromSTSAException(STSAException $ori){
+        public function setFromSTSAException(STSAException $ori): void{
             $this->errorCode = $ori->errorCode;
             $this->errorString = $ori->errorString;
             $this->showMessage = $ori->showMessage;

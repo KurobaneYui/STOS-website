@@ -1,17 +1,17 @@
 <?php
 
 
-if (!isset($__DatabaseConnector__)) {
-    $__DatabaseConnector__ = true;
+if (!isset($__DatabaseConnectorSTMT__)) {
+    $__DatabaseConnectorSTMT__ = true;
 
-    class DatabaseConnector
+    class DatabaseConnectorSTMT
     {
         private bool $status;
         private mysqli $session;
         private string $server;
         private string $username;
         private string $password;
-        private string $datebaseName;
+        private string $databaseName;
 
         public function __construct(string $config_file){
             $this->connect($config_file);
@@ -34,10 +34,10 @@ if (!isset($__DatabaseConnector__)) {
                 $this->server = $conf['host']??'';
                 $this->username = $conf['user']??'';
                 $this->password = $conf['password']??'';
-                $this->datebaseName = $conf['database']??'';
+                $this->databaseName = $conf['database']??'';
             }
 
-            $this->session = new mysqli( $this->server, $this->username, $this->password, $this->datebaseName);
+            $this->session = new mysqli( $this->server, $this->username, $this->password, $this->databaseName);
             // Check whether connection established
             if ($this->session->connect_errno) {
                 $this->status = false;

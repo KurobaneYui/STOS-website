@@ -5,8 +5,8 @@ if (!isset($__DeviceAndIPDetector__)) {
     $__DeviceAndIPDetector__ = true;
 
     require __DIR__ . '/../../../ROOT_PATH.php';
-    require ROOT_PATH . '/frame/php/CustomPackAndLogger/STSAException.php';
-    require ROOT_PATH . '/frame/php/Tools/DateTools.php';
+    require ROOT_PATH . '/Frame/php/CustomPackAndLogger/STSAException.php';
+    require ROOT_PATH . '/Frame/php/Tools/DateTools.php';
 
     /**
      * Class DeviceAndIPDetector

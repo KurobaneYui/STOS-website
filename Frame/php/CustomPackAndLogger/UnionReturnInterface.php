@@ -19,21 +19,26 @@ if (!isset($__UnionReturnInterface__)) {
 
         /**
          * UnionReturnInterface constructor.
+         * @param string $returnCode
+         * @param string $returnString
+         * @param string $showMessage
+         * @param string $data
          */
-        public function __construct()
+        public function __construct(string $returnCode='200', string $returnString='成功', string $showMessage='', string $data='')
         {
-            $this->returnString= '成功';
-            $this->returnCode= '200';
-            $this->showMessage = '';
-            $this->data = '';
+            $this->returnString= $returnString;
+            $this->returnCode= $returnCode;
+            $this->showMessage = $showMessage;
+            $this->data = $data;
         }
 
         /**
          * @param array $data
+         * @throws JsonException
          */
         public function setData(array $data): void
         {
-            $this->data = json_encode($data,JSON_UNESCAPED_UNICODE);
+            $this->data = json_encode($data, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
         }
 
         /**
@@ -44,6 +49,14 @@ if (!isset($__UnionReturnInterface__)) {
             $this->returnCode = $eArray["returnCode"];
             $this->returnString = $eArray["returnString"];
             $this->showMessage = $eArray["showMessage"];
+        }
+
+        /**
+         * @return string
+         * @throws JsonException
+         */
+        public function __toString(): string{
+            return json_encode(['ReturnCode' => $this->returnCode, 'ReturnString' => $this->returnString, 'Message' => $this->showMessage, 'Data' => $this->data], JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
         }
     }
 }

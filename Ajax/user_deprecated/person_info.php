@@ -1,8 +1,8 @@
 <?php
 session_start();
 require_once __DIR__.'/../../ROOT_PATH.php';
-require_once ROOT_PATH.'/frame/php/Person.php';
-require_once ROOT_PATH.'/frame/php/TransJson.php';
+require_once ROOT_PATH . '/Frame/php/Person.php';
+require_once ROOT_PATH . '/Frame/php/TransJson.php';
 
 // TODO
 //    []: 临时个人信息请求，需要替换

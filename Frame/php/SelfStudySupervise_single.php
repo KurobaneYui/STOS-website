@@ -1,10 +1,10 @@
 <?php
 require __DIR__ . '/../../ROOT_PATH.php';
-require ROOT_PATH . '/frame/php/Database_connector.php';
-require ROOT_PATH . '/frame/php/DateTools.php';
+require ROOT_PATH . '/Frame/php/Database_connector.php';
+require ROOT_PATH . '/Frame/php/DateTools.php';
 
-if (!class_exists('CourseSupervise_single')) {
-    class CourseSupervise_single
+if (!class_exists('SelfStudySupervise_set')) {
+    class SelfStudySupervise_single
     {
         // 数据库连接
         private $STSA_DATABASE_INFORMATION; // database connection
@@ -28,42 +28,38 @@ if (!class_exists('CourseSupervise_single')) {
         private $uploadPersonStudentID = ''; // 提交者学号
         // 教室信息
         private $date = ''; // 数据对应日期，请使用PHP的data函数将格式调整为"Y-m-d"
-        private $timeAndPeriod = ''; // 时段与上课周
         private $campus = ''; // 校区
         private $building = ''; // 教学楼
         private $area = ''; // 区号
         private $room = ''; // 教室编号
-        private $order = 1; // 编号
         // 数据部分
         private $school = ''; // 教室对应学院
-        private $grade = ''; // 教室对应年级
-        private $course = ''; // 教室课程名称
         private $numShouldHave = 0; // 教室应到人数
         private $firstAttendance = 0; // 单日第一次出勤
         private $secondAttendance = 0; // 单日第二次出勤
-        private $firstViolationOfDiscipline = 0; // 单日第一次违纪人数
-        private $secondViolationOfDiscipline = 0; // 单日第二次违纪人数
+        private $violationOfDiscipline = 0; // 单日违纪人数
+        private $beLate = 0; // 单日迟到人数
+        private $leaveEarly = 0; // 单日早退人数
+        private $askForLeave = 0; // 单日请假人数
         private $remark = ''; // 备注
 
         /**
          * SelfStudySupervise_single constructor.
          * @param string $date : 数据对应日期，请使用PHP的data函数将格式调整为"Y-m-d"
-         * @param string $timeAndPeriod : 时段与上课周
          * @param string $campus : 校区
          * @param string $building : 教学楼
          * @param string $area : 区号
          * @param string $room : 教室编号
-         * @param int $order : 编号
          * @throws Exception
          */
-        public function __construct(string $date = '', string $timeAndPeriod = '', string $campus = '', string $building = '', string $area = '', string $room = '', int $order = 1)
+        public function __construct(string $date = '', string $campus = '', string $building = '', string $area = '', string $room = '')
         {
             $this->STSA_DATABASE_INFORMATION = new Database_connector(ROOT_PATH.'/config/DataBase_Information.conf');
             $this->STSA_DATABASE_COLLECTION_DATA = new Database_connector(ROOT_PATH.'/config/DataBase_CollectionData.conf');
             $this->DATE_TOOL = new DateTools();
 
-            if ($date === '' || $timeAndPeriod==='' || $building === '' || $area === '' || $room === '' || $campus === '' || $order === 1) {
-                if ($date !== '' || $timeAndPeriod!=='' || $building !== '' || $area !== '' || $room !== '' || $campus !== '' || $order !== 1) {
+            if ($date === '' || $building === '' || $area === '' || $room === '' || $campus === '') {
+                if ($date !== '' || $building !== '' || $area !== '' || $room !== '' ||$campus !== '') {
                     throw new Exception('Invalid parameter');
                 }
 
@@ -76,23 +72,19 @@ if (!class_exists('CourseSupervise_single')) {
             }
             else {
                 $this->date = $date;
-                $this->timeAndPeriod = $timeAndPeriod;
                 $this->campus = $campus;
                 $this->building = $building;
                 $this->area = $area;
                 $this->room = $room;
-                $this->order = $order;
 
                 $result = $this->STSA_DATABASE_COLLECTION_DATA->search(
-                    '查课数据',
+                    '查早数据',
                     array(
                         '校区'=>$this->campus,
                         '教学楼'=>$this->building,
                         '区号'=>$this->area,
                         '教室编号'=>$this->room,
-                        '日期'=>$this->date,
-                        '时段与上课周'=>$this->timeAndPeriod,
-                        '编号'=>$this->order
+                        '日期'=>$this->date
                     )
                 );
                 if($result = $result->fetch_assoc()) {
@@ -100,30 +92,30 @@ if (!class_exists('CourseSupervise_single')) {
                     $this->uploadPersonStudentID = $result['提交者学号'];
 
                     $result = json_decode($result['教室数据'],true);
-                    $this->course = $result['课程名称'];
                     $this->school = $result['学院'];
-                    $this->grade = $result['年级'];
+                    $this->numShouldHave = $result['应到人数'];
                     $this->firstAttendance = $result['第一次出勤'];
                     $this->secondAttendance = $result['第二次出勤'];
-                    $this->firstViolationOfDiscipline = $result['第一次违纪'];
-                    $this->secondViolationOfDiscipline = $result['第二次违纪'];
+                    $this->askForLeave = $result['请假人数'];
+                    $this->leaveEarly = $result['早退人数'];
+                    $this->violationOfDiscipline = $result['违纪人数'];
+                    $this->beLate = $result['迟到人数'];
                     $this->remark = $result['备注'];
 
 //                    $schoolAndNumShouldHave = $this->STSA_DATABASE_COLLECTION_DATA->search(
-//                        '查课排班',
-//                        array('应到人数', '学院', '年级'),
+//                        '查早排班',
+//                        array('应到人数', '学院'),
 //                        array(
-//                            '日期'=>$this->date,
 //                            '校区'=>$this->campus,
 //                            '教学楼'=>$this->building,
 //                            '区号'=>$this->area,
-//                            '教室编号'=>$this->room,
-//                            '编号'=>$this->order
+//                            '教室编号'=>$this->room
 //                        ),
 //                        array(),
 //                        array(),
 //                        array(),
-//                        array()
+//                        array(),
+//                        "'起始日期' <= '{$date}' and '结束日期' >= '{$date}'"
 //                    )->fetch_assoc();
 //                    $this->numShouldHave = $result['应到人数'] ?? $schoolAndNumShouldHave['应到人数'];
 //                    $this->school = $result['学院'] ?? $schoolAndNumShouldHave['学院'];
@@ -262,15 +254,6 @@ if (!class_exists('CourseSupervise_single')) {
                 (
                     'filter' =>FILTER_CALLBACK,
                     'options' => 'date_filter'
-                ),
-                '时段与上课周' => FILTER_SANITIZE_STRING,
-                '编号' => array
-                (
-                    'filter' =>FILTER_VALIDATE_INT,
-                    'options' =>array (
-                        'min_range' =>1,
-                        'max_range' =>150
-                    )
                 )
             );
             $filters_uploader = array
@@ -299,7 +282,7 @@ if (!class_exists('CourseSupervise_single')) {
                         'max_range' =>500
                     )
                 ),
-                '第一次违纪' => array
+                '违纪人数' => array
                 (
                     'filter' =>FILTER_VALIDATE_INT,
                     'options' =>array (
@@ -307,7 +290,23 @@ if (!class_exists('CourseSupervise_single')) {
                         'max_range' =>500
                     )
                 ),
-                '第二次违纪' => array
+                '迟到人数' => array
+                (
+                    'filter' =>FILTER_VALIDATE_INT,
+                    'options' =>array (
+                        'min_range' =>0,
+                        'max_range' =>500
+                    )
+                ),
+                '早退人数' => array
+                (
+                    'filter' =>FILTER_VALIDATE_INT,
+                    'options' =>array (
+                        'min_range' =>0,
+                        'max_range' =>500
+                    )
+                ),
+                '请假人数' => array
                 (
                     'filter' =>FILTER_VALIDATE_INT,
                     'options' =>array (
@@ -324,15 +323,6 @@ if (!class_exists('CourseSupervise_single')) {
                     )
                 ),
                 '学院' => FILTER_SANITIZE_STRING,
-                '年级' => array
-                (
-                    'filter' =>FILTER_VALIDATE_INT,
-                    'options' =>array (
-                        'min_range' =>2015,
-                        'max_range' =>2116
-                    )
-                ),
-                '课程名称' => FILTER_SANITIZE_STRING,
                 '备注' => array
                 (
                     'filter' =>FILTER_SANITIZE_STRING
@@ -345,9 +335,7 @@ if (!class_exists('CourseSupervise_single')) {
                 '教学楼' => $this->building, // 教学楼
                 '区号' => $this->area, // 区号
                 '教室编号' => $this->room, // 教室编号
-                '日期' => $this->date, // 日期
-                '时段与上课周' =>$this->timeAndPeriod, // 时段与上课周
-                '编号' => $this->order // 编号
+                '日期' => $this->date // 日期
             );
             $data_uploader = array
             (
@@ -357,13 +345,13 @@ if (!class_exists('CourseSupervise_single')) {
             $data_data = array
             (
                 '学院' => $this->school, // 学院
-                '年级' => $this->grade, // 年级
-                '课程名称' => $this->course, // 课程名称
                 '应到人数' => $this->numShouldHave, // 应到人数
                 '第一次出勤' => $this->firstAttendance, // 第一次出勤
                 '第二次出勤' => $this->secondAttendance, // 第二次出勤
-                '第一次违纪' => $this->firstViolationOfDiscipline, // 第一次违纪人数
-                '第二次违纪' => $this->secondViolationOfDiscipline, // 第二次违纪人数
+                '请假人数' => $this->askForLeave, // 请假人数
+                '违纪人数' => $this->violationOfDiscipline, // 违纪人数
+                '早退人数' => $this->leaveEarly, // 早退人数
+                '迟到人数' => $this->beLate, // 迟到人数
                 '备注' => $this->remark // 备注
             );
 
@@ -431,25 +419,23 @@ if (!class_exists('CourseSupervise_single')) {
                     '区号' => $this->area, // 区号
                     '教室编号' => $this->room, // 教室编号
                     '日期' => $this->date, // 日期
-                    '时段与上课周' =>$this->timeAndPeriod, // 时段与上课周
-                    '编号' => $this->order, // 编号
 
                     '提交者姓名' => $this->uploadPersonName, // 提交者姓名
                     '提交者学号' => $this->uploadPersonStudentID, // 提交者学号
 
                     '学院' => $this->school, // 学院
-                    '年级' => $this->grade, // 年级
-                    '课程名称' => $this->course, // 课程名称
                     '应到人数' => $this->numShouldHave, // 应到人数
                     '第一次出勤' => $this->firstAttendance, // 第一次出勤
                     '第二次出勤' => $this->secondAttendance, // 第二次出勤
-                    '第一次违纪' => $this->firstViolationOfDiscipline, // 第一次违纪人数
-                    '第二次违纪' => $this->secondViolationOfDiscipline, // 第二次违纪人数
+                    '请假人数' => $this->askForLeave, // 请假人数
+                    '违纪人数' => $this->violationOfDiscipline, // 违纪人数
+                    '早退人数' => $this->leaveEarly, // 早退人数
+                    '迟到人数' => $this->beLate, // 迟到人数
                     '备注' => $this->remark // 备注
                 );
 
                 $this->STSA_DATABASE_INFORMATION->insert(
-                    '查课数据',
+                    '查早数据',
                     $data
                 );
 
@@ -470,27 +456,25 @@ if (!class_exists('CourseSupervise_single')) {
                 $data = array
                 (
                     '学院' => $this->school, // 学院
-                    '年级' => $this->grade, // 年级
-                    '课程名称' => $this->course, // 课程名称
                     '应到人数' => $this->numShouldHave, // 应到人数
                     '第一次出勤' => $this->firstAttendance, // 第一次出勤
                     '第二次出勤' => $this->secondAttendance, // 第二次出勤
-                    '第一次违纪' => $this->firstViolationOfDiscipline, // 第一次违纪人数
-                    '第二次违纪' => $this->secondViolationOfDiscipline, // 第二次违纪人数
+                    '请假人数' => $this->askForLeave, // 请假人数
+                    '违纪人数' => $this->violationOfDiscipline, // 违纪人数
+                    '早退人数' => $this->leaveEarly, // 早退人数
+                    '迟到人数' => $this->beLate, // 迟到人数
                     '备注' => $this->remark // 备注
                 );
                 if ($this->existInDatabase) {
                     $this->STSA_DATABASE_INFORMATION->update(
-                        '查课数据',
+                        '查早数据',
                         $data,
                         array(
                             '校区' => $this->campus,
                             '教学楼' => $this->building,
                             '区号' => $this->area,
                             '教室编号' => $this->room,
-                            '日期' => $this->date,
-                            '时段与上课周' =>$this->timeAndPeriod,
-                            '编号' => $this->order
+                            '日期' => $this->date
                         )
                     );
 
@@ -518,16 +502,14 @@ if (!class_exists('CourseSupervise_single')) {
                 );
                 if ($this->existInDatabase) {
                     $this->STSA_DATABASE_INFORMATION->update(
-                        '查课数据',
+                        '查早数据',
                         $data,
                         array(
                             '校区' => $this->campus,
                             '教学楼' => $this->building,
                             '区号' => $this->area,
                             '教室编号' => $this->room,
-                            '日期' => $this->date,
-                            '时段与上课周' =>$this->timeAndPeriod,
-                            '编号' => $this->order
+                            '日期' => $this->date
                         )
                     );
 
@@ -552,11 +534,11 @@ if (!class_exists('CourseSupervise_single')) {
                 (
                     '第一次出勤' =>$this->firstAttendance, // 第一次出勤
                     '第二次出勤' =>$this->secondAttendance, // 第二次出勤
-                    '第一次违纪' =>$this->firstViolationOfDiscipline, // 第一次违纪人数
-                    '第二次违纪' =>$this->secondViolationOfDiscipline, // 第二次违纪人数
+                    '违纪人数' =>$this->violationOfDiscipline, // 违纪人数
+                    '迟到人数' =>$this->beLate, // 迟到人数
+                    '早退人数' =>$this->leaveEarly, // 早退人数
+                    '请假人数' =>$this->askForLeave, // 请假人数
                     '学院' =>$this->school, // 学院
-                    '年级' =>$this->grade, // 年级
-                    '课程名称' =>$this->course, // 课程名称
                     '应到人数' =>$this->numShouldHave, // 应到人数
                     '备注' =>$this->remark // 备注
                 );
@@ -595,8 +577,6 @@ if (!class_exists('CourseSupervise_single')) {
                 '区号' =>$this->area, // 区号
                 '教室编号' =>$this->room, // 教室编号
                 '日期' =>$this->date, // 日期
-                '时段与上课周' =>$this->timeAndPeriod, // 时段与上课周
-                '编号' => $this->order // 编号
             );
 
             return ($data);
@@ -615,14 +595,14 @@ if (!class_exists('CourseSupervise_single')) {
                     case '提交者学号': $this->uploadPersonStudentID = $value;break; // 提交者学号
                     // 教室数据
                     case '学院': $this->school = $value;break; // 学院
-                    case '年级': $this->grade = $value;break; // 年级
-                    case '课程名称': $this->course = $value;break; // 课程名称
                     case '应到人数': $this->numShouldHave = $value;break; // 应到人数
                     case '第一次出勤': $this->firstAttendance = $value;break; // 第一次出勤
                     case '第二次出勤': $this->secondAttendance = $value;break; // 第二次出勤
-                    case '第一次违纪': $this->firstViolationOfDiscipline = $value;break; // 第一次违纪人数
-                    case '第二次违纪': $this->secondViolationOfDiscipline = $value;break; // 第二次违纪人数
-                    case '备注': $this->remark = $value;break; // 备注
+                    case '违纪人数': $this->violationOfDiscipline = $value;break; // 违纪人数
+                    case '迟到人数': $this->beLate = $value;break; // 迟到人数
+                    case '早退人数': $this->leaveEarly = $value;break; // 早退人数
+                    case '请假人数': $this->askForLeave = $value;break; // 请假人数
+                    case '备注': $this->remark = $value;break; // 备注=
                     default: return false;
                 }
             }
