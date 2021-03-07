@@ -32,7 +32,7 @@ if (!function_exists("getOnePersonBasicInfo")) {
         }
 
         $rows = $PersonBasicInfos->num_rows;
-        $fields = $PersonBasicInfos->fetch_fields();
+        $fields = array_column($PersonBasicInfos->fetch_fields(),'name');
         $PersonBasicInfos = $PersonBasicInfos->fetch_all(MYSQLI_ASSOC);
         return $PersonBasicInfos;
     }
@@ -62,7 +62,7 @@ if (!function_exists("getOnePersonAllInfo")) {
         }
 
         $rows = $PersonAllInfos->num_rows;
-        $fields = $PersonAllInfos->fetch_fields();
+        $fields = array_column($PersonAllInfos->fetch_fields(),'name');
         $PersonAllInfos = $PersonAllInfos->fetch_all(MYSQLI_ASSOC);
         return $PersonAllInfos;
     }
@@ -85,7 +85,7 @@ if (!function_exists("getAllPersonBasicInfo")) {
         }
 
         $rows = $PersonsBasicInfos->num_rows;
-        $fields = $PersonsBasicInfos->fetch_fields();
+        $fields = array_column($PersonsBasicInfos->fetch_fields(),'name');
         $PersonsBasicInfos = $PersonsBasicInfos->fetch_all(MYSQLI_ASSOC);
         return ["行数"=>$rows,"列数"=>count($fields),"数据"=>$PersonsBasicInfos];
     }
@@ -108,7 +108,7 @@ if (!function_exists("getAllPersonAllInfo")) {
         }
 
         $rows = $PersonsAllInfos->num_rows;
-        $fields = $PersonsAllInfos->fetch_fields();
+        $fields = array_column($PersonsAllInfos->fetch_fields(),'name');
         $PersonsAllInfos = $PersonsAllInfos->fetch_all(MYSQLI_ASSOC);
         return ["行数"=>$rows,"列数"=>count($fields),"数据"=>$PersonsAllInfos];
     }
@@ -130,8 +130,8 @@ if (!function_exists("getContactInfo")) {
         }
 
         $rows = $ContactInfos->num_rows;
-        $fields = $ContactInfos->fetch_fields();
+        $fields = array_column($ContactInfos->fetch_fields(),'name');
         $ContactInfos = $ContactInfos->fetch_all(MYSQLI_ASSOC);
-        return ["行数"=>$rows,"列数"=>count($fields),"数据"=>$ContactInfos];
+        return ["行数"=>$rows,"列数"=>count($fields),'表头'=>$fields,"数据"=>$ContactInfos];
     }
 }

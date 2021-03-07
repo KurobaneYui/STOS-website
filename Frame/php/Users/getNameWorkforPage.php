@@ -16,19 +16,15 @@ if (!function_exists("getNameWorkforPage")) {
         }
 
         $session = new DatabaseConnector();
-        $sql = "SELECT `所属组`,`岗位` FROM 工作信息,部门信息 WHERE `所属组号`=`部门编号` and `学号`='{$userID}';";
+        $sql = "SELECT `部门名称`,`岗位` FROM 工作信息,部门信息 WHERE `所属组号`=`部门编号` and `学号`='{$userID}';";
         $workInfos = $session->query($sql);
         if ($workInfos===false) {
             throw new STSAException("数据库查询错误",417);
         }
 
         $rows = $workInfos->num_rows;
-        $fields = $workInfos->fetch_fields();
+        $fields = array_column($workInfos->fetch_fields(),'name');
         $workInfos = $workInfos->fetch_all(MYSQLI_ASSOC);
-        $workInfos_return = array();
-        foreach ($workInfos as $i) {
-            $workInfos_return[] = ["所属组"=>$i["所属组"],"岗位"=>$i["岗位"]];
-        }
-        return ["姓名"=>$_SESSION["userName"],"所属组与岗位"=>$workInfos_return];
+        return ["姓名"=>$_SESSION["userName"],"所属组与岗位"=>$workInfos];
     }
 }

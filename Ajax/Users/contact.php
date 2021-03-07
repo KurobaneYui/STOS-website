@@ -13,6 +13,7 @@ if (isset($_POST['requestFunction'])) { // 是否有要请求的类别
         try {
             $returns = new UnionReturnInterface();
             $returns->setData(getContactInfo());
+            echo $returns;
         } catch (STSAException $e) {
             $returns = new UnionReturnInterface();
             $returns->boundSTSAException($e);
@@ -28,6 +29,6 @@ if (isset($_POST['requestFunction'])) { // 是否有要请求的类别
     }
 }
 else {
-    $returns = new UnionReturnInterface('400', "没有选择需要的功能");
+    $returns = new UnionReturnInterface('404', "没有选择需要的功能");
     echo $returns;
 }
