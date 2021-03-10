@@ -14,12 +14,12 @@ if (isset($_POST['requestFunction'])) { // 是否有要请求的类别
             $returns = new UnionReturnInterface();
             $returns->setData(getContactInfo());
             echo $returns;
+        } catch (JsonException $e) {
+            $returns = new UnionReturnInterface('417','数据封装过程中出现错误');
+            echo $returns;
         } catch (STSAException $e) {
             $returns = new UnionReturnInterface();
             $returns->boundSTSAException($e);
-            echo $returns;
-        } catch (JsonException $e) {
-            $returns = new UnionReturnInterface('417','数据封装过程中出现错误');
             echo $returns;
         }
     }

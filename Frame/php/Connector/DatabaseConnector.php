@@ -11,6 +11,7 @@ if (!isset($__DatabaseConnector__)) {
         private string $errorString;
 
         private mysqli $session;
+        private mysqli_result|bool $query_result;
 
         private string $server;
         private int $port;
@@ -77,12 +78,15 @@ if (!isset($__DatabaseConnector__)) {
         public function query(string $sql): bool|mysqli_result {
             if ($this->status) {
                 try{ // if sql query is insert or update, it needs commit operation
-                    return $this->session->query($sql);
+                    if (isset($this->query_result) && !is_bool($this->query_result)){$this->query_result->free();}
+                    return $this->query_result = $this->session->query($sql);
                 }
                 catch (Exception $e) { // if sql query is search, it do not need commit operation
                     return false;
                 }
             }
+
+            return false;
         }
 
         public function commit(){

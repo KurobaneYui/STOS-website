@@ -8,7 +8,7 @@ require_once ROOT_PATH . "/Frame/php/Tools/Authorization.php";
 // TODO:require log file
 
 if (!function_exists("getNameWorkforPage")) {
-    function getNameWorkforPage() { // 提供给用户中心页面右上角的个人信息简介
+    function getNameWorkforPage(): array{ // 提供给用户中心页面右上角的个人信息简介
         $userID = $_SESSION["userID"];
         // TODO:check authorization 属于个人级别的本人保密信息
         if(!check_authorization("")) {
@@ -22,8 +22,8 @@ if (!function_exists("getNameWorkforPage")) {
             throw new STSAException("数据库查询错误",417);
         }
 
-        $rows = $workInfos->num_rows;
-        $fields = array_column($workInfos->fetch_fields(),'name');
+//        $rows = $workInfos->num_rows;
+//        $fields = array_column($workInfos->fetch_fields(),'name');
         $workInfos = $workInfos->fetch_all(MYSQLI_ASSOC);
         return ["姓名"=>$_SESSION["userName"],"所属组与岗位"=>$workInfos];
     }

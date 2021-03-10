@@ -157,7 +157,7 @@
                                 <a href="#" onclick="f()"><i class="fa fa-power-off"></i> Logout</a>
                             </li>
                             <script>
-                                function f(){$.post("/Ajax/Users/logout.php");swal("已登出");setTimeout(function(){$(window).attr('location','/user/authentication/login.html');},1000);}
+                                function f(){$.post("/Ajax/Users/logout.php");swal({title:"已登出",icon:"success"});setTimeout(function(){$(window).attr('location','/Users/Authentication/login.html');},1300);}
                             </script>
                         </ul>
                     </div>
