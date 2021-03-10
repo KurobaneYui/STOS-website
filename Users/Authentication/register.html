@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="zh,en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="电子科技大学学风督导队">
+    <meta name="author" content="罗寅松，学风督导队数据组">
+    <!-- Favicon icon -->
+    <link rel="icon" type="image/png" sizes="16x16" href="../../assets/images/STSA.png">
+    <title>学风督导队-注册</title>
+    <!-- Bootstrap Core CSS -->
+    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.5.3/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap-switch -->
+    <link href="https://cdn.bootcdn.net/ajax/libs/bootstrap-switch/4.0.0-alpha.1/css/bootstrap-switch.min.css" rel="stylesheet">
+    <!--  Sweet Alert CSS  -->
+    <!--link href="../../assets/node_modules/sweetalert/sweetalert.css" rel="stylesheet" type="text/css"-->
+    <!-- page css -->
+    <link href="../../css/pages/login-register-lock.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="../../css/style.css" rel="stylesheet">
+    <!-- You can change the theme colors from here -->
+    <link href="../../css/colors/default.css" id="theme" rel="stylesheet">
+</head>
+
+<body class="card-no-border">
+    <!-- ============================================================== -->
+    <!-- Preloader - style you can find in spinners.css -->
+    <!-- ============================================================== -->
+    <div class="preloader">
+        <div class="loader">
+            <div class="loader__figure"></div>
+            <p class="loader__label">S T S A</p>
+            <p class="loader__label">学风督导队</p>
+            <p class="loader__label">Supervision Team of Study Atmosphere</p>
+        </div>
+    </div>
+    <!-- ============================================================== -->
+    <!-- Main wrapper - style you can find in pages.scss -->
+    <!-- ============================================================== -->
+    <section id="wrapper">
+        <div class="login-register" style="overflow: auto">
+            <div class="text-center mb-4">
+                <img src="../../assets/images/users/STSA.png" height="160px" width="160px" alt="STSA-icon"/>
+            </div>
+            <div class="card">
+                <div class="card-body" style="padding:25px 75px">
+                    <h1 class="box-title m-b-20">学风督导队网站注册</h1>
+                    <hr/>
+                    <form class="form-horizontal form-material" id="loginform">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h4 class="box-title m-b-20">基本信息</h4>
+                                <div class="form-group">
+                                    <div class="col-xs-12">
+                                        <label>姓名
+                                            <input class="form-control" type="text" required="" placeholder="Name"></label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-xs-12">
+                                        <label>学号
+                                            <input class="form-control" type="text" required="" placeholder="StudentID"></label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-xs-12">
+                                        <label>性别
+                                            <input type="checkbox" id="gender" data-on-color="danger" data-off-color="info" data-on-text="女" data-off-text="男" required></label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-xs-12">
+                                        <label>民族（填写完整，如：“汉族”而不是“汉”）
+                                            <input class="form-control" type="text" required="" placeholder="Ethnicity"></label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-xs-12">
+                                        <label>籍贯（省市（县）即可）
+                                            <input class="form-control" type="text" required="" placeholder="Hometown"></label>
+                                    </div>
+                                </div>
+                                <h4 class="box-title m-b-20">工资信息</h4>
+                                <div class="form-group">
+                                    <div class="col-xs-12">
+                                        <label>银行卡号
+                                            <input class="form-control" type="text" required="" placeholder="BankID"></label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-xs-12">
+                                        <label>建档立卡 <a href="javascript:void(0);" data-toggle="popover" data-trigger="focus" data-placement="right" title="相关信息请查阅百度百科（https://baike.baidu.com/item/建档立卡贫困户）"><i class="ti-help-alt"></i></a>
+                                            <input type="checkbox" id="subsidyDossier" data-on-color="success" data-off-color="info" data-on-text="是" data-off-text="否" required></label>
+                                    </div>
+                                </div>
+                                <h4 class="box-title m-b-20">登录信息</h4>
+                                <div class="form-group">
+                                    <div class="col-xs-12">
+                                        <label>密码（可由大小写字母、数字、或这些符号 !#$%&*+-/=?^_{|}~.[]组成）
+                                            <input class="form-control" type="password" required="" placeholder="Password"></label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <h4 class="box-title m-b-20">联系方式</h4>
+                                <div class="form-group">
+                                    <div class="col-xs-12">
+                                        <label>电话
+                                            <input class="form-control" type="text" required="" placeholder="PhoneNumber"></label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-xs-12">
+                                        <label>QQ
+                                            <input class="form-control" type="text" required="" placeholder="QQ"></label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-xs-12">
+                                        <label>校区
+                                            <select class="form-control" required="" id="campus">
+                                                <option value="">请选择</option>
+                                                <option value="清水河">清水河校区</option>
+                                                <option value="沙河">沙河校区</option>
+                                            </select>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-xs-12">
+                                        <label>学院（填写完整，如：“通信与信息工程学院”）
+                                            <input class="form-control" type="text" required="" placeholder="School"></label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-xs-12">
+                                        <label>寝室（苑）
+                                            <select class="form-control" required="" id="dormitory_yuan">
+                                                <option value="">请选择</option>
+                                                <option value="学知苑">清水河-学知苑</option>
+                                                <option value="硕丰苑">清水河-硕丰苑</option>
+                                                <option value="校内">沙河-校内</option>
+                                                <option value="校外">沙河-校外</option>
+                                            </select>
+                                        </label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-xs-12">
+                                        <label>寝室（栋）
+                                            <input class="form-control" type="number" required="" placeholder="Dormitory(d)"></label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-xs-12">
+                                        <label>寝室（号）
+                                            <input class="form-control" type="number" required="" placeholder="Dormitory(h)"></label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <hr/>
+                        <div class="form-group row">
+                            <div class="col-md-12">
+                                <div class="checkbox checkbox-success p-t-0">
+                                    <input id="checkbox-signup" type="checkbox" required class="filled-in chk-col-light-blue">
+                                    <label for="checkbox-signup"> 我已阅读 <a href="#" data-toggle="modal" data-target="#myModal">个人信息说明</a></label>
+                                    <!-- 个人信息说明的model弹窗 -->
+                                    <div tabindex="-1" class="modal fade show" id="myModal" data-backdrop="false" role="dialog" aria-labelledby="myModalLabel" style="padding-right: 16px; display: none;">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h4 class="modal-title" id="myModalLabel">个人信息展示说明</h4>
+                                                    <button class="close" aria-hidden="true" type="button" data-dismiss="modal">×</button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <h4>对不同查看者，展示不同内容</h4>
+                                                    <p>队长、本组组长查看时：展示所有信息，用于队伍统计和财务报表</p>
+                                                    <p>队员、非本组组长查看时：展示 姓名、性别、学院、电话、QQ 确保队员间基本的联络</p>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button class="btn btn-info waves-effect" type="button" data-dismiss="modal">Close</button>
+                                                </div>
+                                            </div>
+                                            <!-- /.modal-content -->
+                                        </div>
+                                        <!-- /.modal-dialog -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group text-center p-b-20">
+                            <div class="col-sm-4 offset-sm-4">
+                                <button class="btn btn-info btn-lg btn-block btn-rounded text-uppercase waves-effect waves-light" type="button" onclick="register()">注册</button>
+                            </div>
+                        </div>
+                        <div class="form-group m-b-0">
+                            <div class="col-sm-12 text-center">
+                                已经有账号了？ <a href="login.html" class="text-info m-l-5"><b>登录</b></a>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- ============================================================== -->
+    <!-- End Wrapper -->
+    <!-- ============================================================== -->
+    <!-- ============================================================== -->
+    <!-- All Script -->
+    <!-- ============================================================== -->
+    <!-- jQuery --> 
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script> 
+    <!-- Bootstrap Core JavaScript --> 
+    <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.5.3/js/bootstrap.bundle.min.js"></script>
+    <!-- Bootstrap-switch -->
+    <script src="https://cdn.bootcdn.net/ajax/libs/bootstrap-switch/4.0.0-alpha.1/js/bootstrap-switch.min.js"></script>
+    <!--  Sweet Alert Javascript  -->
+    <script src="https://cdn.bootcdn.net/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+    <!--Custom JavaScript -->
+    <script type="text/javascript">
+        $(function() {
+            $(".preloader").fadeOut();
+        });
+        $(function() {
+            $('[data-toggle="tooltip"]').tooltip()
+        });
+        // ============================================================== 
+        // Login and Recover Password 
+        // ============================================================== 
+        $('#to-recover').on("click", function() {
+            $("#loginform").slideUp();
+            $("#recoverform").fadeIn();
+        });
+    </script>
+    <!-- Page Function JavaScript -->
+    <script>
+        function register() { // 点击注册按钮的功能
+            let name = $("input[placeholder='Name']").val();
+            let studentID = $("input[placeholder='StudentID']").val();
+            let gender = $("#gender").prop('checked'); // false是男，true是女
+            let ethnicity = $("input[placeholder='Ethnicity']").val();
+            let hometown = $("input[placeholder='Hometown']").val();
+            let bankID = $("input[placeholder='BankID']").val();
+            let subsidyDossier = $("#subsidyDossier").prop('checked'); // true是，false否
+            let phoneNumber = $("input[placeholder='PhoneNumber']").val();
+            let QQ = $("input[placeholder='QQ']").val();
+            let campus = $("#campus").val();
+            let School = $("input[placeholder='School']").val();
+            let dormitory_yuan = $("#dormitory_yuan").val();
+            let dormitory_dong = $("input[placeholder='Dormitory(d)']").val();
+            let dormitory_hao = $("input[placeholder='Dormitory(h)']").val();
+            let password = $("input[placeholder='Password']").val();
+            let claimBox = $("#checkbox-signup");
+            let register_info = {
+                requestFunction:"register",
+                Name:name,
+                StudentID:studentID,
+                Gender:gender?'女':'男',
+                Ethnicity:ethnicity,
+                Hometown:hometown,
+                BankID:bankID,
+                SubsidyDossier:subsidyDossier?'是':'否',
+                PhoneNumber:phoneNumber,
+                QQ:QQ,
+                Campus:campus,
+                School:School,
+                Dormitory_yuan:dormitory_yuan,
+                Dormitory_dong:dormitory_dong,
+                Dormitory_hao:dormitory_hao,
+                Password:password
+            };
+            if (claimBox.prop('checked')===false) {
+                claimBox.focus();
+                $("label[for=checkbox-signup]").css("color","red");
+                sweetAlert("请阅读个人信息说明");
+                return false;
+            } // TODO: 接口样式修正，具体参见开发手册
+            $.post("../../ajax/user/register.php",
+                register_info,
+                function(data,status){
+                    if (status==='success') {
+                        let return_data = $.parseJSON(data);
+                        if (return_data['status']===true) {
+                            sweetAlert('注册成功');
+                            $(window).attr('location','login.html');
+                        } else {
+                            switch (return_data['error_code']) {
+                                case '30': sweetAlert('功能维护中，暂不开放注册'); break;
+                                case '00': let error_info=$.parseJSON(return_data['error_info']);sweetAlert(error_info['title'],error_info['text']); break;
+                                default: sweetAlert('似乎出现了一些问题，请联系组长反馈');
+                            }
+                        }
+                    }
+                    else {
+                        alert('请检查浏览器网络连接，建议刷新后重试');
+                    }
+                });
+        }
+        $(document).ready(function () {
+            $("[data-toggle='popover']").popover();
+            // bootstrap switch
+            $("#gender,#subsidyDossier").bootstrapSwitch();
+        });
+    </script>
+</body>
+
+</html>
