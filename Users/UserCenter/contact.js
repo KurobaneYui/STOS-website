@@ -33,7 +33,7 @@ function contactFunction() {
             if(status==="success"){
                 let tempdata=JSON.parse(data);
                 let returnCode=tempdata['ReturnCode'];
-                let data=tempdata['Data'];
+                data=tempdata['Data'];
                 if(returnCode==='400') {
                     alert("参数错误，请联系管理员");
                 }
