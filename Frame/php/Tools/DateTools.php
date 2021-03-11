@@ -4,8 +4,8 @@
 if (!isset($__DateTools__)) {
     $__DateTools__ = true;
 
-    require __DIR__ . '/../../../ROOT_PATH.php';
-    require ROOT_PATH . '/Frame/php/CustomPackAndLogger/STSAException.php';
+    require_once __DIR__ . '/../../../ROOT_PATH.php';
+    require_once ROOT_PATH . '/Frame/php/CustomPackAndLogger/STSAException.php';
 
     /**
      * Class DateTools
