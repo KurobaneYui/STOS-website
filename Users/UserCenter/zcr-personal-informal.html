@@ -1,244 +1,274 @@
 <!DOCTYPE html>
-<html lang="zh, en">
-
+<html lang="zh, en">  
 <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <!-- Tell the browser to be responsive to screen width -->
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="电子科技大学学风督导队">
-    <meta name="author" content="罗寅松，学风督导队数据组">
-    <!-- Favicon icon -->
-    <link rel="icon" type="image/png" sizes="16x16" href="../../assets/images/STSA.png">
-    <title>学风督导队-个人信息维护</title>
-    <!-- Bootstrap Core CSS -->
-    <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.5.3/css/bootstrap.min.css" rel="stylesheet">
-    <!--  Sweet Alert CSS  -->
-    <!--link href="../../assets/node_modules/sweetalert/sweetalert.css" rel="stylesheet" type="text/css"-->
-    <!--  Slimscrollbar Scrollbar CSS  -->
-    <link href="https://cdn.bootcdn.net/ajax/libs/jquery.perfect-scrollbar/0.8.1/css/perfect-scrollbar.min.css"
-        rel="stylesheet">
-    <!-- Custom CSS -->
-    <link href="../../css/style.css" rel="stylesheet">
-    <!-- You can change the theme colors from here -->
-    <link href="../../css/colors/default.css" id="theme" rel="stylesheet">
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-			<![endif]-->
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<!-- Tell the browser to be responsive to screen width -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="电子科技大学学风督导队">
+<meta name="author" content="罗寅松，学风督导队数据组">
+<!-- Favicon icon -->
+<link rel="icon" type="image/png" sizes="16x16" href="../../assets/images/STSA.png">
+<title>学风督导队-空页面模板</title>
+<!-- Bootstrap Core CSS -->
+<link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.5.3/css/bootstrap.min.css" rel="stylesheet">
+<!--  Sweet Alert CSS  --> 
+<!--link href="../../assets/node_modules/sweetalert/sweetalert.css" rel="stylesheet" type="text/css"--> 
+<!--  Slimscrollbar Scrollbar CSS  -->
+<link href="https://cdn.bootcdn.net/ajax/libs/jquery.perfect-scrollbar/0.8.1/css/perfect-scrollbar.min.css" rel="stylesheet">
+<!--  Waves (by Google) CSS  -->
+<link href="https://cdn.bootcdn.net/ajax/libs/node-waves/0.7.6/waves.min.css" rel="stylesheet">
+<!-- Custom CSS -->
+<link href="/css/style.css" rel="stylesheet">
+<!-- You can change the theme colors from here -->
+<link href="/css/colors/default.css" id="theme" rel="stylesheet">
 </head>
 
 <body class="fix-header fix-sidebar card-no-border">
-    <!-- ============================================================== -->
-    <!-- Preloader - style you can find in spinners.css -->
-    <!-- ============================================================== -->
-    <div class="preloader">
-        <div class="loader">
-            <div class="loader__figure"></div>
-            <p class="loader__label">S T S A</p>
-            <p class="loader__label">学风督导队</p>
-            <p class="loader__label">Supervision Team of Study Atmosphere</p>
-        </div>
+<!-- ============================================================== --> 
+<!-- Preloader - style you can find in spinners.css --> 
+<!-- ============================================================== -->
+<div class="preloader">
+    <div class="loader">
+        <div class="loader__figure"></div>
+        <p class="loader__label">S T S A</p>
+        <p class="loader__label">学风督导队</p>
+        <p class="loader__label">Supervision Team of Study Atmosphere</p>
     </div>
+</div>
+<!-- ============================================================== --> 
+<!-- Main wrapper - style you can find in pages.scss --> 
+<!-- ============================================================== -->
+<div id="main-wrapper"> 
+    <!-- ============================================================== --> 
+    <!-- Topbar header - style you can find in pages.scss --> 
     <!-- ============================================================== -->
-    <!-- Main wrapper - style you can find in pages.scss -->
+    <header class="topbar" id="loadTopbar"> </header>
+    <!-- ============================================================== --> 
+    <!-- End Topbar header - you can find in /Frame/html5/user_center_topbar_frame.html -->
+    <!-- ============================================================== --> 
+    <!-- ============================================================== --> 
+    <!-- Left Sidebar - you can find in /Frame/html5/user_center_leftSidebar_frame.html  -->
     <!-- ============================================================== -->
-    <div id="main-wrapper">
+    <aside class="left-sidebar" id="loadLeftSidebar"> </aside>
+    <!-- ============================================================== --> 
+    <!-- End Left Sidebar - style you can find in sidebar.scss  --> 
+    <!-- ============================================================== --> 
+    <!-- ============================================================== --> 
+    <!-- Page wrapper  --> 
+    <!-- ============================================================== -->
+    <div class="page-wrapper"> 
+        <!-- ============================================================== --> 
+        <!-- Container fluid  --> 
         <!-- ============================================================== -->
-        <!-- Topbar header - style you can find in pages.scss -->
-        <!-- ============================================================== -->
-        <header class="topbar" id="loadHeadbar"> </header>
-        <!-- ============================================================== -->
-        <!-- End Topbar header - you can find in /frame/html5/user_center_headbar_fram.html -->
-        <!-- ============================================================== -->
-        <!-- ============================================================== -->
-        <!-- Left Sidebar - you can find in /frame/html5/user_center_leftSidebar_frame.html  -->
-        <!-- ============================================================== -->
-        <aside class="left-sidebar" id="loadLeftSidebar"> </aside>
-        <!-- ============================================================== -->
-        <!-- End Left Sidebar - style you can find in sidebar.scss  -->
-        <!-- ============================================================== -->
-        <!-- ============================================================== -->
-        <!-- Page wrapper  -->
-        <!-- ============================================================== -->
-        <div class="page-wrapper">
+        <div class="container-fluid"> 
+            <!-- ============================================================== --> 
+            <!-- Bread crumb and right sidebar toggle --> 
             <!-- ============================================================== -->
-            <!-- Container fluid  -->
-            <!-- ============================================================== -->
-            <div class="container-fluid">
-                <!-- ============================================================== -->
-                <!-- Bread crumb and right sidebar toggle -->
-                <!-- ============================================================== -->
-                <div class="row page-titles">
-                    <div class="col-md-5 align-self-center">
-                        <h3 class="text-themecolor">个人信息维护</h3>
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a href="javascript:void(0)">督导队</a></li>
-                            <li class="breadcrumb-item active">空页面模板</li>
-                        </ol>
-                    </div>
+            <div class="row page-titles">
+                <div class="col-md-5 align-self-center">
+                    <h3 class="text-themecolor">空页面模板</h3>
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="javascript:void(0)">督导队</a></li>
+                        <li class="breadcrumb-item active">空页面模板</li>
+                    </ol>
                 </div>
-                <!-- ============================================================== -->
-                <!-- End Bread crumb and right sidebar toggle -->
-                <!-- ============================================================== -->
-                <!-- ============================================================== -->
-                <!-- 主体 -->
-                <!-- ============================================================== -->
-                <div class="container shadow-sm bg-white rounded self" style="padding-top: 1%;">
-                    <form>
-                        <div class="form-row">
-                            <div class="form-group col-md-3">
-                                <label for="inputEmail4">姓名：</label>
-                                <input class="form-control" id="name" placeholder="姓名">
+            </div>
+            <!-- ============================================================== --> 
+            <!-- End Bread crumb and right sidebar toggle --> 
+            <!-- ============================================================== --> 
+            <!-- ============================================================== --> 
+            <!-- 主体 --> 
+            <!-- ============================================================== -->
+            <div class="card shadow-sm bg-white rounded self">
+                <h5 class="card-header bg-secondary text-white" >基本信息</h5>
+                    <div class="card-body">
+                        <form>
+                            <div class="form-row">
+                                <div class="form-group col-md-4">
+                                    <label for="inputEmail4">姓名：</label>
+                                    <input class="form-control" id="name" placeholder="姓名">
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label for="inputEmail4">学号：</label>
+                                    <input type="text" class="form-control" id="student-number" placeholder="学号">
+                                </div>
+        
+                                <div class="form-group col-md-4">
+                                    <label for="inputState">性别：</label>
+                                    <select id="sex" class="form-control">
+                                  <option selected>女</option>
+                                  <option>男</option>
+                                    </select>
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label for="inputState">学院：</label>
+                                    <select id="college" class="form-control">
+                                        <option>英才实验学院</option>
+                                        <option>信息与通信工程学院</option>
+                                        <option>电子科学与工程学院</option>
+                                        <option>材料与能源学院</option>
+                                        <option>机械与电气工程学院</option>
+                                        <option>光电科学与工程学院</option>
+                                        <option>自动化工程学院</option>
+                                        <option>资源与环境学院</option>
+                                        <option>计算机科学与工程学院</option>
+                                        <option>信息与软件工程学院</option>
+                                        <option>航空航天学院</option>
+                                        <option>数学科学学院</option>
+                                        <option>物理学院</option>
+                                        <option>医学院</option>
+                                        <option>生命科学与技术学院</option>
+                                        <option>公共管理学院</option>
+                                        <option>外国语学院</option>
+                                        <option>格拉斯哥学院</option>
+                                        <option>示范性电子学院</option>
+                                    </select>
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label for="inputEmail4">民族</label>
+                                    <input type="text" class="form-control" id="nation">
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label for="inputEmail4">籍贯</label>
+                                    <input type="text" class="form-control" id="brithplace" >
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label for="inputEmail4">身份证号：</label>
+                                    <input type="text" class="form-control" id="IDcard" >
+                                </div>
                             </div>
-                            <div class="form-group col-md-3">
-                                <label for="inputEmail4">学号：</label>
-                                <input type="email" class="form-control" id="student-number" placeholder="学号">
-                            </div>
-    
-                            <div class="form-group col-md-3">
-                                <label for="inputState">性别：</label>
-                                <select id="sex" class="form-control">
-                              <option selected>女</option>
-                              <option>男</option>
-                                </select>
-                            </div>
+                        </form>
+                    </div>
+            </div>
+            <div class="card shadow-sm bg-white rounded self">
+                <h5 class="card-header bg-secondary text-white" >联系方式</h5>
+                    <div class="card-body">
+                        <form>
+                            <div class="form-row">
                             <div class="form-group col-md-4">
-                                <label for="inputState">学院：</label>
-                                <select id="college" class="form-control">
-                                    <option>英才实验学院</option>
-                                    <option>信息与通信工程学院</option>
-                                    <option>电子科学与工程学院</option>
-                                    <option>材料与能源学院</option>
-                                    <option>机械与电气工程学院</option>
-                                    <option>光电科学与工程学院</option>
-                                    <option>自动化工程学院</option>
-                                    <option>资源与环境学院</option>
-                                    <option>计算机科学与工程学院</option>
-                                    <option>信息与软件工程学院</option>
-                                    <option>航空航天学院</option>
-                                    <option>数学科学学院</option>
-                                    <option>物理学院</option>
-                                    <option>医学院</option>
-                                    <option>生命科学与技术学院</option>
-                                    <option>公共管理学院</option>
-                                    <option>外国语学院</option>
-                                    <option>格拉斯哥学院</option>
-                                    <option>示范性电子学院</option>
-                                </select>
-                            </div>
-                            <div class="form-group col-md-3">
-                                <label for="inputEmail4">民族</label>
-                                <input type="email" class="form-control" id="nation">
-                            </div>
-                            <div class="form-group col-md-6">
-                                <label for="inputEmail4">出生地：</label>
-                                <input type="email" class="form-control" id="brithplace" >
-                            </div>
-                            <div class="form-group col-md-4">
-                                <label for="inputEmail4">身份证号：</label>
-                                <input type="email" class="form-control" id="IDcard" >
-                            </div>
-                            <div class="form-group col-md-3">
                                 <label for="inputEmail4">电话：</label>
-                                <input type="email" class="form-control" id="phone-number" >
+                                <input type="text" class="form-control" id="phone-number" >
                             </div>
-                            <div class="form-group col-md-3">
+                            <div class="form-group col-md-4">
                                 <label for="inputEmail4">QQ：</label>
-                                <input type="email" class="form-control" id="QQ" >
+                                <input type="text" class="form-control" id="QQ" >
                             </div>
-                            <div class="form-group col-md-3">
+                            <div class="form-group col-md-4">
                                 <label for="inputEmail4">邮箱：</label>
-                                <input type="email" class="form-control" id="email" >
+                                <input type="text" class="form-control" id="email" >
                             </div>
-                            <div class="form-group col-md-3">
+                            <div class="form-group col-md-4">
                                 <label for="inputState">校区：</label>
                                 <select class="form-control" id="campus">
                               <option selected>清水河校区</option>
                               <option>沙河校区</option>
                                 </select>
                             </div>
-                            <div class="form-group col-md-3">
+                            <div class="form-group col-md-4">
                                 <label for="inputEmail4">寝室（苑）：</label>
-                                <input type="email" class="form-control" id="dormitory-fang" >
+                                <input type="text" class="form-control" id="dormitory-fang" >
                             </div>
-                            <div class="form-group col-md-3">
+                            <div class="form-group col-md-4">
                                 <label for="inputEmail4">寝室（栋）：</label>
-                                <input type="email" class="form-control" id="dormitory-dong" >
+                                <input type="text" class="form-control" id="dormitory-dong" >
                             </div>
-                            <div class="form-group col-md-3">
+                            <div class="form-group col-md-4">
                                 <label for="inputEmail4">寝室（号）：</label>
-                                <input type="email" class="form-control" id="dormitory-hao" >
-                            </div>
-                            <div class="form-group col-md-3">
-                                <label for="inputEmail4">银行卡号：</label>
-                                <input type="email" class="form-control" id="credit-card-number" >
-                            </div>
-                            <div class="form-group col-md-2">
-                                <label for="inputState">是否建档立卡：</label>
-                                <select  class="form-control" id="JianDangLiKa">
-                              <option selected>否</option>
-                              <option>是</option>
-                                </select>
-                            </div>
-                            <div class="form-group col-md-3">
-                                <label for="inputEmail4">密码修改：</label>
-                                <input type="email" class="form-control" id="password" >
-                            </div>
-                            <div class="float-right" style=" margin-top: 2%; margin-bottom: 1%;" >
-                                <button type="submit" class="btn btn-primary">确认修改</button>
+                                <input type="text" class="form-control" id="dormitory-hao" >
                             </div>
                         </div>
-                    </form>
-                </div>
-                <!-- ============================================================== -->
-                <!-- End 主体 -->
-                <!-- ============================================================== -->
+                        </form>
+                    </div>
             </div>
-            <!-- ============================================================== -->
-            <!-- End Container fluid  -->
-            <!-- ============================================================== -->
-            <!-- ============================================================== -->
-            <!-- footer -->
-            <!-- ============================================================== -->
-            <footer class="footer"> © 2021 电子科技大学 学工部 学风督导队 </footer>
-            <!-- ============================================================== -->
-            <!-- End footer -->
-            <!-- ============================================================== -->
+            <div class="card shadow-sm bg-white rounded self">
+                <h5 class="card-header bg-secondary text-white" >工资申请所需信息</h5>
+                    <div class="card-body">
+                        <div class="alert alert-info">
+                            <strong>
+                                如需代领工资，本项下属内容填写代领同学的信息；如果本人直接领取工资，保持和本人信息一致。
+                            </strong>
+                        </div> 
+                        <form>
+                            <div class="form-row">
+                                <div class="form-group col-md-4">
+                                    <label for="inputEmail4">申请者姓名：</label>
+                                    <input type="text" class="form-control" id="credit-card-number" >
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label for="inputEmail4">申请者学号：</label>
+                                    <input type="text" class="form-control" id="credit-card-number" >
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label for="inputEmail4">申请者银行卡号：</label>
+                                    <input type="text" class="form-control" id="credit-card-number" >
+                                </div>
+                                <div class="form-group col-md-4">
+                                    <label for="inputState">
+                                        是否建档立卡：
+                                    </label>
+                                    <select  class="form-control" id="JianDangLiKa">
+                                  <option selected>否</option>
+                                  <option>是</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </form>
+                        <a href="#" class="btn btn-primary">
+                            对于自己是否属于建档立卡的同学，可以点击此处进行了解。
+                        </a>
+                    </div>
+            </div>
+            <!-- ============================================================== --> 
+            <!-- End 主体 --> 
+            <!-- ============================================================== --> 
         </div>
+        <!-- ============================================================== --> 
+        <!-- End Container fluid  --> 
+        <!-- ============================================================== --> 
+        <!-- ============================================================== --> 
+        <!-- footer --> 
         <!-- ============================================================== -->
-        <!-- End Page wrapper  -->
-        <!-- ============================================================== -->
+        <footer class="footer"> © 2021 电子科技大学 学工部 学风督导队 </footer>
+        <!-- ============================================================== --> 
+        <!-- End footer --> 
+        <!-- ============================================================== --> 
     </div>
-    <!-- ============================================================== -->
-    <!-- End Wrapper -->
-    <!-- ============================================================== -->
+    <!-- ============================================================== --> 
+    <!-- End Page wrapper  --> 
+    <!-- ============================================================== --> 
+</div>
+<!-- ============================================================== --> 
+<!-- End Wrapper --> 
+<!-- ============================================================== --> 
 
-    <!-- ============================================================== -->
-    <!-- All Script -->
-    <!-- ============================================================== -->
-    <!-- jQuery -->
-    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <!-- load top bar and side bar -->
-    <script>
-        $("#loadHeadbar").load("../../frame/html5/user_center_headbar_fram.html");
-        $("#loadLeftSidebar").load("../../frame/html5/user_center_leftSidebar_frame.html");
-    </script>
-    <!-- Bootstrap Core JavaScript -->
-    <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.5.3/js/bootstrap.bundle.min.js"></script>
-    <!-- slimscrollbar scrollbar JavaScript -->
-    <script
-        src="https://cdn.bootcdn.net/ajax/libs/jquery.perfect-scrollbar/0.8.1/js/perfect-scrollbar.jquery.min.js"></script>
-    <!-- Sweet Alert Javascript -->
-    <script src="https://cdn.bootcdn.net/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
-    <!-- Wave Effects -->
-    <script src="../../js/waves.js"></script>
-    <!-- Menu sidebar -->
-    <script src="../../js/sidebarmenu.js"></script>
-    <!-- Custom JavaScript -->
-    <script src="../../js/custom.min.js"></script>
+<!-- ============================================================== --> 
+<!-- All Script --> 
+<!-- ============================================================== --> 
+<!-- jQuery --> 
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script> 
+<!-- load top bar and side bar --> 
+<script>
+    $.ajax({async:false,url:"/Frame/html5/user_center_topbar_frame.html",success:function(result){
+        $("#loadTopbar").html(result);
+    }});
+    $.ajax({async:false,url:"/Frame/html5/user_center_leftSidebar_frame.html",success:function(result){
+        $("#loadLeftSidebar").html(result);
+    }});
+    $.getScript("/Frame/html5/topbar.js");
+</script>
+<!-- Bootstrap Core JavaScript --> 
+<script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.5.3/js/bootstrap.bundle.min.js"></script> 
+<!-- slimscrollbar scrollbar JavaScript --> 
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery.perfect-scrollbar/0.8.1/js/perfect-scrollbar.jquery.min.js"></script> 
+<!-- Sweet Alert Javascript --> 
+<script src="https://cdn.bootcdn.net/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script> 
+<!-- Wave Effects --> 
+<!-- script src="/js/waves.js"></script --> 
+<script src="https://cdn.bootcdn.net/ajax/libs/node-waves/0.7.6/waves.min.js"></script>
+<!-- Menu sidebar --> 
+<script src="/js/sidebarmenu.js"></script>
+<!-- Custom JavaScript --> 
+<script src="/js/custom.min.js"></script>
 </body>
-
 </html>
