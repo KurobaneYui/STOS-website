@@ -4,8 +4,6 @@ require_once __DIR__.'/../../ROOT_PATH.php';
 require_once ROOT_PATH . '/Frame/php/Person.php';
 require_once ROOT_PATH . '/Frame/php/TransJson.php';
 
-// TODO
-//    []: 临时个人信息请求，需要替换
 if (isset($_SESSION['isLogin']) && $_SESSION['isLogin'] === hash('sha256', session_id() . $_SESSION['username'] . 'true')) {
     $login = true;
 } else {

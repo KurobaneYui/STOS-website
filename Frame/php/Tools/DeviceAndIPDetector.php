@@ -207,14 +207,6 @@ if (!isset($__DeviceAndIPDetector__)) {
             else if (false !== stripos($agent, 'unix')) {
                 $os = 'Unix';
             }
-            else if (false !== stripos($agent, 'os')) {
-                if (false !== stripos($agent, 'sun')) {
-                    $os = 'SunOS';
-                }
-                if (false !== stripos($agent, 'ibm')) {
-                    $os = 'IBM OS/2';
-                }
-            }
             else if (false !== stripos($agent, 'Mac') && false !== stripos($agent, 'PC')) {
                 $os = 'Macintosh';
             }
@@ -259,6 +251,14 @@ if (!isset($__DeviceAndIPDetector__)) {
             }
             else if (false !== stripos($agent, 'offline')) {
                 $os = 'offline';
+            }
+            else if (false !== stripos($agent, 'os')) {
+                if (false !== stripos($agent, 'sun')) {
+                    $os = 'SunOS';
+                }
+                if (false !== stripos($agent, 'ibm')) {
+                    $os = 'IBM OS/2';
+                }
             }
             else {
                 $os = 'Unknown';

@@ -5,7 +5,6 @@ require_once ROOT_PATH . "/Frame/php/Connector/DatabaseConnector.php";
 require_once ROOT_PATH . "/Frame/php/CustomPackAndLogger/STSAException.php";
 require_once ROOT_PATH . "/Frame/php/CustomPackAndLogger/UnionReturnInterface.php";
 // TODO:require log file
-// TODO:require authorization file
 
 function login(string $StudentID, string $Password, bool $RememberMe): bool {
     $session = new DatabaseConnector();

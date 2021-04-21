@@ -5,14 +5,16 @@ require_once ROOT_PATH . "/Frame/php/CustomPackAndLogger/STSAException.php";
 require_once ROOT_PATH . "/Frame/php/CustomPackAndLogger/UnionReturnInterface.php";
 require_once ROOT_PATH . "/Frame/php/Connector/DatabaseConnector.php";
 require_once ROOT_PATH . "/Frame/php/Tools/Authorization.php";
+require_once ROOT_PATH . "/Frame/php/Tools/TranslateBetweenChineseAndEnglish.php";
 // TODO:require log file
 
 if (isset($_POST['requestFunction'])) { // 是否有要请求的类别
-    if ($_POST['requestFunction']==='getContact') {
-        require_once ROOT_PATH . '/Frame/php/Users/getContactInfo.php';
+    if ($_POST['requestFunction']==='getPersonalWorks') {
+        require_once ROOT_PATH . '/Frame/php/Users/getPersonWorks.php';
         try {
             $returns = new UnionReturnInterface();
-            $returns->setData(getContactInfo());
+            // 处理信息并打包数据
+            $returns->setData(getOnePersonWorks());
             echo $returns;
         } catch (JsonException $e) {
             $returns = new UnionReturnInterface('417','数据封装过程中出现错误');
@@ -22,8 +24,7 @@ if (isset($_POST['requestFunction'])) { // 是否有要请求的类别
             $returns->boundSTSAException($e);
             echo $returns;
         }
-    }
-    else {
+    } else {
         $returns = new UnionReturnInterface('404', "功能不存在");
         echo $returns;
     }

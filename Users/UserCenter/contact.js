@@ -50,7 +50,7 @@ function contactFunction() {
                     //状态码301，提醒转移函数
                     if(returnCode==='301'){window.console.log('全队成员信息获取函数移至新位置');}
                     //状态码200，处理data
-                    let tempdata = JSON.parse(data); //'行数'，‘列数’，‘表头’，‘数据’
+                    let tempdata = JSON.parse(data); //'行数'，'列数'，'表头'，'数据'
                     let row = Number(tempdata['行数']);
                     let col = Number(tempdata['列数']);
                     let tableId = add_table(row, col); //建表格
