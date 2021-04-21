@@ -56,8 +56,11 @@ if (isset($_POST['requestFunction'])) { // 是否有要请求的类别
             $returns = new UnionReturnInterface('400','提供信息不完整，请联系管理员');
             echo $returns;
         }
-    }
-    else {
+    } elseif ($_POST['requestFunction'] === 'directlyLogin') {
+        if(isset($_SESSION['userID'],$_SESSION['userName'],$_SESSION['isLogin']) && $_SESSION['isLogin']===hash('sha256',session_id().$_SESSION['userID'].'true')) {
+            echo 'true';
+        }
+    } else {
         $returns = new UnionReturnInterface('404', "功能不存在");
         echo $returns;
     }

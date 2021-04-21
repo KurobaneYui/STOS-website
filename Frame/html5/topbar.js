@@ -5,7 +5,7 @@ $(function(){
         if(status==="success"){
             if(a['ReturnCode']==='400') {
                 alert("未登录，请先登录。如无法登陆，请联系管理员");
-    //            window.location.href="/Users/Authentication/login.html"
+                window.location.href="/Users/Authentication/login.html"
             }
             else if(a['ReturnCode']==='401') {
                 alert('权限不足，请联系管理员处理');
@@ -34,4 +34,13 @@ $(function(){
             alert("请检查网络连接，或稍后再试");
         }
     });
+    // 修复手机视角下，侧边栏菜单多次点击时图标错误
+    $("#repair-icon").parent().parent().click(function (){
+        setTimeout(function(){
+            let a = $("#repair-icon").prop("class").split(' ');
+            if(a[1]==="ti-menu") {
+                $("#repair-icon").prop("class",a[0]+' '+a[2]);
+            }
+        },25);
+    })
 });

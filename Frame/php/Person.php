@@ -184,7 +184,7 @@ class Person
         if (!function_exists('gender_filter')) {
             function gender_filter($gender) // 性别过滤器
             {
-                $pattern = '/^(男|女)$/u';
+                $pattern = '/^[男女]$/u';
                 if(preg_match($pattern,$gender)) {
                     return $gender;
                 }
@@ -194,7 +194,7 @@ class Person
         }
         if (!function_exists('studentID_filter')) {
             function studentID_filter($studentID) { // 学号过滤器
-                $pattern = "/^20[1-3]\d[a-zA-Z0-9]{8,9}$/";
+                $pattern = "/^20[1-5]\d[a-zA-Z0-9]{8,9}$/";
                 if(preg_match($pattern,$studentID)) {
                     return $studentID;
                 }
@@ -224,7 +224,7 @@ class Person
         }
         if (!function_exists('dormitory_filter')){
             function dormitory_filter($dormitory ) { // 寝室_苑过滤器
-                $pattern = '/^((学知苑)|(硕丰苑)|(博瀚苑)|(欣苑)|(校内))$/u';
+                $pattern = '/^((学知苑)|(硕丰苑)|(校外)|(校内))$/u';
                 if(preg_match($pattern,$dormitory)) {
                     return $dormitory;
                 }

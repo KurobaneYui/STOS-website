@@ -10,10 +10,10 @@ require_once ROOT_PATH . "/Frame/php/Tools/Authorization.php";
 if (!function_exists("getNameWorkforPage")) {
     function getNameWorkforPage(): array{ // 提供给用户中心页面右上角的个人信息简介
         $userID = $_SESSION["userID"];
-        // TODO:check authorization 属于个人级别的本人保密信息
-        if(!check_authorization("")) {
-            throw new STSAException("无权限查看个人信息",401);
-        }
+        // check authorization 属于个人级别的非保密信息
+//        if(!check_authorization(['team_leader'=>true,'group_leader'=>true,'member'=>true])) {
+//            throw new STSAException("无权限查看个人信息",401);
+//        } 本函数暂且只会由本人调用，无需检查权限
 
         $session = new DatabaseConnector();
         $sql = "SELECT `部门名称`,`岗位` FROM 工作信息,部门信息 WHERE `所属组号`=`部门编号` and `学号`='{$userID}';";

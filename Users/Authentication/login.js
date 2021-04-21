@@ -1,3 +1,11 @@
+function directlyLogin() { // 如果已登录则直接跳转首页
+    $.post('/Ajax/Users/login.php',
+       {requestFunction:"directlyLogin"},
+       function(data,status){
+            if (status === 'success' && data === 'true') $(window).attr('location','../UserCenter/index.html');
+        });
+}
+
 function remembered() { // 自动补全“记住我”保存的用户名和密码
     let student = $("input[placeholder='Username']");
     let password = $("input[placeholder='Password']");
@@ -162,13 +170,14 @@ function reset_password() { // 点击重置按钮的功能
 }
 
 $("#loginform").submit(function(e){
-    e.preventDefault();
+    e.preventDefault(); // 表单提交事件发生时拦截，执行自定义函数。拦截表单提交事件并不阻止表单检查，因此可以自动检查required属性
     login();
   });
 $("#recoverform").submit(function(e){
-    e.preventDefault();
+    e.preventDefault(); // 表单提交事件发生时拦截，执行自定义函数。拦截表单提交事件并不阻止表单检查，因此可以自动检查required属性
     reset_password();
   });
-window.onload=function () { // 记住密码相关功能函数
+window.onload=function () { // 直接登录和记住密码相关功能函数
+    directlyLogin();
     remembered();
 };

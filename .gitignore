@@ -3,7 +3,7 @@ Thumbs.db
 ehthumbs.db
 Desktop.ini
 
-_notes
-_compareTemp
-.idea
-.vscode
+_notes/
+_compareTemp/
+.idea/
+.vscode/
