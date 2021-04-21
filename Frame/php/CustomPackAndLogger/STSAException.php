@@ -1,8 +1,6 @@
 <?php
 
 
-use JetBrains\PhpStorm\Pure;
-
 if (!isset($__STSAException__)) {
     $__STSAException__ = true;
 
@@ -25,7 +23,7 @@ if (!isset($__STSAException__)) {
          * @param Throwable|null $previous
          * @param string $show
          */
-        #[Pure] public function __construct(string $message = "", int $code = 0, Throwable $previous = null, string $show =""){
+        public function __construct(string $message = "", int $code = 0, Throwable $previous = null, string $show =""){
             parent::__construct($message, $code, $previous);
             $this->errorCode= (string)$code;
             $this->errorString = $message;

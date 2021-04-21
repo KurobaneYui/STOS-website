@@ -13,8 +13,8 @@
     <title>学风督导队-注册</title>
     <!-- Bootstrap Core CSS -->
     <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.5.3/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap-switch -->
-    <link href="https://cdn.bootcdn.net/ajax/libs/bootstrap-switch/4.0.0-alpha.1/css/bootstrap-switch.min.css" rel="stylesheet">
+    <!-- switchery -->
+    <link href="https://cdn.bootcdn.net/ajax/libs/switchery/0.8.2/switchery.css" rel="stylesheet">
     <!--  Sweet Alert CSS  -->
     <!--link href="../../assets/node_modules/sweetalert/sweetalert.css" rel="stylesheet" type="text/css"-->
     <!-- page css -->
@@ -68,7 +68,7 @@
                                 <div class="form-group">
                                     <div class="col-xs-12">
                                         <label>性别
-                                            <input type="checkbox" id="gender" data-on-color="danger" data-off-color="info" data-on-text="女" data-off-text="男" required></label>
+                                            <br/>女 <input type="checkbox" id="gender" class='switchery-idx' required> 男</label>
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -92,8 +92,8 @@
                                 </div>
                                 <div class="form-group">
                                     <div class="col-xs-12">
-                                        <label>建档立卡 <a href="javascript:void(0);" data-toggle="popover" data-trigger="focus" data-placement="right" title="相关信息请查阅百度百科（https://baike.baidu.com/item/建档立卡贫困户）"><i class="ti-help-alt"></i></a>
-                                            <input type="checkbox" id="subsidyDossier" data-on-color="success" data-off-color="info" data-on-text="是" data-off-text="否" required></label>
+                                        <label>建档立卡 <a href="javascript:void(0);" data-toggle="popover" data-trigger="focus" data-placement="right" title="相关信息请查阅百度百科：建档立卡贫困户）" tabindex="0"><i class="ti-help-alt"></i></a>
+                                            <br/><input type="checkbox" id="subsidyDossier" class='switchery-idx' required></label>
                                     </div>
                                 </div>
                                 <h4 class="box-title m-b-20">登录信息</h4>
@@ -131,8 +131,29 @@
                                 </div>
                                 <div class="form-group">
                                     <div class="col-xs-12">
-                                        <label>学院（填写完整，如：“通信与信息工程学院”）
-                                            <input class="form-control" type="text" required="" placeholder="School"></label>
+                                        <label>学院
+                                            <select class="form-control" required="" id="school">
+                                                <option value="">请选择</option>
+                                                <option value="信息与通信工程学院">信息与通信工程学院</option>
+                                                <option value="电子科学与工程学院">电子科学与工程学院</option>
+                                                <option value="材料与能源学院">材料与能源学院</option>
+                                                <option value="机械与电气工程学院">机械与电气工程学院</option>
+                                                <option value="光电科学与工程学院">光电科学与工程学院</option>
+                                                <option value="自动化工程学院">自动化工程学院</option>
+                                                <option value="资源与环境学院">资源与环境学院</option>
+                                                <option value="计算机科学与工程学院">计算机科学与工程学院</option>
+                                                <option value="信息与软件工程学院">信息与软件工程学院</option>
+                                                <option value="航空航天学院">航空航天学院</option>
+                                                <option value="数学科学学院">数学科学学院</option>
+                                                <option value="物理学院">物理学院</option>
+                                                <option value="医学院">医学院</option>
+                                                <option value="生命科学与技术学院">生命科学与技术学院</option>
+                                                <option value="经济与管理学院">经济与管理学院</option>
+                                                <option value="公共管理学院">公共管理学院</option>
+                                                <option value="外国语学院">外国语学院</option>
+                                                <option value="格拉斯哥学院">格拉斯哥学院</option>
+                                                <option value="英才实验学院">英才实验学院</option>
+                                            </select>
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -217,8 +238,8 @@
     <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script> 
     <!-- Bootstrap Core JavaScript --> 
     <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.5.3/js/bootstrap.bundle.min.js"></script>
-    <!-- Bootstrap-switch -->
-    <script src="https://cdn.bootcdn.net/ajax/libs/bootstrap-switch/4.0.0-alpha.1/js/bootstrap-switch.min.js"></script>
+    <!-- switchery -->
+    <script src="https://cdn.bootcdn.net/ajax/libs/switchery/0.8.2/switchery.js"></script>
     <!--  Sweet Alert Javascript  -->
     <script src="https://cdn.bootcdn.net/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
     <!--Custom JavaScript -->
@@ -242,15 +263,15 @@
         function register() { // 点击注册按钮的功能
             let name = $("input[placeholder='Name']").val();
             let studentID = $("input[placeholder='StudentID']").val();
-            let gender = $("#gender").prop('checked'); // false是男，true是女
+            let gender = $("#gender").prop('checked'); // false是女，true是男
             let ethnicity = $("input[placeholder='Ethnicity']").val();
             let hometown = $("input[placeholder='Hometown']").val();
             let bankID = $("input[placeholder='BankID']").val();
-            let subsidyDossier = $("#subsidyDossier").prop('checked'); // true是，false否
+            let subsidyDossier = $("#subsidyDossier").prop('checked'); // false否，true是
             let phoneNumber = $("input[placeholder='PhoneNumber']").val();
             let QQ = $("input[placeholder='QQ']").val();
             let campus = $("#campus").val();
-            let School = $("input[placeholder='School']").val();
+            let School = $("#school").val()
             let dormitory_yuan = $("#dormitory_yuan").val();
             let dormitory_dong = $("input[placeholder='Dormitory(d)']").val();
             let dormitory_hao = $("input[placeholder='Dormitory(h)']").val();
@@ -260,7 +281,7 @@
                 requestFunction:"register",
                 Name:name,
                 StudentID:studentID,
-                Gender:gender?'女':'男',
+                Gender:gender?'男':'女',
                 Ethnicity:ethnicity,
                 Hometown:hometown,
                 BankID:bankID,
@@ -303,8 +324,10 @@
         }
         $(document).ready(function () {
             $("[data-toggle='popover']").popover();
-            // bootstrap switch
-            $("#gender,#subsidyDossier").bootstrapSwitch();
+            let elems = Array.prototype.slice.call(document.querySelectorAll('.switchery-idx'));
+            elems.forEach(function(html) {
+              var switchery = new Switchery(html,{ color: '#1eace1', secondaryColor: '#e13c1e', size: 'small' });
+            });
         });
     </script>
 </body>

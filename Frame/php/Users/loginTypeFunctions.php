@@ -5,6 +5,7 @@ require_once ROOT_PATH . "/Frame/php/CustomPackAndLogger/STSAException.php";
 require_once ROOT_PATH . "/Frame/php/CustomPackAndLogger/UnionReturnInterface.php";
 require_once ROOT_PATH . "/Frame/php/Connector/DatabaseConnector.php";
 require_once ROOT_PATH . "/Frame/php/Tools/Authorization.php";
+require_once ROOT_PATH . "/Frame/php/Tools/DeviceAndIPDetector.php";
 // TODO:require log file
 
 if(!function_exists("getCookie")) {
@@ -25,6 +26,9 @@ if(!function_exists("login")) {
             throw new STSAException("数据库查询错误",417);
         }
 
+        // 获取设备信息
+        $LogInfo = new DeviceAndIPDetector();
+
         $rows = $passwordCheck->num_rows;
         if ($rows===1) {
             $sql = "select `姓名` from `成员基本信息` where `学号`='{$log_info['学号']}'";
@@ -39,8 +43,27 @@ if(!function_exists("login")) {
                 setcookie('STSA_un', '', time() - 604800);
                 setcookie('STSA_pd', '', time() - 604800);
             }
+            // 记录成功的登录信息
+            $sql = "select id from 登录信息 order by id DESC;";
+            $id = $session->query($sql)->fetch_assoc()["id"];
+            if($id === null) {$id = 0;}
+                else {++$id;}
+            $sql = "insert into `登录信息` (`学号`, `操作系统`, `浏览器`, `语言`, `访问IP`, `访问地址`, `访问时间`, `登录结果`, `id`)
+                    value ('{$log_info['学号']}', '$LogInfo->OS', '$LogInfo->browser', '$LogInfo->language', '$LogInfo->IP', '$LogInfo->address', '$LogInfo->datetime', '成功', $id);";
+            $session->query($sql);
+            $session->commit();
+
             return [true];
         }
+        // 记录失败的登录信息
+        $sql = "select id from 登录信息 order by id DESC;";
+        $id = $session->query($sql)->fetch_assoc()["id"];
+        if($id === null) {$id = 0;}
+            else {++$id;}
+        $sql = "insert into `登录信息` (`学号`, `操作系统`, `浏览器`, `语言`, `访问IP`, `访问地址`, `访问时间`, `登录结果`, `id`)
+                value ('{$log_info['学号']}', '$LogInfo->OS', '$LogInfo->browser', '$LogInfo->language', '$LogInfo->IP', '$LogInfo->address', '$LogInfo->datetime', '失败', $id);";
+        $session->query($sql);
+        $session->commit();
 
         return [false];
     }

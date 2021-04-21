@@ -10,8 +10,8 @@ require_once ROOT_PATH . "/Frame/php/Tools/Authorization.php";
 if (!function_exists("getWageInfo")) {
     function getWageInfo() { // 提供给队长用于财务报表
         $userID = $_SESSION["userID"];
-        // TODO:check authorization 属于队长级别的他人保密信息
-        if(!check_authorization("")) {
+        // check authorization 属于队长级别的他人保密信息
+        if(!check_authorization(['team_leader'=>true,'group_leader'=>false,'member'=>false])) {
             throw new STSAException("无权限查看队员工资信息",401);
         }
 

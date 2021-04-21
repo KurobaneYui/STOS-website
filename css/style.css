@@ -66,8 +66,8 @@ File: scss
 
 @import url("https://fonts.googleapis.com/css?family=Montserrat:300,400,500,600,700");
 
-/******************* 
-Global Styles 
+/*******************
+Global Styles
 *******************/
 
 @import url(../scss/icons/font-awesome/css/font-awesome.min.css);
@@ -1342,8 +1342,8 @@ File: scss
 /*Extra Variable*/
 
 
-/*============================================================== 
- For all pages 
+/*==============================================================
+ For all pages
  ============================================================== */
 
 #main-wrapper {
@@ -3389,7 +3389,7 @@ Buttons
 }
 
 
-/*============================================================== 
+/*==============================================================
  Buttons page
  ============================================================== */
 
@@ -3452,7 +3452,7 @@ Custom-select
 ******************/
 
 .custom-select {
-    background: url(../../assets/images/custom-select.png) right 0.75rem center no-repeat;
+    background: url(../assets/images/custom-select.png) right 0.75rem center no-repeat;
 }
 
 
@@ -3600,7 +3600,7 @@ Form summernote
 }
 
 
-/*============================================================== 
+/*==============================================================
 Form addons page
 ============================================================== */
 
@@ -3666,7 +3666,7 @@ Form addons page
 }
 
 
-/*============================================================== 
+/*==============================================================
 Form Material page
  ============================================================== */
 
@@ -3728,7 +3728,7 @@ Form Material page
 
 
 /*******************
-Form validation error 
+Form validation error
 ******************/
 
 .error .help-block {
@@ -3737,7 +3737,7 @@ Form validation error
 
 
 /*******************
-File Upload 
+File Upload
 ******************/
 
 .fileupload {
@@ -5667,6 +5667,8 @@ File: scss
     -webkit-box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
     border-radius: 100%;
+    margin-top:-80px;
+    margin-bottom:20px
 }
 
 .little-profile .soc-pro a {
@@ -5866,7 +5868,7 @@ File: scss
 }
 
 
-/*============================================================== 
+/*==============================================================
 widget-chart-page product review
  ============================================================== */
 
@@ -6188,7 +6190,7 @@ File: scss
 }
 
 .has-success .form-control-success {
-    background-image: url(../../assets/images/icon/success.svg);
+    background-image: url(../assets/images/icon/success.svg);
 }
 
 .has-success .form-control {
@@ -6204,7 +6206,7 @@ File: scss
 }
 
 .has-warning .form-control-warning {
-    background-image: url(../../assets/images/icon/warning.svg);
+    background-image: url(../assets/images/icon/warning.svg);
 }
 
 .has-warning .form-control {
@@ -6220,7 +6222,7 @@ File: scss
 }
 
 .has-danger .form-control-danger {
-    background-image: url(../../assets/images/icon/danger.svg);
+    background-image: url(../assets/images/icon/danger.svg);
 }
 
 .has-danger .form-control {
@@ -6311,8 +6313,8 @@ File: scss
 */
 
 
-/*============================================================== 
- For Laptop & above all (1650px) 
+/*==============================================================
+ For Laptop & above all (1650px)
  ============================================================== */
 
 @media (min-width: 1650px) {
@@ -6338,8 +6340,8 @@ File: scss
 }
 
 
-/*============================================================== 
- For Laptop & above all (1370px) 
+/*==============================================================
+ For Laptop & above all (1370px)
  ============================================================== */
 
 @media (max-width: 1370px) {
@@ -6356,8 +6358,8 @@ File: scss
 }
 
 
-/*-- ============================================================== 
- Small Desktop & above all (1024px) 
+/*-- ==============================================================
+ Small Desktop & above all (1024px)
  ============================================================== */
 
 @media (min-width: 1024px) {
@@ -6402,8 +6404,8 @@ File: scss
 }
 
 
-/*-- ============================================================== 
- Ipad & above all(768px) 
+/*-- ==============================================================
+ Ipad & above all(768px)
  ============================================================== */
 
 @media (min-width: 768px) {
@@ -6440,8 +6442,8 @@ File: scss
 }
 
 
-/*-- ============================================================== 
- Phone and below ipad(767px) 
+/*-- ==============================================================
+ Phone and below ipad(767px)
  ============================================================== */
 
 @media (max-width: 767px) {
