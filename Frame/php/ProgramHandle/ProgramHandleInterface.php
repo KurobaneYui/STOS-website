@@ -8,7 +8,7 @@ if (!isset($__ProgramHandleInterface__)) {
     require_once ROOT_PATH . "/Frame/php/CustomPackAndLogger/STSAException.php";
     require_once ROOT_PATH . "/Frame/php/CustomPackAndLogger/UnionReturnInterface.php";
     require_once ROOT_PATH . "/Frame/php/Tools/Authorization.php";
-// TODO:require log file
+    require_once ROOT_PATH . "/Frame/php/CustomPackAndLogger/STSA_log.php";
 
     /**
      * Class ProgramHandleInterface
@@ -25,6 +25,8 @@ if (!isset($__ProgramHandleInterface__)) {
         private array $programReturns = array();
         private int $programReturnCode = 0;
 
+        private STSA_log $logger;
+
         /**
          * ProgramHandleInterface constructor.
          * @param string $programName executable program name
@@ -33,6 +35,7 @@ if (!isset($__ProgramHandleInterface__)) {
          * @throws STSAException
          */
         public function __construct(string $programName, array $programArgv, bool $relative2webroot=false) {
+            $this->logger = new STSA_log();
             $programList = ['python'];
             if(in_array($programName, $programList, true)) {
                 $this->programName = $programName;
@@ -40,7 +43,11 @@ if (!isset($__ProgramHandleInterface__)) {
                 if ($relative2webroot) {
                     $this->programArgv[0] = $this->root_dir.$this->programArgv[0];
                 }
+                $logArgv = implode(' ', $this->programArgv);
+                $this->logger->add_log(__FILE__.':'.__LINE__, "Initial ProgramHandle, ProgramName is {{$this->programName}}, ProgramArgv is {{$logArgv}}", "Log");
             } else {
+                $logArgv = implode(' ', $this->programArgv);
+                $this->logger->add_log(__FILE__.':'.__LINE__, "Initial ProgramHandle, ProgramName is {{$this->programName}}, ProgramArgv is {{$logArgv}}, 指定的程序不存在", "Error");
                 throw new STSAException('指定的程序不存在',417);
             }
         }
@@ -53,6 +60,8 @@ if (!isset($__ProgramHandleInterface__)) {
             $this->programArgv = $programArgv;
             if ($relative2webroot) {
                 $this->programArgv[0] = $this->root_dir.$this->programArgv[0];
+                $logArgv = implode(' ', $this->programArgv);
+                $this->logger->add_log(__FILE__.':'.__LINE__, "Set ProgramArgv, ProgramArgv is {{$logArgv}}", "Log");
             }
         }
 
@@ -63,13 +72,18 @@ if (!isset($__ProgramHandleInterface__)) {
         public function runCode(): array{
             $argvString = implode(' ',$this->programArgv);
             if (!str_starts_with($argvString, "{$this->root_dir}/Program/{$this->programName}/")) {
+                $logArgv = implode(' ', $this->programArgv);
+                $this->logger->add_log(__FILE__.':'.__LINE__, "Run Program, ProgramName is {{$this->programName}}, 可执行程序非指定文件夹", "Error");
                 throw new STSAException("可执行程序非指定文件夹",417);
             }
             exec("{$this->programName} {$argvString}",$this->programReturns,$this->programReturnCode);
             if ($this->programReturnCode!==0) {
                 $returnString = implode('\n',$this->programReturns);
+                $logArgv = implode(' ', $this->programArgv);
+                $this->logger->add_log(__FILE__.':'.__LINE__, "Run Program, ProgramName is {{$this->programName}}, ProgramReturnCode is {{$this->programReturnCode}}, ProgramReturns is {{$returnString}}, 程序运行中出现错误", "Error");
                 throw new STSAException("程序运行中错误: {$returnString}",417);
             }
+            $this->logger->add_log(__FILE__.':'.__LINE__, "Run Program, ProgramName is {{$this->programName}}, 程序成功运行", "Log");
             return $this->programReturns;
         }
     }

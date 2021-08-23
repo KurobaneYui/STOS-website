@@ -17,7 +17,7 @@
     <!--link href="../../assets/node_modules/sweetalert/sweetalert.css" rel="stylesheet" type="text/css"-->
     <!--  Slimscrollbar Scrollbar CSS  -->
     <link href="https://cdn.bootcdn.net/ajax/libs/jquery.perfect-scrollbar/0.8.1/css/perfect-scrollbar.min.css"
-        rel="stylesheet">
+          rel="stylesheet">
     <!--  Waves (by Google) CSS  -->
     <link href="https://cdn.bootcdn.net/ajax/libs/node-waves/0.7.6/waves.min.css" rel="stylesheet">
     <!-- Custom CSS -->
@@ -27,202 +27,221 @@
 </head>
 
 <body class="fix-header fix-sidebar card-no-border">
-    <!-- ============================================================== -->
-    <!-- Preloader - style you can find in spinners.css -->
-    <!-- ============================================================== -->
-    <div class="preloader">
-        <div class="loader">
-            <div class="loader__figure"></div>
-            <p class="loader__label">S T S A</p>
-            <p class="loader__label">学风督导队</p>
-            <p class="loader__label">Supervision Team of Study Atmosphere</p>
-        </div>
+<!-- ============================================================== -->
+<!-- Preloader - style you can find in spinners.css -->
+<!-- ============================================================== -->
+<div class="preloader">
+    <div class="loader">
+        <div class="loader__figure"></div>
+        <p class="loader__label">S T S A</p>
+        <p class="loader__label">学风督导队</p>
+        <p class="loader__label">Supervision Team of Study Atmosphere</p>
     </div>
+</div>
+<!-- ============================================================== -->
+<!-- Main wrapper - style you can find in pages.scss -->
+<!-- ============================================================== -->
+<div id="main-wrapper">
     <!-- ============================================================== -->
-    <!-- Main wrapper - style you can find in pages.scss -->
+    <!-- Topbar header - style you can find in pages.scss -->
     <!-- ============================================================== -->
-    <div id="main-wrapper">
+    <header class="topbar" id="loadTopbar"> </header>
+    <!-- ============================================================== -->
+    <!-- End Topbar header - you can find in /Frame/html5/user_center_topbar_frame.html -->
+    <!-- ============================================================== -->
+    <!-- ============================================================== -->
+    <!-- Left Sidebar - you can find in /Frame/html5/user_center_leftSidebar_frame.html  -->
+    <!-- ============================================================== -->
+    <aside class="left-sidebar" id="loadLeftSidebar"> </aside>
+    <!-- ============================================================== -->
+    <!-- End Left Sidebar - style you can find in sidebar.scss  -->
+    <!-- ============================================================== -->
+    <!-- ============================================================== -->
+    <!-- Page wrapper  -->
+    <!-- ============================================================== -->
+    <div class="page-wrapper">
         <!-- ============================================================== -->
-        <!-- Topbar header - style you can find in pages.scss -->
+        <!-- Container fluid  -->
         <!-- ============================================================== -->
-        <header class="topbar" id="loadTopbar"> </header>
-        <!-- ============================================================== -->
-        <!-- End Topbar header - you can find in /Frame/html5/user_center_topbar_frame.html -->
-        <!-- ============================================================== -->
-        <!-- ============================================================== -->
-        <!-- Left Sidebar - you can find in /Frame/html5/user_center_leftSidebar_frame.html  -->
-        <!-- ============================================================== -->
-        <aside class="left-sidebar" id="loadLeftSidebar"> </aside>
-        <!-- ============================================================== -->
-        <!-- End Left Sidebar - style you can find in sidebar.scss  -->
-        <!-- ============================================================== -->
-        <!-- ============================================================== -->
-        <!-- Page wrapper  -->
-        <!-- ============================================================== -->
-        <div class="page-wrapper">
+        <div class="container-fluid">
             <!-- ============================================================== -->
-            <!-- Container fluid  -->
+            <!-- Bread crumb and right sidebar toggle -->
             <!-- ============================================================== -->
-            <div class="container-fluid">
-                <!-- ============================================================== -->
-                <!-- Bread crumb and right sidebar toggle -->
-                <!-- ============================================================== -->
-                <div class="row page-titles">
-                    <div class="col-md-5 align-self-center">
-                        <h3 class="text-themecolor">成员变更</h3>
-                        <ol class="breadcrumb">
-                            <li class="breadcrumb-item"><a
-                                    href="javascript:window.location.href='..'">个人中心</a></li>
-                            <li class="breadcrumb-item">团队管理</li>
-                            <li class="breadcrumb-item">成员管理</li>
-                            <li class="breadcrumb-item active">成员变更</li>
-                        </ol>
-                    </div>
+            <div class="row page-titles">
+                <div class="col-md-5 align-self-center">
+                    <h3 class="text-themecolor">成员变更</h3>
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a
+                                href="javascript:window.location.href='..'">个人中心</a></li>
+                        <li class="breadcrumb-item">团队管理</li>
+                        <li class="breadcrumb-item">成员管理</li>
+                        <li class="breadcrumb-item active">成员变更</li>
+                    </ol>
                 </div>
-                <!-- ============================================================== -->
-                <!-- End Bread crumb and right sidebar toggle -->
-                <!-- ============================================================== -->
-                <!-- ============================================================== -->
-                <!-- 主体 -->
-                <!-- ============================================================== -->
-
-                <div class="row card-deck">
-                    <div class="card shadow col-12" style="margin-left: 1%;margin-top: 1%; margin-right: 2%;">
-                        <div class="card-body">
-                            <h3 class="card-title">正式成员</h3>
-                            <table class="table ">
-                                <thead>
-                                    <tr class="bg-light-info">
-                                        <th scope="col">序号</th>
-                                        <th scope="col">姓名</th>
-                                        <th scope="col">学号</th>
-                                        <th scope="col">操作</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <th scope="row">1</th>
-                                        <td>林之时</td>
-                                        <td>2021030904004</td>
-                                        <td>
-                                            <button type="submit" class="btn btn-info btn-rounded btn-sm">移出</button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Otto</td>
-                                        <td>Otto</td>
-                                        <td>Otto</td>
-                                        <td>Otto</td>
-
-                                    </tr>
-                                    <tr>
-                                        <td>Otto</td>
-                                        <td>Otto</td>
-                                        <td>Otto</td>
-                                        <td>Otto</td>
-
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <div class="card shadow col-12" style="margin-left: 1%;margin-top: 1%; margin-right: 2%;">
-                        <div class="card-body">
-                            <h3 class="card-title">预备成员</h3>
-                            <table class="table ">
-                                <thead>
-                                    <tr class="bg-light-info">
-                                        <th scope="col">序号</th>
-                                        <th scope="col">姓名</th>
-                                        <th scope="col">学号</th>
-                                        <th scope="col">操作</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <th scope="row">1</th>
-                                        <td>林之时</td>
-                                        <td>2021030904004</td>
-
-                                        <td>
-                                            <button type="submit" class="btn btn-info btn-rounded btn-sm">加入</button>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Otto</td>
-                                        <td>Otto</td>
-                                        <td>Otto</td>
-                                        <td>Otto</td>
-
-                                    </tr>
-                                    <tr>
-                                        <td>Otto</td>
-                                        <td>Otto</td>
-                                        <td>Otto</td>
-                                        <td>Otto</td>
-
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-                <!-- ============================================================== -->
-                <!-- End 主体 -->
-                <!-- ============================================================== -->
             </div>
             <!-- ============================================================== -->
-            <!-- End Container fluid  -->
+            <!-- End Bread crumb and right sidebar toggle -->
             <!-- ============================================================== -->
             <!-- ============================================================== -->
-            <!-- footer -->
+            <!-- 主体 -->
             <!-- ============================================================== -->
-            <footer class="footer"> © 2021 电子科技大学 学工部 学风督导队 </footer>
+
+            <div class="row">
+                <div class="col-md-12 col-lg-6">
+                    <div class="card shadow">
+                        <div class="card-body">
+                            <h3 class="card-title" id="fullMember">正式成员</h3>
+<!--                            <div class="table-responsive">-->
+<!--                                <table class="table table-striped">-->
+<!--                                    <thead>-->
+<!--                                    <tr class="bg-light-info">-->
+<!--                                        <th scope="col">序号</th>-->
+<!--                                        <th scope="col">姓名</th>-->
+<!--                                        <th scope="col">学号</th>-->
+<!--                                        <th scope="col">操作</th>-->
+<!--                                    </tr>-->
+<!--                                    </thead>-->
+<!--                                    <tbody>-->
+<!--                                    <tr>-->
+<!--                                        <th scope="row">1</th>-->
+<!--                                        <td>林之时</td>-->
+<!--                                        <td>2021030904004</td>-->
+<!--                                        <td>-->
+<!--                                            <button type="submit" class="btn btn-info btn-rounded btn-sm">移出</button>-->
+<!--                                        </td>-->
+<!--                                    </tr>-->
+<!--                                    <tr>-->
+<!--                                        <td>Otto</td>-->
+<!--                                        <td>Otto</td>-->
+<!--                                        <td>Otto</td>-->
+<!--                                        <td>Otto</td>-->
+<!--                                    </tr>-->
+<!--                                    <tr>-->
+<!--                                        <td>Otto</td>-->
+<!--                                        <td>Otto</td>-->
+<!--                                        <td>Otto</td>-->
+<!--                                        <td>Otto</td>-->
+<!--                                    </tr>-->
+<!--                                    </tbody>-->
+<!--                                </table>-->
+<!--                            </div>-->
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12 col-lg-6">
+                    <div class="card shadow">
+                        <div class="card-body">
+                            <h3 class="card-title" id="pre-Member">预备成员</h3>
+                            <p class="card-subtitle">展示最新注册的20个成员，其他预备成员请通过搜索框添加</p>
+                            <p class="card-subtitle">搜索框支持搜索姓名和学号（二选一）</p>
+                            <div class="row m-b-10">
+                                <div class="col-3"><button onclick="" type="button" class="btn btn-sm btn-rounded btn-info">搜索成员</button></div>
+                                <div class="col-9"><input type="text" class="form-control"/></div>
+                            </div>
+<!--                            <div class="alert alert-info">-->
+<!--                                <div class="row">-->
+<!--                                    <p class="col-4">${first}</p>-->
+<!--                                    <p class="col-4">${second}</p>-->
+<!--                                    <div class="col-4">-->
+<!--                                        <button onClick="fun2()" type="button" class="btn btn-info btn-rounded btn-sm">加入</button>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                            <div class="table-responsive">-->
+<!--                                <table class="table table-striped">-->
+<!--                                    <thead>-->
+<!--                                    <tr class="bg-light-info">-->
+<!--                                        <th scope="col">序号</th>-->
+<!--                                        <th scope="col">姓名</th>-->
+<!--                                        <th scope="col">学号</th>-->
+<!--                                        <th scope="col">操作</th>-->
+<!--                                    </tr>-->
+<!--                                    </thead>-->
+<!--                                    <tbody>-->
+<!--                                    <tr>-->
+<!--                                        <th scope="row">1</th>-->
+<!--                                        <td>林之时</td>-->
+<!--                                        <td>2021030904004</td>-->
+<!--                                        <td>-->
+<!--                                            <button type="submit" class="btn btn-info btn-rounded btn-sm">加入</button>-->
+<!--                                        </td>-->
+<!--                                    </tr>-->
+<!--                                    <tr>-->
+<!--                                        <td>Otto</td>-->
+<!--                                        <td>Otto</td>-->
+<!--                                        <td>Otto</td>-->
+<!--                                        <td>Otto</td>-->
+<!--                                    </tr>-->
+<!--                                    <tr>-->
+<!--                                        <td>Otto</td>-->
+<!--                                        <td>Otto</td>-->
+<!--                                        <td>Otto</td>-->
+<!--                                        <td>Otto</td>-->
+<!--                                    </tr>-->
+<!--                                    </tbody>-->
+<!--                                </table>-->
+<!--                            </div>-->
+                        </div>
+                    </div>
+                </div>
+            </div>
             <!-- ============================================================== -->
-            <!-- End footer -->
+            <!-- End 主体 -->
             <!-- ============================================================== -->
         </div>
         <!-- ============================================================== -->
-        <!-- End Page wrapper  -->
+        <!-- End Container fluid  -->
+        <!-- ============================================================== -->
+        <!-- ============================================================== -->
+        <!-- footer -->
+        <!-- ============================================================== -->
+        <footer class="footer"> © 2021 电子科技大学 学工部 学风督导队 </footer>
+        <!-- ============================================================== -->
+        <!-- End footer -->
         <!-- ============================================================== -->
     </div>
     <!-- ============================================================== -->
-    <!-- End Wrapper -->
+    <!-- End Page wrapper  -->
     <!-- ============================================================== -->
+</div>
+<!-- ============================================================== -->
+<!-- End Wrapper -->
+<!-- ============================================================== -->
 
-    <!-- ============================================================== -->
-    <!-- All Script -->
-    <!-- ============================================================== -->
-    <!-- jQuery -->
-    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <!-- load top bar and side bar -->
-    <script>
-        $.ajax({
-            async: false, url: "/Frame/html5/user_center_topbar_frame.html", success: function (result) {
-                $("#loadTopbar").html(result);
-            }
-        });
-        $.ajax({
-            async: false, url: "/Frame/html5/user_center_leftSidebar_frame.html", success: function (result) {
-                $("#loadLeftSidebar").html(result);
-            }
-        });
-        $.getScript("/Frame/html5/topbar.js");
-    </script>
-    <!-- Bootstrap Core JavaScript -->
-    <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.5.3/js/bootstrap.bundle.min.js"></script>
-    <!-- slimscrollbar scrollbar JavaScript -->
-    <script
+<!-- ============================================================== -->
+<!-- All Script -->
+<!-- ============================================================== -->
+<!-- jQuery -->
+<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<!-- load top bar and side bar -->
+<script>
+    $.ajax({
+        async: false, url: "/Frame/html5/user_center_topbar_frame.html", success: function (result) {
+            $("#loadTopbar").html(result);
+        }
+    });
+    $.ajax({
+        async: false, url: "/Frame/html5/user_center_leftSidebar_frame.html", success: function (result) {
+            $("#loadLeftSidebar").html(result);
+        }
+    });
+    $.getScript("/Frame/html5/topbar.js");
+</script>
+<!-- Bootstrap Core JavaScript -->
+<script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.5.3/js/bootstrap.bundle.min.js"></script>
+<!-- slimscrollbar scrollbar JavaScript -->
+<script
         src="https://cdn.bootcdn.net/ajax/libs/jquery.perfect-scrollbar/0.8.1/js/perfect-scrollbar.jquery.min.js"></script>
-    <!-- Sweet Alert Javascript -->
-    <script src="https://cdn.bootcdn.net/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
-    <!-- Wave Effects -->
-    <!-- script src="/js/waves.js"></script -->
-    <script src="https://cdn.bootcdn.net/ajax/libs/node-waves/0.7.6/waves.min.js"></script>
-    <!-- Menu sidebar -->
-    <script src="/js/sidebarmenu.js"></script>
-    <!-- Custom JavaScript -->
-    <script src="/js/custom.min.js"></script>
+<!-- Sweet Alert Javascript -->
+<script src="https://cdn.bootcdn.net/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+<!-- Wave Effects -->
+<!-- script src="/js/waves.js"></script -->
+<script src="https://cdn.bootcdn.net/ajax/libs/node-waves/0.7.6/waves.min.js"></script>
+<!-- Menu sidebar -->
+<script src="/js/sidebarmenu.js"></script>
+<!-- Custom JavaScript -->
+<script src="/js/custom.min.js"></script>
+<script src="./membersManagement.js"></script>
 </body>
 
 </html>

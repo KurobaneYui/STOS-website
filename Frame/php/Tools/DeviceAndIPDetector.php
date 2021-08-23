@@ -4,9 +4,10 @@
 if (!isset($__DeviceAndIPDetector__)) {
     $__DeviceAndIPDetector__ = true;
 
-    require __DIR__ . '/../../../ROOT_PATH.php';
-    require ROOT_PATH . '/Frame/php/CustomPackAndLogger/STSAException.php';
-    require ROOT_PATH . '/Frame/php/Tools/DateTools.php';
+    require_once __DIR__ . '/../../../ROOT_PATH.php';
+    require_once ROOT_PATH . '/Frame/php/CustomPackAndLogger/STSAException.php';
+    require_once ROOT_PATH . '/Frame/php/Tools/DateTools.php';
+    require_once ROOT_PATH . "/Frame/php/CustomPackAndLogger/STSA_log.php";
 
     /**
      * Class DeviceAndIPDetector
@@ -22,6 +23,7 @@ if (!isset($__DeviceAndIPDetector__)) {
         public string $language;
         public string $OS;
         public string $datetime;
+        private STSA_log $logger;
         // in development
         private string $onlineIP;
 
@@ -33,6 +35,7 @@ if (!isset($__DeviceAndIPDetector__)) {
          */
         public function __construct()
         {
+            $this->logger = new STSA_log();
             try {
                 $this->detectAddress();
                 $this->detectBrowser();
@@ -41,7 +44,7 @@ if (!isset($__DeviceAndIPDetector__)) {
                 $this->detectOS();
                 $this->detectDatetime();
             } catch (JsonException $err) {
-                // TODO: add Error LOG
+                $this->logger->add_log(__FILE__.":".__LINE__, "Init DeviceAndDetector, json相关错误, 错误信息:\n{$err}", "Error");
                 throw new STSAException('When construct DeviceAndIPDetector, we meet an json error in detectAddress method.', 21, $err);
             }
         }
@@ -61,7 +64,7 @@ if (!isset($__DeviceAndIPDetector__)) {
                 try {
                     $charset = json_decode($charset, true, 1024, JSON_THROW_ON_ERROR);
                 }catch (JsonException $err) {
-                    // TODO: add ERROR LOG
+                    $this->logger->add_log(__FILE__.":".__LINE__, "DeviceAndDetector detectAddress, json解包错误, 错误信息:\n{$err}", "Error");
                     throw $err;
                 }
                 $this->address = $charset['addr']; // 返回一个二维数组
@@ -98,7 +101,7 @@ if (!isset($__DeviceAndIPDetector__)) {
                 $this->browser = $br;
                 return;
             }
-
+            $this->logger->add_log(__FILE__.":".__LINE__, "DeviceAndDetector detectBrowser, 未匹配到已知浏览器", "Log");
             $this->browser = 'Error';
         }
 
@@ -113,7 +116,7 @@ if (!isset($__DeviceAndIPDetector__)) {
             if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
                 $ip = $_SERVER['HTTP_CLIENT_IP'];
                 if ($ip) {
-                    $ips = array_unshift($ips, $ip);
+                    $ip = array_unshift($ip, $ip);
                 }
             }
             if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) { // 获取代理ip
@@ -142,19 +145,26 @@ if (!isset($__DeviceAndIPDetector__)) {
          */
         private function detectLanguage(): void{
             if (!empty($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
-                $lang = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
-                $lang = substr($lang, 0, 5);
-                if (false !== stripos($lang, 'zh-cn')) {
-                    $lang = '简体中文';
-                } elseif (false !== stripos($lang, 'zh')) {
-                    $lang = '繁体中文';
-                } else { // FIXME: 目前此处会将所有其它语言归类为英语
-                    $lang = 'English';
+                $langOri = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
+                $lang = '';
+//                $lang = substr($lang, 0, 5);
+                if (false !== stripos($langOri, 'zh-CN')) {
+                    $lang .= '简体中文';
+                } elseif (false !== stripos($langOri, 'zh')) {
+                    $lang .= '繁体中文';
+                }
+                if (false !== stripos($langOri, 'en-US')){
+                    $lang .= ' English US';
+                } elseif (false !== stripos($langOri, 'en')) {
+                    $lang .= ' English';
+                }
+                if ($lang==="") {
+                    $lang = "Other Language";
                 }
                 $this->language = $lang;
                 return;
             }
-
+            $this->logger->add_log(__FILE__.":".__LINE__, "DeviceAndDetector detectLanguage, 未匹配到语言信息", "Log");
             $this->language = 'Error';
         }
 
@@ -276,10 +286,11 @@ if (!isset($__DeviceAndIPDetector__)) {
 
         /**
          * This function encoding all the info of client into json and return
+         * @param bool $forLog if is true, return empty string instead of write LOG when meet JsonException Error
          * @return string
          * @throws JsonException
          */
-        public function getClientInfo(): string{
+        public function getClientInfo(bool $forLog=false): string{
             $returns = array(
                 'address' => $this->address,
                 'browser' => $this->browser,
@@ -292,7 +303,9 @@ if (!isset($__DeviceAndIPDetector__)) {
             try {
                 return json_encode($returns, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
             } catch (JsonException $err) {
-                // TODO: write ERROR LOG
+                if ($forLog!==true)  {
+                    $this->logger->add_log(__FILE__.":".__LINE__, "DeviceAndDetector getClientInfo, json打包错误, 错误信息:\n{$err}", "Error");
+                }
                 throw $err;
             }
         }
