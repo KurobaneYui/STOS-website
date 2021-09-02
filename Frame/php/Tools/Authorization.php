@@ -64,17 +64,18 @@ if(!function_exists("check_authorization")){
         }
         // 如果队长权限不在需求区间，则判断是否有组长权限，且是否在需求区间
         if($auth_request['group_leader']) {
-            foreach ($auth['groups'] as $value) {
-                // 如果成员有组长权限
-                if ($value['group_leader']) {
-                    // 严格要求组号时，只有组号也对应才放行
-                    if (isset($auth_request['groupID'])) {
-                        if ($auth_request['groupID'] === $value['groupID']) {
-                            $logger->add_log(__FILE__.':'.__LINE__, "Check authorization, group leader rights and match the group required, allow", "Log");
-                            return true;
-                        }
-                    } // 不严格要求组号时，只要有组长权限则放行
-                    else {
+            // 如果严格要求组号
+            if (isset($auth_request['groupID'])) {
+                // 如果有对应组号的组长权限则放行
+                if (isset($auth['groups'][$auth_request['groupID']]) && $auth['groups'][$auth_request['groupID']]["group_leader"]) {
+                    $logger->add_log(__FILE__.':'.__LINE__, "Check authorization, group leader rights and match the group required, allow", "Log");
+                    return true;
+                }
+            }
+            // 如果不严格要求组号，只要有组长权限则放行
+            else {
+                foreach ($auth['groups'] as $value) {
+                    if ($value['group_leader']) {
                         $logger->add_log(__FILE__.':'.__LINE__, "Check authorization, group leader rights and do not need to match the group, allow", "Log");
                         return true;
                     }
@@ -83,19 +84,18 @@ if(!function_exists("check_authorization")){
         }
         // 如果队长权限和组长权限均不符合要求，则判断组员权限
         if($auth_request['member']) {
-            foreach ($auth['groups'] as $value) {
-                // 能进入foreach循环说明是某个组的组员
-                // 严格要求组号时，只有组号也对应才放行
-                if (isset($auth_request['groupID'])) {
-                    if ($auth_request['groupID'] === $value['groupID']) {
-                        $logger->add_log(__FILE__.':'.__LINE__, "Check authorization, member rights and match the group required, allow", "Log");
-                        return true;
-                    }
-                } // 不严格要求组号时，只要是成员就放行
-                else {
-                    $logger->add_log(__FILE__.':'.__LINE__, "Check authorization, member rights and do not need to match the group, allow", "Log");
+            // 如果严格要求组号
+            if (isset($auth_request['groupID'])) {
+                if (isset($auth['groups'][$auth_request['groupID']])) {
+                    $logger->add_log(__FILE__.':'.__LINE__, "Check authorization, member rights and match the group required, allow", "Log");
                     return true;
                 }
+            }
+            // 如果不严格要求组号，只要是成员就放行
+            elseif (!empty($auth['groups'])) {
+                // 非空则说明是某个组的组员
+                $logger->add_log(__FILE__ . ':' . __LINE__, "Check authorization, member rights and do not need to match the group, allow", "Log");
+                return true;
             }
         }
         // 没有一个匹配的则禁止

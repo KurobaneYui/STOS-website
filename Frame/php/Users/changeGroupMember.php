@@ -10,12 +10,13 @@ require_once ROOT_PATH . "/Frame/php/CustomPackAndLogger/STSA_log.php";
 
 if(!function_exists("addGroupMember")) {
     /**
-     * @param array $personID
+     * @param string $personID
      * @param int $groupCode
      * @return array
      * @throws STSAException
+     * @throws JsonException
      */
-    function addGroupMember(array $personID, int $groupCode): array{
+    function addGroupMember(string $personID, int $groupCode): array{
         // 初始化变量
         $session = new DatabaseConnector();
         $logger = new STSA_log();
@@ -35,7 +36,7 @@ if(!function_exists("addGroupMember")) {
         if ($rows!==1) {
             $personCanAddResult->free();
             $logger->add_log(__FILE__ . ":" . __LINE__, "addGroupMember, 成员{$personID}不可添加, 由于成员不存在或已是该组成员", "Log");
-            throw new STSAException("由于成员不存在或已是该组成员", 417);
+            throw new STSAException("由于成员不存在或已是该组成员", 400);
         }
         $personCanAddResult->free();
         // 核对成功，进行成员添加
@@ -47,18 +48,27 @@ if(!function_exists("addGroupMember")) {
         }
         $session->commit();
         $logger->add_log(__FILE__.":".__LINE__, "addGroupMember, 添加成员成功", "Log");
+        // 为其添加所属组组员权限
+        require_once ROOT_PATH . "/Frame/php/Users/changeAuth.php";
+        try {
+            changeMemberAuth($personID, ["+", "member"], $groupCode);
+        }
+        catch (STSAException $e) {
+            $logger->add_log(__FILE__.":".__LINE__, "addGroupMember, 设置权限出错", "Warning");
+        }
         return [true];
     }
 }
 
 if(!function_exists("removeGroupMember")) {
     /**
-     * @param array $personID
-     * @param string $groupCode
+     * @param string $personID
+     * @param int $groupCode
      * @return array
      * @throws STSAException
+     * @throws JsonException
      */
-    function removeGroupMember(array $personID, string $groupCode): array{
+    function removeGroupMember(string $personID, int $groupCode): array{
         // 初始化变量
         $session = new DatabaseConnector();
         $logger = new STSA_log();
@@ -78,7 +88,7 @@ if(!function_exists("removeGroupMember")) {
         if ($rows!==1) {
             $personCanAddResult->free();
             $logger->add_log(__FILE__ . ":" . __LINE__, "removeGroupMember, 成员{$personID}不可删除, 由于不是该组成员", "Log");
-            throw new STSAException("由于不是该组成员", 417);
+            throw new STSAException("由于不是该组成员", 400);
         }
         $personCanAddResult->free();
         // 核对成功，进行成员添加
@@ -90,6 +100,14 @@ if(!function_exists("removeGroupMember")) {
         }
         $session->commit();
         $logger->add_log(__FILE__.":".__LINE__, "removeGroupMember, 删除成员成功", "Log");
+        // 为其去除所属组组员权限
+        require_once ROOT_PATH . "/Frame/php/Users/changeAuth.php";
+        try {
+            changeMemberAuth($personID, ["-", "member"], $groupCode);
+        }
+        catch (STSAException $e) {
+            $logger->add_log(__FILE__.":".__LINE__, "removeGroupMember, 设置权限出错", "Warning");
+        }
         return [true];
     }
 }
