@@ -10,7 +10,7 @@ if (!isset($__STSA_LOG__)) {
 
     /**
      * Class STSA_log
-     * This is an custom class for STSA PHP service log
+     * This is a custom class for STSA PHP service log
      * @author LuoYinsong
      * @package php\CustomPackAndLogger
      */
@@ -39,7 +39,7 @@ if (!isset($__STSA_LOG__)) {
                     }
                     else {
                         $this->LogMode = "Warning";
-                        $this->add_log(__FILE__.":".__LINE__, "When init STSA_log, LogMode in json config file is misstype.\nLogMode set as 'Log'.", "Warning");
+                        $this->add_log(__FILE__.":".__LINE__, "When init STSA_log, LogMode in json config file is mistype.\nLogMode set as 'Log'.", "Warning");
                     }
                 } else {
                     $this->LogMode = "Warning";
@@ -61,6 +61,7 @@ if (!isset($__STSA_LOG__)) {
 
         /**
          * This function add log to file in WEBROOT/log/
+         * @param string $pos
          * @param string $log
          * @param string $type
          * @return void
@@ -111,7 +112,7 @@ if (!isset($__STSA_LOG__)) {
                 // 第六行写入脚本定位
                 fwrite($f,"[POSITION]".$pos."\n");
                 // 第七行写入日志信息
-                fwrite($f,"[CONTENT]",$log."\n");
+                fwrite($f,"[CONTENT]".$log."\n");
                 // 第八行写入换行符
                 fwrite($f,"\n");
                 fclose($f);
