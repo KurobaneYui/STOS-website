@@ -144,6 +144,6 @@ if(!function_exists("searchPreMember")) {
         $rows = $prePersonResults->num_rows;
         $fields = array_column($prePersonResults->fetch_fields(), "name");
         $prePersonResults = $prePersonResults->fetch_all(MYSQLI_ASSOC);
-        return ["rows" => $rows, "fields" => $fields, "results" => $personalInfo];
+        return ["rows" => $rows, "fields" => $fields, "results" => $prePersonResults];
     }
 }
