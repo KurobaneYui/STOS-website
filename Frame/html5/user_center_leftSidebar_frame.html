@@ -13,45 +13,45 @@
                     <li><a href="/Users/UserCenter/person-work.html">岗位</a></li>
                 </ul>
             </li>
-            <li id="user-center-work-data"> <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="sl-icon-chart"></i><span class="hide-menu">工作数据</span></a>
+            <li id="user-center-work-data" functionID="1"> <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="sl-icon-chart"></i><span class="hide-menu">工作数据</span></a>
                 <ul aria-expanded="false" class="collapse">
                     <li><a href="/Users/UserCenter/TeamMember/morning.html">查早</a></li>
                     <li><a href="/Users/UserCenter/TeamMember/course.html">查课</a></li>
                 </ul>
             </li>
-            <li id="user-center-work-info"> <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="ti-wallet"></i><span class="hide-menu">岗位信息<br/>（服务搭建中）</span></a>
+            <li id="user-center-work-info" functionID="0"> <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="ti-wallet"></i><span class="hide-menu"><del>岗位信息<br/>（服务搭建中）</del></span></a>
                 <ul aria-expanded="false" class="collapse">
                     <li><a href="#">个人考评</a></li>
                     <li><a href="#">组考评</a></li>
                     <li><a href="#">费用展示</a></li>
                 </ul>
             </li>
-            <li id="user-center-manager"> <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="sl-icon-people"></i><span class="hide-menu">团队管理</span></a>
+            <li id="user-center-manager" functionID="2,3"> <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="sl-icon-people"></i><span class="hide-menu">团队管理</span></a>
                 <ul aria-expanded="false" class="collapse">
-                    <li><a href="#">数据确认</a></li>
-                    <li><a href="/Users/UserCenter/GroupManagement/noticeEdite.html">通知编辑</a></li>
-                    <li><a class="has-arrow" href="#" aria-expanded="false">部门管理<br/>（服务搭建中）</a>
+                    <li functionID="2,3"><a href="#"><del>数据确认<br/>（服务搭建中）</del></a></li>
+                    <li functionID="2,3"><a href="/Users/UserCenter/GroupManagement/noticeEdite.html">通知编辑</a></li>
+                    <li functionID="2,3"><a class="has-arrow" href="#" aria-expanded="false"><del>部门管理<br/>（服务搭建中）</del></a>
                         <ul aria-expanded="false" class="collapse">
                             <li><a href="#">部门账目</a></li>
                             <li><a href="#">部门考评</a></li>
                         </ul>
                     </li>
-                    <li><a class="has-arrow" href="#" aria-expanded="false">成员管理<br/>（服务搭建中）</a>
+                    <li functionID="2,3"><a class="has-arrow" href="#" aria-expanded="false">成员管理</a>
                         <ul aria-expanded="false" class="collapse">
-                            <li><a href="#">成员信息</a></li>
-                            <li><a href="#">成员考评</a></li>
-                            <li><a href="#">成员变更</a></li>
+                            <li><a href="#"><del>成员信息<br/>（服务搭建中）</del></a></li>
+                            <li><a href="#"><del>成员考评<br/>（服务搭建中）</del></a></li>
+                            <li><a href="/Users/UserCenter/GroupManagement/membersManagement.html">成员变更</a></li>
                         </ul>
                     </li>
-                    <li><a class="has-arrow" href="#" aria-expanded="false">队长功能</a>
+                    <li functionID="3"><a class="has-arrow" href="#" aria-expanded="false">队长功能</a>
                         <ul aria-expanded="false" class="collapse">
-                            <li><a href="#">权限修改</a></li>
+                            <li><a href="/Users/UserCenter/GroupManagement/TeamLeader/authorityManagement.html">权限修改</a></li>
                             <li><a href="/Users/UserCenter/GroupManagement/TeamLeader/wage.html">财务报账</a></li>
                         </ul>
                     </li>
                 </ul>
             </li>
-            <li id="user-center-background-data"> <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="sl-icon-screen-desktop"></i><span class="hide-menu">后台数据<br/>（服务搭建中）</span></a>
+            <li id="user-center-background-data" functionID="4"> <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false"><i class="sl-icon-screen-desktop"></i><span class="hide-menu"><del>后台数据<br/>（服务搭建中）</del></span></a>
                 <ul aria-expanded="false" class="collapse">
                     <li><a href="#">录入表1</a></li>
                     <li><a href="#">录入表2</a></li>
@@ -60,7 +60,7 @@
                     <li><a href="#">导出</a></li>
                 </ul>
             </li>
-            <li id="user-center-member-info"> <a class="waves-effect waves-dark" href="/Users/UserCenter/contact.html"><i class="sl-icon-notebook"></i><span class="hide-menu">成员信息</span></a></li>
+            <li id="user-center-member-info" functionID="0"> <a class="waves-effect waves-dark" href="/Users/UserCenter/contact.html"><i class="sl-icon-notebook"></i><span class="hide-menu">成员联系方式</span></a></li>
             <li></li>
             <li id="user-center-logout"> <a class="waves-effect waves-dark" href="#" onclick="f()"><i class="sl-icon-power"></i><span class="hide-menu">登出</span></a></li>
         </ul>

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh, en">
+
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -9,11 +10,11 @@
     <meta name="author" content="罗寅松，学风督导队数据组">
     <!-- Favicon icon -->
     <link rel="icon" type="image/png" sizes="16x16" href="../../../assets/images/STSA.png">
-    <title>查早-学风督导队</title>
+    <title>成员变更-学风督导队</title>
     <!-- Bootstrap Core CSS -->
     <link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.5.3/css/bootstrap.min.css" rel="stylesheet">
     <!--  Sweet Alert CSS  -->
-    <!--link href="../../../assets/node_modules/sweetalert/sweetalert.css" rel="stylesheet" type="text/css"-->
+    <!--link href="../../assets/node_modules/sweetalert/sweetalert.css" rel="stylesheet" type="text/css"-->
     <!--  Slimscrollbar Scrollbar CSS  -->
     <link href="https://cdn.bootcdn.net/ajax/libs/jquery.perfect-scrollbar/0.8.1/css/perfect-scrollbar.min.css"
           rel="stylesheet">
@@ -44,14 +45,14 @@
     <!-- ============================================================== -->
     <!-- Topbar header - style you can find in pages.scss -->
     <!-- ============================================================== -->
-    <header class="topbar" id="loadTopbar"></header>
+    <header class="topbar" id="loadTopbar"> </header>
     <!-- ============================================================== -->
     <!-- End Topbar header - you can find in /Frame/html5/user_center_topbar_frame.html -->
     <!-- ============================================================== -->
     <!-- ============================================================== -->
     <!-- Left Sidebar - you can find in /Frame/html5/user_center_leftSidebar_frame.html  -->
     <!-- ============================================================== -->
-    <aside class="left-sidebar" id="loadLeftSidebar"></aside>
+    <aside class="left-sidebar" id="loadLeftSidebar"> </aside>
     <!-- ============================================================== -->
     <!-- End Left Sidebar - style you can find in sidebar.scss  -->
     <!-- ============================================================== -->
@@ -68,12 +69,13 @@
             <!-- ============================================================== -->
             <div class="row page-titles">
                 <div class="col-md-5 align-self-center">
-                    <h3 class="text-themecolor">查早</h3>
+                    <h3 class="text-themecolor">成员变更</h3>
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a
-                                href="javascript:window.location.href='/Users/UserCenter'">个人中心</a></li>
-                        <li class="breadcrumb-item">工作数据</li>
-                        <li class="breadcrumb-item active">查早</li>
+                                href="javascript:window.location.href='..'">个人中心</a></li>
+                        <li class="breadcrumb-item">团队管理</li>
+                        <li class="breadcrumb-item">成员管理</li>
+                        <li class="breadcrumb-item active">成员变更</li>
                     </ol>
                 </div>
             </div>
@@ -83,99 +85,103 @@
             <!-- ============================================================== -->
             <!-- 主体 -->
             <!-- ============================================================== -->
-            <div class="card shadow col-12">
-                <div class="card-body">
-                    <h3 class="card-title">数据录入</h3>
-                    <div class="alert alert-info"><strong>经过数据组处理后上报的数据将不再允许修改，如有数据被错误的识别为禁止修改，请联系管理员</strong></div>
-                    <form class="form-row align-items-center">
-                        <div class="form-group col-xlg-3 col-lg-5 col-md-5 col-sm-12">
-                            <label for="class-upload-date">日期：</label>
-                            <input id="class-upload-date" type="date" class="form-control" required/>
+
+            <div class="row">
+                <div class="col-md-12 col-lg-6">
+                    <div class="card shadow">
+                        <div class="card-body">
+                            <h3 class="card-title" id="fullMember">正式成员</h3>
+<!--                            <div class="table-responsive">-->
+<!--                                <table class="table table-striped">-->
+<!--                                    <thead>-->
+<!--                                    <tr class="bg-light-info">-->
+<!--                                        <th scope="col">序号</th>-->
+<!--                                        <th scope="col">姓名</th>-->
+<!--                                        <th scope="col">学号</th>-->
+<!--                                        <th scope="col">操作</th>-->
+<!--                                    </tr>-->
+<!--                                    </thead>-->
+<!--                                    <tbody>-->
+<!--                                    <tr>-->
+<!--                                        <th scope="row">1</th>-->
+<!--                                        <td>林之时</td>-->
+<!--                                        <td>2021030904004</td>-->
+<!--                                        <td>-->
+<!--                                            <button type="submit" class="btn btn-info btn-rounded btn-sm">移出</button>-->
+<!--                                        </td>-->
+<!--                                    </tr>-->
+<!--                                    <tr>-->
+<!--                                        <td>Otto</td>-->
+<!--                                        <td>Otto</td>-->
+<!--                                        <td>Otto</td>-->
+<!--                                        <td>Otto</td>-->
+<!--                                    </tr>-->
+<!--                                    <tr>-->
+<!--                                        <td>Otto</td>-->
+<!--                                        <td>Otto</td>-->
+<!--                                        <td>Otto</td>-->
+<!--                                        <td>Otto</td>-->
+<!--                                    </tr>-->
+<!--                                    </tbody>-->
+<!--                                </table>-->
+<!--                            </div>-->
                         </div>
-                        <div class="form-group col-xlg-3 col-lg-5 col-md-5 col-sm-12">
-                            <label for="class-upload-classroom">教室：</label>
-                            <select id="class-upload-classroom" class="form-control" required>
-                                <option value="" selected>请选择......</option>
-                            </select>
-                        </div>
-                        <div class="form-group col-6 col-md-3 col-lg-3">
-                            <label for="class-first-attendance-number">第一次出勤人数：</label>
-                            <input type="number" class="form-control" id="class-first-attendance-number" required>
-                        </div>
-                        <div class="form-group col-6 col-md-3 col-lg-3">
-                            <label for="class-first-discipline-number">第一次违纪人数：</label>
-                            <input type="number" class="form-control" id="class-first-discipline-number" required>
-                        </div><br>
-                        <div class="form-group col-6 col-md-3 col-lg-3">
-                            <label for="class-second-attendance-number">第二次出勤人数：</label>
-                            <input type="number" class="form-control" id="class-second-attendance-number" required>
-                        </div>
-                        <div class="form-group col-6 col-md-3 col-lg-3">
-                            <label for="class-second-discipline-number">第二次违纪人数：</label>
-                            <input type="number" class="form-control" id="class-second-discipline-number" required>
-                        </div>
-                        <div class="form-group col-12">
-                            <label for="class-remark">备注：</label>
-                            <textarea class="form-control" id="morning-remark" rows="3"></textarea>
-                        </div>
-                        <div class="col-12">
-                            <button type="submit" class="btn btn-info btn-rounded">确认提交</button>
-                        </div>
-                    </form>
+                    </div>
                 </div>
-            </div>
-
-
-
-            <div class="card shadow col-12" style="margin-top: 1%;">
-                <div class="card-body">
-                    <h3 class="card-title">数据查看</h3>
-                    <div class="alert alert-info">
-                        <strong>选择起止日期后，查看日期范围内本人提交的所有数据；分组方式目前支持“按教室分组”和“按时间分组”，默认“按教室分组”</strong></div>
-                    <form class="form-row">
-                        <div class="form-group col-xlg-3 col-lg-4 col-md-4 col-sm-12">
-                            <label for="class-download-start-date">开始日期：</label>
-                            <input id="morning-download-start-date" type="date" class="form-control" required/>
+                <div class="col-md-12 col-lg-6">
+                    <div class="card shadow">
+                        <div class="card-body">
+                            <h3 class="card-title" id="pre-Member">预备成员</h3>
+                            <p class="card-subtitle">展示最新注册的20个成员，其他预备成员请通过搜索框添加</p>
+                            <p class="card-subtitle">搜索框支持搜索姓名和学号（二选一）</p>
+                            <div class="row m-b-10">
+                                <div class="col-3"><button onclick="searchMember()(3,5,'数据组')" type="button" class="btn btn-sm btn-rounded btn-info">搜索成员</button></div>
+                                <div class="col-9"><input type="text" class="form-control"/></div>
+                            </div>
+<!--                            <div class="alert alert-info">-->
+<!--                                <div class="row">-->
+<!--                                    <p class="col-4">${first}</p>-->
+<!--                                    <p class="col-4">${second}</p>-->
+<!--                                    <div class="col-4">-->
+<!--                                        <button onClick="fun2()" type="button" class="btn btn-info btn-rounded btn-sm">加入</button>-->
+<!--                                    </div>-->
+<!--                                </div>-->
+<!--                            </div>-->
+<!--                            <div class="table-responsive">-->
+<!--                                <table class="table table-striped">-->
+<!--                                    <thead>-->
+<!--                                    <tr class="bg-light-info">-->
+<!--                                        <th scope="col">序号</th>-->
+<!--                                        <th scope="col">姓名</th>-->
+<!--                                        <th scope="col">学号</th>-->
+<!--                                        <th scope="col">操作</th>-->
+<!--                                    </tr>-->
+<!--                                    </thead>-->
+<!--                                    <tbody>-->
+<!--                                    <tr>-->
+<!--                                        <th scope="row">1</th>-->
+<!--                                        <td>林之时</td>-->
+<!--                                        <td>2021030904004</td>-->
+<!--                                        <td>-->
+<!--                                            <button type="submit" class="btn btn-info btn-rounded btn-sm">加入</button>-->
+<!--                                        </td>-->
+<!--                                    </tr>-->
+<!--                                    <tr>-->
+<!--                                        <td>Otto</td>-->
+<!--                                        <td>Otto</td>-->
+<!--                                        <td>Otto</td>-->
+<!--                                        <td>Otto</td>-->
+<!--                                    </tr>-->
+<!--                                    <tr>-->
+<!--                                        <td>Otto</td>-->
+<!--                                        <td>Otto</td>-->
+<!--                                        <td>Otto</td>-->
+<!--                                        <td>Otto</td>-->
+<!--                                    </tr>-->
+<!--                                    </tbody>-->
+<!--                                </table>-->
+<!--                            </div>-->
                         </div>
-                        <div class="form-group col-xlg-3 col-lg-4 col-md-4 col-sm-12">
-                            <label for="class-download-end-date">结束日期：</label>
-                            <input id="class-download-end-date" type="date" class="form-control" required/>
-                        </div>
-                    </form>
-                    <div class="card-body">
-                        <table class="table table-responsive table-striped">
-                            <thead>
-                            <tr class="bg-light-info">
-                                <th scope="col">日期</th>
-                                <th scope="col">教室</th>
-                                <th scope="col">第一次出勤人数</th>
-                                <th scope="col">第一次违纪人数</th>
-                                <th scope="col">第二次出勤人数</th>
-                                <th scope="col">第二次违纪人数</th>
-                                <th scope="col">备注</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr>
-                                <td>2021-09-21</td>
-                                <td>品学楼-C2-411</td>
-                                <td>1</td>
-                                <td>2</td>
-                                <td>4</td>
-                                <td>1</td>
-                                <td>无</td>
-                            </tr>
-                            <tr>
-                                <td>2021-09-21</td>
-                                <td>品学楼-C2-412</td>
-                                <td>1</td>
-                                <td>2</td>
-                                <td>4</td>
-                                <td>1</td>
-                                <td>无</td>
-                            </tr>
-                            </tbody>
-                        </table>
                     </div>
                 </div>
             </div>
@@ -189,7 +195,7 @@
         <!-- ============================================================== -->
         <!-- footer -->
         <!-- ============================================================== -->
-        <footer class="footer"> © 2021 电子科技大学 学工部 学风督导队</footer>
+        <footer class="footer"> © 2021 电子科技大学 学工部 学风督导队 </footer>
         <!-- ============================================================== -->
         <!-- End footer -->
         <!-- ============================================================== -->
@@ -224,7 +230,8 @@
 <!-- Bootstrap Core JavaScript -->
 <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/4.5.3/js/bootstrap.bundle.min.js"></script>
 <!-- slimscrollbar scrollbar JavaScript -->
-<script src="https://cdn.bootcdn.net/ajax/libs/jquery.perfect-scrollbar/0.8.1/js/perfect-scrollbar.jquery.min.js"></script>
+<script
+        src="https://cdn.bootcdn.net/ajax/libs/jquery.perfect-scrollbar/0.8.1/js/perfect-scrollbar.jquery.min.js"></script>
 <!-- Sweet Alert Javascript -->
 <script src="https://cdn.bootcdn.net/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
 <!-- Wave Effects -->
@@ -234,5 +241,7 @@
 <script src="/js/sidebarmenu.js"></script>
 <!-- Custom JavaScript -->
 <script src="/js/custom.min.js"></script>
+<script src="./membersManagement.js"></script>
 </body>
+
 </html>

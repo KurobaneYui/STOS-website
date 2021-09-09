@@ -6,6 +6,7 @@ if (!isset($__DateTools__)) {
 
     require_once __DIR__ . '/../../../ROOT_PATH.php';
     require_once ROOT_PATH . '/Frame/php/CustomPackAndLogger/STSAException.php';
+    require_once ROOT_PATH . "/Frame/php/CustomPackAndLogger/STSA_log.php";
 
     /**
      * Class DateTools
@@ -21,6 +22,7 @@ if (!isset($__DateTools__)) {
         private int $currentYearNum; // year num of base time
         private int $currentMonth; // month of year of base time
         private int $currentDayNum; // day of month of base time
+        private STSA_log $logger;
 
         /**
          * DateTools constructor.
@@ -28,6 +30,7 @@ if (!isset($__DateTools__)) {
          * @throws Exception
          */
         public function __construct(string $datetime=''){
+            $this->logger = new STSA_log();
             if ($datetime === '') {
                 $this->baseDatetime = new DateTimeImmutable('now');
             }
@@ -35,7 +38,7 @@ if (!isset($__DateTools__)) {
                 try {
                     $this->baseDatetime = new DateTimeImmutable($datetime);
                 } catch (Exception $err) {
-                    //TODO: write ERROR LOG
+                    $this->logger->add_log(__FILE__.':'.__LINE__, "Init DateTools, input datetime is illegal datetime: {$datetime}", "Error");
                     throw $err;
                 }
             }
@@ -64,7 +67,7 @@ if (!isset($__DateTools__)) {
          * If 'string', function will return string type through build-in method: ->format('Y-m-d')
          * @return DateTimeImmutable|string
          */
-        public static function getCurrentDatetime(string $mode='datetime') {
+        public static function getCurrentDatetime(string $mode='datetime'): DateTimeImmutable|string{
             if ($mode === 'datetime') {
                 return new DateTimeImmutable('now');
             }
@@ -74,7 +77,7 @@ if (!isset($__DateTools__)) {
             if ($mode === 'database') {
                 return (new DateTimeImmutable('now'))->format(('Y-m-d H:i:s'));
             }
-            // TODO: add warning log
+            (new STSA_log())->add_log(__FILE__.':'.__LINE__, "DateTools get current datetime, input mode is not in accept list and use default mode (datetime), input mode is {{$mode}}", "Warning");
             return new DateTimeImmutable('now');
         }
 
@@ -121,7 +124,7 @@ if (!isset($__DateTools__)) {
             if ($mode === 'database') {
                 return (new DateTimeImmutable('now'))->format(('Y-m-d H:i:s'));
             }
-            // TODO: write WARNING LOG that mode unknown and use default return
+            $this->logger->add_log(__FILE__.':'.__LINE__, "DateTools get current datetime, input mode is not in accept list and use default mode (datetime), input mode is {{$mode}}", "Warning");
             return $this->baseDatetime;
         }
 
