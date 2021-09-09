@@ -1,23 +1,10 @@
 // please import this document when jQuery has been imported
 
-function show_alert_bar(first, second) {
-    var alertTemp = `<div class="alert alert-info">
-        <div class="row">
-            <p class="col-4">${first}</p>
-            <p class="col-4">${second}</p>
-            <div class="col-4">
-                <button onClick="" type="button" class="btn btn-info btn-rounded btn-sm">加入</button>
-            </div>
-        </div>
-    </div>`;
-    var tmp = $("#pre-Member").next().next().next();
-    if(tmp.next().attr("class")==="alert alert-info") {
-        tmp.next().remove();
-    }
-    tmp.after(alertTemp);
-}
+// 全局变量用于统计表格数量
+var fullMemberTableCounter = 0;
 
-function add_table(table_rows, table_cols, ID_J, ID) {
+// 添加一个表格（内部功能，不建议直接调用）
+function add_table(table_rows, table_cols, table_name, ID_J, ID) {
     // required
     if (table_rows < 0)
         throw new RangeError("table_rows in add_nav_tab <0");
@@ -28,7 +15,8 @@ function add_table(table_rows, table_cols, ID_J, ID) {
     let table_head_tr = `<tr class="bg-light-info">` + `<th scope="col">#</th>`.repeat(table_cols) + `</tr>`;
     let table_body_trs = (`<tr><th scope="row">a</th>` + `<td></td>`.repeat(table_cols - 1) + `</tr>`).repeat(table_rows);
     let table_content =
-        `<div class="table-responsive">
+        `<h4>${table_name}</h4>
+        <div class="table-responsive">
             <table class="table table-striped" id=${ID+"-table"}>
                 <thead>
                     ${table_head_tr}
@@ -42,22 +30,15 @@ function add_table(table_rows, table_cols, ID_J, ID) {
     return ID+"-table";
 }
 
+// 在网页中添加表格
 function add_table_fullMember(table_rows, table_cols) {
-    if($("#fullMember").next().attr("class")==="table-responsive") {
-        $("#fullMember").next().remove();
-    }
+    fullMemberTableCounter++;
     return add_table(table_rows, table_cols, $("#fullMember"), "fullMember");
 }
 
-function add_table_preMember(table_rows, table_cols) {
-    var tmp = $("#pre-Member").parent().children().last();
-    if(tmp.attr("class")==="table-responsive") {
-        tmp.remove();
-        tmp = $("#pre-Member").parent().children().last();
-    }
-    return add_table(table_rows, table_cols, tmp, "pre-Member");
-}
-
+/* ************************* */
+//   不使用，就是拿来给你参考的   //
+/* ************************* */
 function getGroupMembersFunction() {
     $.post("/Ajax/Users/contact.php", {
             'requestFunction': 'getContact'
@@ -106,15 +87,76 @@ function getGroupMembersFunction() {
             }
         })
 }
+/* ***************** */
 
-function addMember() {
+// 删除页面中的表格
+function freshAllTables() {
+    while (fullMemberTableCounter > 0) {
+        let a = $("#fullMember-" + fullMemberTableCounter.toString() + "-table");
+        a.parent().prev().remove();
+        a.remove()
+        fullMemberTableCounter--;
+    }
+    completePage();
     return 0;
 }
 
-function removeMember() {
+// 这个函数用于补全页面，一般会在页面刚加载完成时自动调用
+// 使用Ajax将信息提交至：/Ajax/Users/changeMemberOrAuth.php
+// 提交内容为(1)
+// 'requestFunction': 'getFullMembers'
+//
+// 对于提交1而言，返回编码与之前一样
+// 如果错误则alert弹窗提醒
+// 如果操作正确，则调用add_table_fullMember函数
+// 函数需要三个参数，第一个时表格行数，第二个是表格列数，第三个填入组名称
+// 函数返回值为新添加的表格的id，可以用于id搜索
+// 以上需要传入函数的信息均提供与返回的json格式串内
+// 如果有多个组，则多次调用函数
+function completePage() {
     return 0;
 }
 
-function searchMember() {
+/* **********************************
+这里给你两个函数，函数返回值是字符串
+需要在某个位置放下拉菜单或按钮的时候，直接把返回的字符串放进去就行
+下拉菜单这个函数输入一个参数，字符串，可以选"组员""组长""队长"三选一，会把对应的菜单设为selected
+function LYS_Selector(work) {
+    let b = `<select class="form-control  input-sm">
+                <option value="group-member">组员</option>
+                <option value="group-leader">组长</option>
+                <option value="team-leader">队长</option>
+            </select>`;
+    b = $(b);
+    if (work==="组员") {
+        b.find("[value=group-member]").attr("selected",true);
+    }
+    if (work==="组长") {
+        b.find("[value=group-leader]").attr("selected",true);
+    }
+    if (work==="队长") {
+        b.find("[value=team-leader]").attr("selected",true);
+    }
+    return b[0];
+}
+function LYS_Confirm_Button() {
+    let b = `<button onClick="changeAuth(this)" type="button" class="btn btn-info btn-rounded btn-sm">确认</button>`;
+    return b;
+}
+   ********************************** */
+
+// 这个函数用于完成修改成员权限的功能
+// 队员列表的每行末尾有一个添加按钮，点击后触发此函数
+// 函数利用传入的参数获取所在行的信息，包括：学号、所属组名称和下拉列表里的岗位
+// 将信息用Ajax提交至：/Ajax/Users/changeMemberOrAuth.php
+// 提交内容为
+// 'requestFunction': 'changeAuth'
+// 'personID': 'xxx'
+// 'groupName': 'xxx'
+// 'work': 'xxx'
+// Ajax返回值部分和之前一样
+// 不论返回错误代码还是操作成功，均弹窗提示（alert）
+// 如果返回错误代码则alert后无任何操作，如果操作成功，则调用freshAllTables函数
+function changeAuth(Button) {
     return 0;
 }
