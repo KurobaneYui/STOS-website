@@ -1,12 +1,13 @@
 // please import this document when jQuery has been imported
 
 // 根据参数显示搜索结果，新的结果会覆盖旧的
-function show_alert_bar(first, second) {
+function addTablePersonsResults(first, second, third) {
     var alertTemp = `<div class="alert alert-info">
         <div class="row">
-            <p class="col-4">${first}</p>
+            <p class="col-3">${first}</p>
             <p class="col-4">${second}</p>
-            <div class="col-4">
+            <p class="col-3">${third}</p>
+            <div class="col-2">
                 <button onClick="addMember(this)" type="button" class="btn btn-info btn-rounded btn-sm">加入</button>
             </div>
         </div>
@@ -49,6 +50,7 @@ function add_table(table_rows, table_cols, table_name, ID_J, ID) {
 }
 
 // 在正式成员卡片下添加表格
+// 返回值是增加的表ID
 function add_table_fullMember(table_rows, table_cols, table_name) {
     fullMemberTableCounter++;
     return add_table(table_rows, table_cols, table_name, $("#fullMember"), "fullMember-"+fullMemberTableCounter.toString());
@@ -133,10 +135,10 @@ function freshAllTables() {
 // 这个函数用于补全页面，一般会在页面刚加载完成时自动调用
 // 使用Ajax将信息提交至：/Ajax/Users/changeMemberOrAuth.php
 // 提交内容为(1)
-// 'requestFunction': 'getGroupFullMembers'
+// 'requestFunction': 'getGroupFullMembersForWorkChange'
 //
 // 提交内容为(2)
-// 'requestFunction': 'getPreMembers'
+// 'requestFunction': 'getPreMembersForWorkChange'
 //
 // 对于提交1而言，返回编码与之前一样
 // 如果错误则alert弹窗提醒
@@ -178,7 +180,7 @@ function LYS_Remove_Button() {
 // 'personID': 'xxx'
 // 'groupName': 'xxx'
 // Ajax返回值部分和之前一样
-// 不论返回错误代码还是操作成功，均弹窗提示（alert）
+// 不论返回错误代码，弹窗提示（alert）
 // 如果返回错误代码则alert后无任何操作，如果操作成功，则调用freshAllTables函数
 function addMember(Button) {
     return 0;
@@ -209,7 +211,7 @@ function removeMember(Button) {
 // Ajax返回值部分和之前一样
 // 如果返回错误代码，则弹窗提示（alert）
 // 如果操作成功，则调用addTablePersonsResults函数
-//     调用此函数需要传入两个参数，第一个为姓名，第二个为学号
+//     调用此函数需要传入三个参数，第一个为姓名，第二个为学号，第三个为性别
 function searchMember() {
     return 0;
 }

@@ -31,9 +31,9 @@ function add_table(table_rows, table_cols, table_name, ID_J, ID) {
 }
 
 // 在网页中添加表格
-function add_table_fullMember(table_rows, table_cols) {
+function add_table_fullMember(table_rows, table_cols, table_name) {
     fullMemberTableCounter++;
-    return add_table(table_rows, table_cols, $("#fullMember"), "fullMember");
+    return add_table(table_rows, table_cols, table_name, $("#fullMember"), "fullMember-"+fullMemberTableCounter.toString());
 }
 
 /* ************************* */
@@ -103,10 +103,10 @@ function freshAllTables() {
 
 // 这个函数用于补全页面，一般会在页面刚加载完成时自动调用
 // 使用Ajax将信息提交至：/Ajax/Users/changeMemberOrAuth.php
-// 提交内容为(1)
-// 'requestFunction': 'getFullMembers'
+// 提交内容为
+// 'requestFunction': 'getFullMembersAuth'
 //
-// 对于提交1而言，返回编码与之前一样
+// 返回编码与之前一样
 // 如果错误则alert弹窗提醒
 // 如果操作正确，则调用add_table_fullMember函数
 // 函数需要三个参数，第一个时表格行数，第二个是表格列数，第三个填入组名称
@@ -123,9 +123,9 @@ function completePage() {
 下拉菜单这个函数输入一个参数，字符串，可以选"组员""组长""队长"三选一，会把对应的菜单设为selected
 function LYS_Selector(work) {
     let b = `<select class="form-control  input-sm">
-                <option value="group-member">组员</option>
-                <option value="group-leader">组长</option>
-                <option value="team-leader">队长</option>
+                <option value="member">组员</option>
+                <option value="group">组长</option>
+                <option value="team">队长</option>
             </select>`;
     b = $(b);
     if (work==="组员") {
