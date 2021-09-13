@@ -8,6 +8,47 @@ require_once ROOT_PATH . "/Frame/php/Tools/Authorization.php";
 require_once ROOT_PATH . "/Frame/php/Tools/TranslateBetweenChineseAndEnglish.php";
 require_once ROOT_PATH . "/Frame/php/CustomPackAndLogger/STSA_log.php";
 
+if(!function_exists("showMemberAuth")) {
+    /**
+     * @return array
+     * @throws STSAException
+     */
+    function showMemberAuth(): array{
+        // 准备参数环境
+        $session = new DatabaseConnector();
+        $logger = new STSA_log();
+        // 检查权限
+        if(!check_authorization(["team_leader" => true, "group_leader" => false, "member" => false])) {
+            $logger->add_log(__FILE__.":".__LINE__, "showMemberAuth, 无权查看成员权限, 权限错误", "Log");
+            throw new STSAException("无权查看成员权限", 401);
+        }
+        // 查询权限并返回
+        $returns = [];
+        $sql = "SELECT 部门编号 FROM 部门信息 ORDER BY 部门编号;";
+        $groupCodesResult = $session->query($sql);
+        if ($groupCodesResult===false) {
+            $logger->add_log(__FILE__.":".__LINE__, "showMemberAuth, 数据库查询错误", "Error");
+            throw new STSAException("数据库查询错误", 417);
+        }
+        $groupCodesResult = array_column($groupCodesResult->fetch_fields(),'部门编号');
+        foreach ($groupCodesResult as $value) {
+            $sql = "SELECT 姓名,成员基本信息.学号 AS '学号',部门名称,岗位 FROM 成员基本信息,工作信息,部门信息 WHERE 工作信息.学号=成员基本信息.学号 and 工作信息.所属组号=部门信息.部门编号 ORDER BY 岗位 DESC;";
+            $fullMemberAuthResult = $session->query($sql);
+            if ($fullMemberAuthResult===false) {
+                $logger->add_log(__FILE__.":".__LINE__, "showMemberAuth, 数据库查询错误", "Error");
+                throw new STSAException("数据库查询错误", 417);
+            }
+            $rows = $fullMemberAuthResult->num_rows;
+            $fields = array_column($fullMemberAuthResult->fetch_fields(),'name');
+            $cols = count($fields);
+            $fullMemberAuthResult = $fullMemberAuthResult->fetch_all(MYSQLI_ASSOC);
+            $name = $fullMemberAuthResult[0]["部门名称"];
+            $returns[] = ["行数"=>$rows,"列数"=>$cols,"部门名称"=>$name,"表头"=>$fields,"数据"=>$fullMemberAuthResult];
+        }
+        return $returns;
+    }
+}
+
 if(!function_exists("changeMemberAuth")) {
     /**
      * @param string $personID
@@ -109,21 +150,26 @@ if(!function_exists("changeMemberAuth")) {
                 $authResult = json_decode($authResult[0]["权限"], true, 512, JSON_THROW_ON_ERROR);
             }
         }
-        // 首先判断是否变更队长部分的权限
+        // 首先判断是否变更队长部分的权限，如果增加队长权限，首先要求其为队长组成员
         if ($authStringArray[1]==="team") {
-            if ($authStringArray[0]==="+") {
+            require_once ROOT_PATH . "/Frame/php/Users/getGroupCode.php";
+            if ($authStringArray[0]==="+" && isset($authResult['groups'][getGroupCode("队长")])) {
                 $authResult["team_leader"]=true;
             }
             elseif ($authStringArray[0]==="-") {
                 $authResult["team_leader"]=false;
             }
         }
-        // 判断是否变更组长权限
+        // 判断是否变更组长权限，如果移出的组是队长组，则同时移除队长权限
         elseif ($authStringArray[1]==="group") {
+            require_once ROOT_PATH . "/Frame/php/Users/getGroupCode.php";
             if ($authStringArray[0]==="+") {
                 $authResult["groups"][$groupCode]=["group_leader"=>true];
             }
             elseif ($authStringArray[0]==="-") {
+                if ($groupCode===getGroupCode("队长")) {
+                    $authResult["team_leader"]=false;
+                }
                 $authResult["groups"][$groupCode]=["group_leader"=>false];
             }
         }
@@ -138,7 +184,7 @@ if(!function_exists("changeMemberAuth")) {
         }
         // 更新数据库权限信息
         $authResult = json_encode($authResult, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
-        $sql = "INSERT INTO 权限信息 (学号,权限) VALUES (\"{$personID}\",\"{$authResult}\") ON DUPLICATE KEY UPDATE 权限=\"{$authResult}\";";
+        $sql = "INSERT INTO 权限信息 (学号,权限) VALUES ('{$personID}','{$authResult}') ON DUPLICATE KEY UPDATE 权限='{$authResult}';";
         $changeAuthResult = $session->query($sql);
         if ($changeAuthResult===false) {
             $logger->add_log(__FILE__ . ':' . __LINE__, "changeMemberAuth, 数据库查询错误", "Error");
