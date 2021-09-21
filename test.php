@@ -6,7 +6,11 @@ require_once __DIR__."/ROOT_PATH.php";
 require_once ROOT_PATH . "/Frame/php/CustomPackAndLogger/STSAException.php";
 require_once ROOT_PATH . "/Frame/php/CustomPackAndLogger/UnionReturnInterface.php";
 require_once ROOT_PATH . "/Frame/php/Tools/Authorization.php";
+<<<<<<< HEAD
 // TODO:require log file
+=======
+require_once ROOT_PATH . "/Frame/php/CustomPackAndLogger/STSA_log.php";
+>>>>>>> website-v2
 
 require_once ROOT_PATH . "/Frame/php/Connector/DatabaseConnector.php";
 var_dump($agent = $_SERVER['HTTP_USER_AGENT']);

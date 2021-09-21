@@ -8,7 +8,7 @@ function add_table(table_rows, table_cols) {
         throw new RangeError("table_cols in add_nav_tab <0");
 
     // add table
-    let table_head_tr = `<tr class="table-info">` + `<th scope="col">#</th>`.repeat(table_cols) + `</tr>`;
+    let table_head_tr = `<tr class="bg-light-info">` + `<th scope="col">#</th>`.repeat(table_cols) + `</tr>`;
     let table_body_trs = (`<tr><th scope="row">a</th>` + `<td></td>`.repeat(table_cols - 1) + `</tr>`).repeat(table_rows);
     let table_content =
         `<div class="table-responsive">

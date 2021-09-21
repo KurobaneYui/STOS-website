@@ -78,7 +78,7 @@ def SetStyle(path: str):
     path: 文件路径
     '''
     wb = openpyxl.load_workbook(path)
-    ws_sheet2 = wb['sheet2'] # 咱们先处理表二
+    ws_sheet2 = wb['Info'] # 咱们先处理表二
     ws_sheet2.merge_cells('A1:K1') # 前四行合并
     ws_sheet2.merge_cells('A2:K2')
     ws_sheet2.merge_cells('A3:K3')
@@ -180,7 +180,7 @@ def SetStyle(path: str):
             ws_sheet2.cell(row=i, column=j).alignment = Alignment(wrapText=True)
             ws_sheet2.cell(row=i, column=j).font = Font(u'楷体', size=12,  color='000000')
 
-    ws_sheet1 = wb['sheet1'] # 咱再处理表一
+    ws_sheet1 = wb['Wage'] # 咱再处理表一
     ws_sheet1.merge_cells('A1:K1')  # 前四行合并
     ws_sheet1.merge_cells('A2:K2')
     ws_sheet1.merge_cells('A3:K3')
@@ -285,7 +285,7 @@ if __name__ == '__main__':
                     params = {
                         'path': path,
                         'session': session,
-                        'date': datetime.datetime.strptime(sys.argv[3],'%Y-%M-%D'),
+                        'date': datetime.datetime.strptime(sys.argv[3],'%Y-%m-%d'),
                         'teacherName': sys.argv[4],
                         'teacherPhone': sys.argv[5],
                         'teacherEmail': sys.argv[6],
@@ -304,8 +304,8 @@ if __name__ == '__main__':
             raise Exception('程序输入参数数量与需求不一致，获得了{}个参数'.format(input_len))
     except Exception as e:
         import json
-        errors = {'ReturnCode': '417', 'ReturnString': '程序出错', 'ShowMessage': e, 'Data': ''}
+        errors = {'ReturnCode': '417', 'ReturnString': '程序出错', 'ShowMessage': repr(e), 'Data': ''}
         print(json.dumps(errors, ensure_ascii=False))
     else:
-        datetime.datetime.strptime('2013-2-3','%Y-%M-%D')
+        datetime.datetime.strptime('2013-2-3','%Y-%m-%d')
         print(json.dumps({'ReturnCode': '200', 'ReturnString': '成功', 'ShowMessage': '', 'Data': path}, ensure_ascii=False))

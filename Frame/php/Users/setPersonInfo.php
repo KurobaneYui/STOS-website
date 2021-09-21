@@ -6,10 +6,18 @@ require_once ROOT_PATH . "/Frame/php/CustomPackAndLogger/UnionReturnInterface.ph
 require_once ROOT_PATH . "/Frame/php/Connector/DatabaseConnector.php";
 require_once ROOT_PATH . "/Frame/php/Tools/Authorization.php";
 require_once ROOT_PATH . "/Frame/php/Tools/TranslateBetweenChineseAndEnglish.php";
+<<<<<<< HEAD
 // TODO:require log file
 
 if(!function_exists("setOnePersonAllInfo")) {
     function setOnePersonAllInfo(array $personalInfo, bool $isFirst=false): array{
+=======
+require_once ROOT_PATH . "/Frame/php/CustomPackAndLogger/STSA_log.php";
+
+if(!function_exists("setOnePersonAllInfo")) {
+    function setOnePersonAllInfo(array $personalInfo, bool $isFirst=false): array{
+        $logger = new STSA_log();
+>>>>>>> website-v2
         // 初始化过滤器
         function studentID_filter($studentID) { // 学号过滤器
             $pattern = "/^20[1-5]\d[a-zA-Z0-9]{8,9}$/";
@@ -178,6 +186,10 @@ if(!function_exists("setOnePersonAllInfo")) {
                 $showMessage[$translation] = $value;
             }
             $showMessage = json_encode($showMessage, JSON_THROW_ON_ERROR|JSON_UNESCAPED_UNICODE);
+<<<<<<< HEAD
+=======
+            $logger->add_log(__FILE__.":".__LINE__, "setOnePersonAllInfo, some input info is illegal", "Log");
+>>>>>>> website-v2
             throw new STSAException("输入数据不合法",400,show: $showMessage);
         }
         // 如果全部合法，则继续下方的提交
@@ -187,11 +199,19 @@ if(!function_exists("setOnePersonAllInfo")) {
             $sql = "select * from 成员信息 where 学号='{$personalInfo['学号']}';";
             $info = $session->query($sql);
             if ($info===false) {
+<<<<<<< HEAD
+=======
+                $logger->add_log(__FILE__.":".__LINE__, "setOnePersonAllInfo, 数据库查询错误", "Error");
+>>>>>>> website-v2
                 throw new STSAException("数据库查询错误",417);
             }
             // 已有数据返回错误
             if($info->num_rows!==0) {
                 $showMessage = json_encode(["信息" => "账号已存在"], JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
+<<<<<<< HEAD
+=======
+                $logger->add_log(__FILE__.":".__LINE__, "setOnePersonAllInfo, account wanted to register has already exist", "Log");
+>>>>>>> website-v2
                 throw new STSAException("输入数据不合法",400,show: $showMessage);
             }
             // 没有数据则进行录入
@@ -221,16 +241,28 @@ if(!function_exists("setOnePersonAllInfo")) {
             $sql = "insert into 权限信息 (学号, 权限) VALUE ('{$personalInfo['学号']}',$auth);";
             $session->query($sql);
             $session->commit();
+<<<<<<< HEAD
+=======
+            $logger->add_log(__FILE__.":".__LINE__, "setOnePersonAllInfo, register new account", "Log");
+>>>>>>> website-v2
         } else { // 不是初次注册
             // 确定权限信息
             if ($personalInfo['学号'] === $_SESSION["userID"]) { // 修改本人信息
                 // check authorization 属于个人级别的本人保密信息
                 if (!check_authorization()) {
+<<<<<<< HEAD
+=======
+                    $logger->add_log(__FILE__.":".__LINE__, "setOnePersonAllInfo, 修改本人信息失败, 权限错误", "Log");
+>>>>>>> website-v2
                     throw new STSAException("无权限修改本人信息，可能由于未登录或登录信息已过期", 401);
                 }
             } else {
                 // check authorization 属于个人级别的他人保密信息
                 if (!check_authorization(['team_leader' => false, 'group_leader' => false, 'member' => false])) {
+<<<<<<< HEAD
+=======
+                    $logger->add_log(__FILE__.":".__LINE__, "setOnePersonAllInfo, 修改他人信息失败, 权限错误", "Log");
+>>>>>>> website-v2
                     throw new STSAException("无权限修改他人信息", 401);
                 }
             }
@@ -239,11 +271,19 @@ if(!function_exists("setOnePersonAllInfo")) {
             $sql = "select * from 成员信息 where 学号='{$personalInfo['学号']}';";
             $info = $session->query($sql);
             if ($info===false) {
+<<<<<<< HEAD
+=======
+                $logger->add_log(__FILE__.":".__LINE__, "setOnePersonAllInfo, 数据库查询错误", "Error");
+>>>>>>> website-v2
                 throw new STSAException("数据库查询错误",417);
             }
             // 没有数据则返回错误
             if($info->num_rows===0) {
                 $showMessage = json_encode(["信息" => "账号不存在"], JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
+<<<<<<< HEAD
+=======
+                $logger->add_log(__FILE__.":".__LINE__, "setOnePersonAllInfo, account wanted to change is not exist", "Log");
+>>>>>>> website-v2
                 throw new STSAException("输入数据不合法",400,show: $showMessage);
             }
             // 已有数据则进行更新
@@ -261,6 +301,10 @@ if(!function_exists("setOnePersonAllInfo")) {
                 $session->query($sql);
             }
             $session->commit();
+<<<<<<< HEAD
+=======
+            $logger->add_log(__FILE__.":".__LINE__, "setOnePersonAllInfo, change account", "Log");
+>>>>>>> website-v2
         }
         $_SESSION["userName"] = $personalInfo["姓名"];
         return [true];
