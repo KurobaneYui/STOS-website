@@ -129,12 +129,12 @@ if(!function_exists("searchPreMember")) {
         }
         // 如果没有搜索要求（输入为空字符串），则提供所有成员
         if ($personalInfo==='') {
-            $sql = "SELECT 成员信息.学号 as 学号,姓名,性别 FROM 成员信息,成员基本信息 WHERE 成员信息.学号=成员基本信息.学号 and 成员信息.学号 not in (SELECT DISTINCT 学号 FROM 工作信息);";
+            $sql = "SELECT 成员信息.学号 as 学号,姓名,性别 FROM 成员信息,成员基本信息 WHERE 成员信息.学号=成员基本信息.学号 and 成员信息.学号 not in (SELECT DISTINCT 学号 FROM 工作信息) LIMIT 10;";
         }
         // 如果有搜索字段则进行搜索
         // FIXME: 处理注入
         else {
-            $sql = "SELECT 成员信息.学号 as 学号,姓名,性别 FROM 成员信息,成员基本信息 WHERE 成员信息.学号=成员基本信息.学号 and (成员信息.学号 like '{$personalInfo}' or 姓名 like '{$personalInfo}');";
+            $sql = "SELECT 成员信息.学号 as 学号,姓名,性别 FROM 成员信息,成员基本信息 WHERE 成员信息.学号=成员基本信息.学号 and (成员信息.学号 like '{$personalInfo}' or 姓名 like '{$personalInfo}') LIMIT 10;";
         }
         $prePersonResults = $session->query($sql);
         if ($prePersonResults===false) {
