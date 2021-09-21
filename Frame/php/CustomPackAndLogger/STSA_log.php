@@ -46,8 +46,8 @@ if (!isset($__STSA_LOG__)) {
                     $this->add_log(__FILE__.":".__LINE__, "When init STSA_log, LogMode in json config file is missing.\nLogMode set as 'Log'.", "Warning");
                 }
                 // set LogDir
-                if (isset($conf["LogDir"]) && is_dir($conf["LogDir"])) {
-                    $this->LogDir = $conf["LogDir"];
+                if (isset($conf["LogDir"]) && is_dir(ROOT_PATH.$conf["LogDir"])) {
+                    $this->LogDir = ROOT_PATH.$conf["LogDir"];
                 } else {
                     $this->LogDir = ROOT_PATH."/log";
                     $this->add_log(__FILE__.":".__LINE__, "When init STSA_log, LogDir in json config file is missing or not a directory.\nLogDir set as WEBROOT/log.", "Warning");
