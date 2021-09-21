@@ -9,6 +9,7 @@ _compareTemp/
 .vscode/
 /log/*
 !/log/README.md
-/config
+/config/*
+!/config/Log.conf
 /tmpFiles/*
 !/tmpFiles/README.md
