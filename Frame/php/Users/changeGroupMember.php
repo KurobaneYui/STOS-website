@@ -26,7 +26,7 @@ if(!function_exists("addGroupMember")) {
             throw new STSAException("无权给小组添加成员", 401);
         }
         // 进行数据核对：待添加成员是否已存在且不为该组成员
-        $sql = "SELECT 学号 FROM 成员信息 WHERE '{$personID}' not in (SELECT DISTINCT 学号 FROM 工作信息 WHERE 所属组号=$groupCode) and 学号='{$personID}';";
+        $sql = "SELECT 学号 FROM 成员信息 WHERE '{$personID}' not in (SELECT DISTINCT 学号 FROM 工作信息 WHERE 所属组号={$groupCode}) and 学号='{$personID}';";
         $personCanAddResult = $session->query($sql);
         if ($personCanAddResult===false) {
             $logger->add_log(__FILE__.":".__LINE__, "addGroupMember, 数据库查询错误", "Error");
@@ -34,13 +34,13 @@ if(!function_exists("addGroupMember")) {
         }
         $rows = $personCanAddResult->num_rows;
         if ($rows!==1) {
-            $personCanAddResult->free();
+            $personCanAddResult->fetch_all();
             $logger->add_log(__FILE__ . ":" . __LINE__, "addGroupMember, 成员{$personID}不可添加, 由于成员不存在或已是该组成员", "Log");
             throw new STSAException("由于成员不存在或已是该组成员", 400);
         }
-        $personCanAddResult->free();
+        $personCanAddResult->fetch_all();
         // 核对成功，进行成员添加
-        $sql = "INSERT INTO 工作信息 ('学号','所属组号','岗位','基本工资','备注') VALUES ('{$personID}', $groupCode, '组员', '300', '';";
+        $sql = "INSERT INTO 工作信息 (学号,所属组号,岗位,基本工资,备注) VALUES ('{$personID}', {$groupCode}, '组员', '300', '');";
         $addResult = $session->query($sql);
         if ($addResult===false) {
             $logger->add_log(__FILE__.":".__LINE__, "addGroupMember, 数据库查询错误", "Error");
@@ -78,7 +78,7 @@ if(!function_exists("removeGroupMember")) {
             throw new STSAException("无权给小组删除成员", 401);
         }
         // 进行数据核对：待添加成员是否已存在且不为该组成员
-        $sql = "SELECT 学号 FROM 工作信息 WHERE 所属组号=$groupCode and 学号='{$personID}';";
+        $sql = "SELECT 学号 FROM 工作信息 WHERE 所属组号={$groupCode} and 学号='{$personID}';";
         $personCanAddResult = $session->query($sql);
         if ($personCanAddResult===false) {
             $logger->add_log(__FILE__.":".__LINE__, "removeGroupMember, 数据库查询错误", "Error");
@@ -86,13 +86,13 @@ if(!function_exists("removeGroupMember")) {
         }
         $rows = $personCanAddResult->num_rows;
         if ($rows!==1) {
-            $personCanAddResult->free();
+            $personCanAddResult->fetch_all();
             $logger->add_log(__FILE__ . ":" . __LINE__, "removeGroupMember, 成员{$personID}不可删除, 由于不是该组成员", "Log");
             throw new STSAException("由于不是该组成员", 400);
         }
-        $personCanAddResult->free();
+        $personCanAddResult->fetch_all();
         // 核对成功，进行成员添加
-        $sql = "DELETE FROM 工作信息 WHERE 所属组号=$groupCode and 学号='{$personID}';";
+        $sql = "DELETE FROM 工作信息 WHERE 所属组号={$groupCode} and 学号='{$personID}';";
         $addResult = $session->query($sql);
         if ($addResult===false) {
             $logger->add_log(__FILE__.":".__LINE__, "removeGroupMember, 数据库查询错误", "Error");
