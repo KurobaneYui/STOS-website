@@ -3,6 +3,9 @@
 // 全局变量用于统计表格数量
 var fullMemberTableCounter = 0;
 
+// 页面初始化时加载页面内容
+$(completePage());
+
 // 添加一个表格（内部功能，不建议直接调用）
 function add_table(table_rows, table_cols, table_name, ID_J, ID) {
     // required
@@ -17,7 +20,7 @@ function add_table(table_rows, table_cols, table_name, ID_J, ID) {
     let table_content =
         `<h4>${table_name}</h4>
         <div class="table-responsive">
-            <table class="table table-striped" id=${ID+"-table"}>
+            <table class="table table-striped" id=${ID + "-table"}>
                 <thead>
                     ${table_head_tr}
                 </thead>
@@ -27,13 +30,13 @@ function add_table(table_rows, table_cols, table_name, ID_J, ID) {
             </table>
         </div>`;
     ID_J.after(table_content);
-    return ID+"-table";
+    return ID + "-table";
 }
 
 // 在网页中添加表格
-function add_table_fullMember(table_rows, table_cols) {
+function add_table_fullMember(table_rows, table_cols, table_name) {
     fullMemberTableCounter++;
-    return add_table(table_rows, table_cols, $("#fullMember"), "fullMember");
+    return add_table(table_rows, table_cols, table_name, $("#fullMember"), "fullMember-" + fullMemberTableCounter.toString());
 }
 
 /* ************************* */
@@ -41,34 +44,34 @@ function add_table_fullMember(table_rows, table_cols) {
 /* ************************* */
 function getGroupMembersFunction() {
     $.post("/Ajax/Users/contact.php", {
-            'requestFunction': 'getContact'
-        },
-        function handleData(data,status) {
-            if(status==="success"){
-                let tempdata=JSON.parse(data);
-                let returnCode=tempdata['ReturnCode'];
-                data=tempdata['Data'];
-                if(returnCode==='400') {
+        'requestFunction': 'getContact'
+    },
+        function handleData(data, status) {
+            if (status === "success") {
+                let tempdata = JSON.parse(data);
+                let returnCode = tempdata['ReturnCode'];
+                data = tempdata['Data'];
+                if (returnCode === '400') {
                     alert("参数错误，请联系管理员");
                 }
-                else if(returnCode==='401') {
+                else if (returnCode === '401') {
                     alert('无权查看全队成员信息，请联系管理员处理');
                 }
-                else if(returnCode==='404') {
+                else if (returnCode === '404') {
                     alert('功能不存在，请联系管理员更正文件调用');
                 }
-                else if(returnCode==='417') {
+                else if (returnCode === '417') {
                     alert('功能错误，请联系管理员处理');
                 }
-                else if (returnCode==='200' || returnCode==='301') {
+                else if (returnCode === '200' || returnCode === '301') {
                     //状态码301，提醒转移函数
-                    if(returnCode==='301'){window.console.log('全队成员信息获取函数移至新位置');}
+                    if (returnCode === '301') { window.console.log('全队成员信息获取函数移至新位置'); }
                     //状态码200，处理data
                     let tempdata = JSON.parse(data); //'行数'，'列数'，'表头'，'数据'
                     let row = Number(tempdata['行数']);
                     let col = Number(tempdata['列数']);
                     let tableId = add_table(row, col); //建表格
-                    let table=document.getElementById(tableId);
+                    let table = document.getElementById(tableId);
                     let hed = tempdata['表头'];
                     for (let i = 0; i < col; i++) { //填写表头
                         table.children[0].children[0].children[i].innerText = hed[i];
@@ -82,7 +85,7 @@ function getGroupMembersFunction() {
                     }
                 }
             }
-            else{
+            else {
                 alert("请检查网络连接，或稍后再试");
             }
         })
@@ -103,47 +106,132 @@ function freshAllTables() {
 
 // 这个函数用于补全页面，一般会在页面刚加载完成时自动调用
 // 使用Ajax将信息提交至：/Ajax/Users/changeMemberOrAuth.php
-// 提交内容为(1)
-// 'requestFunction': 'getFullMembers'
+// 提交内容为
+// 'requestFunction': 'getFullMembersAuth'
 //
-// 对于提交1而言，返回编码与之前一样
+// 返回编码与之前一样
 // 如果错误则alert弹窗提醒
 // 如果操作正确，则调用add_table_fullMember函数
-// 函数需要三个参数，第一个时表格行数，第二个是表格列数，第三个填入组名称
+// 函数需要三个参数，第一个是表格行数，第二个是表格列数，第三个填入组名称
 // 函数返回值为新添加的表格的id，可以用于id搜索
 // 以上需要传入函数的信息均提供与返回的json格式串内
 // 如果有多个组，则多次调用函数
 function completePage() {
+    $.post("/Ajax/Users/changeMemberOrAuth.php", {
+        'requestFunction': 'getFullMembersAuth'
+    },
+        function handleData(data, status) {
+            if (status === "success") {
+                let tempdata = JSON.parse(data);
+                let returnCode = tempdata['ReturnCode'];
+                data = tempdata['Data'];
+                if (returnCode === '400') {
+                    alert("参数错误，请联系管理员");
+                }
+                else if (returnCode === '401') {
+                    alert('无权查看全队成员权限，请联系管理员处理');
+                }
+                else if (returnCode === '404') {
+                    alert('功能不存在，请联系管理员更正文件调用');
+                }
+                else if (returnCode === '417') {
+                    alert('功能错误，请联系管理员处理');
+                }
+                else if (returnCode === '200' || returnCode === '301') {
+                    //状态码301，提醒转移函数
+                    if (returnCode === '301') { window.console.log('全队成员权限获取函数移至新位置'); }
+                    //状态码200，处理data
+                    if (returnCode === '200') {
+                        let tempdata = JSON.parse(data);
+                        for (let m = 0; m < tempdata['length']; m++) {
+                            tpd = tempdata[m];
+                            let row = tpd['行数'];
+                            let col = tpd['列数'];
+                            let gName = tpd['部门名称'];
+                            let detaildata = tpd['数据'];//Array() [0]示例：姓名:XXX 学号:XXX 岗位:XX 部门名称:XXX
+                            let hed = tpd['表头'];//姓名 学号 部门名称 岗位
+                            let tableID = add_table_fullMember(row, col + 1, gName);//创建表格
+                            let table = document.getElementById(tableID);
+                            //填写表头
+                            for (let i = 0; i < col; i++) {
+                                table.children[0].children[0].children[i].innerText = hed[i];
+                            }
+
+                            //填写队员数据
+                            for (let i = 0; i < row; i++) {
+                                for (let j = 0; j < col - 1; j++) {
+                                    table.children[1].children[i].children[j].innerText = detaildata[i][hed[j]]; //以hed[j]为键
+                                }
+                                //table.children[1].children[i].children[col-1].innerHTML= LYS_Selector(detaildata[i][hed[col - 1]]) ;
+                                $('#' + tableID)[0].children[1].children[i].children[col-1].innerHTML=LYS_Selector(detaildata[i][hed[col - 1]]);
+                                table.children[1].children[i].children[col].innerHTML = LYS_Confirm_Button();
+                            }
+
+                        }
+                    }
+                }
+            }
+            else {
+                alert("错误:" + status);
+            }
+        })
     return 0;
 }
 
 /* **********************************
 这里给你两个函数，函数返回值是字符串
 需要在某个位置放下拉菜单或按钮的时候，直接把返回的字符串放进去就行
-下拉菜单这个函数输入一个参数，字符串，可以选"组员""组长""队长"三选一，会把对应的菜单设为selected
-function LYS_Selector(work) {
+下拉菜单这个函数输入一个参数，字符串，可以选"组员""组长""队长"三选一，会把对应的菜单设为selected*/
+/*function LYS_Selector(work) {
     let b = `<select class="form-control  input-sm">
-                <option value="group-member">组员</option>
-                <option value="group-leader">组长</option>
-                <option value="team-leader">队长</option>
+                <option value="member">组员</option>
+                <option value="group">组长</option>
+                <option value="team">队长</option>
             </select>`;
     b = $(b);
-    if (work==="组员") {
-        b.find("[value=group-member]").attr("selected",true);
+    if (work === "组员") {
+        b.find("[value=group-member]").attr("selected", true);
     }
-    if (work==="组长") {
-        b.find("[value=group-leader]").attr("selected",true);
+    if (work === "组长") {
+        b.find("[value=group-leader]").attr("selected", true);
     }
-    if (work==="队长") {
-        b.find("[value=team-leader]").attr("selected",true);
+    if (work === "队长") {
+        b.find("[value=team-leader]").attr("selected", true);
     }
     return b[0];
+}*/
+
+function LYS_Selector(work) {
+    var b;
+    if (work === "组员") {
+        b = `<select class="form-control  input-sm">
+        <option value="member" selected=true>组员</option>
+        <option value="group">组长</option>
+        <option value="team">队长</option>
+        </select>`;
+    }
+    if (work === "组长") {
+        b = `<select class="form-control  input-sm">
+        <option value="member">组员</option>
+        <option value="group" selected=true>组长</option>
+        <option value="team">队长</option>
+        </select>`;
+    }
+    if (work === "队长") {
+        b = `<select class="form-control  input-sm">
+        <option value="member">组员</option>
+        <option value="group">组长</option>
+        <option value="team" selected=true>队长</option>
+        </select>`;
+    }
+    return b;
 }
+
 function LYS_Confirm_Button() {
     let b = `<button onClick="changeAuth(this)" type="button" class="btn btn-info btn-rounded btn-sm">确认</button>`;
     return b;
 }
-   ********************************** */
+/*  ********************************** */
 
 // 这个函数用于完成修改成员权限的功能
 // 队员列表的每行末尾有一个添加按钮，点击后触发此函数
@@ -158,5 +246,45 @@ function LYS_Confirm_Button() {
 // 不论返回错误代码还是操作成功，均弹窗提示（alert）
 // 如果返回错误代码则alert后无任何操作，如果操作成功，则调用freshAllTables函数
 function changeAuth(Button) {
+    let pID = Button.parentNode.previousElementSibling.previousElementSibling.previousElementSibling.innerText;//学号
+    let gName = Button.parentNode.previousElementSibling.previousElementSibling.innerText;//部门名称
+    //let sWork = Button.parentNode.previousElementSibling.innerText;
+    //岗位
+    sIdx=Button.parentNode.previousElementSibling.children[0].selectedIndex;
+    sWork=Button.parentNode.previousElementSibling.children[0].options[sIdx].value;
+    $.post("/Ajax/Users/changeMemberOrAuth.php", {
+        'requestFunction': 'changeAuth',
+        'personID': pID,//学号：2017080101014
+        'groupName': gName,//组别：早餐组
+        'work': sWork//岗位：组长
+    },
+        function handleData(data, status) {
+            if (status === "success") {
+                let tempdata = JSON.parse(data);
+                let returnCode = tempdata['ReturnCode'];
+                if (returnCode === '400') {
+                    alert("参数错误，请联系管理员");
+                }
+                else if (returnCode === '401') {
+                    alert('无权查看全队成员权限，请联系管理员处理');
+                }
+                else if (returnCode === '404') {
+                    alert('功能不存在，请联系管理员更正文件调用');
+                }
+                else if (returnCode === '417') {
+                    alert('功能错误，请联系管理员处理');
+                }
+                else if (returnCode === '200' || returnCode === '301') {
+                    //状态码301，提醒转移函数
+                    if (returnCode === '301') { window.console.log('全队成员权限获取函数移至新位置'); }
+                    //状态码200，处理data
+                    alert("修改权限成功!");
+                    freshAllTables();
+                }
+            }
+            else {
+                alert("错误:" + status);
+            }
+        })
     return 0;
 }

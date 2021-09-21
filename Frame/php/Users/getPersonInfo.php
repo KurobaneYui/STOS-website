@@ -66,8 +66,8 @@ if (!function_exists("getOnePersonAllInfo")) {
     }
 }
 
-if (!function_exists("getAllPersonBasicInfo")) {
-    function getGroupPersonBasicInfo(string $GroupID): array { // 用于返回某组成员的非保密信息
+if (!function_exists("getGroupPersonBasicInfo")) {
+    function getGroupPersonBasicInfo(int $GroupID): array { // 用于返回某组成员的非保密信息
         // check authorization 属于组级别的的他人非保密信息
         if(!check_authorization(['team_leader'=>true,'group_leader'=>true,'member'=>true])) {
             throw new STSAException("无权限查看组内他人信息",401);
@@ -89,10 +89,10 @@ if (!function_exists("getAllPersonBasicInfo")) {
     }
 }
 
-if (!function_exists("getAllPersonAllInfo")) {
-    function getGroupPersonAllInfo(string $GroupID): array { // 用于返回某组成员的全部保密信息
+if (!function_exists("getGroupPersonAllInfo")) {
+    function getGroupPersonAllInfo(int $GroupID): array { // 用于返回某组成员的全部保密信息
         // check authorization 属于组级别的他人保密信息
-        if(!check_authorization(['team_leader'=>true,'group_leader'=>true,'member'=>false,'groupID'=> (int)$GroupID])) {
+        if(!check_authorization(['team_leader'=>true,'group_leader'=>true,'member'=>false,'groupID'=> $GroupID])) {
             throw new STSAException("无权限查看组内他人信息",401);
         }
 
@@ -109,5 +109,27 @@ if (!function_exists("getAllPersonAllInfo")) {
         $fields = array_column($PersonsAllInfos->fetch_fields(),'name');
         $PersonsAllInfos = $PersonsAllInfos->fetch_all(MYSQLI_ASSOC);
         return ["行数"=>$rows,"列数"=>count($fields),"数据"=>$PersonsAllInfos];
+    }
+}
+
+if (!function_exists("getPrePersonBasicInfo")) {
+    function getPrePersonBasicInfo(): array { // 用于返回预备成员的基本非保密信息
+        // check authorization 属于组级别的他人保密信息
+        if(!check_authorization(['team_leader'=>true,'group_leader'=>true,'member'=>false])) {
+            throw new STSAException("无权限查看预备队员信息",401);
+        }
+
+        $session = new DatabaseConnector();
+        $sql =
+            "SELECT * FROM 预备成员非保密信息 LIMIT 20;";
+        $PrePersonsBasicInfos = $session->query($sql);
+        if ($PrePersonsBasicInfos===false) {
+            throw new STSAException("数据库查询错误",417);
+        }
+
+        $rows = $PrePersonsBasicInfos->num_rows;
+        $fields = array_column($PrePersonsBasicInfos->fetch_fields(),'name');
+        $PrePersonsBasicInfos = $PrePersonsBasicInfos->fetch_all(MYSQLI_ASSOC);
+        return ["行数"=>$rows,"列数"=>count($fields),"字段"=>$fields,"数据"=>$PrePersonsBasicInfos];
     }
 }
