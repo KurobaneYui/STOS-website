@@ -1,12 +1,12 @@
 <?php
 session_start();
 require ('../ROOT_PATH.php');
-require(ROOT_PATH . '/frame/php/Database_connector.php');
-require(ROOT_PATH . '/frame/php/Person.php');
+require (ROOT_PATH.'/frame/php_frame/Database_connector.php');
+require (ROOT_PATH.'/frame/php_frame/Person_connector.php');
 
 if ( isset( $_SESSION[ 'islogin' ] )and isset( $_SESSION[ 'username' ] ) ) { // 如果已经登陆
     $connection = new Database_connector(ROOT_PATH.'/config/DataBase_CollectionData.conf'); // 建立数据库连接
-    $person = new Person( $_SESSION[ "username" ] ); // 获取个人信息
+    $person = new Person_connector( $_SESSION[ "username" ] ); // 获取个人信息
 }
 else { // 没有登陆但是cookie中存有登陆信息
     //检查cookie
@@ -15,7 +15,7 @@ else { // 没有登陆但是cookie中存有登陆信息
         $_SESSION[ 'islogin' ] = 1;
 
         $connection = new Database_connector(ROOT_PATH.'/config/DataBase_CollectionData.conf'); // 建立数据库连接
-        $person = new Person( $_SESSION[ "username" ] ); // 获取个人信息
+        $person = new Person_connector( $_SESSION[ "username" ] ); // 获取个人信息
     }
     else
         header( 'refresh:0; url=../log/login.php' ); // 返回登陆页面

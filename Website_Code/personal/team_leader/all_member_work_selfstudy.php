@@ -135,7 +135,7 @@ else { // 没有登陆
                                         <div class='card-block'>");
                         echo("<h4 class='card-title'>{$temp->xinming} </h4>");
                         echo("<h5 class = 'card-title'>{$paibans[$memberID]['教学楼']}{$paibans[$memberID]['区号']}{$paibans[$memberID]['教室编号']}  {$paibans[$memberID]["学院"]}</h5>");
-                        $temp->__destruct();
+
                         echo("
                         <div class='table-responsive'>
                             <table class='table'>

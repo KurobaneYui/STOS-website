@@ -138,7 +138,8 @@ if(isset($_POST["接受申请"]) and $_POST["接受申请"]=="yes") {
                         <div class="card">
                             <div class="card-block">
                                 <h2 class="card-title">代查系统说明</h2>
-								<h4 class="card-subtitle">周三当天开始就可以用了。咕咕了这么久，总算来了</h4>
+								<h4 class="card-subtitle">功能关闭</h4>
+                                <h4 class="card-text">本学期计划换用新的页面样式和数据库结构，代查系统暂时不再启用，需要大家自行联系帮忙的同学要数据，然后自己填写。</h4>
                                 <h4 class="card-text">代查系统的变动完全交由组长们处理了，组员可以在群里寻找代查，但是为了保证你们知到组员的代查情况，统一由组长进行代查的申请和接受。</h4>
 								<h4 class="card-text">组员和你们说了是哪个组的哪个组员，不论申请还是接受，你们都要及时在系统里提交申请或者接受申请</h4>
                             </div>
@@ -205,7 +206,7 @@ if(isset($_POST["接受申请"]) and $_POST["接受申请"]=="yes") {
 										</thead>
 										<tbody>
 											<?php
-											$sql = "SELECT * FROM `代查安排` WHERE `代查日期` BETWEEN '2019-11-10' and '2019-12-10' ORDER BY `代查日期` DESC;";
+											$sql = "SELECT * FROM `代查安排` WHERE `代查日期` BETWEEN '2019-11-20' and '2019-12-31' ORDER BY `代查日期` DESC;";
 											$daicha_paibans = $connection_data->execute_query($sql);
 											
 											while($daicha_single = $daicha_paibans->fetch_assoc()) {

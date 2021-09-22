@@ -17,7 +17,6 @@ function get_queqin_data($day,$memberID) {
 			}
 		echo("</tbody></table>");
 	}
-	$conn_temp->__destruct();
 }
 
 if(isset($_GET["day"])) {

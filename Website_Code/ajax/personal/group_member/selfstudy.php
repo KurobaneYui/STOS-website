@@ -50,47 +50,47 @@ function upload_selfstudy_data() {
 function upload_absent_data() {
 	$connection_temp = new STOS_MySQL_data();
 	$data_json = array();
-	if(isset($_POST["姓名1"]) and $_POST["姓名1"]!="" and $_POST["学号1"]!="") {
-		for($i=1;$i<200;$i++){
-			if(isset($_POST["姓名".$i]) and $_POST["姓名".$i]!="" and $_POST["学号".$i]!="") {
-					$data_json[$_POST["学号".$i]] = $_POST["姓名".$i];
-				}
-		}
-		if($a = $connection_temp->search("查早排班",false,array("查早组员"=>$_SESSION['username'],"周起始日期"=>getWeekRange(time(), 1)[0]),false)->fetch_assoc()) {
-			switch($_POST["日期"]) {
-				case "周一":$queqinbiaoriqi=getWeekRange(time(), 1)[2][0];break;
-				case "周二":$queqinbiaoriqi=getWeekRange(time(), 1)[2][1];break;
-				case "周三":$queqinbiaoriqi=getWeekRange(time(), 1)[2][2];break;
-				case "周四":$queqinbiaoriqi=getWeekRange(time(), 1)[2][3];break;
-				case "周五":$queqinbiaoriqi=getWeekRange(time(), 1)[2][4];break;
-				case "周六":$queqinbiaoriqi=getWeekRange(time(), 1)[2][5];break;
-				case "周日":$queqinbiaoriqi=getWeekRange(time(), 1)[2][6];break;
-				default:exit;
-			}
-			$data_array = array(
-				"日期"=>$queqinbiaoriqi,
-				"教学楼"=>$a["教学楼"],
-				"区号"=>$a["区号"],
-				"教室编号"=>$a["教室编号"],
-				"缺勤名单"=>json_encode($data_json, JSON_UNESCAPED_UNICODE),
-				"提交者"=>$_SESSION[ 'username' ]
-			);
+    for($i=1;$i<200;$i++){
+        if(isset($_POST["姓名".$i]) and $_POST["姓名".$i]!="" and $_POST["学号".$i]!="") {
+                $data_json[$_POST["学号".$i]] = $_POST["姓名".$i];
+            }
+    }
+    if($a = $connection_temp->search("查早排班",false,array("查早组员"=>$_SESSION['username'],"周起始日期"=>getWeekRange(time(), 1)[0]),false)->fetch_assoc()) {
+        switch($_POST["日期"]) {
+            case "周一":$queqinbiaoriqi=getWeekRange(time(), 1)[2][0];break;
+            case "周二":$queqinbiaoriqi=getWeekRange(time(), 1)[2][1];break;
+            case "周三":$queqinbiaoriqi=getWeekRange(time(), 1)[2][2];break;
+            case "周四":$queqinbiaoriqi=getWeekRange(time(), 1)[2][3];break;
+            case "周五":$queqinbiaoriqi=getWeekRange(time(), 1)[2][4];break;
+            case "周六":$queqinbiaoriqi=getWeekRange(time(), 1)[2][5];break;
+            case "周日":$queqinbiaoriqi=getWeekRange(time(), 1)[2][6];break;
+            default:exit;
+        }
+        $data_array = array(
+            "日期"=>$queqinbiaoriqi,
+            "教学楼"=>$a["教学楼"],
+            "区号"=>$a["区号"],
+            "教室编号"=>$a["教室编号"],
+            "缺勤名单"=>json_encode($data_json, JSON_UNESCAPED_UNICODE),
+            "提交者"=>$_SESSION[ 'username' ]
+        );
 
-			$conditions = array(
-				"日期"=>$data_array["日期"],
-				"教学楼"=>$data_array["教学楼"],
-				"区号"=>$data_array["区号"],
-				"教室编号"=>$data_array["教室编号"]
-			);
-			if($connection_temp->search("缺勤人员名单",false,$conditions,false)->fetch_assoc()){
-				$sql = "DELETE FROM `缺勤人员名单` WHERE `日期`='{$data_array["日期"]}'";
-				$sql = $sql." AND `教学楼`='{$data_array['教学楼']}' AND `区号`='{$data_array['区号']}'";
-				$sql = $sql." AND `教室编号`='{$data_array['教室编号']}';";
-				$connection_temp->execute_query($sql);
-			}
-			$connection_temp->insert("缺勤人员名单",$data_array);
-		}
-	}
+        $conditions = array(
+            "日期"=>$data_array["日期"],
+            "教学楼"=>$data_array["教学楼"],
+            "区号"=>$data_array["区号"],
+            "教室编号"=>$data_array["教室编号"]
+        );
+        if($connection_temp->search("缺勤人员名单",false,$conditions,false)->fetch_assoc()){
+            $sql = "DELETE FROM `缺勤人员名单` WHERE `日期`='{$data_array["日期"]}'";
+            $sql = $sql." AND `教学楼`='{$data_array['教学楼']}' AND `区号`='{$data_array['区号']}'";
+            $sql = $sql." AND `教室编号`='{$data_array['教室编号']}';";
+            $connection_temp->execute_query($sql);
+        }
+        if(isset($_POST["姓名1"]) and $_POST["姓名1"]!="" and $_POST["学号1"]!="")
+            $connection_temp->insert("缺勤人员名单",$data_array);
+    }
+
 	echo(json_encode(array("status"=>"true","content"=>"记名表数据已提交"),JSON_UNESCAPED_UNICODE));
 }
 

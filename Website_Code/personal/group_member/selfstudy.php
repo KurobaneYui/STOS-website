@@ -1,5 +1,7 @@
 <?php
 session_start();
+//ini_set("display_errors","On");
+//error_reporting(E_ALL);
 require("../../frame/Person_Class_frame.php");
 
 if ( isset( $_SESSION[ 'islogin' ] )and isset( $_SESSION[ 'username' ] ) ) { // 如果已经登陆
@@ -716,7 +718,7 @@ else { // 没有登陆
 			var ajax_beizhu = document.getElementById("beizhu").value; // 备注
 			var ajax_riqi = document.getElementById("chidaorenshu").parentNode.parentNode.previousElementSibling.value; // 日期
 			
-			xmlhttp.open("POST","http://132.232.231.109/ajax/personal/group_member/selfstudy.php",true);
+			xmlhttp.open("POST","/ajax/personal/group_member/selfstudy.php",true);
 			xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
 			xmlhttp.send("日期="+ajax_riqi+"&迟到人数="+ajax_chidaorenshu+"&第一次出勤="+ajax_diyicichuqin+"&违纪人数="+ajax_weijirenshu+"&第二次出勤="+ajax_diercichuqin+"&早退人数="+ajax_zaotuirenshu+"&请假人数="+ajax_qinjiarenshu+"&备注="+ajax_beizhu+"&早自习数据=yes");
 		}
@@ -780,7 +782,7 @@ else { // 没有登陆
 			}
 			
 			
-			xmlhttp.open("POST","http://132.232.231.109/ajax/personal/group_member/selfstudy.php",true);
+			xmlhttp.open("POST","/ajax/personal/group_member/selfstudy.php",true);
 			xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
 			xmlhttp.send(post_head);
 		}

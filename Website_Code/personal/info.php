@@ -138,41 +138,49 @@ if(isset($_POST["修改"]) and $_POST["修改"]=="yes") { // 如果有提交注�
                             <li class="breadcrumb-item active">个人信息</li>
                         </ol>
                     </div>
+                </div>
                     <!-- <div class="col-md-7 col-4 align-self-center">
                         <a href="#" class="btn waves-effect waves-light btn-danger pull-right hidden-sm-down"> Upgrade to Pro</a>
                     </div> -->
                                     <!-- Start Page Content -->
                 <!-- ============================================================== -->
-                <!-- Row -->
-                <div class="row">
-                    <!-- Column -->
-                    <div class="col-lg-4 col-xlg-3 col-md-5">
-                        <div class="card">
-                            <div class="card-block">
-                                <center class="m-t-30"> <img src="../assets/images/users/5.jpg" class="img-circle" width="150" />
-                                    <h4 class="card-title m-t-10">修改个人信息</h4>
-                                    <h6 class="card-subtitle">本页信息中，除必要联系方式信息展示给组长外所有信息不会展示给其他队员</h6>
-                                    <h6 class="card-subtitle">由于部分信息涉及工资申报，请在信息发生变动时及时修改</h6>  
-                                    <!-- <div class="row text-center justify-content-md-center">
-                                        <div class="col-4"><a href="javascript:void(0)" class="link"><i class="icon-people"></i> <font class="font-medium">254</font></a></div>
-                                        <div class="col-4"><a href="javascript:void(0)" class="link"><i class="icon-picture"></i> <font class="font-medium">54</font></a></div>
-                                    </div> -->
-                                </center>
+                <form class="form-horizontal form-material needs-validation" id="myform" novalidate action="info.php" method="post">
+                    <!-- Row -->
+                    <div class="row">
+                        <!-- Column -->
+                        <div class="col-lg-4 col-xlg-3 col-md-5">
+                            <div class="card">
+                                <div class="card-block">
+                                    <center class="m-t-30"> <img src="../assets/images/users/5.jpg" class="img-circle" width="150" />
+                                        <h4 class="card-title m-t-10">修改个人信息</h4>
+                                        <h6 class="card-subtitle">本页信息中，除必要联系方式信息展示给组长外所有信息不会展示给其他队员</h6>
+                                        <h6 class="card-subtitle">由于部分信息涉及工资申报，请在信息发生变动时及时修改</h6>
+                                        <!-- <div class="row text-center justify-content-md-center">
+                                            <div class="col-4"><a href="javascript:void(0)" class="link"><i class="icon-people"></i> <font class="font-medium">254</font></a></div>
+                                            <div class="col-4"><a href="javascript:void(0)" class="link"><i class="icon-picture"></i> <font class="font-medium">54</font></a></div>
+                                        </div> -->
+                                    </center>
+                                    <hr class="mb-12"/>
+                                    <h3 class ="card-title">密码修改</h3>
+                                    <div class="form-group">
+                                        <div class="col-md-12">
+                                            <label for="mima">密码（6-18位）可由：字母、数字和以下特殊字符组成：<br/>!#$%&'*+-/=?^_`{|}~.[]</label>
+                                            <input type="password" class="form-control form-control-line" id="mima" name="密码" <?php echo("value={$person->mima}"); ?> required>
+                                            <!-- <div class="invalid-feedback">需要填写有效密码</div> -->
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <!-- Column -->
-                    <!-- Column -->
-                    <div class="col-lg-8 col-xlg-9 col-md-7">
-                        <div class="card">
-                            <div class="card-block">
-                                <?php
-                                if(!($info_error===false)) { echo("<h2>提交的信息有误</h2><p>本次提交我们不会修改你的个人信息，请检查后重新填写</p><br/>"); foreach($info_error as $key=>$value) { echo("<p>{$key}：{$value}</p>"); } }
-                                elseif($upload_success===true) { echo("<h2>信息提交成功</h2><p>个人信息已修改，你可以刷新本页查看修改后信息</p>"); }
-                                ?>
-                                <form class="form-horizontal form-material needs-validation" id="myform" novalidate action="info.php" method="post">
+                        <!-- Column -->
+                        <div class="col-lg-8 col-xlg-9 col-md-7">
+                            <div class="card">
+                                <div class="card-block">
+                                    <?php
+                                    if(!($info_error===false)) { echo("<h2>提交的信息有误</h2><p>本次提交我们不会修改你的个人信息，请检查后重新填写</p><br/>"); foreach($info_error as $key=>$value) { echo("<p>{$key}：{$value}</p>"); } }
+                                    elseif($upload_success===true) { echo("<h2>信息提交成功</h2><p>个人信息已修改，你可以刷新本页查看修改后信息</p>"); }
+                                    ?>
                                     <h3 class ="card-title">基本信息</h3>
-                                    <hr class="mb-12">
                                     <div class="form-group">
                                         <div class="col-md-12">
                                             <label for="Name">姓名</label>
@@ -195,51 +203,50 @@ if(isset($_POST["修改"]) and $_POST["修改"]=="yes") { // 如果有提交注�
                                     </div>
                                     <div class="form-group">
                                         <div class="col-md-12 mb-3">
+                                            <h6 style='color:gray'>学院请填写全称</h6>
                                             <label for="school">学院（全称）</label>
                                             <input type="text" class="form-control form-control-line" id="school" placeholder="" name="学院" <?php echo("value={$person->xueyuan}"); ?> required>
-                                            <!-- <div class="invalid-feedback">
-                                                需要填写有效学院
-                                            </div> -->
+                                            <!-- <div class="invalid-feedback">需要填写有效学院</div> -->
                                         </div>
-
                                     </div>
                                     <div class="form-group">
                                         <div class="col-md-12">
                                             <label for="peoples">民族</label>
                                             <input type="text" class="form-control form-control-line" id="peoples" placeholder="民族" name="民族" <?php echo("value={$person->minzu}"); ?> required>
-                                            <!-- <div class="invalid-feedback" style="width: 100%;">
-                                                需要填写民族
-                                            </div>                                     -->
+                                            <!-- <div class="invalid-feedback" style="width: 100%;">需要填写民族</div> -->
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <div class="col-md-12">
                                             <label for="hometown">籍贯</label>
                                             <input type="text" class="form-control form-control-line" id="hometown" placeholder="籍贯" name="籍贯" <?php echo("value={$person->jiguan}"); ?> required>
-                                            <!-- <div class="invalid-feedback" style="width: 100%;">
-                                                需要填写籍贯
-                                            </div> -->
+                                            <!-- <div class="invalid-feedback" style="width: 100%;">、需要填写籍贯、</div> -->
                                         </div>
                                     </div>
-
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Column -->
+                    </div>
+                    <!-- Row -->
+                    <div class="row">
+                        <!-- Column -->
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-block">
                                     <h3 class ="card-title">联系方式及工资卡</h3>
-                                    <hr class="mb-12">
                                     <div class="form-group">
                                         <div class="col-md-12">
                                             <label for="phone">手机号</label>
                                             <input type="text" class="form-control form-control-line" id="phone" placeholder="手机号" name="电话" <?php echo("value={$person->dianhua}"); ?> required>
-                                            <!-- <div class="invalid-feedback" style="width: 100%;">
-                                                需要填写有效手机号
-                                            </div> -->
+                                            <!-- <div class="invalid-feedback" style="width: 100%;">需要填写有效手机号</div> -->
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <div class="col-md-12">
                                             <label for="QQ">QQ号</label>
                                             <input type="text" class="form-control form-control-line" id="QQ" placeholder="QQ号" name="QQ" <?php echo("value={$person->QQ}"); ?> required>
-                                            <!-- <div class="invalid-feedback" style="width: 100%;">
-                                                需要填写QQ号
-                                            </div> -->
+                                            <!-- <div class="invalid-feedback" style="width: 100%;">需要填写QQ号</div> -->
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -250,60 +257,55 @@ if(isset($_POST["修改"]) and $_POST["修改"]=="yes") { // 如果有提交注�
                                                 <option value="学知苑" <?php if($person->qinshi_yuan=="学知苑")echo("selected"); ?>>学知苑</option>
                                                 <option value="硕丰苑" <?php if($person->qinshi_yuan=="硕丰苑")echo("selected"); ?>>硕丰苑</option>
                                             </select>
-                                            <!-- <div class="invalid-feedback" style="width: 100%;">
-                                                请选择
-                                            </div> -->
+                                            <!-- <div class="invalid-feedback" style="width: 100%;">请选择</div> -->
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <div class="col-md-12">
                                             <label for="buildings">楼栋号</label>
                                             <input type="text" class="form-control" id="buildings" placeholder="例:8" name="寝室_楼" <?php echo("value={$person->qinshi_lou}"); ?> required>
-                                            <!-- <div class="invalid-feedback" style="width: 100%;">
-                                                请提供有效寝室房间号
-                                            </div> -->
+                                            <!-- <div class="invalid-feedback" style="width: 100%;">请提供有效寝室房间号</div> -->
                                         </div>
                                     </div>
-
                                     <div class="form-group">
                                         <div class="col-md-12">
                                             <label for="room">房间号</label>
                                             <input type="text" class="form-control" id="room" placeholder="例:230" name="寝室_号" <?php echo("value={$person->qinshi_hao}"); ?> required>
-                                            <!-- <div class="invalid-feedback" style="width: 100%;">
-                                                请提供有效寝室房间号
-                                            </div> -->
+                                            <!-- <div class="invalid-feedback" style="width: 100%;">请提供有效寝室房间号</div> -->
                                         </div>
                                     </div>
-                                    <hr/>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Column -->
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-block">
                                     <h3 class ="card-title">工资申请所需信息</h3>
+                                    <h6 style='color;gray'>如需代领工资，本项下属内容填写代领同学的信息；如果本人直接领取工资，保持和本人信息一致</h6>
                                     <div class="form-group">
                                         <div class="col-md-12">
                                             <label for="shenqingzheName">申请者姓名</label>
                                             <input type="text" class="form-control form-control-line" id="shenqingzheName" placeholder="" name="工资申请时姓名" <?php echo("value='{$person->gongzishenqingshixingming}'"); ?>required>
-                                            <!-- <div class="invalid-feedback" style="width: 100%;">
-                                                需要填写有效银行卡号
-                                            </div> -->
+                                            <!-- <div class="invalid-feedback" style="width: 100%;">需要填写有效银行卡号</div> -->
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <div class="col-md-12">
                                             <label for="shenqingzheID">申请者学号</label>
                                             <input type="text" class="form-control form-control-line" id="shenqingzheID" placeholder="" name="工资申请时学号" <?php echo("value='{$person->gongzishenqingshixuehao}'"); ?>required>
-                                            <!-- <div class="invalid-feedback" style="width: 100%;">
-                                                需要填写有效银行卡号
-                                            </div> -->
+                                            <!-- <div class="invalid-feedback" style="width: 100%;">需要填写有效银行卡号</div> -->
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <div class="col-md-12">
                                             <label for="bankID">申请者银行卡号</label>
                                             <input type="text" class="form-control form-control-line" id="bankID" placeholder="银行卡号" name="工资申请时银行卡号" <?php echo("value='{$person->gongzishenqingshiyinhangkahao}'"); ?>required>
-                                            <!-- <div class="invalid-feedback" style="width: 100%;">
-                                                需要填写有效银行卡号
-                                            </div> -->
+                                            <!-- <div class="invalid-feedback" style="width: 100%;">需要填写有效银行卡号</div> -->
                                         </div>
                                     </div>
                                     <div class="form-group">
+                                        <h6 style='color:gray'>建档立卡是在当地进行过资助备案的一部分同学，如果不了解这个，基本说明并没有建档立卡，选否即可</h6>
                                         <label for="recorder" class="col-md-12">建档立卡</label>
                                         <div class="col-md-12 custom-control custom-radi" id="recorder">
                                             <input class="form-control" id="yes" name="建档立卡" value="是" type="radio" <?php if($person->recorder=="是")echo("checked"); ?> required>
@@ -314,34 +316,18 @@ if(isset($_POST["修改"]) and $_POST["修改"]=="yes") { // 如果有提交注�
                                             <label class="custom-control-label" for="no">否</label>
                                         </div>
                                     </div>
-                                    
-                                    <h3 class ="card-title">密码修改</h3>
-                                    <hr class="mb-12">
-                                    <div class="form-group">
-                                        <div class="col-md-12">
-                                            <label for="mima">密码（6-18位）可由：字母、数字和以下特殊字符组成：<br/>!#$%&'*+-/=?^_`{|}~.[]</label>
-                                            <input type="password" class="form-control form-control-line" id="mima" name="密码" <?php echo("value={$person->mima}"); ?> required>
-                                            <!-- <div class="invalid-feedback">
-                                                需要填写有效密码
-                                            </div> -->
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="col-sm-12">
-                                            <button class="btn btn-success btn-primary btn-block" type="submit" name="修改" value="yes">提交修改</button>
-                                        </div>
-                                    </div>
-                                </form>
+                                </div>
                             </div>
                         </div>
+                        <!-- Column -->
                     </div>
-                    <!-- Column -->
-                </div>
-                <!-- Row -->
+                    <!-- Row -->
+                    <div class="form-group">
+                        <button class="btn btn-success btn-primary btn-block col-sm-12 col-md-6 col-lg-4 offset-md-3 offset-lg-4 offset-sm-0" type="submit" name="修改" value="yes">提交修改</button>
+                    </div>
+                </form>
                 <!-- ============================================================== -->
                 <!-- End PAge Content -->
-                </div>
-
             </div>
             <!-- ============================================================== -->
             <!-- End Container fluid  -->

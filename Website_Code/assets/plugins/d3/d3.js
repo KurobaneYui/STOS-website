@@ -11355,7 +11355,7 @@ var type$1 = function(defaultMimeType, response) {
   };
 };
 
-var html = type$1("text/html5", function(xhr) {
+var html = type$1("text/html", function(xhr) {
   return document.createRange().createContextualFragment(xhr.responseText);
 });
 

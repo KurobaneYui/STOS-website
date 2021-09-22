@@ -134,7 +134,6 @@ else { // 没有登陆
                                         <div class='card-block'>");
                         echo("<h4 class='card-title'>{$temp->xinming}</h4>");
                         echo("<h5 class = 'card-title'>{$paibans[$memberID]['教学楼']}{$paibans[$memberID]['区号']}{$paibans[$memberID]['教室编号']}  {$paibans[$memberID]["学院"]}");
-                        $temp->__destruct();
 						
 						echo("<ul class='nav nav-tabs' id='myTab{$memberID}' role='tablist'>
 						<li class='nav-item'>
@@ -509,7 +508,7 @@ else { // 没有登陆
 					document.getElementById("btn"+memberID).setAttribute("data-content",xmlhttp.responseText);
                 }
             }
-            xmlhttp.open("GET","http://132.232.231.109/ajax/personal/group_leader/member_work.php?day="+day+"&memberID="+memberID,true);
+            xmlhttp.open("GET","/ajax/personal/group_leader/member_work.php?day="+day+"&memberID="+memberID,true);
             xmlhttp.send();
         }
     </script>

@@ -63,6 +63,28 @@ function temp_getdata_xueyuan($xueyuan,$time) { // 例如：$xueyuan="信通", $
     else return false;
 }
 
+// function temp_getdata_xueyuan($xueyuan,$time) { // 例如：$xueyuan="信通", $time="2019-04-03"
+//     $xinxiku = new STOS_MySQL();
+//     $shujuku = new STOS_MySQL_data();
+    
+//     //给定日期对应的起始日期
+//     $zhou_first = getWeekRange(strtotime($time),1)[0];
+//     //搜索学院对应的教室
+//     if($result = $xinxiku->search("早自习教室安排",false,array("学院"=>$xueyuan,"起始日期"=>$zhou_first),false)) {
+//         $returns = array();
+//         while($jiaoshi_d = $result->fetch_assoc()) {
+//             if($t = $shujuku->search("查早数据",array("日期","教学楼","区号","教室编号","教室数据"),array("教学楼"=>$jiaoshi_d["教学楼"],"区号"=>$jiaoshi_d["区号"],"教室编号"=>$jiaoshi_d["教室编号"],"日期"=>$time),false)) {
+//                 if($t = $t->fetch_assoc()) {
+//                     $data = json_decode($t["教室数据"],true);
+//                     unset($t["教室数据"]);
+//                     array_push($returns,array_merge($data,$t));
+//                 }
+//             }
+//         }
+//         return json_encode($returns,JSON_UNESCAPED_UNICODE); // 配套JavaScript时可改为echo
+//     }
+//     else return false;
+// }
 function temp_getdata_jiaoshi($jiaoshi,$time) { // 例如：$jiaoshibianhao="品学楼A102", $time="2019-04-03"
     $xinxiku = new STOS_MySQL();
     $shujuku = new STOS_MySQL_data();

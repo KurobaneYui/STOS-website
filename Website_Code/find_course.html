@@ -175,7 +175,7 @@
 				document.getElementById("navbar").innerHTML = xmlhttp.responseText;
 			}
 		}
-		xmlhttp.open("GET","http://132.232.231.109/frame/index_head_frame.html",false);
+		xmlhttp.open("GET","/frame/index_head_frame.html",false);
 		xmlhttp.send();
 	</script>
     <script type="text/javascript">
@@ -253,7 +253,7 @@
                     }
                 }
             }
-            xmlhttp.open("GET","http://132.232.231.109/ajax/find_course.php?xy="+xueyuan+"&nj="+nianji+"&date_start="+date_start+"&date_end="+date_end,true);
+            xmlhttp.open("GET","/ajax/find_course.php?xy="+xueyuan+"&nj="+nianji+"&date_start="+date_start+"&date_end="+date_end,true);
             xmlhttp.send();
         }
     </script>

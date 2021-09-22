@@ -133,7 +133,6 @@ if(isset($_POST["减少组员"])) {
                                     echo("<td>".$info->xinbie."</td>");
                                     echo("<td>".$info->xuehao."</td>");
                                     echo("</tr>");
-                                    $info->__destruct();
                                 }
                                 echo("
                                     </tbody>
@@ -240,7 +239,7 @@ if(isset($_POST["减少组员"])) {
                 }
             }
         }
-        xmlhttp.open("POST","http://132.232.231.109/ajax/personal/group_leader/member_info.php",true);
+        xmlhttp.open("POST","/ajax/personal/group_leader/member_info.php",true);
         xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
         xmlhttp.send("修改空课=yes"+"&组员学号="+xuehao+"&空课周="+weekday+"&空课字符串="+N_S);
     }

@@ -17,7 +17,6 @@ if(isset($_POST["重置密码"])) {
     $te = new person_all_info($_POST["重置密码"]);
     $te->mima = $te->xuehao;
     $te->upload_mima();
-    $te->__destruct();
 }
 ?>
 <!doctype html>

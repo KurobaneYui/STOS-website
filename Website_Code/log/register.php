@@ -261,7 +261,7 @@ if(isset($_POST["注册"]) and $_POST["注册"]=="yes"/*false*/) { // 如果有�
 					document.getElementById("navbar").innerHTML = xmlhttp.responseText;
 				}
 			}
-			xmlhttp.open("GET","http://132.232.231.109/frame/index_head_frame.html",false);
+			xmlhttp.open("GET","/frame/index_head_frame.html",false);
             xmlhttp.send();
 	</script>
 	

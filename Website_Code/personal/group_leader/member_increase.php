@@ -127,7 +127,7 @@ if(isset($_POST["添加组员"])) {
                                     </thead>
                                     <tbody> 
                             ");
-                                $pre_memberID = $connection->execute_query("SELECT `学号` FROM `成员岗位` WHERE `所属组` IS NULL ORDER BY `submission_time` DESC ;");
+                                $pre_memberID = $connection->execute_query("SELECT `学号` FROM `成员岗位` WHERE `所属组` IS NULL ORDER BY `submission_time` DESC limit 40;");
                                 $i=0;
                                 while($memberID = $pre_memberID->fetch_assoc())
                                 {
@@ -139,7 +139,6 @@ if(isset($_POST["添加组员"])) {
                                     echo("<td>".$info->xinbie."</td>");
                                     echo("<td>".$info->xuehao."</td>");
                                     echo("</tr>");
-                                    $info->__destruct();
                                 }
                                 echo("
                                     </tbody>

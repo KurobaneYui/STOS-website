@@ -16,7 +16,6 @@ if(isset($_POST["重置密码"])) {
     $te = new person_all_info($_POST["重置密码"]);
     $te->mima = $te->xuehao;
     $te->upload_mima();
-    $te->__destruct();
 }
 ?>
 <!doctype html>
@@ -155,10 +154,10 @@ if(isset($_POST["重置密码"])) {
                                                 echo("<td><form class='needs-validation' novalidate action='member_info.php' method='post'><button class='btn btn-success' type='button' name='重置密码'>重置</button></form></td>");
                                             }
                                             else {
-                                                echo("<td><form class='needs-validation' novalidate action='member_info.php' method='post'><button class='btn btn-primary' type='submit' name='重置密码' value='{$memberID['学号']}'>重置</button></form></td>");
+                                                echo("<td><form class='needs-validation' novalidate action='all_member_info.php' method='post'><button class='btn btn-primary' type='submit' name='重置密码' value='{$memberID['学号']}'>重置</button></form></td>");
                                             }
                                             echo("</tr>");
-                                            $info->__destruct();
+
                                         }
                             echo("
                                     </tbody>

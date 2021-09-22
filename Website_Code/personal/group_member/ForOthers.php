@@ -96,8 +96,8 @@ else { // 没有登陆
                         <div class="card">
                             <div class="card-block">
 								<h2 class="card-title">代查系统说明</h2>
-								<h4 class="card-subtitle">周三当天开始就可以用了。咕咕了这么久，总算来了</h4>
-                                <h4 class="card-text">为保证组长可以知到大家代查情况，也便于我们在任何问题发生时迅速定位。系统的代查变更需要组长提交申请和接受申请。所以以后大家找代查，申请和接受的双方都要告知各自组长。</h4>
+								<h4 class="card-subtitle">功能关闭</h4>
+                                <h4 class="card-text">本学期计划换用新的页面样式和数据库结构，代查系统暂时不再启用，需要大家自行联系帮忙的同学要数据，然后自己填写。</h4>
                             </div>
                         </div>
                     </div>
@@ -120,7 +120,7 @@ else { // 没有登陆
 										</thead>
 										<tbody>
 											<?php
-											$sql = "SELECT * FROM `代查安排` WHERE `代查日期` BETWEEN '2019-11-10' and '2019-12-10' ORDER BY `代查日期` DESC;";
+											$sql = "SELECT * FROM `代查安排` WHERE `代查日期` BETWEEN '2019-11-20' and '2019-12-31' ORDER BY `代查日期` DESC;";
 											$daicha_paibans = $connection_data->execute_query($sql);
 											
 											while($daicha_single = $daicha_paibans->fetch_assoc()) {
@@ -710,7 +710,7 @@ else { // 没有登陆
 			var ajax_beizhu = document.getElementById("beizhu").value; // 备注
 			var ajax_riqi = document.getElementById("chidaorenshu").parentNode.parentNode.previousElementSibling.value; // 日期
 			
-			xmlhttp.open("POST","http://132.232.231.109/ajax/personal/group_member/ForOthers.php",true);
+			xmlhttp.open("POST","/ajax/personal/group_member/ForOthers.php",true);
 			xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
 			xmlhttp.send("日期="+ajax_riqi+"&迟到人数="+ajax_chidaorenshu+"&第一次出勤="+ajax_diyicichuqin+"&违纪人数="+ajax_weijirenshu+"&第二次出勤="+ajax_diercichuqin+"&早退人数="+ajax_zaotuirenshu+"&请假人数="+ajax_qinjiarenshu+"&备注="+ajax_beizhu+"&早自习数据=yes");
 		}
@@ -774,7 +774,7 @@ else { // 没有登陆
 			}
 			
 			
-			xmlhttp.open("POST","http://132.232.231.109/ajax/personal/group_member/ForOthers.php",true);
+			xmlhttp.open("POST","/ajax/personal/group_member/ForOthers.php",true);
 			xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
 			xmlhttp.send(post_head);
 		}
@@ -827,7 +827,7 @@ else { // 没有登陆
 			var post_head = "查课数据=yes"+"&教室="+ajax_jiaoshi+"&第一次出勤="+ajax_diyicichuqin+"&第二次出勤="+ajax_diercichuqin+"&第一次违纪="+ajax_diyiciweiji+"&第二次违纪="+ajax_dierciweiji<?php if(isset($courses_array)){echo("+'&申请者学号={$courses_array[0]['查课组员']}'");} ?>+"&备注="+ajax_beizhu;
 			
 			
-			xmlhttp.open("POST","http://132.232.231.109/ajax/personal/group_member/ForOthers.php",true);
+			xmlhttp.open("POST","/ajax/personal/group_member/ForOthers.php",true);
 			xmlhttp.setRequestHeader("Content-type","application/x-www-form-urlencoded");
 			xmlhttp.send(post_head);
 		}
