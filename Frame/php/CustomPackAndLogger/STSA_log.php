@@ -71,9 +71,10 @@ if (!isset($__STSA_LOG__)) {
          * @param string $pos
          * @param string $log
          * @param string $type
+         * @param bool $justWrite
          * @return void
          */
-        public function add_log(string $pos, string $log, string $type="Log"): void{
+        public function add_log(string $pos, string $log, string $type="Log", bool $justWrite=false): void{
             $addTypeWarning = false;
             $canLog = false;
             // 规范记录类型
@@ -94,10 +95,10 @@ if (!isset($__STSA_LOG__)) {
             // 记录日志
             if ($canLog===true) {
                 // 获取时间，获取设备信息，登录信息
-                $timeForFileName = DateTools::getCurrentDatetime(mode: "string");
-                $timeForLog = DateTools::getCurrentDatetime(mode: "database");
+                $timeForFileName = $justWrite ? "00:00:00" : DateTools::getCurrentDatetime(mode: "string");
+                $timeForLog = $justWrite ? "00:00:00" : DateTools::getCurrentDatetime(mode: "database");
                 try {
-                    $deviceInfo = (new DeviceAndIPDetector())->getClientInfo(forLog: true);
+                    $deviceInfo = $justWrite ? "" : (new DeviceAndIPDetector())->getClientInfo(forLog: true);
                 } catch (JsonException $e) {
                     $deviceInfo = "";
                 }
