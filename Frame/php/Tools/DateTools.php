@@ -38,7 +38,7 @@ if (!isset($__DateTools__)) {
                 try {
                     $this->baseDatetime = new DateTimeImmutable($datetime);
                 } catch (Exception $err) {
-                    $this->logger->add_log(__FILE__.':'.__LINE__, "Init DateTools, input datetime is illegal datetime: {$datetime}", "Error");
+                    $this->logger->add_log(__FILE__.':'.__LINE__, "Init DateTools, input datetime is illegal datetime: {$datetime}", "Error", true);
                     throw $err;
                 }
             }
@@ -124,7 +124,7 @@ if (!isset($__DateTools__)) {
             if ($mode === 'database') {
                 return (new DateTimeImmutable('now'))->format(('Y-m-d H:i:s'));
             }
-            $this->logger->add_log(__FILE__.':'.__LINE__, "DateTools get current datetime, input mode is not in accept list and use default mode (datetime), input mode is {{$mode}}", "Warning");
+            $this->logger->add_log(__FILE__.':'.__LINE__, "DateTools get current datetime, input mode is not in accept list and use default mode (datetime), input mode is {{$mode}}", "Warning", true);
             return $this->baseDatetime;
         }
 
