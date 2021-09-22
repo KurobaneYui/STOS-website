@@ -58,16 +58,23 @@ if (!isset($__DeviceAndIPDetector__)) {
             if (empty($this->IP)) {
                 $this->detectIP();
             }
-            $ip_add = file_get_contents('https://whois.pconline.com.cn/ipJson.jsp?json=true&ip=' . $this->IP); // 根据新浪api接口获取
+            $firstFunction = true; // 用于判断使用了哪个API
+            $ip_add = file_get_contents('https://whois.pconline.com.cn/ipJson.jsp?json=true&ip=' . $this->IP,
+                false,stream_context_create(['http'=>['method'=>'GET','timeout'=>2]])); // 根据新浪api接口获取，对香港服务器不适用，太慢
+            if ($ip_add===false) {
+                $firstFunction = false;
+                $ip_add = file_get_contents("http://ip-api.com/json/{$this->IP}?lang=zh-CN",
+                    false,stream_context_create(['http'=>['method'=>'GET','timeout'=>2]])); // 设置2秒超时
+            }
             if ($ip_add) {
-                $charset = iconv('gbk', 'utf-8', $ip_add);
+                $charset = $firstFunction ? iconv('gbk', 'utf-8', $ip_add) : $ip_add; // 使用ip-api则不需要编码转换
                 try {
                     $charset = json_decode($charset, true, 1024, JSON_THROW_ON_ERROR);
                 }catch (JsonException $err) {
                     $this->logger->add_log(__FILE__.":".__LINE__, "DeviceAndDetector detectAddress, json解包错误, 错误信息:\n{$err}", "Error", true);
                     throw $err;
                 }
-                $this->address = $charset['addr']; // 返回一个二维数组
+                $this->address = $firstFunction ? $charset['addr'] : $charset["country"].$charset["regionName"].$charset["city"].'-'.$charset["isp"].'-'.$charset["org"].'-'.$charset["as"]; // 如果用新浪api，则返回一个二维数组
                 return;
             }
 
