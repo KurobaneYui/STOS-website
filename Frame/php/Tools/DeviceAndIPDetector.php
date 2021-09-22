@@ -44,7 +44,7 @@ if (!isset($__DeviceAndIPDetector__)) {
                 $this->detectOS();
                 $this->detectDatetime();
             } catch (JsonException $err) {
-                $this->logger->add_log(__FILE__.":".__LINE__, "Init DeviceAndDetector, json相关错误, 错误信息:\n{$err}", "Error");
+                $this->logger->add_log(__FILE__.":".__LINE__, "Init DeviceAndDetector, json相关错误, 错误信息:\n{$err}", "Error", true);
                 throw new STSAException('When construct DeviceAndIPDetector, we meet an json error in detectAddress method.', 21, $err);
             }
         }
@@ -64,7 +64,7 @@ if (!isset($__DeviceAndIPDetector__)) {
                 try {
                     $charset = json_decode($charset, true, 1024, JSON_THROW_ON_ERROR);
                 }catch (JsonException $err) {
-                    $this->logger->add_log(__FILE__.":".__LINE__, "DeviceAndDetector detectAddress, json解包错误, 错误信息:\n{$err}", "Error");
+                    $this->logger->add_log(__FILE__.":".__LINE__, "DeviceAndDetector detectAddress, json解包错误, 错误信息:\n{$err}", "Error", true);
                     throw $err;
                 }
                 $this->address = $charset['addr']; // 返回一个二维数组
@@ -101,7 +101,7 @@ if (!isset($__DeviceAndIPDetector__)) {
                 $this->browser = $br;
                 return;
             }
-            $this->logger->add_log(__FILE__.":".__LINE__, "DeviceAndDetector detectBrowser, 未匹配到已知浏览器", "Log");
+            $this->logger->add_log(__FILE__.":".__LINE__, "DeviceAndDetector detectBrowser, 未匹配到已知浏览器", "Log", true);
             $this->browser = 'Error';
         }
 
@@ -164,7 +164,7 @@ if (!isset($__DeviceAndIPDetector__)) {
                 $this->language = $lang;
                 return;
             }
-            $this->logger->add_log(__FILE__.":".__LINE__, "DeviceAndDetector detectLanguage, 未匹配到语言信息", "Log");
+            $this->logger->add_log(__FILE__.":".__LINE__, "DeviceAndDetector detectLanguage, 未匹配到语言信息", "Log", true);
             $this->language = 'Error';
         }
 
@@ -304,7 +304,7 @@ if (!isset($__DeviceAndIPDetector__)) {
                 return json_encode($returns, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
             } catch (JsonException $err) {
                 if ($forLog!==true)  {
-                    $this->logger->add_log(__FILE__.":".__LINE__, "DeviceAndDetector getClientInfo, json打包错误, 错误信息:\n{$err}", "Error");
+                    $this->logger->add_log(__FILE__.":".__LINE__, "DeviceAndDetector getClientInfo, json打包错误, 错误信息:\n{$err}", "Error", true);
                 }
                 throw $err;
             }
