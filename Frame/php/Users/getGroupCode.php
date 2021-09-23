@@ -1,5 +1,5 @@
 <?php
-session_start();
+if (session_status()!==PHP_SESSION_ACTIVE) { session_start(); }
 require_once __DIR__ . "/../../../ROOT_PATH.php";
 require_once ROOT_PATH . "/Frame/php/CustomPackAndLogger/STSAException.php";
 require_once ROOT_PATH . "/Frame/php/CustomPackAndLogger/UnionReturnInterface.php";
@@ -13,23 +13,37 @@ if(!function_exists("getGroupCode")) {
      * @return int
      * @throws STSAException
      */
-    function getGroupCode(string $groupName): int{
+    function getGroupCode(string $groupName): int
+    {
+        return getGroupsCodes($groupName)[0];
+    }
+}
+
+if (!function_exists("getGroupsCodes")) {
+    /**
+     * @param string $groupName
+     * @return array
+     * @throws STSAException
+     */
+    function getGroupsCodes(string $groupName): array{
         $session = new DatabaseConnector();
         $logger = new STSA_log();
         // 非关键信息无需权限检查
-        $sql="SELECT 部门编号 FROM 部门信息 WHERE 部门名称='{$groupName}';";
+        $sql = "SELECT 部门编号 FROM 部门信息 WHERE 部门名称='{$groupName}';";
         $result = $session->query($sql);
         if ($result === false) {
-            $logger->add_log(__FILE__ . ":" . __LINE__, "getGroupCode, 数据库查询错误", "Error");
+            $logger->add_log(__FILE__ . ":" . __LINE__, "getGroupsCodes, 数据库查询错误", "Error");
             throw new STSAException("数据库查询错误", 417);
         }
-        if ($result->num_rows<1) {
-            $logger->add_log(__FILE__ . ":" . __LINE__, "getGroupCode, 提供的输入错误, 找不到{$groupName}对应的编号", "Error");
+        if ($result->num_rows < 1) {
+            $logger->add_log(__FILE__ . ":" . __LINE__, "getGroupsCodes, 提供的输入错误, 找不到{$groupName}对应的编号", "Error");
             throw new STSAException("提供的输入错误", 400);
         }
-        return $result->fetch_all(MYSQLI_ASSOC)[0]["部门编号"];
+        return array_column($result->fetch_all(MYSQLI_ASSOC), "部门编号");
     }
+}
 
+if (!function_exists("getGroupCodeForTeamOrGroupLeader")){
     /**
      * @return array
      * @throws STSAException

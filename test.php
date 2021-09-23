@@ -1,7 +1,7 @@
 <?php
-session_start();
-//ini_set("display_errors","On");
-//error_reporting(E_ALL);
+if (session_status()!==PHP_SESSION_ACTIVE) { session_start(); }
+ini_set("display_errors","On");
+error_reporting(E_ALL);
 require_once __DIR__."/ROOT_PATH.php";
 require_once ROOT_PATH . "/Frame/php/CustomPackAndLogger/STSAException.php";
 require_once ROOT_PATH . "/Frame/php/CustomPackAndLogger/UnionReturnInterface.php";
