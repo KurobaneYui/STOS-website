@@ -48,8 +48,8 @@ def writedata(path: str, session: connector.connection.MySQLConnection,
     # Wage表单写入表头
     ws_sheet1.cell(row=1, column=1, value='{}年{}月勤工助学补助'.format(date.year, date.month))
     ws_sheet1.cell(row=2, column=1, value="指导老师姓名：{}        指导老师电话：{}         指导老师邮箱：{}".format(teacherName, teacherPhone, teacherEmail))
-    ws_sheet1.cell(row=3, column=1, value='骨干姓名：{}         骨干电话：{}          骨干邮箱：{}         岗位总数：{}         办公地点：{}								'.format(teamLeaderName, teamLeaderPhone, teamLeaderEmail,len(results), workPlace))
-    ws_sheet1.cell(row=4, column=1, value='一档金额：{}元/月（人）   二档金额：{}元/月（人）            三档金额: {}元/月（人）            建档立卡专设岗位 {}（人）'.format(firstWage, secondWage, thirdWage, numForSubsidy))
+    ws_sheet1.cell(row=3, column=1, value='骨干姓名：{}         骨干电话：{}          骨干邮箱：{}         岗位总数：{}'.format(teamLeaderName, teamLeaderPhone, teamLeaderEmail,len(results), workPlace))
+    ws_sheet1.cell(row=4, column=1, value='一档金额：{}元/月（人）           二档金额：{}元/月（人）           建档立卡专设岗位 {}（人）'.format(firstWage, secondWage, thirdWage, numForSubsidy))
     ws_sheet1.cell(row=5, column=1, value="序号")
     for conlum_index in range(2, len(column_names) + 2):
         ws_sheet1.cell(row=5, column=conlum_index, value=column_names[conlum_index - 2])

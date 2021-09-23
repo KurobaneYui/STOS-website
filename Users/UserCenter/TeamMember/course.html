@@ -88,15 +88,25 @@
                     <h3 class="card-title">数据录入</h3>
                     <div class="alert alert-info"><strong>经过数据组处理后上报的数据将不再允许修改，如有数据被错误的识别为禁止修改，请联系管理员</strong></div>
                     <form class="form-row align-items-center">
-                        <div class="form-group col-xlg-3 col-lg-5 col-md-5 col-sm-12">
+                        <div class="form-group col-xlg-3 col-lg-4 col-md-4 col-sm-12">
                             <label for="class-upload-date">日期：</label>
                             <input id="class-upload-date" type="date" class="form-control" required/>
                         </div>
-                        <div class="form-group col-xlg-3 col-lg-5 col-md-5 col-sm-12">
+                        <div class="form-group col-xlg-3 col-lg-4 col-md-4 col-sm-12">
                             <label for="class-upload-classroom">教室：</label>
                             <select id="class-upload-classroom" class="form-control" required>
                                 <option value="" selected>请选择......</option>
                             </select>
+                        </div>
+                        <div class="form-group col-xlg-3 col-lg-4 col-md-4 col-sm-12 text-center row">
+                            <div class="col-5 offset-1">
+                                <label for="morning-upload-number-expect">应到人数：</label>
+                                <input id="morning-upload-number-expect" type="number" class="form-control-plaintext" readonly/>
+                            </div>
+                            <div class="col-5">
+                                <label for="morning-upload-No">编号：</label>
+                                <input id="morning-upload-No" type="number" class="form-control-plaintext" readonly/>
+                            </div>
                         </div>
                         <div class="form-group col-6 col-md-3 col-lg-3">
                             <label for="class-first-attendance-number">第一次出勤人数：</label>

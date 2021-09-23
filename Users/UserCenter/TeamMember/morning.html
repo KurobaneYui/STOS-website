@@ -99,9 +99,15 @@
                                     <option value="" selected>请选择......</option>
                                 </select>
                             </div>
-                            <div class="form-group col-xlg-3 col-lg-4 col-md-4 col-sm-12 text-center">
-                                <label for="morning-upload-number-expect">应到人数：</label>
-                                <input id="morning-upload-number-expect" type="number" class="form-control-plaintext" readonly/>
+                            <div class="form-group col-xlg-3 col-lg-4 col-md-4 col-sm-12 text-center row">
+                                <div class="col-5 offset-1">
+                                    <label for="morning-upload-number-expect">应到人数：</label>
+                                    <input id="morning-upload-number-expect" type="number" class="form-control-plaintext" readonly/>
+                                </div>
+                                <div class="col-5">
+                                    <label for="morning-upload-No">编号：</label>
+                                    <input id="morning-upload-No" type="number" class="form-control-plaintext" readonly/>
+                                </div>
                             </div>
                         </form>
                         <ul class="nav nav-tabs" id="morning-upload-navs" role="tablist">
@@ -160,22 +166,22 @@
                             <div class="tab-pane fade" id="morning-absent-upload" role="tabpanel"
                                  aria-labelledby="morning-absent-upload-tab">
                                 <form class="card-body">
-                                    <div class="form-row align-items-center">
-                                        <div class="col-md-2">
-                                            <button type="button" class="btn btn-danger btn-rounded mb-3">删除此条</button>
-                                        </div>
-                                        <div class="form-group col-md-5">
-                                            <label for="morning-absent-name-0">姓名：</label>
-                                            <input type="text" class="form-control" id="morning-absent-name-0" required>
-                                        </div>
-                                        <div class="form-group col-md-5">
-                                            <label for="morning-absent-studentID-0">学号：</label>
-                                            <input type="text" class="form-control" id="morning-absent-studentID-0"
-                                                   required>
-                                        </div>
-                                    </div>
+<!--                                    <div class="form-row align-items-center">-->
+<!--                                        <div class="col-md-2">-->
+<!--                                            <button type="button" class="btn btn-danger btn-rounded mb-3">删除此条</button>-->
+<!--                                        </div>-->
+<!--                                        <div class="form-group col-md-5">-->
+<!--                                            <label for="morning-absent-name-0">姓名：</label>-->
+<!--                                            <input type="text" class="form-control" id="morning-absent-name-0" required>-->
+<!--                                        </div>-->
+<!--                                        <div class="form-group col-md-5">-->
+<!--                                            <label for="morning-absent-studentID-0">学号：</label>-->
+<!--                                            <input type="text" class="form-control" id="morning-absent-studentID-0"-->
+<!--                                                   required>-->
+<!--                                        </div>-->
+<!--                                    </div>-->
                                     <div class="form-row">
-                                        <button type="button" class="btn btn-secondary btn-rounded mb-3">添加一条</button>
+                                        <button type="button" onclick="add_line(this)" class="btn btn-secondary btn-rounded mb-3">+</button>
                                     </div>
                                     <div class="form-row">
                                         <button type="submit" class="btn btn-info btn-rounded">确认提交</button>
@@ -507,5 +513,6 @@
 <script src="/js/sidebarmenu.js"></script>
 <!-- Custom JavaScript -->
 <script src="/js/custom.min.js"></script>
+<script src="morning.js"></script>
 </body>
 </html>

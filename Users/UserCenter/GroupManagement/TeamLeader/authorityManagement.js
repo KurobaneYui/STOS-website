@@ -163,7 +163,7 @@ function completePage() {
                                     table.children[1].children[i].children[j].innerText = detaildata[i][hed[j]]; //以hed[j]为键
                                 }
                                 //table.children[1].children[i].children[col-1].innerHTML= LYS_Selector(detaildata[i][hed[col - 1]]) ;
-                                $('#' + tableID)[0].children[1].children[i].children[col-1].innerHTML=LYS_Selector(detaildata[i][hed[col - 1]]);
+                                $($('#' + tableID)[0].children[1].children[i].children[col-1]).html(LYS_Selector(detaildata[i][hed[col - 1]]));
                                 table.children[1].children[i].children[col].innerHTML = LYS_Confirm_Button();
                             }
 
@@ -202,29 +202,22 @@ function completePage() {
 }*/
 
 function LYS_Selector(work) {
-    var b;
+    let b = `<select class="form-control  input-sm">
+                <option value="member">组员</option>
+                <option value="group">组长</option>
+                <option value="team">队长</option>
+            </select>`;
+    b = $(b);
     if (work === "组员") {
-        b = `<select class="form-control  input-sm">
-        <option value="member" selected=true>组员</option>
-        <option value="group">组长</option>
-        <option value="team">队长</option>
-        </select>`;
+        b.find("[value=member]").attr("selected", true);
     }
     if (work === "组长") {
-        b = `<select class="form-control  input-sm">
-        <option value="member">组员</option>
-        <option value="group" selected=true>组长</option>
-        <option value="team">队长</option>
-        </select>`;
+        b.find("[value=group]").attr("selected", true);
     }
     if (work === "队长") {
-        b = `<select class="form-control  input-sm">
-        <option value="member">组员</option>
-        <option value="group">组长</option>
-        <option value="team" selected=true>队长</option>
-        </select>`;
+        b.find("[value=team]").attr("selected", true);
     }
-    return b;
+    return b[0];
 }
 
 function LYS_Confirm_Button() {
