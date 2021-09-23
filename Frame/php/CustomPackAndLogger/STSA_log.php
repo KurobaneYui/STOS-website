@@ -1,5 +1,6 @@
 <?php
 <<<<<<< HEAD
+<<<<<<< HEAD
 
 
 class STSA_log
@@ -7,6 +8,9 @@ class STSA_log
 
 =======
 session_start();
+=======
+if (session_status()!==PHP_SESSION_ACTIVE) { session_start(); }
+>>>>>>> website-v2
 require_once __DIR__ . "/../../../ROOT_PATH.php";
 require_once ROOT_PATH . "/Frame/php/Tools/DateTools.php";
 require_once ROOT_PATH . "/Frame/php/Tools/DeviceAndIPDetector.php";

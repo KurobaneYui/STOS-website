@@ -66,51 +66,27 @@ function get_info() {
                     //岗位信息部分
                     let info = tempdata['基本岗位信息'];
                     //先判断有几个岗位
-                    workNums=info.length;
-                    if (workNums==1){//一个岗位
-                        //备注存入全局变量
-                        window.workRemarks[0]=info[0]['备注'];
-                        $("#work-table tbody").append(
-                            `<tr>
-                                <th><h4 class="m-b-0 font-light"></h4></th>
-                                <th><h4 class="m-b-0 font-light"></h4></th>
-                                <th><h4 class="m-b-0 font-light"></h4></th>
-                                <th onclick="show_work_remark(0)"><a data-toggle="modal" data-target="#work-remark" href="javascript:void(0)"><h4 class="m-b-0 font-light"><i class="sl-icon-eye"></i></h4></a></th>
-                            </tr>`
-                        );
-                        let transferList=['部门名称','岗位','基本工资']
-                        for(i=0;i<3;i++){
-                            $("#work-table tbody").children()[0].children[i].children[0].innerHTML=info[0][transferList[i]]
-                        }
+                    let workNums=info.length;
+                    //备注存入全局变量
+                    for(let i=0;i<workNums;i++)
+                    {
+                        window.workRemarks[i]=info[i]['备注'];
                     }
-                    if(workNums==2){//两个岗位
-                        //备注存入全局变量
-                        window.workRemarks[0]=info[0]['备注'];
-                        window.workRemarks[1]=info[1]['备注'];
+                    for(let i=0;i<workNums;i++) {
                         $("#work-table tbody").append(//第一个岗位
                             `<tr>
-                                <th><h3 class="m-b-0 font-light"></h3></th>
-                                <th><h3 class="m-b-0 font-light"></h3></th>
-                                <th><h3 class="m-b-0 font-light"></h3></th>
-                                <th onclick="show_work_remark(0)"><a data-toggle="modal" data-target="#work-remark" href="javascript:void(0)"><h3 class="m-b-0 font-light"><i class="sl-icon-eye"></i></h3></a></th>
-                            </tr>`
+                            <th><h3 class="m-b-0 font-light"></h3></th>
+                            <th><h3 class="m-b-0 font-light"></h3></th>
+                            <th><h3 class="m-b-0 font-light"></h3></th>
+                            <th onclick="show_work_remark(${i})"><a data-toggle="modal" data-target="#work-remark" href="javascript:void(0)"><h3 class="m-b-0 font-light"><i class="sl-icon-eye"></i></h3></a></th>
+                        </tr>`
                         );
-                        let transferList=['部门名称','岗位','基本工资']
-                        for(i=0;i<3;i++){
-                            $("#work-table tbody").children()[0].children[i].children[0].innerHTML=info[0][transferList[i]]
+                    }
+                    let transferList=['部门名称','岗位','基本工资']
+                    for(let i=0;i<workNums;i++){
+                        for(j=0;j<3;j++){
+                            $("#work-table tbody").children()[i].children[j].children[0].innerHTML=info[i][transferList[j]]
                         }
-                        $("#work-table tbody").append(//第二个岗位
-                            `<tr>
-                                <th><h3 class="m-b-0 font-light"></h3></th>
-                                <th><h3 class="m-b-0 font-light"></h3></th>
-                                <th><h3 class="m-b-0 font-light"></h3></th>
-                                <th onclick="show_work_remark(0)"><a data-toggle="modal" data-target="#work-remark" href="javascript:void(0)"><h3 class="m-b-0 font-light"><i class="sl-icon-eye"></i></h3></a></th>
-                            </tr>`
-                        );
-                        for(i=0;i<3;i++){
-                            $("#work-table tbody").children()[1].children[i].children[0].innerHTML=info[0][transferList[i]]
-                        }
-
                     }
                     //然后填写空课表
                     //找到每天的空课,五个数字对应1-2 3-4 5-6 7-8 9-11
