@@ -60,11 +60,11 @@ if (!isset($__DeviceAndIPDetector__)) {
             }
             $firstFunction = true; // 用于判断使用了哪个API
             $ip_add = file_get_contents('https://whois.pconline.com.cn/ipJson.jsp?json=true&ip=' . $this->IP,
-                false,stream_context_create(['http'=>['method'=>'GET','timeout'=>1]])); // 根据新浪api接口获取，对香港服务器不适用，太慢
+                false,stream_context_create(['http'=>['method'=>'GET','timeout'=>0.5]])); // 根据新浪api接口获取，对香港服务器不适用，太慢
             if ($ip_add===false) {
                 $firstFunction = false;
                 $ip_add = file_get_contents("http://ip-api.com/json/{$this->IP}?lang=zh-CN",
-                    false,stream_context_create(['http'=>['method'=>'GET','timeout'=>1]])); // 设置2秒超时
+                    false,stream_context_create(['http'=>['method'=>'GET','timeout'=>0.5]])); // 设置2秒超时
             }
             if ($ip_add) {
                 $charset = $firstFunction ? iconv('gbk', 'utf-8', $ip_add) : $ip_add; // 使用ip-api则不需要编码转换
