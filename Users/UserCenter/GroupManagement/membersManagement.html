@@ -85,12 +85,75 @@
             <!-- ============================================================== -->
             <!-- 主体 -->
             <!-- ============================================================== -->
-
             <div class="row">
                 <div class="col-md-12 col-lg-6">
                     <div class="card shadow">
                         <div class="card-body">
                             <h3 class="card-title" id="fullMember">正式成员</h3>
+                            <!-- 按钮触发模态框 --><!-- 按钮触发模态框 --><!-- 按钮触发模态框 --><!-- 按钮触发模态框 --><!-- 按钮触发模态框 -->
+                            <button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
+                                开始演示模态框
+                            </button>
+                            <!-- 模态框（Modal） --><!-- 模态框（Modal） --><!-- 模态框（Modal） --><!-- 模态框（Modal） -->
+                            <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="flase" data-backdrop="static">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h4 class="modal-title" id="myModalLabel">
+                                                工作转移
+                                            </h4>
+                                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                                                &times;
+                                            </button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="alert alert-info"><strong>文字说明</strong></div>
+                                            <form class="form-row">
+                                                <div class="form-group col-xlg-3 col-lg-4 col-md-4 col-sm-12">
+                                                    <label for="morning-download-start-date">开始日期：</label>
+                                                    <input id="start-date" type="date" class="form-control" required/>
+                                                </div>
+                                                <div class="form-group col-xlg-3 col-lg-4 col-md-4 col-sm-12">
+                                                    <label for="morning-download-end-date">结束日期：</label>
+                                                    <input id="end-date" type="date" class="form-control" required/>
+                                                </div>
+                                            </form>
+                                            <form class="form-row">
+                                                <div class="form-group col-xlg-3 col-lg-4 col-md-4 col-sm-12">
+                                                    <label for="morning-download-group-style">选择组：</label>
+                                                    <select id="morning-download-group-style" class="form-control" required>
+                                                        <option value="按教室分组" selected>xxx</option>
+                                                        <option value="按时间分组">xxx</option>
+                                                    </select>
+                                                </div>
+                                                <div class="form-group col-xlg-3 col-lg-4 col-md-4 col-sm-12">
+                                                    <label for="morning-download-group-style">新的成员：</label>
+                                                    <select id="morning-download-group-style" class="form-control" required>
+                                                        <option value="按教室分组" selected>xxx</option>
+                                                        <option value="按时间分组">xxx</option>
+                                                    </select>
+                                                </div>
+                                                <div class="form-group col-xlg-3 col-lg-4 col-md-4 col-sm-12">
+                                                    <label for="morning-download-group-style">组内成员：</label>
+                                                    <select id="morning-download-group-style" class="form-control" required>
+                                                        <option value="按教室分组" selected>xxx</option>
+                                                        <option value="按时间分组">xxx</option>
+                                                    </select>
+                                                </div>
+                                            </form>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                                            </button>
+                                            <button type="button" class="btn btn-primary">
+                                                提交更改
+                                            </button>
+                                        </div>
+                                    </div><!-- /.modal-content -->
+                                </div><!-- /.modal -->
+                            </div>
+                            <!-- 模态框（Modal） --><!-- 模态框（Modal） --><!-- 模态框（Modal） --><!-- 模态框（Modal） -->
+
 <!--                            <div class="table-responsive">-->
 <!--                                <table class="table table-striped">-->
 <!--                                    <thead>-->
@@ -126,7 +189,7 @@
 <!--                                </table>-->
 <!--                            </div>-->
                         </div>
-                    </div>
+                </div>
                 </div>
                 <div class="col-md-12 col-lg-6">
                     <div class="card shadow">
