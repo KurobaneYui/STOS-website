@@ -26,7 +26,8 @@ if (!function_exists("getWageInfo")) {
         $sql = "SELECT * FROM 成员工资信息 ORDER BY `岗位`, `部门名称` DESC;";
         $WageInfos = $session->query($sql);
         if ($WageInfos===false) {
-            $logger->add_log(__FILE__.":".__LINE__, "getWageInfo, 数据库查询错误", "Error");
+            $errorList2string = mysqli_error($session->getSession());
+            $logger->add_log(__FILE__.":".__LINE__, "getWageInfo, 数据库查询错误：{$errorList2string}", "Error");
             throw new STSAException("数据库查询错误",417);
         }
 

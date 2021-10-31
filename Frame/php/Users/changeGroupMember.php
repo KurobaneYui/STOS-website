@@ -29,7 +29,8 @@ if(!function_exists("addGroupMember")) {
         $sql = "SELECT 学号 FROM 成员信息 WHERE '{$personID}' not in (SELECT DISTINCT 学号 FROM 工作信息 WHERE 所属组号={$groupCode}) and 学号='{$personID}';";
         $personCanAddResult = $session->query($sql);
         if ($personCanAddResult===false) {
-            $logger->add_log(__FILE__.":".__LINE__, "addGroupMember, 数据库查询错误", "Error");
+            $errorList2string = mysqli_error($session->getSession());
+            $logger->add_log(__FILE__.":".__LINE__, "addGroupMember, 数据库查询错误：{$errorList2string}", "Error");
             throw new STSAException("数据库查询错误", 417);
         }
         $rows = $personCanAddResult->num_rows;
@@ -43,7 +44,8 @@ if(!function_exists("addGroupMember")) {
         $sql = "INSERT INTO 工作信息 (学号,所属组号,岗位,基本工资,备注) VALUES ('{$personID}', {$groupCode}, '组员', '300', '');";
         $addResult = $session->query($sql);
         if ($addResult===false) {
-            $logger->add_log(__FILE__.":".__LINE__, "addGroupMember, 数据库查询错误", "Error");
+            $errorList2string = mysqli_error($session->getSession());
+            $logger->add_log(__FILE__.":".__LINE__, "addGroupMember, 数据库查询错误：{$errorList2string}", "Error");
             throw new STSAException("数据库查询错误", 417);
         }
         $session->commit();
@@ -81,7 +83,8 @@ if(!function_exists("removeGroupMember")) {
         $sql = "SELECT 学号 FROM 工作信息 WHERE 所属组号={$groupCode} and 学号='{$personID}';";
         $personCanAddResult = $session->query($sql);
         if ($personCanAddResult===false) {
-            $logger->add_log(__FILE__.":".__LINE__, "removeGroupMember, 数据库查询错误", "Error");
+            $errorList2string = mysqli_error($session->getSession());
+            $logger->add_log(__FILE__.":".__LINE__, "removeGroupMember, 数据库查询错误：{$errorList2string}", "Error");
             throw new STSAException("数据库查询错误", 417);
         }
         $rows = $personCanAddResult->num_rows;
@@ -95,7 +98,8 @@ if(!function_exists("removeGroupMember")) {
         $sql = "DELETE FROM 工作信息 WHERE 所属组号={$groupCode} and 学号='{$personID}';";
         $addResult = $session->query($sql);
         if ($addResult===false) {
-            $logger->add_log(__FILE__.":".__LINE__, "removeGroupMember, 数据库查询错误", "Error");
+            $errorList2string = mysqli_error($session->getSession());
+            $logger->add_log(__FILE__.":".__LINE__, "removeGroupMember, 数据库查询错误：{$errorList2string}", "Error");
             throw new STSAException("数据库查询错误", 417);
         }
         $session->commit();
@@ -138,7 +142,8 @@ if(!function_exists("searchPreMember")) {
         }
         $prePersonResults = $session->query($sql);
         if ($prePersonResults===false) {
-            $logger->add_log(__FILE__.":".__LINE__, "searchPreMember, 数据库查询错误", "Error");
+            $errorList2string = mysqli_error($session->getSession());
+            $logger->add_log(__FILE__.":".__LINE__, "searchPreMember, 数据库查询错误：{$errorList2string}", "Error");
             throw new STSAException("数据库查询错误", 417);
         }
         $rows = $prePersonResults->num_rows;

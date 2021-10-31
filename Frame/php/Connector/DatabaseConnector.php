@@ -75,6 +75,10 @@ if (!isset($__DatabaseConnector__)) {
             return array();
         }
 
+        public function getSession() {
+            return $this->session;
+        }
+
         public function query(string $sql): bool|mysqli_result {
             if ($this->status) {
                 try{ // if sql query is insert or update, it needs commit operation

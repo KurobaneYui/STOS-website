@@ -32,7 +32,8 @@ if (!function_exists("getGroupsCodes")) {
         $sql = "SELECT 部门编号 FROM 部门信息 WHERE 部门名称='{$groupName}';";
         $result = $session->query($sql);
         if ($result === false) {
-            $logger->add_log(__FILE__ . ":" . __LINE__, "getGroupsCodes, 数据库查询错误", "Error");
+            $errorList2string = mysqli_error($session->getSession());
+            $logger->add_log(__FILE__ . ":" . __LINE__, "getGroupsCodes, 数据库查询错误：{$errorList2string}", "Error");
             throw new STSAException("数据库查询错误", 417);
         }
         if ($result->num_rows < 1) {
@@ -62,7 +63,8 @@ if (!function_exists("getGroupCodeForTeamOrGroupLeader")){
         $sql = "SELECT 所属组号 FROM 工作信息 WHERE 学号='{$personID}' and 岗位 in ('组长','队长');";
         $groupCodeResult = $session->query($sql);
         if ($groupCodeResult===false) {
-            $logger->add_log(__FILE__ . ":" . __LINE__, "getGroupCodeForTeamOrGroupLeader, 数据库查询错误", "Error");
+            $errorList2string = mysqli_error($session->getSession());
+            $logger->add_log(__FILE__ . ":" . __LINE__, "getGroupCodeForTeamOrGroupLeader, 数据库查询错误：{$errorList2string}", "Error");
             throw new STSAException("数据库查询错误", 417);
         }
         return array_column($groupCodeResult->fetch_all(MYSQLI_ASSOC),"所属组号");

@@ -26,7 +26,8 @@ if (!function_exists("getContactInfo")) {
             "SELECT (@i:=@i+1)'序号',`姓名`, `性别`, `QQ`, `电话`, `部门名称` as '所属组', `岗位` FROM 成员非保密信息,(SELECT @i:=0)b;";
         $ContactInfos = $session->query($sql);
         if ($ContactInfos===false) {
-            $logger->add_log(__FILE__.":".__LINE__, "getContactInfo, 数据库查询错误", "Error");
+            $errorList2String = mysqli_error($session->getSession());
+            $logger->add_log(__FILE__.":".__LINE__, "getContactInfo, 数据库查询错误：{$errorList2String}", "Error");
             throw new STSAException("数据库查询错误",417);
         }
 

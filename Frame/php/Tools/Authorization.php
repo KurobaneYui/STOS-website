@@ -39,7 +39,8 @@ if(!function_exists("check_authorization")){
         $sql = "SELECT 权限 FROM 权限信息 WHERE `学号`='{$_SESSION["userID"]}';";
         $PersonAuthorization = $session->query($sql);
         if ($PersonAuthorization===false) {
-            $logger->add_log(__FILE__.':'.__LINE__, "Check authorization, 数据库查询错误", "Error");
+            $errorList2string = mysqli_error($session->getSession());
+            $logger->add_log(__FILE__.':'.__LINE__, "Check authorization, 数据库查询错误：{$errorList2string}", "Error");
             throw new STSAException("数据库查询错误",417);
         }
         $rows = $PersonAuthorization->num_rows;
