@@ -68,6 +68,7 @@ if(!function_exists("changeMemberAuth")) {
         // 如果authStringArray第二个参数是group，则增加时同时享有组员权限，删除时自动变更为对应组组员权限，不改变队长等其他权限
         // 如果authStringArray第二个参数是member，则添加时自动去除组长权限仅设置为组员权限，删除时则直接去除对应组组长和组员权限，不改变队长等其他权限
         // 每次还会检查groupCode是否为队长组，增删时会影响队长权限和组长权限，如果是队长组成员则自动有队长权限和队长组组长权限，如果不是则自动去除队长权限
+        // 每次还会修正数据权限，队长有数据查看和导出权限，现场组组员和组长有数据查看、修改权限，数据组组员有数据查看、修改权限，数据组组长有数据查看、修改、导入和导出权限
         if (!isset($authStringArray[0], $authStringArray[1])) {
             $logger->add_log(__FILE__.":".__LINE__, "changeMemberAuth, 提供的输入格式错误", "Log");
             throw new STSAException("输入参数有误", 400);
@@ -129,7 +130,9 @@ if(!function_exists("changeMemberAuth")) {
             $authResult = [
                 "data" => [
                     "check" => false,
-                    "change" => false
+                    "change" => false,
+                    "input" => false,
+                    "output" => false
                 ],
                 "super" => false,
                 "team_leader" => false,
@@ -142,7 +145,9 @@ if(!function_exists("changeMemberAuth")) {
                 $authResult = [
                     "data" => [
                         "check" => false,
-                        "change" => false
+                        "change" => false,
+                        "input" => false,
+                        "output" => false
                     ],
                     "super" => false,
                     "team_leader" => false,
@@ -153,8 +158,10 @@ if(!function_exists("changeMemberAuth")) {
                 $authResult = json_decode($authResult[0]["权限"], true, 512, JSON_THROW_ON_ERROR);
             }
         }
-        // 获取队长组组号
+        // 获取队长组组号、数据组组号和现场组组号
         $leaderCode = getGroupCode("队长");
+        $xianchangzuCodes = getGroupsCodes("现场组%");
+        $shujuzuCode = getGroupCode("数据组");
         // 判断是否变更组长权限
         if ($authStringArray[1]==="group") {
             require_once ROOT_PATH . "/Frame/php/Users/getGroupCode.php";
@@ -197,6 +204,40 @@ if(!function_exists("changeMemberAuth")) {
                 unset($authResult["groups"][$groupCode]);
                 if ($leaderCode===$groupCode) {
                     $authResult["team_leader"]=false;
+                }
+            }
+        }
+        // 更新数据权限
+        if ($authResult["super"]===true) {
+            $authResult["data"]["check"] = true;
+            $authResult["data"]["change"] = true;
+            $authResult["data"]["input"] = true;
+            $authResult["data"]["output"] = true;
+        }
+        else {
+            // 队长的数据权限
+            if ($authResult["team_leader"] === true) {
+                $authResult["data"]["check"] = true;
+                $authResult["data"]["output"] = true;
+            }
+            // 检查组长组员的数据权限
+            foreach ($authResult["groups"] as $key=>$value) {
+                // 如果是现场组的组员或组长
+                if (in_array($key,$xianchangzuCodes)) {
+                    $authResult["data"]["check"] = true;
+                    $authResult["data"]["change"] = true;
+                }
+                // 如果是数据组的组员（默认是组员）
+                if ($key===$shujuzuCode) {
+                    $authResult["data"]["check"] = true;
+                    $authResult["data"]["change"] = true;
+                    // 如果还是组长
+                    if ($authResult["groups"][$key]["group_leader"]===true) {
+                        $authResult["data"]["check"] = true;
+                        $authResult["data"]["change"] = true;
+                        $authResult["data"]["input"] = true;
+                        $authResult["data"]["output"] = true;
+                    }
                 }
             }
         }
