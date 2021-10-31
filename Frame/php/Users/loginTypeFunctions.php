@@ -27,7 +27,8 @@ if(!function_exists("login")) {
         $sql = "select `学号` from `账户密码` where `学号`='{$log_info['学号']}'  and `密码`=AES_ENCRYPT( '{$log_info['密码']}','{$log_info['密码']}' );";
         $passwordCheck = $session->query($sql);
         if ($passwordCheck===false) {
-            $logger->add_log(__FILE__.":".__LINE__, "login, 数据库查询错误", "Error");
+            $errorList2string = mysqli_error($session->getSession());
+            $logger->add_log(__FILE__.":".__LINE__, "login, 数据库查询错误：{$errorList2string}", "Error");
             throw new STSAException("数据库查询错误",417);
         }
 
@@ -84,7 +85,8 @@ if(!function_exists("resetPassword")) {
                                 `姓名`='{$reset_info['姓名']}' and `学院名称`='{$reset_info['学院']}';";
         $resetPasswordCheck = $session->query($sql);
         if ($resetPasswordCheck===false) {
-            $logger->add_log(__FILE__.":".__LINE__, "resetPassword, 数据库查询错误", "Error");
+            $errorList2string = mysqli_error($session->getSession());
+            $logger->add_log(__FILE__.":".__LINE__, "resetPassword, 数据库查询错误：{$errorList2string}", "Error");
             throw new STSAException("数据库查询错误",417);
         }
 
@@ -93,7 +95,8 @@ if(!function_exists("resetPassword")) {
             $sql = "update 账户密码 set `密码备份`='{$reset_info['学号']}', `密码`=AES_ENCRYPT( '{$reset_info['学号']}','{$reset_info['学号']}' ) where `学号`='{$reset_info['学号']}';";
             $resetPasswordSql = $session->query($sql);
             if ($resetPasswordSql===false) {
-                $logger->add_log(__FILE__.":".__LINE__, "resetPassword, 数据库更新错误", "Error");
+                $errorList2string = mysqli_error($session->getSession());
+                $logger->add_log(__FILE__.":".__LINE__, "resetPassword, 数据库更新错误：{$errorList2string}", "Error");
                 throw new STSAException("数据库更新错误",417);
             }
             $session->commit();

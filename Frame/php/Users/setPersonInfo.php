@@ -189,7 +189,8 @@ if(!function_exists("setOnePersonAllInfo")) {
             $sql = "select * from 成员信息 where 学号='{$personalInfo['学号']}';";
             $info = $session->query($sql);
             if ($info===false) {
-                $logger->add_log(__FILE__.":".__LINE__, "setOnePersonAllInfo, 数据库查询错误", "Error");
+                $errorList2string = mysqli_error($session->getSession());
+                $logger->add_log(__FILE__.":".__LINE__, "setOnePersonAllInfo, 数据库查询错误：{$errorList2string}", "Error");
                 throw new STSAException("数据库查询错误",417);
             }
             // 已有数据返回错误
@@ -246,7 +247,8 @@ if(!function_exists("setOnePersonAllInfo")) {
             $sql = "select * from 成员信息 where 学号='{$personalInfo['学号']}';";
             $info = $session->query($sql);
             if ($info===false) {
-                $logger->add_log(__FILE__.":".__LINE__, "setOnePersonAllInfo, 数据库查询错误", "Error");
+                $errorList2string = mysqli_error($session->getSession());
+                $logger->add_log(__FILE__.":".__LINE__, "setOnePersonAllInfo, 数据库查询错误：{$errorList2string}", "Error");
                 throw new STSAException("数据库查询错误",417);
             }
             // 没有数据则返回错误

@@ -43,7 +43,8 @@ if (!function_exists("uploadWageInfo")) {
                         一档金额='{$info['firstMoney']}',二档金额='{$info['secondMoney']}',三档金额='{$info['thirdMoney']}',建档立卡专设岗位='{$info['subsidyDossierNum']}';";
         $wageInfoResult = $session->query($sql);
         if ($wageInfoResult===false) {
-            $logger->add_log(__FILE__.":".__LINE__,"uploadWageInfo, 数据库查询错误","Error");
+            $errorList2string = mysqli_error($session->getSession());
+            $logger->add_log(__FILE__.":".__LINE__,"uploadWageInfo, 数据库查询错误：{$errorList2string}","Error");
             throw new STSAException("数据库查询错误",417);
         }
         $session->commit();
@@ -70,7 +71,8 @@ if (!function_exists("downloadWageInfo")) {
                     一档金额,二档金额,三档金额,建档立卡专设岗位 FROM 财务报账表头 ORDER BY 日期 DESC LIMIT 1;";
         $wageInfoResult = $session->query($sql);
         if ($wageInfoResult===false) {
-            $logger->add_log(__FILE__ . ":" . __LINE__, "uploadWageInfo, 数据库查询错误", "Error");
+            $errorList2string = mysqli_error($session->getSession());
+            $logger->add_log(__FILE__ . ":" . __LINE__, "uploadWageInfo, 数据库查询错误：{$errorList2string}", "Error");
             throw new STSAException("数据库查询错误", 417);
         }
         return $wageInfoResult->fetch_all(MYSQLI_ASSOC)[0];

@@ -90,11 +90,7 @@ if (!isset($__STSA_LOG__)) {
                 // 获取时间，获取设备信息，登录信息
                 $timeForFileName = $justWrite ? "00:00:00" : DateTools::getCurrentDatetime(mode: "string");
                 $timeForLog = $justWrite ? "00:00:00" : DateTools::getCurrentDatetime(mode: "database");
-                try {
-                    $deviceInfo = $justWrite ? "" : (new DeviceAndIPDetector())->getClientInfo(forLog: true);
-                } catch (JsonException $e) {
-                    $deviceInfo = "";
-                }
+                $deviceInfo = $justWrite ? "" : (new DeviceAndIPDetector())->getClientInfo(forLog: true);
                 $UserIDName = $_SESSION["userID"]." ".$_SESSION["userName"]." ".$_SESSION["isLogin"];
                 // 根据时间尝试打开或创建文件，追加写入
                 $f = fopen($this->LogDir."/".$timeForFileName.".log", 'a');

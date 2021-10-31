@@ -11,7 +11,7 @@ if(!function_exists("check_authorization")){
      * @package php\Tools
      * @author LuoYinsong
      */
-    function check_authorization(array $auth_request=array()): bool{
+    function check_authorization(array $auth_request=array(), array $auth_request_for_data=array("check"=>false,"change"=>false,"input"=>false,"output"=>false)): bool{
         require_once __DIR__ . '/../../../ROOT_PATH.php';
         require_once ROOT_PATH . "/Frame/php/Connector/DatabaseConnector.php";
         require_once ROOT_PATH . "/Frame/php/CustomPackAndLogger/STSAException.php";
@@ -39,7 +39,8 @@ if(!function_exists("check_authorization")){
         $sql = "SELECT 权限 FROM 权限信息 WHERE `学号`='{$_SESSION["userID"]}';";
         $PersonAuthorization = $session->query($sql);
         if ($PersonAuthorization===false) {
-            $logger->add_log(__FILE__.':'.__LINE__, "Check authorization, 数据库查询错误", "Error");
+            $errorList2string = mysqli_error($session->getSession());
+            $logger->add_log(__FILE__.':'.__LINE__, "Check authorization, 数据库查询错误：{$errorList2string}", "Error");
             throw new STSAException("数据库查询错误",417);
         }
         $rows = $PersonAuthorization->num_rows;
@@ -52,6 +53,14 @@ if(!function_exists("check_authorization")){
             $logger->add_log(__FILE__.':'.__LINE__, "Check authorization, json解包错误, 待解包数据为：\n{$PersonAuthorization}", "Error");
             return false;
         }
+        // 检查数据权限
+        foreach ($auth["data"] as $key=>$value) {
+            if($value===false && $auth_request_for_data[$key]===true) {
+                $logger->add_log(__FILE__.':'.__LINE__, "Check authorization, data rights check error, not allowed", "Log");
+                return false;
+            }
+        }
+        // 检查身份权限
         if($auth['super']) { // 超级权限放行
             $logger->add_log(__FILE__.':'.__LINE__, "Check authorization, super rights, allow", "Log");
             return true;
