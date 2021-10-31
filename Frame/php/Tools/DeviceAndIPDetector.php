@@ -23,7 +23,7 @@ if (!isset($__DeviceAndIPDetector__)) {
         public string $language;
         public string $OS;
         public string $datetime;
-        private STSA_log $logger;
+        public string $errorInfo;
         // in development
         private string $onlineIP;
 
@@ -43,9 +43,9 @@ if (!isset($__DeviceAndIPDetector__)) {
                 $this->detectLanguage();
                 $this->detectOS();
                 $this->detectDatetime();
+                $this->errorInfo = "";
             } catch (JsonException $err) {
-                $this->logger->add_log(__FILE__.":".__LINE__, "Init DeviceAndDetector, json相关错误, 错误信息:\n{$err}", "Error", true);
-                throw new STSAException('When construct DeviceAndIPDetector, we meet an json error in detectAddress method.', 21, $err);
+                $this->errorInfo = (string)$err;
             }
         }
 
@@ -64,16 +64,11 @@ if (!isset($__DeviceAndIPDetector__)) {
             if ($ip_add===false) {
                 $firstFunction = false;
                 $ip_add = file_get_contents("http://ip-api.com/json/{$this->IP}?lang=zh-CN",
-                    false,stream_context_create(['http'=>['method'=>'GET','timeout'=>0.5]])); // 设置2秒超时
+                    false,stream_context_create(['http'=>['method'=>'GET','timeout'=>1.5]])); // 设置2秒超时
             }
             if ($ip_add) {
                 $charset = $firstFunction ? iconv('gbk', 'utf-8', $ip_add) : $ip_add; // 使用ip-api则不需要编码转换
-                try {
-                    $charset = json_decode($charset, true, 1024, JSON_THROW_ON_ERROR);
-                }catch (JsonException $err) {
-                    $this->logger->add_log(__FILE__.":".__LINE__, "DeviceAndDetector detectAddress, json解包错误, 错误信息:\n{$err}", "Error", true);
-                    throw $err;
-                }
+                $charset = json_decode($charset, true, 1024, JSON_THROW_ON_ERROR);
                 $this->address = $firstFunction ? $charset['addr'] : $charset["country"].$charset["regionName"].$charset["city"].'-'.$charset["isp"].'-'.$charset["org"].'-'.$charset["as"]; // 如果用新浪api，则返回一个二维数组
                 return;
             }
@@ -108,7 +103,7 @@ if (!isset($__DeviceAndIPDetector__)) {
                 $this->browser = $br;
                 return;
             }
-            $this->logger->add_log(__FILE__.":".__LINE__, "DeviceAndDetector detectBrowser, 未匹配到已知浏览器", "Log", true);
+            $this->errorInfo .= "--未匹配到已知浏览器--";
             $this->browser = 'Error';
         }
 
@@ -171,7 +166,7 @@ if (!isset($__DeviceAndIPDetector__)) {
                 $this->language = $lang;
                 return;
             }
-            $this->logger->add_log(__FILE__.":".__LINE__, "DeviceAndDetector detectLanguage, 未匹配到语言信息", "Log", true);
+            $this->errorInfo .= "--未匹配到语言信息--";
             $this->language = 'Error';
         }
 
@@ -295,7 +290,6 @@ if (!isset($__DeviceAndIPDetector__)) {
          * This function encoding all the info of client into json and return
          * @param bool $forLog if is true, return empty string instead of write LOG when meet JsonException Error
          * @return string
-         * @throws JsonException
          */
         public function getClientInfo(bool $forLog=false): string{
             $returns = array(
@@ -307,13 +301,13 @@ if (!isset($__DeviceAndIPDetector__)) {
                 'OS' => $this->OS,
                 'datetime' => $this->datetime
             );
+            if ($forLog===true) {
+                $returns["errorInfo"] = $this->errorInfo;
+            }
             try {
                 return json_encode($returns, JSON_THROW_ON_ERROR | JSON_UNESCAPED_UNICODE);
             } catch (JsonException $err) {
-                if ($forLog!==true)  {
-                    $this->logger->add_log(__FILE__.":".__LINE__, "DeviceAndDetector getClientInfo, json打包错误, 错误信息:\n{$err}", "Error", true);
-                }
-                throw $err;
+                return $this->errorInfo;
             }
         }
 

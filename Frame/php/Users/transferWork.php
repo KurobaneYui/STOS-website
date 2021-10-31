@@ -27,7 +27,8 @@ if(!function_exists("transferMorningWork")) {
         $sql = "SELECT 学号 FROM 工作信息 WHERE 学号='{$personID_new}' and 所属组号 IN (SELECT 所属组号 FROM 工作信息 WHERE 所属组号={$groupCode} and 学号='{$personID_ori}');";
         $isInSameGroupResult = $session->query($sql);
         if ($isInSameGroupResult===false) {
-            $logger->add_log(__FILE__.":".__LINE__, "transferMorningWork, 数据库查询错误", "Error");
+            $errorList2string = mysqli_error($session->getSession());
+            $logger->add_log(__FILE__.":".__LINE__, "transferMorningWork, 数据库查询错误：{$errorList2string}", "Error");
             throw new STSAException("数据库查询错误",417);
         }
         if($isInSameGroupResult->num_rows<1) {
@@ -77,7 +78,8 @@ if(!function_exists("transferMorningWork")) {
                     ) and 原定检查者学号='{$personID_ori}' and 原定检查者学号<>最终检查者学号;";
         $updateMorningResult = $session->query($sql);
         if ($updateMorningResult===false) {
-            $logger->add_log(__FILE__.":".__LINE__, "transferMorningWork, 数据库查询错误", "Error");
+            $errorList2string = mysqli_error($session->getSession());
+            $logger->add_log(__FILE__.":".__LINE__, "transferMorningWork, 数据库查询错误：{$errorList2string}", "Error");
             throw new STSAException("数据库查询错误",417);
         }
         $session->commit();
@@ -104,7 +106,8 @@ if(!function_exists("transferCoursesWork")) {
         $sql = "SELECT 学号 FROM 工作信息 WHERE 学号='{$personID_new}' and 所属组号 IN (SELECT 所属组号 FROM 工作信息 WHERE 所属组号={$groupCode} and 学号='{$personID_ori}');";
         $isInSameGroupResult = $session->query($sql);
         if ($isInSameGroupResult===false) {
-            $logger->add_log(__FILE__.":".__LINE__, "transferCoursesWork, 数据库查询错误", "Error");
+            $errorList2string = mysqli_error($session->getSession());
+            $logger->add_log(__FILE__.":".__LINE__, "transferCoursesWork, 数据库查询错误：{$errorList2string}", "Error");
             throw new STSAException("数据库查询错误",417);
         }
         if($isInSameGroupResult->num_rows<1) {
@@ -154,7 +157,8 @@ if(!function_exists("transferCoursesWork")) {
                     ) and 原定检查者学号='{$personID_ori}' and 原定检查者学号<>最终检查者学号;";
         $updateCoursesResult = $session->query($sql);
         if ($updateCoursesResult===false) {
-            $logger->add_log(__FILE__.":".__LINE__, "transferCoursesWork, 数据库查询错误", "Error");
+            $errorList2string = mysqli_error($session->getSession());
+            $logger->add_log(__FILE__.":".__LINE__, "transferCoursesWork, 数据库查询错误：{$errorList2string}", "Error");
             throw new STSAException("数据库查询错误",417);
         }
         $session->commit();

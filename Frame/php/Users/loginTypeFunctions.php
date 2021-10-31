@@ -6,15 +6,6 @@ require_once ROOT_PATH . "/Frame/php/CustomPackAndLogger/UnionReturnInterface.ph
 require_once ROOT_PATH . "/Frame/php/Connector/DatabaseConnector.php";
 require_once ROOT_PATH . "/Frame/php/Tools/Authorization.php";
 require_once ROOT_PATH . "/Frame/php/Tools/DeviceAndIPDetector.php";
-<<<<<<< HEAD
-// TODO:require log file
-
-if(!function_exists("getCookie")) {
-    function getCookie(): array{
-        if (isset($_COOKIE['STSA_un'], $_COOKIE['STSA_pd'])) {
-            return ['STSA_un' => $_COOKIE['STSA_un'], 'STSA_pd' => $_COOKIE['STSA_pd'], 'STSA_rm' => true];
-        }
-=======
 require_once ROOT_PATH . "/Frame/php/CustomPackAndLogger/STSA_log.php";
 
 if(!function_exists("getCookie")) {
@@ -25,25 +16,19 @@ if(!function_exists("getCookie")) {
             return ['STSA_un' => $_COOKIE['STSA_un'], 'STSA_pd' => $_COOKIE['STSA_pd'], 'STSA_rm' => true];
         }
         $logger->add_log(__FILE__.":".__LINE__, "getCookie, cookie is not exist", "Log");
->>>>>>> website-v2
         return ['STSA_un' => '', 'STSA_pd' => '', 'STSA_rm' => false];
     }
 }
 
 if(!function_exists("login")) {
     function login(array $log_info): array{
-<<<<<<< HEAD
-=======
         $logger = new STSA_log();
->>>>>>> website-v2
         $session = new DatabaseConnector();
         $sql = "select `学号` from `账户密码` where `学号`='{$log_info['学号']}'  and `密码`=AES_ENCRYPT( '{$log_info['密码']}','{$log_info['密码']}' );";
         $passwordCheck = $session->query($sql);
         if ($passwordCheck===false) {
-<<<<<<< HEAD
-=======
-            $logger->add_log(__FILE__.":".__LINE__, "login, 数据库查询错误", "Error");
->>>>>>> website-v2
+            $errorList2string = mysqli_error($session->getSession());
+            $logger->add_log(__FILE__.":".__LINE__, "login, 数据库查询错误：{$errorList2string}", "Error");
             throw new STSAException("数据库查询错误",417);
         }
 
@@ -73,10 +58,7 @@ if(!function_exists("login")) {
                     value ('{$log_info['学号']}', '$LogInfo->OS', '$LogInfo->browser', '$LogInfo->language', '$LogInfo->IP', '$LogInfo->address', '$LogInfo->datetime', '成功', $id);";
             $session->query($sql);
             $session->commit();
-<<<<<<< HEAD
-=======
             $logger->add_log(__FILE__.":".__LINE__, "login, login successfully", "Log");
->>>>>>> website-v2
 
             return [true];
         }
@@ -89,10 +71,7 @@ if(!function_exists("login")) {
                 value ('{$log_info['学号']}', '$LogInfo->OS', '$LogInfo->browser', '$LogInfo->language', '$LogInfo->IP', '$LogInfo->address', '$LogInfo->datetime', '失败', $id);";
         $session->query($sql);
         $session->commit();
-<<<<<<< HEAD
-=======
         $logger->add_log(__FILE__.":".__LINE__, "login, login unsuccessfully", "Log");
->>>>>>> website-v2
 
         return [false];
     }
@@ -100,19 +79,14 @@ if(!function_exists("login")) {
 
 if(!function_exists("resetPassword")) {
     function resetPassword(array $reset_info): array{
-<<<<<<< HEAD
-=======
         $logger = new STSA_log();
->>>>>>> website-v2
         $session = new DatabaseConnector();
         $sql = "select `学号` from `成员保密信息` where `学号`='{$reset_info['学号']}' and `籍贯`='{$reset_info['籍贯']}' and
                                 `姓名`='{$reset_info['姓名']}' and `学院名称`='{$reset_info['学院']}';";
         $resetPasswordCheck = $session->query($sql);
         if ($resetPasswordCheck===false) {
-<<<<<<< HEAD
-=======
-            $logger->add_log(__FILE__.":".__LINE__, "resetPassword, 数据库查询错误", "Error");
->>>>>>> website-v2
+            $errorList2string = mysqli_error($session->getSession());
+            $logger->add_log(__FILE__.":".__LINE__, "resetPassword, 数据库查询错误：{$errorList2string}", "Error");
             throw new STSAException("数据库查询错误",417);
         }
 
@@ -121,16 +95,8 @@ if(!function_exists("resetPassword")) {
             $sql = "update 账户密码 set `密码备份`='{$reset_info['学号']}', `密码`=AES_ENCRYPT( '{$reset_info['学号']}','{$reset_info['学号']}' ) where `学号`='{$reset_info['学号']}';";
             $resetPasswordSql = $session->query($sql);
             if ($resetPasswordSql===false) {
-<<<<<<< HEAD
-                throw new STSAException("数据库更新错误",417);
-            }
-            $session->commit();
-
-            return [true];
-        }
-
-=======
-                $logger->add_log(__FILE__.":".__LINE__, "resetPassword, 数据库更新错误", "Error");
+                $errorList2string = mysqli_error($session->getSession());
+                $logger->add_log(__FILE__.":".__LINE__, "resetPassword, 数据库更新错误：{$errorList2string}", "Error");
                 throw new STSAException("数据库更新错误",417);
             }
             $session->commit();
@@ -139,7 +105,6 @@ if(!function_exists("resetPassword")) {
             return [true];
         }
         $logger->add_log(__FILE__.":".__LINE__, "resetPassword, resetPassword unsuccessfully", "Log");
->>>>>>> website-v2
         return [false];
     }
 }

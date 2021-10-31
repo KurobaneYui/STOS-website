@@ -25,7 +25,8 @@ if (!function_exists("getNameWorkforPage")) {
         $sql = "SELECT `部门名称`,`岗位` FROM 工作信息,部门信息 WHERE `所属组号`=`部门编号` and `学号`='{$userID}';";
         $workInfos = $session->query($sql);
         if ($workInfos===false) {
-            $logger->add_log(__FILE__.":".__LINE__, "getNameWorkforPage, 数据库查询错误", "Error");
+            $errorList2string = mysqli_error($session->getSession());
+            $logger->add_log(__FILE__.":".__LINE__, "getNameWorkforPage, 数据库查询错误：{$errorList2string}", "Error");
             throw new STSAException("数据库查询错误",417);
         }
 

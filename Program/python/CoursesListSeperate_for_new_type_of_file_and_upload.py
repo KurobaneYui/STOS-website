@@ -167,8 +167,7 @@ class NewFileProcessor:
 
     def process_data(self) -> None:
         """正式数据处理"""
-        assert isinstance(self.insertDataFrame,DataFrame
-        )
+        assert isinstance(self.insertDataFrame,DataFrame)
         # 读入待处理数据，并返回处理结果
         self.insertDataFrame = dataNormalization(self.insertDataFrame)()
 
