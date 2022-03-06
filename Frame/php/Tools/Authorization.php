@@ -6,6 +6,7 @@ if(!function_exists("check_authorization")){
      * This function is used to make authorization
      * input is expect authorization code. And if have right to do query, will return true, otherwise will return false.
      * @param array $auth_request two params request: team_leader(bool), group_leader(bool), member(bool); and one param option: groupID(int)
+     * @param array $auth_request_for_data
      * @return bool
      * @throws STSAException
      * @package php\Tools

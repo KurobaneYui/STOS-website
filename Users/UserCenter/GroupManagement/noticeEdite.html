@@ -86,16 +86,25 @@
             <div class="row">
                 <div class="card shadow-sm col-lg-7 col-md-12">
                     <div class="card-body">
-                        <form>
+                        <form id="noticeUpload">
                             <h4 class="card-title">通知编辑</h4>
                             <h6 class="card-subtitle">只提供简单文本、字符表情的支持，不支持emoji等</h6>
                             <label>
+                                发布位置
+                                <select id="noticeType" class="form-control" required>
+                                    <option value="" selected>请选择...</option>
+                                    <option value="team">全队</option>
+                                    <option value="management">骨干</option>
+                                    <option value="xxxGroupCode">xxx组</option>
+                                </select>
+                            </label>
+                            <label>
                                 通知标题
-                                <input type="text" width="100%" class="form-control">
+                                <input id="noticeHeader" type="text" width="100%" class="form-control" required>
                             </label>
                             <label>
                                 通知正文
-                                <textarea rows="4" cols="100%" class="form-control"></textarea>
+                                <textarea id="noticeContent" rows="4" cols="100%" class="form-control" required></textarea>
                             </label>
                             <button type="submit" class="btn btn-rounded btn-info">提交</button>
                         </form>
@@ -106,9 +115,9 @@
                         <h4 class="card-title">效果预览</h4>
                         <h6 class="card-subtitle">展示成员看到的内容，如果有不支持的输入，可以及时发现</h6>
                         <div class="card-body border">
-                            <h5 class="card-title">通知标题balabala</h5>
-                            <p class="card-text">Some quick example text to build. 一些信息。</p>
-                            <p class="card-blockquote">FROM 队长</p>
+                            <h5 id="previewHeader" class="card-title">通知标题balabala</h5>
+                            <p id="previewContent" class="card-text">Some quick example text to build. 一些信息。</p>
+                            <p id="previewType" class="card-blockquote">FROM 队长</p>
                         </div>
                     </div>
                 </div>
@@ -198,5 +207,6 @@
 <script src="/js/sidebarmenu.js"></script>
 <!-- Custom JavaScript -->
 <script src="/js/custom.min.js"></script>
+<script src="noticeEdite.js"></script>
 </body>
 </html>

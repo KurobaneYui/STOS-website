@@ -33,7 +33,19 @@ if (!isset($__TranslateBetweenChineseAndEnglish__)) {
             'applicant-credit-card'=>'工资用银行卡',
             'subsidyDossier'=>'建档立卡',
             'password'=>'密码',
-            'remark'=>'备注'
+            'remark'=>'备注',
+            'date'=>'日期',
+            'building'=>'教学楼',
+            'area'=>'区域',
+            'classroom'=>'教室编号',
+            'expect'=>'应到人数',
+            'No'=>'表编号',
+            'late'=>'迟到人数',
+            'absent'=>'缺勤人数',
+            'first-attendance'=>'第一次出勤',
+            'discipline'=>'违纪人数',
+            'second-attendance'=>'第二次出勤',
+            'leave-early'=>'早退人数'
         );
         private static array $C2EArray = array(
             '姓名'=>'name',
@@ -53,7 +65,19 @@ if (!isset($__TranslateBetweenChineseAndEnglish__)) {
             '工资用银行卡'=>'applicant-credit-card',
             '建档立卡'=>'subsidyDossier',
             '密码'=>'password',
-            '备注'=>'remark'
+            '备注'=>'remark',
+            '日期'=>'date',
+            '教学楼'=>'building',
+            '区域'=>'area',
+            '教室编号'=>'classroom',
+            '应到人数'=>'expect',
+            '表编号'=>'No',
+            '迟到人数'=>'late',
+            '缺勤人数'=>'absent',
+            '第一次出勤'=>'first-attendance',
+            '违纪人数'=>'discipline',
+            '第二次出勤'=>'second-attendance',
+            '早退人数'=>'leave-early'
         );
 
         /**

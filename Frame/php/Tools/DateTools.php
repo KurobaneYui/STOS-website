@@ -114,7 +114,8 @@ if (!isset($__DateTools__)) {
          * If 'string', function will return string type through build-in method: ->format('Y-m-d')
          * @return DateTimeImmutable|string
          */
-        public function getBaseDatetime(string $mode='datetime') {
+        public function getBaseDatetime(string $mode='datetime'): DateTimeImmutable|string
+        {
             if ($mode === 'datetime') {
                 return $this->baseDatetime;
             }
