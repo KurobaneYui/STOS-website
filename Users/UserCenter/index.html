@@ -1,284 +1,147 @@
 <!DOCTYPE html>
-<html lang="zh, en">
+
+<html lang="zh, en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default"
+  data-assets-path="/assets/" data-template="vertical-menu-template-free">
+
 <head>
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<!-- Tell the browser to be responsive to screen width -->
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="电子科技大学学风督导队">
-<meta name="author" content="罗寅松，学风督导队数据组">
-<!-- Favicon icon -->
-<link rel="icon" type="image/png" sizes="16x16" href="../../assets/images/STSA.png">
-<title>首页-学风督导队</title>
-<!-- Bootstrap Core CSS -->
-<link href="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.2.0/css/bootstrap.min.css" rel="stylesheet">
-<!--  Sweet Alert CSS  --> 
-<!--link href="../../assets/node_modules/sweetalert/sweetalert.css" rel="stylesheet" type="text/css"--> 
-<!--  Slimscrollbar Scrollbar CSS  -->
-<link href="https://cdn.bootcdn.net/ajax/libs/jquery.perfect-scrollbar/0.8.1/css/perfect-scrollbar.min.css" rel="stylesheet">
-<!--  Waves (by Google) CSS  -->
-<link href="https://cdn.bootcdn.net/ajax/libs/node-waves/0.7.6/waves.min.css" rel="stylesheet">
-<!-- Custom CSS -->
-<link href="/css/style.css" rel="stylesheet">
-<!-- You can change the theme colors from here -->
-<link href="/css/colors/default.css" id="theme" rel="stylesheet">
+  <meta charset="utf-8" />
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+
+  <title>个人中心</title>
+
+  <meta name="description" content="电子科技大学学风督导队" />
+  <meta name="author" content="罗寅松，学风督导队数据组">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" sizes="16x16" href="/assets/img/users/STSA_small.png">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
+    rel="stylesheet" />
+
+  <!-- Icons. Uncomment required icon fonts -->
+  <link rel="stylesheet" href="/assets/vendor/fonts/boxicons.css" />
+
+  <!-- Core CSS -->
+  <link rel="stylesheet" href="/assets/vendor/css/core.css" class="template-customizer-core-css" />
+  <link rel="stylesheet" href="/assets/vendor/css/theme-default.css" class="template-customizer-theme-css" />
+  <link rel="stylesheet" href="/assets/css/demo.css" />
+
+  <!-- Vendors CSS -->
+  <link rel="stylesheet" href="/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
+
+  <!-- Page CSS -->
+
+  <!-- Helpers -->
+  <script src="/assets/vendor/js/helpers.js"></script>
+
+  <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
+  <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
+  <script src="/assets/js/config.js"></script>
 </head>
 
-<body class="fix-header fix-sidebar">
-<!-- ============================================================== --> 
-<!-- Preloader - style you can find in spinners.css --> 
-<!-- ============================================================== -->
-<div class="preloader">
-    <div class="loader">
-        <div class="loader__figure"></div>
-        <p class="loader__label">S T S A</p>
-        <p class="loader__label">学风督导队</p>
-        <p class="loader__label">Supervision Team of Study Atmosphere</p>
-    </div>
-</div>
-<!-- ============================================================== --> 
-<!-- Main wrapper - style you can find in pages.scss --> 
-<!-- ============================================================== -->
-<div id="main-wrapper"> 
-    <!-- ============================================================== --> 
-    <!-- Topbar header - style you can find in pages.scss --> 
-    <!-- ============================================================== -->
-    <header class="topbar" id="loadTopbar"> </header>
-    <!-- ============================================================== --> 
-    <!-- End Topbar header - you can find in /Frame/html5/user_center_topbar_frame.html --> 
-    <!-- ============================================================== --> 
-    <!-- ============================================================== --> 
-    <!-- Left Sidebar - you can find in /Frame/html5/user_center_leftSidebar_frame.html  --> 
-    <!-- ============================================================== -->
-    <aside class="left-sidebar" id="loadLeftSidebar"> </aside>
-    <!-- ============================================================== --> 
-    <!-- End Left Sidebar - style you can find in sidebar.scss  --> 
-    <!-- ============================================================== --> 
-    <!-- ============================================================== --> 
-    <!-- Page wrapper  --> 
-    <!-- ============================================================== -->
-    <div class="page-wrapper"> 
-        <!-- ============================================================== --> 
-        <!-- Container fluid  --> 
-        <!-- ============================================================== -->
-        <div class="container-fluid"> 
-            <!-- ============================================================== --> 
-            <!-- Bread crumb and right sidebar toggle --> 
-            <!-- ============================================================== -->
-            <div class="row page-titles">
-                <div class="col-md-5 align-self-center">
-                    <h3 class="text-themecolor">首页</h3>
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="javascript:window.location.href='/Users/UserCenter'">个人中心</a></li>
-                        <li class="breadcrumb-item active">首页</li>
-                    </ol>
-                </div>
-            </div>
-            <!-- ============================================================== --> 
-            <!-- End Bread crumb and right sidebar toggle --> 
-            <!-- ============================================================== --> 
-            <!-- ============================================================== --> 
-            <!-- 主体 --> 
-            <!-- ============================================================== -->
-            <div id="alert-info" class="alert alert-info">
-                <strong>
-                    点击 “通知栏” “考核概览” “任务概览” 以查看不同信息
-                </strong>
-            </div>
-            <div class="accordion" id="homepage">
-                <div class="card" style="border: 0px">
-                    <div class="card-header bg-info" style="padding: 0.4rem 1.25rem" id="headingOne">
-                        <h3 class="text-white mb-0" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">通知栏</h3>
-                    </div>
-                    <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#homepage">
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-xlg-3 col-lg-4 col-md-6 col-sm-12">
-                                    <div class="card mb-3">
-                                        <div class="card-header">队内通知</div>
-                                        <div class="card-body">
-                                            <h5 class="card-title">通知标题balabala</h5>
-                                            <p class="card-text">Some quick example text to build. 一些信息。</p>
-                                            <p class="card-blockquote">FROM 队长</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-xlg-3 col-lg-4 col-md-6 col-sm-12">
-                                    <div class="card mb-3">
-                                        <div class="card-header">组内通知</div>
-                                        <div class="card-body">
-                                            <h5 class="card-title">通知标题balabala</h5>
-                                            <p class="card-text">Some quick example text to build. 一些信息。</p>
-                                            <p class="card-blockquote">FROM 组长</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-xlg-3 col-lg-4 col-md-6 col-sm-12">
-                                    <div class="card mb-3">
-                                        <div class="card-header">骨干通知</div>
-                                        <div class="card-body">
-                                            <h5 class="card-title">通知标题balabala</h5>
-                                            <p class="card-text">Some quick example text to build. 一些信息。</p>
-                                            <p class="card-blockquote">FROM 队长</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="card" style="border: 0px">
-                    <div class="card-header bg-info" style="padding: 0.4rem 1.25rem" id="headingTwo">
-                        <h3 class="text-white mb-0" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">考核概览</h3>
-                    </div>
-                    <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#homepage">
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-lg-3 col-md-6 col-sm-12">
-                                    <div class="card">
-                                        <div class="card-body">
-                                            <div class="d-flex no-block justify-content-around">
-                                                <div class="align-self-center display-6 m-r-20">
-                                                    <input type="text" class="dial" value="5.1">
-                                                </div>
-                                                <div class="align-self-center">
-                                                    <h2 class="m-b-0"><small><i class="ti-angle-down text-danger"></i></small> 5.1</h2>
-                                                    <h5 class="text-muted m-b-0">个人考评</h5>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-3 col-md-6 col-sm-12">
-                                    <div class="card">
-                                        <div class="card-body">
-                                            <div class="d-flex no-block justify-content-around">
-                                                <div class="align-self-center display-6">
-                                                    <canvas id="person-ingroup-No" width="12" height="70" style="border-radius:10px"></canvas>
-                                                </div>
-                                                <div class="align-self-center">
-                                                    <h2 class="m-b-0"><small><i class="ti-angle-up text-success"></i></small> 2/13</h2>
-                                                    <h5 class="text-muted m-b-0">个人组内排名</h5>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-3 col-md-6 col-sm-12">
-                                    <div class="card">
-                                        <div class="card-body">
-                                            <div class="d-flex no-block justify-content-around">
-                                                <div class="align-self-center display-6 m-r-20">
-                                                    <input type="text" class="dial" value="2">
-                                                </div>
-                                                <div class="align-self-center">
-                                                    <h2 class="m-b-0"><small><i class="ti-angle-up text-success"></i></small> 5.1</h2>
-                                                    <h5 class="text-muted m-b-0">所在组考评</h5>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-3 col-md-6">
-                                    <div class="card">
-                                        <div class="card-body">
-                                            <div class="d-flex no-block justify-content-around">
-                                                <div class="align-self-center display-6">
-                                                    <canvas id="group-inteam-No" width="12" height="70" style="border-radius:10px"></canvas>
-                                                </div>
-                                                <div class="align-self-center">
-                                                    <h2 class="m-b-0"><small><i class="ti-angle-down text-danger"></i></small> 3/10</h2>
-                                                    <h5 class="text-muted m-b-0">所在组队内排名</h5>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="card" style="border: 0px">
-                    <div class="card-header bg-info" style="padding: 0.4rem 1.25rem" id="headingThree">
-                        <h3 class="text-white mb-0" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">任务概览</h3>
-                    </div>
-                    <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#homepage">
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-6 col-sm-12">
-                                    <div class="card text-center">
-                                        <h5 class="card-header">计划的任务</h5>
-                                        <div class="card-body">
-                                            显示还未到时间或当天的查早、查课、代查信息概览
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6 col-sm-12">
-                                    <div class="card text-center">
-                                        <h5 class="card-header">已完成任务</h5>
-                                        <div class="card-body">
-                                            显示已经过时间的查早、查课、代查信息概览
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- ============================================================== --> 
-            <!-- End 主体 --> 
-            <!-- ============================================================== --> 
-        </div>
-        <!-- ============================================================== --> 
-        <!-- End Container fluid  --> 
-        <!-- ============================================================== --> 
-        <!-- ============================================================== --> 
-        <!-- footer --> 
-        <!-- ============================================================== -->
-        <footer class="footer"> © 2021 电子科技大学 学工部 学风督导队 </footer>
-        <!-- ============================================================== --> 
-        <!-- End footer --> 
-        <!-- ============================================================== --> 
-    </div>
-    <!-- ============================================================== --> 
-    <!-- End Page wrapper  --> 
-    <!-- ============================================================== --> 
-</div>
-<!-- ============================================================== --> 
-<!-- End Wrapper --> 
-<!-- ============================================================== --> 
+<body>
+  <!-- Layout wrapper -->
+  <div class="layout-wrapper layout-content-navbar">
+    <div class="layout-container">
+      <!-- Menu -->
+      <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme"></aside>
+      <!-- / Menu -->
 
-<!-- ============================================================== --> 
-<!-- All Script --> 
-<!-- ============================================================== --> 
-<!-- jQuery --> 
-<script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.6.1/jquery.min.js"></script> 
-<!-- jQuery knob --> 
-<script src="https://cdn.bootcdn.net/ajax/libs/jQuery-Knob/1.2.9/jquery.knob.min.js"></script> 
-<!-- load top bar and side bar --> 
-<script>
+      <!-- Layout container -->
+      <div class="layout-page">
+        <!-- Navbar -->
+        <nav
+          class="layout-navbar container-fluid navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme"
+          id="layout-navbar"></nav>
+        <!-- / Navbar -->
+
+        <!-- Content wrapper -->
+        <div class="content-wrapper">
+          <!-- Content -->
+
+          <div class="container-fluid flex-grow-1 container-p-y">
+            <!-- Layout Demo -->
+            <div class="layout-demo-wrapper">
+              <div class="layout-demo-placeholder">
+                <img src="/assets/img/layouts/layout-fluid-light.png" class="img-fluid" alt="Layout fluid"
+                  data-app-light-img="layouts/layout-fluid-light.png"
+                  data-app-dark-img="layouts/layout-fluid-dark.png" />
+              </div>
+              <div class="layout-demo-info">
+                <h4>Layout fluid</h4>
+                <p>Fluid layout sets a <code>100% width</code> at each responsive breakpoint.</p>
+              </div>
+            </div>
+            <!--/ Layout Demo -->
+          </div>
+          <!-- / Content -->
+
+          <!-- Footer -->
+          <footer class="content-footer footer bg-footer-theme">
+            <div class="container-fluid d-flex flex-wrap justify-content-between py-2 flex-md-row flex-column">
+              <div class="mb-2 mb-md-0">
+                ©
+                <script>
+                  document.write(new Date().getFullYear());
+                </script>
+                <a href="https://themeselection.com" target="_blank" class="footer-link fw-bolder">罗寅松，学风督导队数据组</a>
+              </div>
+            </div>
+          </footer>
+          <!-- / Footer -->
+
+          <div class="content-backdrop fade"></div>
+        </div>
+        <!-- Content wrapper -->
+      </div>
+      <!-- / Layout page -->
+    </div>
+
+    <!-- Overlay -->
+    <div class="layout-overlay layout-menu-toggle"></div>
+  </div>
+  <!-- / Layout wrapper -->
+
+  <!-- Core JS -->
+  <!-- build:js assets/vendor/js/core.js -->
+  <script src="/assets/vendor/libs/jquery/jquery.js"></script>
+  <script src="/assets/vendor/libs/popper/popper.js"></script>
+  <script src="/assets/vendor/js/bootstrap.js"></script>
+  <script src="/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+  <script>
     $.ajax({async:false,url:"/Frame/html5/user_center_topbar_frame.html",success:function(result){
-        $("#loadTopbar").html(result);
+        $("#layout-navbar").html(result);
     }});
-    $.ajax({async:false,url:"/Frame/html5/user_center_leftSidebar_frame.html",success:function(result){
-        $("#loadLeftSidebar").html(result);
-    }});
-    $.getScript("/Frame/html5/topbar.js");
-</script> 
-<!-- Bootstrap Core JavaScript --> 
-<script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.2.0/js/bootstrap.bundle.min.js"></script> 
-<!-- slimscrollbar scrollbar JavaScript --> 
-<script src="https://cdn.bootcdn.net/ajax/libs/jquery.perfect-scrollbar/0.8.1/js/perfect-scrollbar.jquery.min.js"></script> 
-<!-- Sweet Alert Javascript --> 
-<script src="https://cdn.bootcdn.net/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script> 
-<!-- Wave Effects --> 
-<!-- script src="/js/waves.js"></script --> 
-<script src="https://cdn.bootcdn.net/ajax/libs/node-waves/0.7.6/waves.min.js"></script> 
-<!-- Menu sidebar --> 
-<script src="/js/sidebarmenu.js"></script> 
-<!-- Custom JavaScript --> 
-<script src="/js/custom.min.js"></script> 
-<script src="./index.js"></script>
+    $.ajax({
+      async: false, url: "/Frame/html5/user_center_leftSidebar_frame.html", success: function (result) {
+        $("#layout-menu").html(result);
+      }
+    });
+    // $.getScript("/Frame/html5/topbar.js");
+    let item = $(`a.menu-link[href='${window.location.pathname}']`).parent()
+    item.addClass("active")
+    if(item.parent().hasClass("menu-sub"))
+    {
+      item.parent().parent().addClass("active").addClass("open")
+    }
+  </script>
+  <script src="/assets/vendor/js/menu.js"></script>
+  <!-- endbuild -->
+
+  <!-- Vendors JS -->
+
+  <!-- Main JS -->
+  <script src="/assets/js/main.js"></script>
+
+  <!-- Page JS -->
+
+  <!-- Place this tag in your head or just before your close body tag. -->
+  <script async defer src="https://buttons.github.io/buttons.js"></script>
 </body>
+
 </html>
