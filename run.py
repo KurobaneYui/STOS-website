@@ -8,6 +8,7 @@ from datetime import timedelta
 # set template_folder for 'render_template' function
 app = Flask(__name__, template_folder="Frame/html5/")
 # set secret_key for starting the session
+app.secret_key = b'_5#"F4Q8z\n\xec]/'
 app.config["SEND_FILE_MAX_AGE_DEFAULT"] = timedelta(seconds=0.5)
 
 

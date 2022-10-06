@@ -114,7 +114,7 @@ class DatabaseConnector:
             self.Cursor = None
             self.Status = DatabaseConnectionStatus.ConnectionEstablished
 
-    def execute(self, sql : str, data : Optional[tuple|list|dict] = None, autoCommit : bool = True) -> int:
+    def execute(self, sql : str, data : Optional[tuple or list or dict] = None, autoCommit : bool = True) -> int:
         """Execute a query with multiply data.
 
         When a cursor exists, execute sql query in that cursor and cache the results.
