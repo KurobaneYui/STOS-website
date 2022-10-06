@@ -60,13 +60,14 @@ $(function(){
             alert("请检查网络连接，或稍后再试");
         }
     });
-    // 修复手机视角下，侧边栏菜单多次点击时图标错误
-    $("#repair-icon").parent().parent().click(function (){
-        setTimeout(function(){
-            let a = $("#repair-icon").prop("class").split(' ');
-            if(a[1]==="ti-menu") {
-                $("#repair-icon").prop("class",a[0]+' '+a[2]);
-            }
-        },25);
-    })
 });
+
+function logout() {
+    $.get("/Ajax/Users/logout",function(data,status) {
+        if (status === "success") {
+            if (data["data"] === "finished") {
+                window.location.href = "/Users/Authentication/logout.html";
+            }
+        }
+    })
+}

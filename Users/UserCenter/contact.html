@@ -69,19 +69,57 @@
             <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);" aria-label="breadcrumb">
               <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="./index.html">个人中心</a></li>
-                <li class="breadcrumb-item active" aria-current="page">首页</li>
+                <li class="breadcrumb-item active" aria-current="page">通讯录</li>
               </ol>
             </nav>
-            <!-- Layout Demo -->
-            <div class="layout-demo-wrapper">
-              <div class="layout-demo-placeholder">
-                <img src="/assets/img/layouts/layout-fluid-light.png" class="img-fluid" alt="Layout fluid"
-                  data-app-light-img="layouts/layout-fluid-light.png"
-                  data-app-dark-img="layouts/layout-fluid-dark.png" />
-              </div>
-              <div class="layout-demo-info">
-                <h4>Layout fluid</h4>
-                <p>Fluid layout sets a <code>100% width</code> at each responsive breakpoint.</p>
+            <!-- main content -->
+            <div class="card">
+              <h5 class="card-header">通讯录</h5>
+              <div class="table-responsive text-nowrap">
+                <table class="table table-hover table-striped">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>所属组</th>
+                      <th>姓名</th>
+                      <th>性别</th>
+                      <th>电话</th>
+                      <th>QQ</th>
+                      <th>岗位</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>1</td>
+                      <td>队长</td>
+                      <td>罗寅松</td>
+                      <td><span class="badge bg-label-info me-1">男</span></td>
+                      <td>18100500681</td>
+                      <td>1531037856</td>
+                      <td>队长</td>
+                    </tr>
+                    <tr>
+                      <td>2</td>
+                      <td>数据组</td>
+                      <td>梁彩玉</td>
+                      <td><span class="badge bg-label-danger me-1">女</span></td>
+                      <td>13258199776</td>
+                      <td>1531037850</td>
+                      <td>组长</td>
+                    </tr>
+                  </tbody>
+                  <tfoot class="table-border-bottom-0">
+                    <tr>
+                      <th>#</th>
+                      <th>所属组</th>
+                      <th>姓名</th>
+                      <th>性别</th>
+                      <th>电话</th>
+                      <th>QQ</th>
+                      <th>岗位</th>
+                    </tr>
+                  </tfoot>
+                </table>
               </div>
             </div>
             <!--/ Layout Demo -->
