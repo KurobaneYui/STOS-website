@@ -1,26 +1,52 @@
 // JavaScript Document
 $(function(){
-    $.post('/Ajax/Users/topbarInfo.php',{'requestFunction':'getTopbarInfo'},function(data,status){
-        let a = JSON.parse(data);
+    $.get('/Ajax/Users/topbarInfo',function(data,status){
         if(status==="success"){
-            if(a['ReturnCode']==='400') {
-                alert("未登录，请先登录。如无法登陆，请联系管理员");
+            let returnCode=data['code'];
+            if(returnCode===400) {
+                swal({
+                    title: "参数错误，请联系管理员",
+                    icon: "warning",
+                  });
+            }
+            else if(returnCode===401) {
+                swal({
+                    title: "权限错误",
+                    text: "如果未登录，请先登录",
+                    icon: "error",
+                  });
                 window.location.href="/Users/Authentication/login.html"
             }
-            else if(a['ReturnCode']==='401') {
-                alert('权限不足，请联系管理员处理');
+            else if(returnCode===404) {
+                swal({
+                    title: "功能不存在，请联系管理员",
+                    icon: "warning",
+                  });
             }
-            else if(a['ReturnCode']==='404') {
-                alert('功能不存在，请联系管理员更正文件调用');
+            else if(returnCode===417) {
+                swal({
+                    title: "功能错误，请联系管理员",
+                    icon: "warning",
+                  });
             }
-            else if(a['ReturnCode']==='417') {
-                alert('功能错误，请联系管理员处理');
+            else if(returnCode===498) {
+                swal({
+                    title: "数据库异常，请联系管理员",
+                    icon: "warning",
+                  });
             }
-            else if(a['ReturnCode']==='200' || a['ReturnCode']==='301') {
-                if(a['ReturnCode']==='301'){window.console.log('头部栏的信息获取函数移至新位置');}
-                a = JSON.parse(a.Data);
-                var name = a["姓名"];
-                var work = a["所属组与岗位"];
+            else if(returnCode===499) {
+                swal({
+                  title: "功能维护中，暂不允许登录",
+                  icon: "warning",
+                });
+            }
+            else if (returnCode===200 || returnCode===301) {
+                //状态码301，提醒转移函数
+                if(returnCode===301){window.console.log('topbar信息获取函数移至新位置');}
+                //状态码200，处理data
+                let name = data["data"]["name"];
+                let work = data["data"]["groupAndWork"];
                 $("#HEAD_BAR_NAME").html(name+"&nbsp;<i class='fa fa-angle-down'></i>");
                 var headBarInnerName = $("#HEAD_BAR_INNER_NAME");
                 headBarInnerName.html(name);
