@@ -1,170 +1,87 @@
-<!-- ============================================================== -->
-<!-- Topbar header - style you can find in pages.scss -->
-<!-- ============================================================== -->
-    <nav class="navbar top-navbar navbar-expand-md navbar-light">
-        <!-- ============================================================== -->
-        <!-- Logo -->
-        <!-- ============================================================== -->
-        <div class="navbar-header">
-            <a class="navbar-brand" href="/index.html">
-                <!-- Logo icon -->
-                <b>
-                    <!--You can put here icon as well // <i class="wi wi-sunset"></i> //-->
-                    <img src="/assets/images/STSA.png" alt="homepage"/>
-                </b>
-                <!--End Logo icon -->
-                <!-- Logo text -->
-                <span class="bold text-themecolor">
-                    学风督导队
-                </span>
-            </a>
-        </div>
-        <!-- ============================================================== -->
-        <!-- End Logo -->
-        <!-- ============================================================== -->
-        <div class="navbar-collapse">
-            <!-- ============================================================== -->
-            <!-- toggle and nav items -->
-            <!-- ============================================================== -->
-            <ul class="navbar-nav mr-auto">
-                <!-- This is  -->
-                <li class="nav-item">
-                    <a class="nav-link nav-toggler hidden-md-up waves-effect waves-dark" href="javascript:void(0)">
-                        <i class="sl-icon-menu" id="repair-icon"></i>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link sidebartoggler hidden-sm-down waves-effect waves-dark" href="javascript:void(0)">
-                        <i class="sl-icon-menu"></i>
-                    </a>
-                </li>
-                <!-- ============================================================== -->
-                <!-- Search -->
-                <!-- ============================================================== -->
-                <li class="nav-item hidden-xs-down search-box">
-                    <a class="nav-link hidden-sm-down waves-effect waves-dark" href="javascript:void(0)">
-                        <i class="icon-Magnifi-Glass2"></i>
-                    </a>
-                    <form class="app-search">
-                        <input type="text" class="form-control" placeholder="Search & enter" style="height: 75px">
-                        <a class="srh-btn">
-                            <i class="ti-close"></i>
-                        </a> 
-                    </form>
-                </li>
-            </ul>
-            <!-- ============================================================== -->
-            <!-- User profile and search -->
-            <!-- ============================================================== -->
-            <ul class="navbar-nav my-lg-0">
-                <!-- ============================================================== -->
-                <!-- Comment -->
-                <!-- ============================================================== -->
-                <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle waves-effect waves-dark" href="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <i class="icon-Bell"></i>
-                        <div class="notify"> <span class="heartbit"></span> <span class="point"></span> </div>
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-right mailbox animated bounceInDown">
-                        <ul>
-                            <li>
-                                <div class="drop-title">队伍手册</div>
-                            </li>
-                            <li>
-                                <div class="message-center">
-                                    <!-- Message -->
-                                    <a href="#">
-                                        <div class="btn btn-danger btn-circle"><i class="fa fa-link"></i></div>
-                                        <div class="mail-contnet">
-                                            <h5>队伍手册</h5> <span class="mail-desc">督导队队伍规范，不定期更新</span>
-                                        </div>
-                                    </a>
-                                    <!-- Message -->
-                                    <a href="#">
-                                        <div class="btn btn-success btn-circle"><i class="ti-calendar"></i></div>
-                                        <div class="mail-contnet">
-                                            <h5>网站使用指南</h5> <span class="mail-desc">网站使用说明</span>
-                                        </div>
-                                    </a>
-                                </div>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-                <!-- ============================================================== -->
-                <!-- End Comment -->
-                <!-- ============================================================== -->
-                <!-- ============================================================== -->
-                <!-- mega menu -->
-                <!-- ============================================================== -->
-                <li class="nav-item dropdown mega-dropdown"> <a class="nav-link dropdown-toggle waves-effect waves-dark" href="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i class="icon-Box-Close"></i></a>
-                    <div class="dropdown-menu animated bounceInDown">
-                        <h4 class="m-b-20">反馈收集</h4>
-                        <!-- Contact -->
-                        <form>
-                            <div class="row">
-                                <div class="form-group col-md-4">
-                                    <div class="row">
-                                        <div class="form-group col-12">
-                                            <!--input type="text" class="form-control" id="exampleInputname1" placeholder="Enter Name"> </div-->
-                                            <input type="text" class="form-control" disabled id="callback-name" placeholder="Enter Name">
-                                        </div>
-                                        <div class="form-group col-12">
-                                            <input type="text" class="form-control" disabled id="callback-studentID" placeholder="Enter StudentID">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-group col-md-3">
-                                    <input type="text" class="form-control" placeholder="页面问题 or 功能问题">
-                                </div>
-                                <div class="form-group col-md-5">
-                                    <textarea class="form-control" id="exampleTextarea" rows="3" placeholder="Message"></textarea>
-                                </div>
-                                <button type="submit" class="btn btn-info">Submit</button>
-                            </div>
-                        </form>
-                    </div>
-                </li>
-                <!-- ============================================================== -->
-                <!-- End mega menu -->
-                <!-- ============================================================== -->
-                <!-- ============================================================== -->
-                <!-- Profile -->
-                <!-- ============================================================== -->
-                <li class="nav-item dropdown u-pro">
-                    <a class="nav-link dropdown-toggle waves-effect waves-dark profile-pic" href="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <span class="hidden-md-down" style="font-size: 1em" id="HEAD_BAR_NAME">姓名&nbsp;<i class="fa fa-angle-down"></i></span>
-                    </a>
-                    <div class="dropdown-menu dropdown-menu-right animated flipInY">
-                        <ul class="dropdown-user">
-                            <li>
-                                <div class="dw-user-box">
-                                    <div class="u-text">
-                                        <h3 id="HEAD_BAR_INNER_NAME">姓名</h3>
-                                        <p class="text-muted" style="font-size: 1em">xxx组-组员/组长</p>
-                                    </div>
-                                </div>
-                            </li>
-                            <li role="separator" class="divider"></li>
-                            <li>
-                                <a href="/Users/UserCenter/person-info.html"><i class="ti-user"></i> 个人信息</a>
-                            </li>
-                            <li>
-                                <a href="/Users/UserCenter/person-work.html"><i class="ti-wallet"></i> 岗位信息</a>
-                            </li>
-                            <li role="separator" class="divider"></li>
-                            <li>
-                                <a href="#" onclick="f()"><i class="sl-icon-logout"></i> Logout</a>
-                            </li>
-                            <script>
-                                function f(){$.post("/Ajax/Users/logout.php");swal({title:"已登出",icon:"success"});setTimeout(function(){$(window).attr('location','/Users/Authentication/login.html');},1300);}
-                            </script>
-                        </ul>
-                    </div>
-                </li>
-            </ul>
-        </div>
-    </nav>
-<!-- ============================================================== -->
-<!-- End Topbar header -->
-<!-- ============================================================== -->
+<div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
+	<a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)">
+		<i class="bx bx-menu bx-sm"></i>
+	</a>
+</div>
+
+<div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
+	<!-- Search -->
+	<div class="navbar-nav align-items-center">
+		<div class="nav-item d-flex align-items-center">
+			<i class="bx bx-search fs-4 lh-0"></i>
+			<input type="text" class="form-control border-0 shadow-none" placeholder="Search..."
+				aria-label="Search..." />
+		</div>
+	</div>
+	<!-- /Search -->
+
+	<ul class="navbar-nav flex-row align-items-center ms-auto">
+		<!-- Place this tag where you want the button to render. -->
+		<li class="nav-item lh-1 me-3">
+			<a class="github-button" href="https://github.com/themeselection/sneat-html-admin-template-free"
+				data-icon="octicon-star" data-size="large" data-show-count="true"
+				aria-label="Star themeselection/sneat-html-admin-template-free on GitHub">Star</a>
+		</li>
+
+		<!-- User -->
+		<li class="nav-item navbar-dropdown dropdown-user dropdown">
+			<a class="nav-link dropdown-toggle hide-arrow" href="javascript:void(0);" data-bs-toggle="dropdown">
+				<div class="avatar avatar-online">
+					<img src="/assets/img/avatars/1.png" alt class="w-px-40 h-auto rounded-circle" />
+				</div>
+			</a>
+			<ul class="dropdown-menu dropdown-menu-end">
+				<li>
+					<a class="dropdown-item" href="#">
+						<div class="d-flex">
+							<div class="flex-shrink-0 me-3">
+								<div class="avatar avatar-online">
+									<img src="/assets/img/avatars/1.png" alt class="w-px-40 h-auto rounded-circle" />
+								</div>
+							</div>
+							<div class="flex-grow-1">
+								<span class="fw-semibold d-block">John Doe</span>
+								<small class="text-muted">Admin</small>
+							</div>
+						</div>
+					</a>
+				</li>
+				<li>
+					<div class="dropdown-divider"></div>
+				</li>
+				<li>
+					<a class="dropdown-item" href="#">
+						<i class="bx bx-user me-2"></i>
+						<span class="align-middle">My Profile</span>
+					</a>
+				</li>
+				<li>
+					<a class="dropdown-item" href="#">
+						<i class="bx bx-cog me-2"></i>
+						<span class="align-middle">Settings</span>
+					</a>
+				</li>
+				<li>
+					<a class="dropdown-item" href="#">
+						<span class="d-flex align-items-center align-middle">
+							<i class="flex-shrink-0 bx bx-credit-card me-2"></i>
+							<span class="flex-grow-1 align-middle">Billing</span>
+							<span
+								class="flex-shrink-0 badge badge-center rounded-pill bg-danger w-px-20 h-px-20">4</span>
+						</span>
+					</a>
+				</li>
+				<li>
+					<div class="dropdown-divider"></div>
+				</li>
+				<li>
+					<a class="dropdown-item" href="/Ajax/Users/logout">
+						<i class="bx bx-power-off me-2"></i>
+						<span class="align-middle">Log Out</span>
+					</a>
+				</li>
+			</ul>
+		</li>
+		<!--/ User -->
+	</ul>
+</div>
