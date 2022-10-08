@@ -60,6 +60,7 @@ function login() { // 点击登录按钮的功能
         });
 }
 
+
 function reset_password() { // 点击重置按钮的功能
     let name = $("#name").val();
     let studentID = $("#id").val();
@@ -128,6 +129,7 @@ function reset_password() { // 点击重置按钮的功能
             }
         });
 }
+
 
 function register() { // 点击注册按钮的功能
     let name = $("#username").val();
@@ -237,17 +239,20 @@ function register() { // 点击注册按钮的功能
         });
 }
 
+
 $("#loginform").submit(function(e){
     e.preventDefault(); // 表单提交事件发生时拦截，执行自定义函数。拦截表单提交事件并不阻止表单检查，因此可以自动检查required属性
     login();
   });
+
 
 $("#recoverform").submit(function(e){
     e.preventDefault(); // 表单提交事件发生时拦截，执行自定义函数。拦截表单提交事件并不阻止表单检查，因此可以自动检查required属性
     reset_password();
   });
 
-$("#formAuthentication").submit(function(e){
+
+$("#register").submit(function(e){
     e.preventDefault(); // 表单提交事件发生时拦截，执行自定义函数。拦截表单提交事件并不阻止表单检查，因此可以自动检查required属性
     register();
   });

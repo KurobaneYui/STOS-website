@@ -1,5 +1,10 @@
 // JavaScript Document
 $(function(){
+    getTopbarInfo();
+});
+
+
+function getTopbarInfo() {
     $.get('/Ajax/Users/topbarInfo',function(data,status){
         if(status==="success"){
             let returnCode=data['code'];
@@ -15,7 +20,6 @@ $(function(){
                     text: "如果未登录，请先登录",
                     icon: "error",
                   });
-                window.location.href="/Users/Authentication/login.html"
             }
             else if(returnCode===404) {
                 swal({
@@ -45,22 +49,16 @@ $(function(){
                 //状态码301，提醒转移函数
                 if(returnCode===301){window.console.log('topbar信息获取函数移至新位置');}
                 //状态码200，处理data
-                let name = data["data"]["name"];
-                let work = data["data"]["groupAndWork"];
-                $("#HEAD_BAR_NAME").html(name+"&nbsp;<i class='fa fa-angle-down'></i>");
-                var headBarInnerName = $("#HEAD_BAR_INNER_NAME");
-                headBarInnerName.html(name);
-                headBarInnerName.next().remove();
-                for(var i=0;i<work.length;i++){
-                    headBarInnerName.after(`<p class="text-muted" style="font-size: 1em">${work[i]['部门名称']}-${work[i]['岗位']}</p>`);
-                }
+                let name = data["data"]['name'];
+                $("#topbar-name").html(name);
             }
         }
         else {
             alert("请检查网络连接，或稍后再试");
         }
     });
-});
+}
+
 
 function logout() {
     $.get("/Ajax/Users/logout",function(data,status) {
