@@ -30,18 +30,34 @@ def checkIfLogin() -> dict[str,Any]:
         return {"warning":"", "message":"", "data":False}
 
 
-def Auth(auth : dict) -> Callable: # TODO: finish this decorator
+def Auth(auth : tuple) -> Callable:
     def decorator(func : Callable) -> Callable:
         @wraps(func)
         def wrapper(*args, **kwargs):
             # check whether user has login or not
             if not checkIfLogin()["data"]:
                 raise PermissionDenyError("Please login first.", filename=__file__, line=sys._getframe().f_lineno)
-            # TODO: Check function_auth
+            # Check function_auth
             connect = DatabaseConnector.DatabaseConnector()
             connect.startCursor()
-            connect.execute(sql='SELECT department_id FROM Authority where student_id = %s;',data=(session["userID"],))
+            connect.execute(sql='SELECT department_id,actor FROM Authority where student_id = %s;',data=(session["userID"],))
             results = connect.fetchall()
+            
+            can_pass = False
+            for auth_required in auth:
+                for auth_have in results:
+                    if auth_required['department_id'] is not None and auth_required['department_id'] != auth_have['department_id']: continue
+                    if auth_required["actor"][0] == auth_have["actor"][0]:
+                        can_pass = True
+                        break
+                    if auth_required["actor"][1] == auth_have["actor"][1]: 
+                        can_pass = True
+                        break
+                if can_pass: break
+            
+            if not can_pass:
+                raise PermissionDenyError("Authority check error. Have no rights to execute function.", filename=__file__, line=sys._getframe().f_lineno)
+            
             return func(*args, **kwargs)
         return wrapper
     return decorator
