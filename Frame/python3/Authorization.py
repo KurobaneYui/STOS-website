@@ -45,12 +45,18 @@ def Auth(auth : tuple) -> Callable:
             
             can_pass = False
             for auth_required in auth:
+                if auth_required['department_id'] is None and auth_required['actor'] is None:
+                    can_pass = True
+                    break
                 for auth_have in results:
                     if auth_required['department_id'] is not None and auth_required['department_id'] != auth_have['department_id']: continue
-                    if auth_required["actor"][0] == auth_have["actor"][0]:
+                    if auth_required['actor'] is None:
                         can_pass = True
                         break
-                    if auth_required["actor"][1] == auth_have["actor"][1]: 
+                    elif auth_required["actor"][0] == auth_have["actor"][0]:
+                        can_pass = True
+                        break
+                    elif auth_required["actor"][1] == auth_have["actor"][1]: 
                         can_pass = True
                         break
                 if can_pass: break
