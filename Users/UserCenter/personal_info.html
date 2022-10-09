@@ -402,7 +402,7 @@
                 $("#layout-menu").html(result);
             }
         });
-        //$.getScript("/Frame/html5/topbar.js");
+        $.getScript("/Frame/html5/topbar.js");
         let item = $(`a.menu-link[href='${window.location.pathname}']`).parent()
         item.addClass("active")
         if (item.parent().hasClass("menu-sub")) {
@@ -421,7 +421,7 @@
     <script src="https://cdn.bootcdn.net/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
 
     <!-- Page JS -->
-    <!--script src="./personal_info.js"></script-->
+    <script src="./personal_info.js"></script>
 
     <!-- Place this tag in your head or just before your close body tag. -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>
