@@ -85,7 +85,6 @@ def CustomResponsePackage(func : Callable) -> Callable:
             returns = {"code": 499, "message": str(e), "data": ""}
         except Exception as e:
             returns = {"code": 417, "message": str(e), "data": ""}
-            raise e
 
         # ensure response is json and escape UTF-8
         returns = make_response(json.dumps(returns, ensure_ascii=False))

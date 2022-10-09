@@ -3,6 +3,7 @@ from Frame.python3.DatabaseConnector import DatabaseConnector
 from Frame.python3.CustomResponsePackage import IllegalValueError
 from Frame.python3.ClientInfo import ClientInfo
 from Frame.python3.Logger import Logger
+from Frame.python3.Authorization import Auth
 import sys
 import re
 import datetime
@@ -25,6 +26,7 @@ def LoginDeviceRecorder(formDict : dict, loginResult : bool, database : Database
 
 
 @Logger # TODO: Not Finished Yet !!! password not check and others
+@Auth(({'department_id':None, 'actor':None},))
 def ChangeInfoCheck(formDict : dict, database : DatabaseConnector) -> dict[str,Any]:
     if "name" not in formDict.keys() and \
         "gender" not in formDict.keys() and \

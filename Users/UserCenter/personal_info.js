@@ -108,7 +108,7 @@ function changeInfo() { // 点击确定按钮的功能
 
 function confirmDelete()
 {
-    if ($('#deleteConfirm').val('')==='我已知删除账户的影响且确认注销账户')
+    if ($('#deleteConfirm').val()==='我已知晓删除账户的影响且确认注销账户')
     {
         $.post("/Ajax/Users/delete_personal_info",
         {'confirmDelete':'confirm'},
