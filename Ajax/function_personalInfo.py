@@ -1,15 +1,14 @@
 from Frame.python3.DatabaseConnector import DatabaseConnector
 from Frame.python3.Authorization import Auth
 from Frame.python3.Logger import Logger
-from Frame.python3.Tools import RegisterCheck, ChangeInfoCheck
 from flask import session
 from Frame.python3.CustomResponsePackage import PermissionDenyError, IllegalValueError, DatabaseRuntimeError
 import sys
 import hashlib
 
 
-@Auth(({'department_id':None,'actor':None},))
 @Logger
+@Auth(({'department_id':None,'actor':None},))
 def get_personal_info():
     connection = DatabaseConnector()
     connection.startCursor()
@@ -31,18 +30,9 @@ def get_personal_info():
     return {'warning':'', 'message':'', 'data':results}
 
 
-@Auth(({'department_id':None,'actor':None},))
 @Logger
-def change_personal_info(data : dict): # TODO: Not Finished Yet !!!
-    database = DatabaseConnector()
-    database.startCursor()
-    
-    tmp = ChangeInfoCheck(data, database)
-    checkResult, checkMessage = tmp["data"], tmp["message"]
-    del tmp
-    if not checkResult:
-        raise IllegalValueError(checkMessage, filename=__file__, line=sys._getframe().f_lineno)
-
+@Auth(({'department_id':None,'actor':None},))
+def change_personal_info(data : dict, database : DatabaseConnector): # TODO: Not Finished Yet !!!
     DBAffectRows = database.execute(
         "SELECT student_id FROM `MemberExtend` WHERE student_id = %(studentID)s;",
         data)
@@ -87,4 +77,42 @@ def change_personal_info(data : dict): # TODO: Not Finished Yet !!!
             database.rollback()
             raise DatabaseRuntimeError("Update password info error.", filename=__file__, line=sys._getframe().f_lineno)
     database.commit()
-    return {"warning":"","data":"", "message":"刷新页面以更新数据，如仍有数据未更新，请退出重新登录。如有问题请联系管理员。"}
+    return {"warning":"", "data":"", "message":"刷新页面以更新数据，如仍有数据未更新，请退出重新登录。如有问题请联系管理员。"}
+
+
+@Logger
+@Auth(({'department_id':None,'actor':None},))
+def delete_personal_info():
+    database = DatabaseConnector()
+    database.startCursor()
+
+    DBAffectRows = database.execute(
+        "DELETE FROM `MemberExtend` WHERE student_id=%s;",
+        (session["userID"],))
+
+    if DBAffectRows != 1:
+        raise PermissionDenyError("Student ID not exists.", filename=__file__, line=sys._getframe().f_lineno)
+    
+    return {"warning":"", "message":"", "data":""}
+
+
+@Logger
+@Auth(({'department_id':None,'actor':None},))
+def reset_password(data : dict):
+    database = DatabaseConnector()
+    database.startCursor()
+    DBAffectRows = database.execute(
+        "SELECT `MemberBasic`.student_id FROM `MemberBasic` \
+        LEFT JOIN `MemberExtend` ON `MemberExtend`.student_id = `MemberBasic`.student_id \
+        LEFT JOIN `School` ON `School`.school_id = `MemberExtend`.school_id \
+        WHERE MemberBasic.student_id = %(StudentID)s and MemberBasic.name = %(Name)s \
+            and School.name = %(School)s and hometown = %(Hometown)s;",
+        data)
+    database.fetchall()
+    if DBAffectRows == 1:
+        DBAffectRows = database.execute(
+            "UPDATE `Password` SET passhash = %s WHERE student_id = %s;",
+            (hashlib.sha512(data["StudentID"].encode()).digest(), data["StudentID"]))
+        return {"warning":"", "message":"", "data":"/Users/Authentication/login.html"}
+
+    raise PermissionDenyError("Information is wrong.", filename=__file__, line=sys._getframe().f_lineno)
