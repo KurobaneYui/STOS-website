@@ -106,6 +106,79 @@ function changeInfo() { // 点击确定按钮的功能
 }
 
 
+function confirmDelete()
+{
+    if ($('#deleteConfirm').val('')==='我已知删除账户的影响且确认注销账户')
+    {
+        $.post("/Ajax/Users/delete_personal_info",
+        {'confirmDelete':'confirm'},
+        function(data,status){
+            if (status==='success') {
+                let returnCode=data['code'];
+                if(returnCode===400) {
+                    swal({
+                        title: "内容不符合要求",
+                        text: data['message'],
+                        icon: "error",
+                      });
+                }
+                else if(returnCode===401) {
+                    swal({
+                        title: "权限错误",
+                        text: data['message'],
+                        icon: "error",
+                      });
+                }
+                else if(returnCode===404) {
+                    swal({
+                        title: "功能不存在，请联系管理员",
+                        icon: "warning",
+                      });
+                }
+                else if(returnCode===417) {
+                    swal({
+                        title: "功能错误，请联系管理员",
+                        icon: "warning",
+                      });
+                }
+                else if(returnCode===498) {
+                    swal({
+                        title: "数据库异常，请联系管理员",
+                        icon: "warning",
+                      });
+                }
+                else if(returnCode===499) {
+                    swal({
+                      title: "功能维护中，暂不允许登录",
+                      icon: "warning",
+                    });
+                }
+                else if (returnCode===200 || returnCode===301) {
+                    //状态码301，提醒转移函数
+                    if(returnCode===301){window.console.log('注销个人信息函数移至新位置');}
+                    //状态码200，处理data
+                    swal({
+                        title: "注销成功",
+                        icon: "success",
+                    }).then( (value)=>{window.location.href="/index.html"} );
+                }
+            }
+            else {
+                alert('请检查浏览器网络连接，建议刷新后重试');
+            }
+        });
+    }
+    else
+    {
+        swal({
+            title: "请确认",
+            text: "如需注销账户，请填写确认文字！",
+            icon: "error",
+          });
+    }
+}
+
+
 function fill_personal_info(data)
 {
     $("#username").val(data["name"]);

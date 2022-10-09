@@ -78,6 +78,26 @@ def Users(app : flask.Flask) -> None:
         raise PermissionDenyError("Information is wrong.", filename=__file__, line=sys._getframe().f_lineno)
 
 
+    @app.route("/Ajax/Users/delete_personal_info", methods=['POST'])
+    @CustomResponsePackage
+    @Auth(({'department_id':None,'actor':None},))
+    @Logger
+    def delete_personal_info():
+        database = DatabaseConnector()
+        database.startCursor()
+        if 'confirmDelete' not in request.form.keys() or request.form['confirmDelete'] != 'confirm':
+            raise IllegalValueError("请填写正确确认文字，如有问题请联系管理员！", filename=__file__, line=sys._getframe().f_lineno)
+
+        DBAffectRows = database.execute(
+            "DELETE FROM `MemberExtend` WHERE student_id=%s;",
+            (session["userID"],))
+
+        if DBAffectRows != 1:
+            raise PermissionDenyError("Student ID not exists.", filename=__file__, line=sys._getframe().f_lineno)
+
+        return {"warning":"","message":"","data":""}
+
+
     @app.route("/Ajax/Users/register", methods=['POST'])
     @CustomResponsePackage
     @Logger
