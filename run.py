@@ -76,5 +76,10 @@ if __name__ == "__main__":
     # Users package include ajax handler for user function
     Users(app)
     # start a request
-    app.run(debug=config["debug"], threaded=config["threaded"],
-            host=config["host"], port=config["port"])
+    if config["ssl_context"]:
+        app.run(debug=config["debug"], threaded=config["threaded"],
+                host=config["host"], port=config["port"],
+                ssl_context=(config["cert"],config["key"]))
+    else:
+        app.run(debug=config["debug"], threaded=config["threaded"],
+                host=config["host"], port=config["port"])

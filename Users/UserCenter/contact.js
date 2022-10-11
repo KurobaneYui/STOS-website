@@ -13,7 +13,7 @@ $(function () {
                     else if(returnCode===401) {
                         swal({
                             title: "权限错误",
-                            text: data['message'],
+                            text: "预备队员无通讯录查看权限。",
                             icon: "error",
                         });
                     }
