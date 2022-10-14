@@ -2,6 +2,7 @@ import flask
 from flask import Flask, request, redirect, send_file, url_for, abort, session, render_template
 from werkzeug.middleware.proxy_fix import ProxyFix
 from Ajax.Users import Users
+from Ajax.TeamManager import TeamManager
 from Frame.python3.Authorization import checkIfLogin
 from datetime import timedelta
 import json
@@ -75,6 +76,7 @@ if __name__ == "__main__":
     app.secret_key = config["secret_key"].encode()
     # Users package include ajax handler for user function
     Users(app)
+    TeamManager(app)
     # start a request
     if config["ssl_context"]:
         app.run(debug=config["debug"], threaded=config["threaded"],
