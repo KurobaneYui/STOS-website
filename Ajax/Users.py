@@ -5,8 +5,8 @@ from Frame.python3.Tools import RegisterCheck
 from Frame.python3.Logger import Logger
 from Frame.python3.DatabaseConnector import DatabaseConnector
 from Frame.python3.Tools import ChangeInfoCheck
-import sys
 from Frame.python3.CustomResponsePackage import CustomResponsePackage, IllegalValueError
+import sys
 import Ajax.function_contact as function_contact
 import Ajax.function_personalInfo as function_personalInfo
 import Ajax.function_loginAndRegister as function_loginAndRegister
