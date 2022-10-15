@@ -5,8 +5,8 @@ from Frame.python3.Tools import RegisterCheck
 from Frame.python3.Logger import Logger
 from Frame.python3.DatabaseConnector import DatabaseConnector
 from Frame.python3.Tools import ChangeInfoCheck
-import sys
 from Frame.python3.CustomResponsePackage import CustomResponsePackage, IllegalValueError
+import sys
 import Ajax.function_contact as function_contact
 import Ajax.function_personalInfo as function_personalInfo
 import Ajax.function_loginAndRegister as function_loginAndRegister
@@ -89,8 +89,18 @@ def Users(app : flask.Flask) -> None:
     @Logger
     @Auth(({'department_id':None,'actor':None},))
     def topbarInfo():
-        return {"warning":"", "message":"",
-            "data":{"name":session["name"], "groupAndWork":[]}}
+        database = DatabaseConnector()
+        database.startCursor()
+        
+        DBAffectRows = database.execute(
+            sql="SELECT Department.department_id as department_id,name FROM `Work` \
+                LEFT JOIN `Department` ON `Work`.department_id=Department.department_id\
+                WHERE student_id=%s;",
+            data=(session['userID'],)
+        )
+        results = database.fetchall()
+        
+        return {"warning":"", "message":"", "data":{"name":session["name"], "groupAndWork":results}}
         
         
     @app.route("/Ajax/Users/get_contact", methods=['GET'])
