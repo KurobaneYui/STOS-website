@@ -23,9 +23,8 @@ def TeamManager(app : flask.Flask) -> None:
             sql="SELECT Department.department_id as department_id, Department.name as department_name, \
                 job_available, remark, MemberBasic.student_id as student_id, MemberBasic.name as student_name \
                 FROM Department \
-                LEFT JOIN Authority ON Department.department_id=Authority.department_id \
-                LEFT JOIN MemberBasic ON Authority.student_id=MemberBasic.student_id \
-                WHERE actor LIKE '1%' OR actor IS NULL;")
+                LEFT JOIN (SELECT * FROM Authority WHERE actor LIKE '1%' OR actor IS NULL) AS Authority ON Department.department_id=Authority.department_id \
+                LEFT JOIN MemberBasic ON Authority.student_id=MemberBasic.student_id;")
         returns = connection.fetchall()
         return {"warning":"", "message":"", "data":returns}
     
@@ -37,9 +36,7 @@ def TeamManager(app : flask.Flask) -> None:
     def update_department():
         if "max_num" not in request.form.keys() or "department_id" not in request.form.keys() \
             or "group_leader_id" not in request.form.keys() or "remark" not in request.form.keys():
-            raise IllegalValueError("Not all required data received.", filename=__file__, line=sys._getframe().f_lineno)
-        
-        print(request.form)
+            raise IllegalValueError("Not all required data received.", filename=__file__, line=sys._getframe().f_lineno)        
         
         formDict = dict(request.form)
         if not 0 <= int(formDict['max_num']) <= 50:

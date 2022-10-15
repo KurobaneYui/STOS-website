@@ -49,7 +49,6 @@ function get_department() {
                         //状态码301，提醒转移函数
                         if(returnCode===301){window.console.log('获取部门信息函数移至新位置');}
                         //状态码200，处理data
-                        console.log(data['data']);
                         fill_department_table(data['data']);
                         editable_readonly_input();
                     }
@@ -71,13 +70,13 @@ function fill_department_table(data) {
             <td>${one_department['department_id']}</td>
             <td>${one_department['department_name']}</td>
             <td>
-                <input type="number" min="0" max="50" class="form-control-plaintext editable-readonly-input" value="${one_department['job_available']}" readonly required/>
+                <input type="number" min="0" max="50" class="form-control-plaintext editable-readonly-input text-center" style="min-width: 20px;" value="${one_department['job_available']}" readonly required/>
             </td>
             <td>
-                <input type="text" class="form-control-plaintext editable-readonly-input" value="${one_department['student_name']}（${one_department['student_id']}）" readonly/>
+                <input type="text" class="form-control-plaintext editable-readonly-input text-center" style="min-width: 120px;" value="${one_department['student_name']}--${one_department['student_id']}" readonly/>
             </td>
             <td>
-                <input type="text" class="form-control-plaintext editable-readonly-input" value="${one_department['remark']}" readonly/>
+                <input type="text" class="form-control-plaintext editable-readonly-input text-center" style="min-width: 150px;" value="${one_department['remark']}" readonly/>
             </td>
             <td>
                 <button class="btn btn-danger btn-sm rounded-pill">删除</button>
@@ -100,9 +99,12 @@ function upload_department(element_row) {
     if (department_id === "" || max_num === "" || max_num < 0 || max_num > 50) {
         alert("请检编号、人数上限的信息，人数上限应在0~50之间");
     }
-    let tmp = group_leader_id.indexOf("（");
+    let tmp = group_leader_id.indexOf("-");
     if (tmp != -1) {
-        group_leader_id = group_leader_id.slice(tmp+1,-1);
+        group_leader_id = group_leader_id.slice(tmp+2);
+    }
+    if (group_leader_id == 'null') {
+        group_leader_id = "";
     }
 
     $.post(
