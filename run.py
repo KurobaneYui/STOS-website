@@ -10,7 +10,6 @@ import json
 
 # set template_folder for 'render_template' function
 app = Flask(__name__, template_folder="Frame/html5/")
-app.config["SEND_FILE_MAX_AGE_DEFAULT"] = timedelta(seconds=0.5)
 
 
 @app.route("/Frame/html5/<path:additionalURL>")
@@ -69,6 +68,7 @@ def not_found_405(error):
 if __name__ == "__main__":
     with open("./config/Flask.conf", 'r') as f:
         config = json.load(f)
+    app.config["SEND_FILE_MAX_AGE_DEFAULT"] = timedelta(**config["send_file_max_age_default"])
     if config["proxy_enable"]:
         app.wsgi_app = ProxyFix(
             app.wsgi_app, x_for=config["x_for"], x_proto=config["x_proto"], x_host=config["x_host"], x_prefix=config["x_prefix"])
