@@ -49,17 +49,32 @@ function getTopbarInfo() {
                 //状态码301，提醒转移函数
                 if(returnCode===301){window.console.log('topbar信息获取函数移至新位置');}
                 //状态码200，处理data
-                let name = data["data"]['name'];
-                $("#topbar-name").text(name);
-                $("#formal-member").text(
-                    data['data']['groupAndWork'].length === 0 ? "预备队员" : "正式队员"
-                    );
+                update_topbar(data["data"]);
             }
         }
         else {
             alert("请检查网络连接，或稍后再试");
         }
     });
+}
+
+
+function update_topbar(data) {
+    let name = data['name'];
+    $("#topbar-name").text(name);
+    $("#formal-member").text(
+        data['groupAndWork'].length === 0 ? "预备队员" : "正式队员"
+        );
+    update_badges(data['groupAndWork']);
+}
+
+
+function update_badges(data) {
+    $("#self-status-badges").html("")
+    for (let i of data) {
+        let badge = `<div class="col-auto"><span class="badge bg-label-primary fs-6">${i['name']}-${i['score']}'-#${i['order']}</span></div>`;
+        $("#self-status-badges").append(badge);
+    }
 }
 
 
