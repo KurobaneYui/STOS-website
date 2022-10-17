@@ -1,10 +1,8 @@
 import flask
 from flask import session, request
 from Frame.python3.Authorization import Auth
-from Frame.python3.Tools import RegisterCheck
 from Frame.python3.Logger import Logger
 from Frame.python3.DatabaseConnector import DatabaseConnector
-from Frame.python3.Tools import ChangeInfoCheck
 from Frame.python3.CustomResponsePackage import CustomResponsePackage, IllegalValueError
 import sys
 import Ajax.function_departmentManager as function_departmentManager
