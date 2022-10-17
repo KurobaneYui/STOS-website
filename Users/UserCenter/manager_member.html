@@ -79,14 +79,14 @@
                   <div class="modal-header">
                     <h5 class="modal-title">搜索并添加</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
                     <p class="text-muted">
                       完整输入学号以匹配成员，点击搜索结果的“添加”按钮，弹出添加成功提示框即可完成添加。<br/>
                       继续在输入框输入学号以完成其余组员的添加。添加结束则点击“X”或“结束”按钮。<br/>
                       小提示：可以用英文分号（;）分隔多个完整学号以批量添加。<br/>
-                      注意：本页支持岗位兼任，即使输错学号检索到已在岗的成员，也可以完成岗位添加，因此请认真确认姓名、学号和性别。
+                      <span class="fw-bold text-primary">注意：本页支持岗位兼任，即使输错学号检索到已在岗的成员，也可以完成岗位添加，因此请认真确认姓名、学号和性别。</span>
                     </p>
-                  </div>
-                  <div class="modal-body">
                     <form>
                       <div class="mb-3">
                         <label for="multi-id" class="col-form-label">学号：</label>
@@ -120,6 +120,27 @@
               <div class="col-12 col-lg-6">
                 <div class="card">
                   <h5 class="card-header">xxx组</h5>
+                  <div class="table-responsive text-nowrap">
+                    <table class="table table-hover table-striped mb-3">
+                      <thead>
+                        <tr>
+                          <th>#</th>
+                          <th>姓名</th>
+                          <th>性别</th>
+                          <th>学号</th>
+                          <th>操作</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                      </tbody>
+                    </table>
+                    <button class="btn btn-sm btn-primary rounded-pill mb-3 ms-3" data-bs-toggle="modal" data-bs-target="#add-member">添加</button>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 col-lg-6">
+                <div class="card">
+                  <h5 class="card-header">xxx组</h5>
                   <div class="table-responsive text-nowrap mb-3">
                     <table class="table table-hover table-striped">
                       <thead>
@@ -134,8 +155,29 @@
                       <tbody>
                       </tbody>
                     </table>
+                    <button class="btn btn-sm btn-primary rounded-pill mb-3 ms-3">添加</button>
                   </div>
-                  <button class="btn btn-sm btn-primary rounded-pill mb-3 ms-3">添加</button>
+                </div>
+              </div>
+              <div class="col-12 col-lg-6">
+                <div class="card">
+                  <h5 class="card-header">xxx组</h5>
+                  <div class="table-responsive text-nowrap mb-3">
+                    <table class="table table-hover table-striped">
+                      <thead>
+                        <tr>
+                          <th>#</th>
+                          <th>姓名</th>
+                          <th>性别</th>
+                          <th>学号</th>
+                          <th>操作</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                      </tbody>
+                    </table>
+                    <button class="btn btn-sm btn-primary rounded-pill mb-3 ms-3">添加</button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -150,7 +192,7 @@
                 <script>
                   document.write(new Date().getFullYear());
                 </script>
-                <a href="javascript:void(0);" class="footer-link fw-bolder">学工部学风督导队：罗寅松，学风督导队数据组</a>
+                <a href="javascript:void(0);" class="footer-link fw-bolder">学工部学风督导队：罗寅松、赵创日、涂芷荇、张舒涵</a>
               </div>
             </div>
           </footer>
