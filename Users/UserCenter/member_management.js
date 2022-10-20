@@ -3,10 +3,54 @@ function get_all_groups_members() {
     $.get(
         "/Ajax/GroupManager/get_all_groups_members",
         function(data,status){
-            // handle ajax return
-
-            // if success
-            fill_page_tables(data['data']);
+            if(status === "success"){
+                let returnCode=data['code'];
+                    if(returnCode===400) {
+                        swal({
+                            title: "提供的数据错误，请联系管理员",
+                            icon: "error",
+                        });
+                    }
+                    else if(returnCode===401) {
+                        swal({
+                            title: "权限错误",
+                            text: "非组长、队长无管理权限。",
+                            icon: "error",
+                        });
+                    }
+                    else if(returnCode===404) {
+                        swal({
+                            title: "功能不存在，请联系管理员",
+                            icon: "warning",
+                        });
+                    }
+                    else if(returnCode===417) {
+                        swal({
+                            title: "功能错误，请联系管理员",
+                            icon: "warning",
+                        });
+                    }
+                    else if(returnCode===498) {
+                        swal({
+                            title: "数据库异常，请联系管理员",
+                            icon: "warning",
+                        });
+                    }
+                    else if(returnCode===499) {
+                        swal({
+                        title: "功能维护中，暂不允许获取所有管理的组的组员",
+                        icon: "warning",
+                        });
+                    }
+                    else if (returnCode===200 || returnCode===301) {
+                        //状态码301，提醒转移函数
+                        if(returnCode===301){window.console.log('获取所有管理的组的组员函数移至新位置');}
+                        //状态码200，处理data
+                        fill_page_tables(data['data']);
+                    }
+            }
+            else
+                alert("请检查网络状况。");
         }
     )
 }
@@ -54,18 +98,20 @@ function add_table_template(group_id, group_name) {
 
 
 function fill_table_by_id(group_id,data) {
+    let rowNumber = 0;
     for(let student of data) {
+        rowNumber++;
         let row =
         `<tr>
-            <td>${student['rowNumber']}</td>
-            <td>${student['name']}</td>
+            <td>${rowNumber}</td>
+            <td>${student['student_name']}</td>
             <td>${render_gender(student['gender'])}</td>
             <td>${student['student_id']}</td>
             <td><buton class="btn btn-danger btn-sm rounded-pill" onclick="remove_member(this)">删除</buton></td>
+            <div hidden>${student['department_id']}</div>
         </tr>`;
+        $("#"+String(group_id)).append(row)
     }
-
-    $("#"+String(group_id)).append(row)
 }
 
 
@@ -78,7 +124,7 @@ function render_gender(gender) {
 
 function set_modal_header(element) {
     let group_name = $(element).parent().prev().text();
-    let group_id = $(element).prev().children().first().next().prop("id");
+    let group_id = $(element).prev().children().first().next().attr("id");
     $("#group-name").text(group_name);
     $("#group-id").text(group_id);
 }
@@ -91,10 +137,54 @@ function search_member() {
         "/Ajax/GroupManager/search_member",
         {student_ids:ids},
         function(data,status){
-            // handle ajax return
-
-            // if success
-            fill_search_results(data['data']);
+            if(status === "success"){
+                let returnCode=data['code'];
+                    if(returnCode===400) {
+                        swal({
+                            title: "提供的数据错误，请联系管理员",
+                            icon: "error",
+                        });
+                    }
+                    else if(returnCode===401) {
+                        swal({
+                            title: "权限错误",
+                            text: "非组长、队长无权搜索成员。",
+                            icon: "error",
+                        });
+                    }
+                    else if(returnCode===404) {
+                        swal({
+                            title: "功能不存在，请联系管理员",
+                            icon: "warning",
+                        });
+                    }
+                    else if(returnCode===417) {
+                        swal({
+                            title: "功能错误，请联系管理员",
+                            icon: "warning",
+                        });
+                    }
+                    else if(returnCode===498) {
+                        swal({
+                            title: "数据库异常，请联系管理员",
+                            icon: "warning",
+                        });
+                    }
+                    else if(returnCode===499) {
+                        swal({
+                        title: "功能维护中，暂不允许搜索成员",
+                        icon: "warning",
+                        });
+                    }
+                    else if (returnCode===200 || returnCode===301) {
+                        //状态码301，提醒转移函数
+                        if(returnCode===301){window.console.log('搜索成员函数移至新位置');}
+                        //状态码200，处理data
+                        fill_search_results(data['data']);
+                    }
+            }
+            else
+                alert("请检查网络状况。");
         }
     )
 }
@@ -105,7 +195,6 @@ function fill_search_results(data) {
     for(let student of data) {
         let row = 
         `<tr>
-            <td>${student['rowNumber']}</td>
             <td>${student['name']}</td>
             <td>${student['gender']}</td>
             <td>${student['student_id']}</td>
@@ -121,15 +210,154 @@ function add_member(element) {
     let group_id = $("#group-id").text();
     $(element).remove();
 
-    // ajax to add member
+    $.post(
+        "/Ajax/GroupManager/add_member",
+        {student_id:student_id,group_id:group_id},
+        function(data,status){
+            if(status === "success"){
+                let returnCode=data['code'];
+                    if(returnCode===400) {
+                        swal({
+                            title: "提供的数据错误，请联系管理员",
+                            icon: "error",
+                        });
+                    }
+                    else if(returnCode===401) {
+                        swal({
+                            title: "权限错误",
+                            text: "非组长、队长无权添加成员。",
+                            icon: "error",
+                        });
+                    }
+                    else if(returnCode===404) {
+                        swal({
+                            title: "功能不存在，请联系管理员",
+                            icon: "warning",
+                        });
+                    }
+                    else if(returnCode===417) {
+                        swal({
+                            title: "功能错误，请联系管理员",
+                            icon: "warning",
+                        });
+                    }
+                    else if(returnCode===498) {
+                        swal({
+                            title: "数据库异常，请联系管理员",
+                            icon: "warning",
+                        });
+                    }
+                    else if(returnCode===499) {
+                        swal({
+                        title: "功能维护中，暂不允许添加组员",
+                        icon: "warning",
+                        });
+                    }
+                    else if (returnCode===200 || returnCode===301) {
+                        //状态码301，提醒转移函数
+                        if(returnCode===301){window.console.log('添加组员函数移至新位置');}
+                        //状态码200，处理data
+                        showToast("success","成功","已添加组员");
+                    }
+            }
+            else
+                alert("请检查网络状况。");
+        }
+    )
 }
 
 
 function remove_member(element) {
-    ;
+    let student_id = $(element).parent().prev().text();
+    let group_id = $(element).parent().parent().parent().prop("id");
+    $(element).remove();
+
+    $.post(
+        "/Ajax/GroupManager/remove_member",
+        {student_id:student_id,group_id:group_id},
+        function(data,status){
+            if(status === "success"){
+                let returnCode=data['code'];
+                    if(returnCode===400) {
+                        showToast("error","失败",data['message']);
+                    }
+                    else if(returnCode===401) {
+                        swal({
+                            title: "权限错误",
+                            text: "非组长、队长无权删除成员。",
+                            icon: "error",
+                        });
+                    }
+                    else if(returnCode===404) {
+                        swal({
+                            title: "功能不存在，请联系管理员",
+                            icon: "warning",
+                        });
+                    }
+                    else if(returnCode===417) {
+                        swal({
+                            title: "功能错误，请联系管理员",
+                            icon: "warning",
+                        });
+                    }
+                    else if(returnCode===498) {
+                        swal({
+                            title: "数据库异常，请联系管理员",
+                            icon: "warning",
+                        });
+                    }
+                    else if(returnCode===499) {
+                        swal({
+                        title: "功能维护中，暂不允许删除组员",
+                        icon: "warning",
+                        });
+                    }
+                    else if (returnCode===200 || returnCode===301) {
+                        //状态码301，提醒转移函数
+                        if(returnCode===301){window.console.log('删除组员函数移至新位置');}
+                        //状态码200，处理data
+                        showToast("success","成功","已删除组员");
+                    }
+            }
+            else
+                alert("请检查网络状况。");
+        }
+    )
+}
+
+function showToast(status,title,text) {
+    let success =
+    `<div class="bs-toast toast m-2 fade bg-success hide" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="1000">
+        <div class="toast-header">
+            <i class="bx bx-check me-2"></i>
+            <div class="me-auto fw-semibold">${title}</div>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">${text}</div>
+    </div>`
+    let error =
+    `<div class="bs-toast toast m-2 fade bg-danger hide" role="alert" aria-live="assertive" aria-atomic="true" data-bs-delay="2000">
+        <div class="toast-header">
+            <i class="bx bx-x me-2"></i>
+            <div class="me-auto fw-semibold">${title}</div>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">${text}</div>
+    </div>`
+    container = $("#toast-container");
+    if (status==="success") {
+        container.append(success);
+        let a = new bootstrap.Toast(container.children().last());
+        a.show();
+    }
+    else if (status==="error") {
+        container.append(error);
+        let a = new bootstrap.Toast(container.children().last());
+        a.show();
+    }
 }
 
 $(function() {
     // get member
-    // get_all_groups_members();
+    get_all_groups_members();
 })

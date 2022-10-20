@@ -41,7 +41,7 @@ function get_school() {
                     }
                     else if(returnCode===499) {
                         swal({
-                        title: "功能维护中，暂不允许登录",
+                        title: "功能维护中，暂不允许获取学院信息",
                         icon: "warning",
                         });
                     }
@@ -66,7 +66,7 @@ function fill_school_table(data) {
     for (let one_school of data)
     {
         table_body.append(`
-        <tr id='test'>
+        <tr old-data='${one_school['school_id']}'>
             <td>
                 <input type="number" min="1" max="50" class="form-control-plaintext editable-readonly-input text-center" style="min-width: 20px;" value="${one_school['school_id']}" readonly required/>
             </td>
@@ -86,21 +86,23 @@ function fill_school_table(data) {
 
 function upload_school(element_row) {
     let selector = element_row.children().first();
-    let school_id = selector.children().first().val();
+    let school_id = eval(selector.children().first().val());
     selector = selector.next();
-    let name = eval(selector.children().first().val());
+    let name = selector.children().first().val();
     selector = selector.next();
     let campus = selector.children().first().val();
+    let old_school_id = eval(element_row.attr("old-data"));
 
-    if (school_id === "" || max_num === "" || max_num < 1 || max_num > 50) {
+    if (school_id === undefined || school_id < 1 || school_id > 50) {
         alert("请检编号应在1~50之间");
     }
 
     $.post(
         "/Ajax/DataManager/update_school",
-        {"school_id":school_id,"max_num":max_num,"group_leader_id":group_leader_id,"remark":remark},
+        {"school_id":school_id,"name":name,"campus":campus,"old_school_id":old_school_id},
         function(data,status){
             if(status === "success"){
+                get_school();
                 let returnCode=data['code'];
                     if(returnCode===400) {
                         showToast('error',"提供的数据有误",data['message']);
@@ -128,7 +130,7 @@ function upload_school(element_row) {
                     }
                     else if(returnCode===499) {
                         swal({
-                        title: "功能维护中，暂不允许登录",
+                        title: "功能维护中，暂不允许修改学院信息",
                         icon: "warning",
                         });
                     }
@@ -137,7 +139,6 @@ function upload_school(element_row) {
                         if(returnCode===301){window.console.log('修改学院信息函数移至新位置');}
                         //状态码200，处理data
                         showToast('success',"成功","数据已修改，如有问题可刷新重试。")
-                        get_school();
                     }
             }
             else
@@ -185,7 +186,7 @@ function change_content_editable(element) {
 
 function change_content_uneditable(element) {
     $(element).prop("readonly",true);
-    $(element).removeClass('form-control')
-    $(element).addClass('form-control-plaintext')
-    upload_school($(element).parent().parent())
+    $(element).removeClass('form-control');
+    $(element).addClass('form-control-plaintext');
+    upload_school($(element).parent().parent());
 }

@@ -21,18 +21,31 @@ def DataManager(app : flask.Flask) -> None:
         return {"warning":"", "message":"", "data":returns}
     
     
-    # @app.route("/Ajax/DataManager/update_school", methods=['POST'])
-    # @CustomResponsePackage
-    # @Logger
-    # @Auth(({"department_id":3,"actor":"10"},{"department_id":1,"actor":None}))
-    # def update_school():
-    #     if "name" not in request.form.keys() or \
-    #         "school_id" not in request.form.keys() or "campus" not in request.form.keys():
-    #         raise IllegalValueError("Not all required data received.", filename=__file__, line=sys._getframe().f_lineno)        
+    @app.route("/Ajax/DataManager/update_school", methods=['POST'])
+    @CustomResponsePackage
+    @Logger
+    @Auth(({"department_id":3,"actor":"10"},{"department_id":1,"actor":None}))
+    def update_school():
+        if "name" not in request.form.keys() or "old_school_id" not in request.form.keys() or \
+            "school_id" not in request.form.keys() or "campus" not in request.form.keys():
+            raise IllegalValueError("Not all required data received.", filename=__file__, line=sys._getframe().f_lineno)        
         
-    #     formDict = dict(request.form)
-    #     if not 0 <= int(formDict['school_id']) <= 50:
-    #         raise IllegalValueError("人数上限应在0~50之间", filename=__file__, line=sys._getframe().f_lineno)
+        formDict = dict(request.form)
+        if not 1 <= int(formDict['school_id']) <= 50 or not 1 <= int(formDict['old_school_id']) <= 50:
+            raise IllegalValueError("学院编号目前支持1~50之间", filename=__file__, line=sys._getframe().f_lineno)
         
-    #     returns = function_departmentManager.departmentManager(formDict=formDict)
-    #     return {"warning":"", "message":returns["message"], "data":returns["data"]}
+        connection = DatabaseConnector()
+        connection.startCursor()
+        
+        DBAffectRows = connection.execute(
+            "SELECT 'school_id' FROM `School` WHERE school_id=%(school_id)s;",
+            formDict)
+        results = connection.fetchall()
+        if formDict["school_id"] != formDict["old_school_id"] and DBAffectRows != 0:
+            raise IllegalValueError("学院 ID 已存在，请检查输入避免重复。", filename=__file__, line=sys._getframe().f_lineno)
+
+        DBAffectRows = connection.execute(
+            "UPDATE `School` SET school_id=%(school_id)s,name=%(name)s,campus=%(campus)s WHERE school_id=%(old_school_id)s;",
+            formDict)
+        
+        return {"warning":"", "message":"", "data":""}
