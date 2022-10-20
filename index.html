@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="zh, en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="description" content="Index Page">
+<meta name="author" content="Luo Yinsong">
+<link rel="icon" href="/assets/images/STOS.png">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<title>学风督导队</title>
+
+<!-- 新 Bootstrap4 核心 CSS 文件 -->
+<link rel="stylesheet" href="bootstrap-4.0.0/css/bootstrap.min.css">
+
+<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+<script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+
+<!-- popper.min.js 用于弹窗、提示、下拉菜单 -->
+<script src="https://cdn.staticfile.org/popper.js/1.12.5/umd/popper.min.js"></script>
+
+<!-- 最新的 Bootstrap4 核心 JavaScript 文件 -->
+<script src="bootstrap-4.0.0/js/bootstrap.min.js"></script>
+
+<!-- Custom styles for this template -->
+<link href="bootstrap-4.0.0/css/extra/jumbotron.css" rel="stylesheet">
+</head>
+
+<body>
+	<nav id="navbar" class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+		<!--ajax替换文本-->
+	</nav>
+    <main role="main"> 
+  		<!-- Main jumbotron for a primary marketing message or call to action -->
+		<div class="jumbotron">
+			<div class="container">
+				<h1 class="display-3">学工部学风督导队</h1>
+				<p>学风督导队是在学生工作部管理科指导下，依照学校的规章制度和本队的章程，独立自主开展工作，实现学生自我管理的学生组织。校风学风督导队以“服务学校、服务同学”为宗旨，以“责任在心，纪律在身”为工作方针，以建设一流的校风和良好的学风以及丰富校园精神文明为己任，倡导同学“自我管理，自我约束，自我修养，自我教育，自我学习”，促进校风校纪的建设，营造良好的学习氛围。学风督导队自2007年成立以来，认真了解同学需求，积极服务同学，秉承“自我管理、自我服务、自我教育”的宗旨，不断改进创新，追求卓越。多次被评为勤工助学先进组织，为电子科技大学做出了应有贡献。学风督导队下设现场组，早餐租，新闻组和数据组四个部门，共计103人。</p>
+				<p><a class="btn btn-primary btn-lg" href="#" role="button" onClick="aler(1)">团队结构及工作介绍 &raquo;</a></p>
+			</div>
+		</div>
+		<div class="container">
+			<!-- Example row of columns -->
+			<div class="row">
+				<div class="col-md-4">
+					<h2>早自习数据</h2>
+					<p>学校各学院大一新生早自习检查数据展示，可以按天、按周、按月查看学院的早自习出勤率等数据，数据分教室和学院展示。（因每周末对数据统一处理，按日展示的数据仅供参考，最终数据以周数据为准）</p>
+					<p><a class="btn btn-secondary" href="/find.html" role="button">查看数据 &raquo;</a></p>
+				</div>
+				<div class="col-md-4">
+					<h2>课堂检查数据</h2>
+					<p>学校各学院各年级的课堂情况统计数据，数据分学院和年级展示图标，同时提供指定课程的具体数据。</p>
+					<p><a class="btn btn-secondary" href="/find_course.html" role="button">查看数据 &raquo;</a></p>
+				</div>
+				<div class="col-md-4">
+					<h2>建议收集页</h2>
+					<p>如果对我们有什么建议和意见，都可以写在这里，我们会尽力完善。</p>
+					<p><a class="btn btn-secondary" href="#" role="button" onClick="aler(2)">提供建议 &raquo;</a></p>
+				</div>
+			</div>
+			<hr>
+		</div>
+		<!-- /container -->
+	</main>
+	<footer class="container">
+		<p>2019 电子科技大学 学工部 学风督导队</p>
+	</footer>
+
+    <!-- Bootstrap core JavaScript
+		================================================== --> 
+    <!-- Placed at the end of the document so the pages load faster --> 
+	<script>
+		var xmlhttp;
+		if (window.XMLHttpRequest) {
+                // IE7+, Firefox, Chrome, Opera, Safari 浏览器执行代码
+                xmlhttp=new XMLHttpRequest();
+            }
+            else {
+                // IE6, IE5 浏览器执行代码
+                xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+            }
+            xmlhttp.onreadystatechange=function() {
+				if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+					document.getElementById("navbar").innerHTML = xmlhttp.responseText;
+				}
+			}
+			xmlhttp.open("GET","/frame/index_head_frame.html",false);
+            xmlhttp.send();
+	</script>
+    <!-- Icons --> 
+    <script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script> 
+    <script>
+		feather.replace()
+	</script> 
+    <script>
+		window.jQuery || document.write('<script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"><\/script>')
+	</script>
+	<script>
+		function aler(x) {
+			if(x==1) {
+				alert("网站建设中")
+			}
+			else if(x==2) {
+				alert("暂未投入使用");
+			}
+		}
+	</script>
+</body>
+</html>

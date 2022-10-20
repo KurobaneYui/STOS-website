@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="zh, en" xmlns="http://www.w3.org/1999/html">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="description" content="Index Page">
+<meta name="author" content="罗寅松, 张锐">
+<link rel="icon" href="./assets/images/STOS.png">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<title>查看查课信息</title>
+
+<!-- 新 Bootstrap4 核心 CSS 文件 -->
+<link rel="stylesheet" href="bootstrap-4.0.0/css/bootstrap.min.css">
+
+<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+<script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"></script>
+
+<!-- popper.min.js 用于弹窗、提示、下拉菜单 -->
+<script src="https://cdn.staticfile.org/popper.js/1.12.5/umd/popper.min.js"></script>
+
+<!-- 最新的 Bootstrap4 核心 JavaScript 文件 -->
+<script src="bootstrap-4.0.0/js/bootstrap.min.js"></script>
+
+<!-- Custom styles for this template -->
+<link href="bootstrap-4.0.0/css/extra/jumbotron.css" rel="stylesheet">
+</head>
+
+<body class="fix-header fix-sidebar card-no-border">
+	<nav id="navbar" class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+		<!--ajax替换文本-->
+	</nav>
+	<main role="main"> 
+        <br>
+  		<!-- Main jumbotron for a primary marketing message or call to action -->
+        <div class="container">
+            <div class="card">
+                <div class="card-body">
+                    <h3>查课信息查看说明</h3>
+                    <ul class="list-group">
+						<!--li class="list-group-item list-group-item-danger">周汇总时，请假学生计入总应到人数，故和每日汇总结果有一定偏差，望知晓<br/>本页展示的每日数据均为原始数据，每周末会对存在问题的数据（如：数据缺失）进行处理。处理后的数据会和每日数据有一定不同</li-->
+                        <li class="list-group-item list-group-item-info">当天数据可能不能及时在当天展示，希望理解<br/>出勤率为程序自动生成，如果教室数据存在特殊情况，出勤率并不准确，请不用担心，周末我们会对特殊教室统一处理</li>
+                        <li class="list-group-item list-group-item-info">当日出勤率：<br/>出勤率=(出勤1+出勤2)/2/应到人数<br/>出勤1为第一节小课的出勤人数<br/>出勤2为第二次小课出勤的人数</li>
+                        <li class="list-group-item list-group-item-info">若数据存在问题请尽快与督导队联系</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <br>
+		<div class="container">
+            <!-- Example row of columns -->
+            <!-- <div class="card">
+                <div class="card-body"> -->
+                    <div class="row">
+                        <div class="col-lg-6 col-md-6">
+                            <form action="" id="xyf">
+                                <div class="form-group">
+                                    <label for="date_start">起始日期</label>
+                                    <input type="date" name="user_date_start" id="date_start" class="form-control"/>
+                                </div>
+                                <div class="form-group">
+                                    <label for="date_end">结束日期</label>
+                                    <input type="date" name="user_date_end" id="date_end" class="form-control"/>
+                                </div>
+                                <div class="form-group">
+                                    <label for="xy">学院</label>
+                                    <select name="customers" id="xy" class="form-control" >
+                                        <option value="">请选择学院</option>
+                                        <option value="信息与通信工程学院" id="xt">信通</option>
+                                        <option value="电子科学与工程学院" id="dz">电子</option>
+                                        <option value="航空航天学院" id="kt">空天</option>
+                                        <option value="机械与电气工程学院" >机电</option>
+                                        <option value="光电科学与工程学院">光电</option>
+                                        <option value="自动化工程学院">自动化</option>
+                                        <option value="数学科学学院">数学</option>
+                                        <option value="资源与环境学院">资环</option>
+                                        <option value="计算机科学与工程学院">计算机</option>
+                                        <option value="物理学院">物理</option>
+                                        <option value="材料与能源学院">材料</option>
+                                        <option value="信息与软件工程学院">信软</option>
+                                        <option value="格拉斯哥学院">格院</option>
+                                        <option value="外国语学院">外国语</option>
+                                        <option value="生命科学与技术学院">生命</option>
+                                        <option value="英才实验学院">英才</option>
+                                        <option value="医学院">医学院</option>
+                                        <option value="经济与管理学院">经管</option>
+                                        <option value="公共管理学院">公管</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="x">年级</label>
+                                    <select name="nian" id="x" class="form-control">
+                                        <option value="">请选择年级</option>
+                                        <option value="2019">大一</option>
+                                        <option value="2018">大二</option>
+                                        <option value="2017">大三</option>
+                                        <option value="2016">大四</option>
+                                    </select>
+                                </div>
+                            
+                                <button type="button" onclick="find()" class="btn btn-primary"  >查看</button>
+                            </form>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div id="txtHint" class="col-lg-12 col-md-12">
+                            <div class="alert alert-info alert-dismissible">
+                                <button type="button" class="close" data-dismiss="alert">&times;</button>
+                                <strong>注意</strong> 结果将在这里显示。
+                            </div>
+                        </div>
+                    </div>
+                <!-- </div>
+            </div> -->
+        </div>
+        <!--br/><hr/><br/>
+        <div-- class="container">
+            <div class="card">
+                <div class="card-body">
+                    <h3>意见与建议</h3>
+                    <hr/>
+                    <div class="row">
+                        <div class="col-12">
+                            <form id="CAS" action="">
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label for="area_group">请选择教学楼区域</label>
+                                        <div class="form-group" id="area_group">
+                                            <label><input type="radio" name="area" id="area_A" class="form-control"/>A</label>
+                                            <label><input type="radio" name="area" id="area__B" class="form-control"/>B</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label>请输入教室编号<input type="text" name="numbering" id="numbering" class="form-control"/></label>
+                                    </div>
+                                    <div class="col-md-12">
+                                        <label>请提供您的意见和建议<textarea type="width:100% height:100%" name="CommentsAndSuggestions" id="CommentsAndSuggestions" class="form-control"></textarea></label>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div-->
+		<!-- /container -->
+    </main>
+    <br>
+	<footer class="container">
+		<p>2019 电子科技大学 学工部 学风督导队</p>
+	</footer>
+	<script type="text/javascript">
+		var xmlhttp;
+		if (window.XMLHttpRequest) {
+			// IE7+, Firefox, Chrome, Opera, Safari 浏览器执行代码
+			xmlhttp=new XMLHttpRequest();
+		}
+		else {
+			// IE
+			try {
+				xmlhttp=new ActiveXObject("Msxml2.XMLHTTP");
+			}
+			catch (e) {
+				try {
+					xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+				}
+				catch (e) {
+					alert("您的浏览器不支持AJAX！");
+					//return false;
+				}
+			}
+		}
+		xmlhttp.onreadystatechange=function() {
+			if (xmlhttp.readyState==4 && xmlhttp.status==200) {
+				document.getElementById("navbar").innerHTML = xmlhttp.responseText;
+			}
+		}
+		xmlhttp.open("GET","/frame/index_head_frame.html",false);
+		xmlhttp.send();
+	</script>
+    <script type="text/javascript">
+        function find(){
+            var date_start = document.getElementById('date_start').value;
+            var date_end = document.getElementById('date_end').value;
+            var xueyuan = document.getElementById('xy').value;
+            var nianji = document.getElementById('x').value;
+            var xmlhttp;
+            var rejson;
+            var fenzi=0;
+            var fenmu=0;
+            var chuqin=0;
+            var innerstring="<div class='table-responsive'><table class='table table-striped'>";
+            if (xueyuan=="" || date_start=="" || date_end=="" || nianji=="")
+            {
+                document.getElementById("txtHint").innerHTML='<div class="alert alert-danger alert-dismissible"><button type="button" class="close" data-dismiss="alert">&times;</button>'+"<strong>请检查日期和学院以及年级</strong></div>";
+                return;
+            }
+			if (window.XMLHttpRequest) {
+				// IE7+, Firefox, Chrome, Opera, Safari 浏览器执行代码
+				xmlhttp=new XMLHttpRequest();
+			}
+			else {
+				// IE
+				try {
+					xmlhttp=new ActiveXObject("Msxml2.XMLHTTP");
+				}
+				catch (e) {
+					try {
+						xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+					}
+					catch (e) {
+						alert("您的浏览器不支持AJAX！");
+						return false;
+					}
+				}
+			}
+            xmlhttp.onreadystatechange=function()
+            {
+                if (xmlhttp.readyState==4 && xmlhttp.status==200)
+                {
+                    console.log(xmlhttp.responseText);rejson=JSON.parse(xmlhttp.responseText);console.log(rejson);
+                    // innerstring=innerstring+"<h4>"+date+" "+xueyuan+"学院"+" "+nianji+"级"+"</h4>";
+                    innerstring=innerstring+"<thead><tr><th>日期</th><th>课程名称</th><th>上课教室</th><th>时段与上课周</th><th>应到人数</th><th>出勤1</th><th>违纪1</th><th>出勤2</th><th>违纪2</th><th>备注</th></tr></thead>";
+                    innerstring=innerstring+"<tbody>";
+                    if (rejson.length==0){
+                        document.getElementById("txtHint").innerHTML='<div class="alert alert-danger alert-dismissible"><button type="button" class="close" data-dismiss="alert">&times;</button>'+"<strong>未查找到信息，请检查日期或稍后再尝试</strong></div>";
+                    }
+                    else{
+                        for(var i=0;i<rejson.length;i++){
+                            innerstring+="<tr>";
+                            innerstring=innerstring+"<td>"+rejson[i].日期+"</td>";
+                            innerstring=innerstring+"<td>"+rejson[i].课程名称+"</td>";
+                            innerstring=innerstring+"<td>"+rejson[i].教学楼+rejson[i].区号+rejson[i].教室编号+"</td>";
+                            innerstring=innerstring+"<td>"+rejson[i].时段与上课周+"</td>";
+                            innerstring=innerstring+"<td>"+rejson[i].应到人数+"</td>";
+                            innerstring=innerstring+"<td>"+rejson[i].第一次出勤+"</td>";
+                            innerstring=innerstring+"<td>"+rejson[i].第一次违纪+"</td>";
+                            innerstring=innerstring+"<td>"+rejson[i].第二次出勤+"</td>";
+                            innerstring=innerstring+"<td>"+rejson[i].第二次违纪+"</td>";
+                            innerstring=innerstring+"<td>"+rejson[i].备注+"</td>";
+                            innerstring+="</tr>";
+                            if (parseInt(rejson[i].第一次出勤).toString()!="NaN" && parseInt(rejson[i].第二次出勤).toString()!="NaN") {
+                                fenzi = fenzi + (parseInt(rejson[i].第一次出勤) / 2 + parseInt(rejson[i].第二次出勤) / 2);
+                                fenmu = fenmu + (parseInt(rejson[i].应到人数));
+                            }
+                        }
+                        innerstring+="</tbody></table></div>";
+                        chuqin = (fenzi/fenmu)*100;
+                        // innerstring=innerstring+"<h5>出勤率: "+chuqin.toString().slice(0,6)+"%"+"</h5>";
+                        innerstring= '<div class="alert alert-success">'+"<strong>出勤率: "+chuqin.toString().slice(0,6)+"%"+"</strong></div>"+innerstring;
+                        innerstring="<h4>"+date_start+' ~ '+date_end+" "+xueyuan+"学院 "+nianji+"级"+"</h4>"+innerstring;
+                        document.getElementById("txtHint").innerHTML=innerstring;
+                    }
+                }
+            }
+            xmlhttp.open("GET","/ajax/find_course.php?xy="+xueyuan+"&nj="+nianji+"&date_start="+date_start+"&date_end="+date_end,true);
+            xmlhttp.send();
+        }
+    </script>
+    <script type="text/javascript">
+        var mydateInput_start = document.getElementById("date_start");
+        var mydateInput_end = document.getElementById("date_end");
+        var date = new Date();
+        var month;
+        var day;
+        if ((date.getMonth() + 1)<10){
+            month = '0'+(date.getMonth() + 1).toString();
+        }
+        else{
+            month = (date.getMonth() + 1).toString()
+        }
+        if(date.getDate()<10){
+            day = '0'+date.getDate().toString();
+        }
+        else{
+            day = date.getDate().toString();
+        }
+        var dateString = date.getFullYear() + "-" + month + "-" + day;
+        mydateInput_start.value = dateString;
+        mydateInput_end.value = dateString;
+    </script>
+    <!-- Bootstrap core JavaScript
+		================================================== --> 
+    <!-- Placed at the end of the document so the pages load faster --> 
+
+    <!-- Icons --> 
+    <script src="https://unpkg.com/feather-icons/dist/feather.min.js"></script> 
+    <script>
+		feather.replace()
+	</script> 
+    <script>
+		window.jQuery || document.write('<script src="https://cdn.staticfile.org/jquery/3.2.1/jquery.min.js"><\/script>')
+	</script>
+</body>
+</html>

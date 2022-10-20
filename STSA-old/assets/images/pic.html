@@ -1,0 +1,49 @@
+<!DOCTYPE HTML>
+	<head>
+		<meta charset="utf-8">
+		<meta name="referrer" content="no-referrer" />
+		<script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+	</head>
+	
+	<body>
+
+		<div>
+			<button bu='last_group' accesskey='w'>上一组</button>
+			<button bu='next_group' accesskey='s'>下一组</button>
+			<span></span>
+			<button bu='last_pic' accesskey='z'>上一张</button>
+			<button bu='next_pic' accesskey='c'>下一张</button>
+		</div>
+
+		<div>
+			<img height:100% width:100% referrer="no-referrer|origin|unsafe-url"></img>
+		</div>
+
+		<div>
+			<button bu='last_group'>上一组</button>
+			<button bu='next_group'>下一组</button>
+			<span></span>
+			<button bu='last_pic'>上一张</button>
+			<button bu='next_pic'>下一张</button>
+		</div>
+
+	</body>
+	
+	<script>
+		$(function(){
+			group = 24747
+			pic = 1
+			
+			url = "https://ii.hywly.com/a/1/"+group+"/"+pic+".jpg"
+			d()
+			$('img').prop('src',url)
+			
+			$("button[bu='last_group']").click( function(){ group-=1; pic = 1; url = "https://ii.hywly.com/a/1/"+group+"/"+pic+".jpg"; $('img').prop('src',url); d(); } )
+			$("button[bu='next_group']").click( function(){ group+=1; pic = 1; url = "https://ii.hywly.com/a/1/"+group+"/"+pic+".jpg"; $('img').prop('src',url); d(); } )
+			$("button[bu='last_pic']").click( function(){ pic-=1; url = "https://ii.hywly.com/a/1/"+group+"/"+pic+".jpg"; $('img').prop('src',url); d(); } )
+			$("button[bu='next_pic']").click( function(){ pic+=1; url = "https://ii.hywly.com/a/1/"+group+"/"+pic+".jpg"; $('img').prop('src',url); d(); } )
+			
+			function d(){ $('span').text(group+'-'+pic);}
+		});
+	</script>
+</html>
