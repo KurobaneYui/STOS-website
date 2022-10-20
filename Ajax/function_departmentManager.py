@@ -46,6 +46,7 @@ def departmentManager(formDict : dict):
         data=formDict,
         autoCommit=False)
     if DBAffectRows not in [0,1]:
+        connection.rollback()
         raise DatabaseRuntimeError("Update department info error.", filename=__file__, line=sys._getframe().f_lineno)
 
     if formDict['group_leader_id'] != "":
@@ -71,7 +72,8 @@ def departmentManager(formDict : dict):
                     job=%(job)s, wage=%(wage)s;",
             data=formDict,
             autoCommit=False)
-        if DBAffectRows not in [0,1]:
+        if DBAffectRows not in [0,1,2]:
+            connection.rollback()
             raise DatabaseRuntimeError("Insert or Update work info error.", filename=__file__, line=sys._getframe().f_lineno)
         
         DBAffectRows = connection.execute(
@@ -81,7 +83,8 @@ def departmentManager(formDict : dict):
                     student_id=%(student_id)s, department_id=%(department_id)s, actor=%(actor)s;",
             data=formDict,
             autoCommit=False)
-        if DBAffectRows not in [0,1]:
+        if DBAffectRows not in [0,1,2]:
+            connection.rollback()
             raise DatabaseRuntimeError("Insert or Update authority info error.", filename=__file__, line=sys._getframe().f_lineno)
     elif formDict['student_id'] != "":
         DBAffectRows = connection.execute(
@@ -90,6 +93,7 @@ def departmentManager(formDict : dict):
             data=formDict,
             autoCommit=False)
         if DBAffectRows not in [0,1]:
+            connection.rollback()
             raise DatabaseRuntimeError("Update work info error.", filename=__file__, line=sys._getframe().f_lineno)
         
         DBAffectRows = connection.execute(
@@ -98,6 +102,7 @@ def departmentManager(formDict : dict):
             data=formDict,
             autoCommit=False)
         if DBAffectRows not in [0,1]:
+            connection.rollback()
             raise DatabaseRuntimeError("Insert or Update authority info error.", filename=__file__, line=sys._getframe().f_lineno)
     else:
         DBAffectRows = connection.execute(
@@ -105,6 +110,7 @@ def departmentManager(formDict : dict):
             data=formDict,
             autoCommit=False)
         if DBAffectRows not in [0,1]:
+            connection.rollback()
             raise DatabaseRuntimeError("Delete work info error.", filename=__file__, line=sys._getframe().f_lineno)
         
         DBAffectRows = connection.execute(
@@ -112,6 +118,7 @@ def departmentManager(formDict : dict):
             data=formDict,
             autoCommit=False)
         if DBAffectRows not in [0,1]:
+            connection.rollback()
             raise DatabaseRuntimeError("Insert or Update authority info error.", filename=__file__, line=sys._getframe().f_lineno)
     
     connection.commit()

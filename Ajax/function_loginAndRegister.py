@@ -61,7 +61,7 @@ def register(infodict : dict, database : DatabaseConnector):
         ON DUPLICATE KEY \
             UPDATE name=%(name)s, gender=%(gender)s;",
         infodict, autoCommit=False)
-    if DBAffectRows not in [0, 1]:
+    if DBAffectRows not in [0, 1, 2]:
         database.rollback()
         raise DatabaseRuntimeError("Insert or Update member basic info error.", filename=__file__, line=sys._getframe().f_lineno)
     DBAffectRows = database.execute(
