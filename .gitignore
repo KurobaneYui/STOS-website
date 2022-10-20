@@ -3,8 +3,10 @@ Thumbs.db
 ehthumbs.db
 Desktop.ini
 
+.venv/
 _notes/
 _compareTemp/
+__pycache__/
 .idea/
 .vscode/
 /log/*
