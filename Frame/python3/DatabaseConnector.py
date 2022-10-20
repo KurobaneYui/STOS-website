@@ -58,10 +58,6 @@ class DatabaseConnector:
                 charset="utf8")
             self.Cursor = None
             self.Status = DatabaseConnectionStatus.ConnectionEstablished
-            # if connection failed
-            if self.Session.Error==True:
-                self.Status = DatabaseConnectionStatus.NoConnection
-                raise DatabaseConnectionError("Error in connection to database", filename=__file__, line=sys._getframe().f_lineno)
         except Exception as e:
             # if any error occured
             self.Session = None
@@ -138,15 +134,16 @@ class DatabaseConnector:
         if self.Status is DatabaseConnectionStatus.QueryCached:
             raise DatabaseBufferError("Already cached query results. Please fetch them all and try again.", filename=__file__, line=sys._getframe().f_lineno)
 
-        if data is None:
-            affectedRow = self.Cursor.execute(sql)
-        elif isinstance(data, (tuple,list)) and len(data) > 0 and isinstance(data[0], (tuple,list,dict)):
-            affectedRow = self.Cursor.executemany(sql, data)
-        else:
-            affectedRow = self.Cursor.execute(sql, data)
-
-        if self.Session.Error == True:
-            raise DatabaseRuntimeError(f"Cannot execute query.", filename=__file__, line=sys._getframe().f_lineno)
+        try:
+            if data is None:
+                affectedRow = self.Cursor.execute(sql)
+            elif isinstance(data, (tuple,list)) and len(data) > 0 and isinstance(data[0], (tuple,list,dict)):
+                affectedRow = self.Cursor.executemany(sql, data)
+            else:
+                affectedRow = self.Cursor.execute(sql, data)
+        except Exception as e:
+        # except pymysql.err.IntegrityError as e:
+            raise DatabaseRuntimeError(f"Cannot execute query: {e}", filename=__file__, line=sys._getframe().f_lineno)
 
         if sql.startswith(('SELECT ','select ')):
             self.Status = DatabaseConnectionStatus.QueryCached
