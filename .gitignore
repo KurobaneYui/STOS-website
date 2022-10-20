@@ -3,4 +3,16 @@ Thumbs.db
 ehthumbs.db
 Desktop.ini
 
-_notes
+.venv/
+_notes/
+_compareTemp/
+__pycache__/
+.idea/
+.vscode/
+/log/*
+!/log/README.md
+/config/*
+!/config/Log.conf
+/tmpFiles/*
+!/tmpFiles/README.md
+
