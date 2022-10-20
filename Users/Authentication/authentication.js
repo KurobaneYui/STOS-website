@@ -110,7 +110,7 @@ function reset_password() { // 点击重置按钮的功能
                 }
                 else if(returnCode===499) {
                     swal({
-                      title: "功能维护中，暂不允许登录",
+                      title: "功能维护中，暂不允许重置密码",
                       icon: "warning",
                     });
                 }
@@ -218,7 +218,7 @@ function register() { // 点击注册按钮的功能
                 }
                 else if(returnCode===499) {
                     swal({
-                      title: "功能维护中，暂不允许登录",
+                      title: "功能维护中，暂不允许注册",
                       icon: "warning",
                     });
                 }

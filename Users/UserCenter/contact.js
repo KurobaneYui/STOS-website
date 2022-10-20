@@ -37,7 +37,7 @@ $(function () {
                     }
                     else if(returnCode===499) {
                         swal({
-                        title: "功能维护中，暂不允许登录",
+                        title: "功能维护中，暂不允许获取通讯录",
                         icon: "warning",
                         });
                     }

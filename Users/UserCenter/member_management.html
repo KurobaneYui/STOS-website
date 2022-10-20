@@ -73,32 +73,30 @@
                 <li class="breadcrumb-item active" aria-current="page">组员增删</li>
               </ol>
             </nav>
-            <div class="modal fade" id="add-member" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" onblur="get_all_groups_members()">
+            <div class="modal fade" id="add-member" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="exampleModalLabel" aria-hidden="true" onblur="get_all_groups_members()">
               <div class="modal-dialog">
                 <div class="modal-content">
                   <div class="modal-header">
                     <h5 class="modal-title" id="group-name"></h5>
                     <span id="group-id" hidden></span>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" onclick="get_all_groups_members()"></button>
                   </div>
                   <div class="modal-body">
                     <p class="text-muted">
-                      输入完整学号点击搜索，点击搜索结果中的“添加”按钮，弹出成功提示框即完成添加。添加结束则点击“X”或“结束”按钮。<br/>
-                      小提示：可以用英文分号（;）分隔多个完整学号以批量添加。<br/>
-                      <span class="fw-bold text-primary">注意：本页支持岗位兼任，即使输错学号检索到已在岗的成员，也可以完成岗位添加，因此请认真确认姓名、学号和性别。</span>
+                      输入完整学号,可以用英文逗号（,）分隔多个。点击条目末尾的添加按钮弹出添加成功提示即可。添加结束则点击“X”或“结束”按钮。<br/>
+                      <span class="fw-bold text-primary">注意：本页支持岗位兼任，即使输错学号检索到已在岗的成员亦可完成岗位添加，请认真确认姓名、学号和性别。</span>
                     </p>
                     <form>
                       <div class="mb-3">
                         <label for="multi-id" class="col-form-label">学号：</label>
                         <input type="text" class="form-control" id="multi-id" aria-describedby="inputHelp">
-                        <div id="inputHelp" class="form-text">完整学号，可用英文分号分隔多个学号</div>
+                        <div id="inputHelp" class="form-text">完整学号，可用英文逗号分隔多个学号</div>
                         <button type="button" class="btn btn-primary btn-sm rounded-pill" onclick="search_member()">搜索</button>
                       </div>
                       <div class="table-responsive text-nowrap mb-3">
                         <table class="table table-sm table-hover table-striped">
                           <thead>
                             <tr>
-                              <th>#</th>
                               <th>姓名</th>
                               <th>性别</th>
                               <th>学号</th>
@@ -112,11 +110,13 @@
                     </form>
                   </div>
                   <div class="modal-footer">
-                    <button type="button" class="btn btn-sm btn-secondary rounded-pill" data-bs-dismiss="modal">结束</button>
+                    <button type="button" class="btn btn-sm btn-secondary rounded-pill" data-bs-dismiss="modal" onclick="get_all_groups_members()">结束</button>
                   </div>
                 </div>
               </div>
             </div>
+            
+            <div aria-live="polite" aria-atomic="true" class="position-fixed top-1 end-0 p-3" style="z-index: 1090" id="toast-container"></div>
 
             <div class="row g-3" id="group-card-container">
             </div>

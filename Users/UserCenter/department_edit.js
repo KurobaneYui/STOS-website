@@ -41,7 +41,7 @@ function get_department() {
                     }
                     else if(returnCode===499) {
                         swal({
-                        title: "功能维护中，暂不允许登录",
+                        title: "功能维护中，暂不允许获取部门信息",
                         icon: "warning",
                         });
                     }
@@ -96,7 +96,7 @@ function upload_department(element_row) {
     selector = selector.parent().next().children().first();
     let remark = selector.val();
 
-    if (department_id === "" || max_num === "" || max_num < 0 || max_num > 50) {
+    if (department_id === "" || max_num === undefined || max_num < 0 || max_num > 50) {
         alert("请检编号、人数上限的信息，人数上限应在0~50之间");
     }
     let tmp = group_leader_id.indexOf("-");
@@ -139,7 +139,7 @@ function upload_department(element_row) {
                     }
                     else if(returnCode===499) {
                         swal({
-                        title: "功能维护中，暂不允许登录",
+                        title: "功能维护中，暂不允许修改部门信息",
                         icon: "warning",
                         });
                     }

@@ -84,7 +84,7 @@ function changeInfo() { // 点击确定按钮的功能
                 }
                 else if(returnCode===499) {
                     swal({
-                      title: "功能维护中，暂不允许登录",
+                      title: "功能维护中，暂不允许修改个人信息",
                       icon: "warning",
                     });
                 }
@@ -149,7 +149,7 @@ function confirmDelete()
                 }
                 else if(returnCode===499) {
                     swal({
-                      title: "功能维护中，暂不允许登录",
+                      title: "功能维护中，暂不允许注销个人信息",
                       icon: "warning",
                     });
                 }
@@ -272,7 +272,7 @@ $(function(){
                 }
                 else if(returnCode===499) {
                     swal({
-                      title: "功能维护中，暂不允许登录",
+                      title: "功能维护中，暂不允许获取个人信息",
                       icon: "warning",
                     });
                 }
