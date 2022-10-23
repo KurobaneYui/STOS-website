@@ -8,7 +8,7 @@
   <meta name="viewport"
     content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
-  <title>个人中心</title>
+  <title>黑名单</title>
 
   <meta name="description" content="电子科技大学学风督导队" />
   <meta name="author" content="罗寅松，学风督导队数据组">
@@ -69,19 +69,35 @@
             <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);" aria-label="breadcrumb">
               <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="./index.html">个人中心</a></li>
-                <li class="breadcrumb-item active" aria-current="page">首页</li>
+                <li class="breadcrumb-item active" aria-current="page">黑名单</li>
               </ol>
             </nav>
-            <!-- Layout Demo -->
-            <div class="layout-demo-wrapper">
-              <div class="layout-demo-placeholder">
-                <img src="/assets/img/layouts/layout-fluid-light.png" class="img-fluid" alt="Layout fluid"
-                  data-app-light-img="layouts/layout-fluid-light.png"
-                  data-app-dark-img="layouts/layout-fluid-dark.png" />
-              </div>
-              <div class="layout-demo-info">
-                <h4>Layout fluid</h4>
-                <p>Fluid layout sets a <code>100% width</code> at each responsive breakpoint.</p>
+            <!-- main content -->
+            <div class="card">
+              <h5 class="card-header">黑名单</h5>
+              <div class="table-responsive text-nowrap">
+                <table class="table table-hover table-striped">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>姓名</th>
+                      <th>性别</th>
+                      <th>学号</th>
+                      <th>事由</th>
+                    </tr>
+                  </thead>
+                  <tbody id="blacklist-table-body">
+                  </tbody>
+                  <tfoot class="table-border-bottom-0">
+                    <tr>
+                      <th>#</th>
+                      <th>姓名</th>
+                      <th>性别</th>
+                      <th>学号</th>
+                      <th>事由</th>
+                    </tr>
+                  </tfoot>
+                </table>
               </div>
             </div>
             <!--/ Layout Demo -->
@@ -149,7 +165,7 @@
   <script src="https://cdn.bootcdn.net/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
 
   <!-- Page JS -->
-  
+  <script src="./blacklist.js"></script>
 </body>
 
 </html>

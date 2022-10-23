@@ -8,7 +8,7 @@
   <meta name="viewport"
     content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
-  <title>个人中心</title>
+  <title>岗位基本信息</title>
 
   <meta name="description" content="电子科技大学学风督导队" />
   <meta name="author" content="罗寅松，学风督导队数据组">
@@ -69,21 +69,74 @@
             <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);" aria-label="breadcrumb">
               <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="./index.html">个人中心</a></li>
-                <li class="breadcrumb-item active" aria-current="page">首页</li>
+                <li class="breadcrumb-item"><a href="./index.html">岗位信息</a></li>
+                <li class="breadcrumb-item active" aria-current="page">基本信息</li>
               </ol>
             </nav>
             <!-- Layout Demo -->
-            <div class="layout-demo-wrapper">
-              <div class="layout-demo-placeholder">
-                <img src="/assets/img/layouts/layout-fluid-light.png" class="img-fluid" alt="Layout fluid"
-                  data-app-light-img="layouts/layout-fluid-light.png"
-                  data-app-dark-img="layouts/layout-fluid-dark.png" />
-              </div>
-              <div class="layout-demo-info">
-                <h4>Layout fluid</h4>
-                <p>Fluid layout sets a <code>100% width</code> at each responsive breakpoint.</p>
+            <div class="alert alert-info" role="alert">
+              空课时间如有错误，请及时联系组长对数据进行更正，否则会影响查课排班。
+            </div>
+
+            <div class="row g-3" id="page-container">
+              <div class="col-12">
+                <div class="card">
+                  <h5 class="card-header">空课时间表</h5>
+                  <div class="card-body pb-0">
+                    <h6>
+                      <img height="15" width="15" src-data="green_point">
+                      为空闲，
+                      <img height="15" width="15" src-data="red_point">
+                      为有课
+                    </h6>
+                  </div>
+                  <div class="row">
+                    <div class="col-12 col-md-6">
+                      <div class="table-responsive text-nowrap">
+                        <table class="table table-sm table-hover table-striped mb-3 text-center">
+                          <thead>
+                            <tr>
+                              <th><span class="text-primary fw-bold">单</span></th>
+                              <th>周一</th>
+                              <th>周二</th>
+                              <th>周三</th>
+                              <th>周四</th>
+                              <th>周五</th>
+                              <th>周六</th>
+                              <th>周日</th>
+                            </tr>
+                          </thead>
+                          <tbody id="odd-empty-table-body">
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                    <div class="col-12 col-md-6">
+                      <div class="table-responsive text-nowrap">
+                        <table class="table table-sm table-hover table-striped mb-3 text-center">
+                          <thead>
+                            <tr>
+                              <th><span class="text-primary fw-bold">双</span></th>
+                              <th>周一</th>
+                              <th>周二</th>
+                              <th>周三</th>
+                              <th>周四</th>
+                              <th>周五</th>
+                              <th>周六</th>
+                              <th>周日</th>
+                            </tr>
+                          </thead>
+                          <tbody id="even-empty-table-body">
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  </div>
+                  <p id="empty-table-remark" class="ms-3"></p>
+                </div>
               </div>
             </div>
+
             <!--/ Layout Demo -->
           </div>
           <!-- / Content -->
@@ -149,6 +202,9 @@
   <script src="https://cdn.bootcdn.net/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
 
   <!-- Page JS -->
+  <script src="/assets/img/users/small-point.js"></script>
+  <script src="./random-card-img.js"></script>
+  <script src="./work_basic_info.js"></script>
   
 </body>
 

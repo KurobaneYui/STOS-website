@@ -10,6 +10,8 @@ import sys
 import Ajax.function_contact as function_contact
 import Ajax.function_personalInfo as function_personalInfo
 import Ajax.function_loginAndRegister as function_loginAndRegister
+import Ajax.function_emptyTimeTable as function_emptyTimeTable
+import Ajax.function_workBasicInfo as function_workBasicInfo
     
 
 def resetLogoutSession():
@@ -93,14 +95,18 @@ def Users(app : flask.Flask) -> None:
         database.startCursor()
         
         DBAffectRows = database.execute(
-            sql="SELECT Department.department_id as department_id,name FROM `Work` \
-                LEFT JOIN `Department` ON `Work`.department_id=Department.department_id\
-                WHERE student_id=%s;",
+            sql="SELECT Department.department_id as department_id,name, group_rank, score FROM `Work` \
+                LEFT JOIN `Department` ON `Work`.department_id=Department.department_id \
+                LEFT JOIN RankAndScoreInGroup ON \
+                    `Work`.department_id=RankAndScoreInGroup.department_id AND `Work`.student_id=RankAndScoreInGroup.student_id \
+                WHERE `Work`.student_id=%s;",
             data=(session['userID'],)
         )
-        results = database.fetchall()
+        results = database.fetchall()  
+        for i in results:
+            i['score'] = float(i['score'])
         
-        return {"warning":"", "message":"", "data":{"name":session["name"], "groupAndWork":results}}
+        return {"warning":"", "message":"", "data":{"name":session["name"], "GroupScoreRank":results}}
         
         
     @app.route("/Ajax/Users/get_contact", methods=['GET'])
@@ -138,3 +144,23 @@ def Users(app : flask.Flask) -> None:
         
         returns = function_personalInfo.change_personal_info(data, database)
         return {"warning":"", "message":returns['message'], "data":returns['data']}
+    
+    
+    @app.route("/Ajax/Users/get_empty_time_info", methods=['GET'])
+    @CustomResponsePackage
+    @Logger
+    @Auth(({'department_id':None,'actor':None},))
+    def get_empty_time_info():
+        results = function_emptyTimeTable.get_empty_time_info()
+        results['warning'] = ""
+        return results
+    
+    
+    @app.route("/Ajax/Users/get_work_basic_info", methods=['GET'])
+    @CustomResponsePackage
+    @Logger
+    @Auth(({'department_id':None,'actor':None},))
+    def get_work_basic_info():
+        results = function_workBasicInfo.get_work_basic_info()
+        results['warning'] = ""
+        return results

@@ -56,8 +56,8 @@ def register(infodict : dict, database : DatabaseConnector):
         raise PermissionDenyError("Student ID exists.", filename=__file__, line=sys._getframe().f_lineno)
 
     DBAffectRows = database.execute(
-        "INSERT INTO `MemberBasic` (student_id,name,gender) \
-            VALUES (%(studentID)s,%(name)s,%(gender)s) \
+        "INSERT INTO `MemberBasic` (student_id,name,gender,reason) \
+            VALUES (%(studentID)s,%(name)s,%(gender)s,'') \
         ON DUPLICATE KEY \
             UPDATE name=%(name)s, gender=%(gender)s;",
         infodict, autoCommit=False)

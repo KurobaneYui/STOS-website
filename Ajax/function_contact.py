@@ -8,8 +8,7 @@ from Frame.python3.Logger import Logger
 def get_contact():
     connection = DatabaseConnector()
     connection.startCursor()
-    connection.execute(sql="set @i:=0;")
-    connection.execute(sql="SELECT (@i:=@i+1) as `id`,`Contact`.* FROM `Contact`;")
+    connection.execute(sql="SELECT * FROM `Contact`;")
     results = connection.fetchall()
     
     return {'warning':'', 'message':'', 'data':results}

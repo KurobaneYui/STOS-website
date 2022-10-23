@@ -9,6 +9,19 @@ import Ajax.function_departmentManager as function_departmentManager
 
 
 def TeamManager(app : flask.Flask) -> None:
+    @app.route("/Ajax/TeamManager/get_blacklist", methods=['GET'])
+    @CustomResponsePackage
+    @Logger
+    @Auth(({"department_id":1,"actor":"11"},))
+    def get_blacklist():
+        connection = DatabaseConnector()
+        connection.startCursor()
+        
+        DBAffectRows = connection.execute(sql="SELECT ROW_NUMBER() OVER() `rowNum`,student_id,name,gender,reason FROM MemberBasic WHERE blacklist IS TRUE;")
+        returns = connection.fetchall()
+        return {"warning":"", "message":"", "data":returns}
+    
+    
     @app.route("/Ajax/TeamManager/get_department", methods=['GET'])
     @CustomResponsePackage
     @Logger
