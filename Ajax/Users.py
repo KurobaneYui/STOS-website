@@ -164,3 +164,31 @@ def Users(app : flask.Flask) -> None:
         results = function_workBasicInfo.get_work_basic_info()
         results['warning'] = ""
         return results
+    
+    
+    @app.route("/Ajax/Users/get_score_details", methods=['GET'])
+    @CustomResponsePackage
+    @Logger
+    @Auth(({'department_id':None,'actor':"11"},))
+    def get_score_details():
+        database = DatabaseConnector()
+        database.startCursor()
+        
+        DBAffectedRows = database.execute(
+            sql="SELECT `date`, `Score`.department_id, `name` AS department_name, variant, reason  FROM `Score` \
+                LEFT JOIN Department ON `Score`.department_id=Department.department_id \
+                WHERE student_id=%s \
+                ORDER BY `Score`.submission_time DESC;",
+            data=(session["userID"],))
+        results = database.fetchall()
+        
+        returns = dict()
+        for row in results:
+            if row["department_id"] not in returns.keys():
+                returns[row["department_id"]] = list()
+            if len(returns[row["department_id"]]) > 20:
+                continue
+            row["date"] = str(row["date"])
+            returns[row["department_id"]].append(row)
+
+        return {"warning":"", "message":"", "data":returns}

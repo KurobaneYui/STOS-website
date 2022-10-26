@@ -8,7 +8,7 @@
   <meta name="viewport"
     content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
-  <title>岗位基本信息</title>
+  <title>扣分详情</title>
 
   <meta name="description" content="电子科技大学学风督导队" />
   <meta name="author" content="罗寅松，学风督导队数据组">
@@ -70,73 +70,16 @@
               <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="./index.html">个人中心</a></li>
                 <li class="breadcrumb-item"><a href="./index.html">岗位信息</a></li>
-                <li class="breadcrumb-item active" aria-current="page">基本信息</li>
+                <li class="breadcrumb-item active" aria-current="page">扣分详情</li>
               </ol>
             </nav>
             <!-- Layout Demo -->
             <div class="alert alert-primary" role="alert">
-              空课时间如有错误，请及时联系组长对数据进行更正，否则会影响查课排班。
+              详情只显示最近的20次记录，但是分数累计会累计所有的记录。
             </div>
 
-            <div class="row g-3" id="page-container">
-              <div class="col-12">
-                <div class="card">
-                  <h5 class="card-header">空课时间表</h5>
-                  <div class="card-body pb-0">
-                    <h6>
-                      <img height="15" width="15" src-data="green_point">
-                      为空闲，
-                      <img height="15" width="15" src-data="red_point">
-                      为有课
-                    </h6>
-                  </div>
-                  <div class="row">
-                    <div class="col-12 col-md-6">
-                      <div class="table-responsive text-nowrap">
-                        <table class="table table-sm table-hover table-striped mb-3 text-center">
-                          <thead>
-                            <tr>
-                              <th><span class="text-primary fw-bold">单</span></th>
-                              <th>周一</th>
-                              <th>周二</th>
-                              <th>周三</th>
-                              <th>周四</th>
-                              <th>周五</th>
-                              <th>周六</th>
-                              <th>周日</th>
-                            </tr>
-                          </thead>
-                          <tbody id="odd-empty-table-body">
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-                    <div class="col-12 col-md-6">
-                      <div class="table-responsive text-nowrap">
-                        <table class="table table-sm table-hover table-striped mb-3 text-center">
-                          <thead>
-                            <tr>
-                              <th><span class="text-primary fw-bold">双</span></th>
-                              <th>周一</th>
-                              <th>周二</th>
-                              <th>周三</th>
-                              <th>周四</th>
-                              <th>周五</th>
-                              <th>周六</th>
-                              <th>周日</th>
-                            </tr>
-                          </thead>
-                          <tbody id="even-empty-table-body">
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-                  </div>
-                  <p id="empty-table-remark" class="ms-3"></p>
-                </div>
-              </div>
+            <div class="row" id="score-details-table-container">
             </div>
-
             <!--/ Layout Demo -->
           </div>
           <!-- / Content -->
@@ -202,9 +145,7 @@
   <script src="https://cdn.bootcdn.net/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
 
   <!-- Page JS -->
-  <script src="/assets/img/users/small-point.js"></script>
-  <script src="./random-card-img.js"></script>
-  <script src="./work_basic_info.js"></script>
+  <script src="./score_details.js"></script>
   
 </body>
 

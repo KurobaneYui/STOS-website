@@ -148,19 +148,19 @@ function add_work_basic_info_card(data) {
           <h3 class="card-title text-center mb-3">${data["name"]}</h3>
           <div class="row fs-5 g-3 ms-2">
             <span class="col-1 col-lg-2"></span>
-            <p class="col-auto badge bg-label-info">岗位</p>
+            <p class="col-auto badge bg-label-primary">岗位</p>
             <p class="col">${data["job"]}</p>
             <span class="col-1 col-lg-2"></span>
           </div>
           <div class="row fs-5 g-3 ms-2">
             <span class="col-1 col-lg-2"></span>
-            <p class="col-auto badge bg-label-info">工资</p>
+            <p class="col-auto badge bg-label-primary">工资</p>
             <p class="col">&yen;${data["wage"]}</p>
             <span class="col-1 col-lg-2"></span>
           </div>
           <div class="row fs-5 g-3 ms-2">
             <span class="col-1 col-lg-2"></span>
-            <p class="col-auto badge bg-label-info">备注</p>
+            <p class="col-auto badge bg-label-primary">备注</p>
             <p class="col">${data["remark"]}</p>
             <span class="col-1 col-lg-2"></span>
           </div>
