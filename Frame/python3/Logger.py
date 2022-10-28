@@ -1,10 +1,9 @@
-from functools import wraps
-from typing import Callable
-import pprint
-import json
-import sys
 import os
+import json
+import pprint
 import datetime
+from typing import Callable
+from functools import wraps
 from Frame.python3.ClientInfo import ClientInfo
 from Frame.python3.CustomResponsePackage import CustomError
 
@@ -15,7 +14,7 @@ from Frame.python3.CustomResponsePackage import CustomError
 logMode, logDir = None, None
 
 
-def Logger(func : Callable) -> Callable:
+def Logger(func: Callable) -> Callable:
     """Decorator for program log.
 
     Logger decorator will log function runtime info if logMode is 'Log'.
@@ -36,7 +35,7 @@ def Logger(func : Callable) -> Callable:
     Raises:
         Any error raised by function input will be logged and raised again.
     """
-    
+
     global logMode, logDir
 
     # check 'logMode' and 'logDir'
@@ -46,7 +45,7 @@ def Logger(func : Callable) -> Callable:
     # logDir: default is '/log'
     if logMode is None or logDir is None:
         logDir, logMode = "./log", "Warning"
-        with open("./config/Log.conf",'r') as f:
+        with open("./config/Log.conf", 'r') as f:
             config = json.load(f)
             logDir, logMode = config["LogDir"], config["LogMode"]
 
@@ -83,7 +82,7 @@ def Logger(func : Callable) -> Callable:
 
         # log warning info if logMode isn't 'Error'
         warning = returns.pop('warning', None)
-        
+
         if logMode != "Error":
             with open(os.path.join(logDir, time_postfix), "a") as f:
                 f.write("\n[Warning]\n")
@@ -99,5 +98,5 @@ def Logger(func : Callable) -> Callable:
                 f.write(f"{pprint.pformat(returns)}\n")
 
         return returns
-            
+
     return wrapper

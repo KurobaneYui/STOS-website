@@ -1,6 +1,6 @@
-from flask import request
-import requests
 import json
+import requests
+from flask import request
 
 
 def ClientInfo() -> dict:
@@ -23,14 +23,17 @@ def ClientInfo() -> dict:
     agent = request.user_agent
     # detect address of IP
     try:
-        address = json.loads(requests.get(f"https://whois.pconline.com.cn/ipJson.jsp?json=true&ip={ip}", timeout=1).text)
+        address = json.loads(requests.get(
+            f"https://whois.pconline.com.cn/ipJson.jsp?json=true&ip={ip}", timeout=1).text)
         address["url"] = "https://whois.pconline.com.cn"
     except requests.exceptions.ProxyError:
         try:
-            address = json.loads(requests.get(f"http://ip-api.com/json/{ip}?lang=zh-CN", timeout=1).text)
+            address = json.loads(requests.get(
+                f"http://ip-api.com/json/{ip}?lang=zh-CN", timeout=1).text)
             address["url"] = "http://ip-api.com"
         except requests.exceptions.ProxyError:
-            print("Cannot connect to https://whois.pconline.com.cn nor http://ip-api.com.")
+            print(
+                "Cannot connect to https://whois.pconline.com.cn nor http://ip-api.com.")
             address = {"url": ""}
     return {
         "IP": ip,

@@ -10,10 +10,10 @@ from Frame.python3.CustomResponsePackage import DatabaseConnectionError, Databas
 class DatabaseConnectionStatus(Enum):
     """DatabaseConnector inner status enumerate
     """
-    NoConnection = 0 # There is no connection to the server
-    ConnectionEstablished = 1 # There is only connection to the server but no cursor
-    CursorEstablished = 2 # There is a cursor established to server
-    QueryCached = 3 # There is a query executed and caching some results
+    NoConnection = 0  # There is no connection to the server
+    ConnectionEstablished = 1  # There is only connection to the server but no cursor
+    CursorEstablished = 2  # There is a cursor established to server
+    QueryCached = 3  # There is a query executed and caching some results
 
 
 class DatabaseConnector:
@@ -34,7 +34,8 @@ class DatabaseConnector:
         (method) rollback: rollback sql query in last transaction if not be committed.
         (method) commit: commit last transaction.
     """
-    def __init__(self, configFile : str = "./config/DataBase_STSA.conf") -> None:
+
+    def __init__(self, configFile: str = "./config/DataBase_STSA.conf") -> None:
         """Inits DatabaseConnector with configFile.
 
         Args:
@@ -42,7 +43,7 @@ class DatabaseConnector:
         """
         try:
             # read config file and try to connect the database
-            with open(configFile,'r') as f:
+            with open(configFile, 'r') as f:
                 config = json.load(f)
             Host = config['host']
             Port = config['port']
@@ -63,7 +64,8 @@ class DatabaseConnector:
             self.Session = None
             self.Cursor = None
             self.Status = DatabaseConnectionStatus.NoConnection
-            raise DatabaseConnectionError(f"Error in set connection environment. Error info is: {e}", filename=__file__, line=sys._getframe().f_lineno)
+            raise DatabaseConnectionError(
+                f"Error in set connection environment. Error info is: {e}", filename=__file__, line=sys._getframe().f_lineno)
 
     def __del__(self) -> None:
         # deprecate cached results if exists
@@ -74,43 +76,46 @@ class DatabaseConnector:
         if self.Status is DatabaseConnectionStatus.CursorEstablished:
             self.Cursor.close()
             self.Status = DatabaseConnectionStatus.ConnectionEstablished
-            
+
         if self.Status is DatabaseConnectionStatus.ConnectionEstablished:
             self.Session.close()
             self.Status = DatabaseConnectionStatus.NoConnection
 
     def startCursor(self) -> None:
         """Start a database connection cursor.
-        
+
         When there is no cursor exists and connection is already established, create a new cursor.
         """
         if self.Status is DatabaseConnectionStatus.NoConnection:
-            raise DatabaseConnectionError("Connection not established.", filename=__file__, line=sys._getframe().f_lineno)
-        
+            raise DatabaseConnectionError(
+                "Connection not established.", filename=__file__, line=sys._getframe().f_lineno)
+
         if self.Status in [DatabaseConnectionStatus.CursorEstablished, DatabaseConnectionStatus.QueryCached]:
-            raise DatabaseConnectionError("Cursor has been established.", filename=__file__, line=sys._getframe().f_lineno)
+            raise DatabaseConnectionError(
+                "Cursor has been established.", filename=__file__, line=sys._getframe().f_lineno)
 
         try:
             self.Cursor = self.Session.cursor(cursor=DictCursor)
             self.Status = DatabaseConnectionStatus.CursorEstablished
         except:
-            raise DatabaseConnectionError("Cannot start cursor on this session.", filename=__file__, line=sys._getframe().f_lineno)
+            raise DatabaseConnectionError(
+                "Cannot start cursor on this session.", filename=__file__, line=sys._getframe().f_lineno)
 
     def closeCursor(self) -> None:
         """Close a database connection cursor.
-        
+
         When there is a cursor, close it. This action will clean the cache of query result
         """
         if self.Status is DatabaseConnectionStatus.QueryCached:
             self.Cursor.fetchall()
             self.Status = DatabaseConnectionStatus.CursorEstablished
-        
+
         if self.Status is DatabaseConnectionStatus.CursorEstablished:
             self.Cursor.close()
             self.Cursor = None
             self.Status = DatabaseConnectionStatus.ConnectionEstablished
 
-    def execute(self, sql : str, data : Optional[tuple or list or dict] = None, autoCommit : bool = True) -> int:
+    def execute(self, sql: str, data: Optional[tuple or list or dict] = None, autoCommit: bool = True) -> int:
         """Execute a query with multiply data.
 
         When a cursor exists, execute sql query in that cursor and cache the results.
@@ -129,23 +134,26 @@ class DatabaseConnector:
             int: _description_
         """
         if self.Status not in [DatabaseConnectionStatus.CursorEstablished, DatabaseConnectionStatus.QueryCached]:
-            raise DatabaseConnectionError("Please start a cursor first", filename=__file__, line=sys._getframe().f_lineno)
-        
+            raise DatabaseConnectionError(
+                "Please start a cursor first", filename=__file__, line=sys._getframe().f_lineno)
+
         if self.Status is DatabaseConnectionStatus.QueryCached:
-            raise DatabaseBufferError("Already cached query results. Please fetch them all and try again.", filename=__file__, line=sys._getframe().f_lineno)
+            raise DatabaseBufferError("Already cached query results. Please fetch them all and try again.",
+                                      filename=__file__, line=sys._getframe().f_lineno)
 
         try:
             if data is None:
                 affectedRow = self.Cursor.execute(sql)
-            elif isinstance(data, (tuple,list)) and len(data) > 0 and isinstance(data[0], (tuple,list,dict)):
+            elif isinstance(data, (tuple, list)) and len(data) > 0 and isinstance(data[0], (tuple, list, dict)):
                 affectedRow = self.Cursor.executemany(sql, data)
             else:
                 affectedRow = self.Cursor.execute(sql, data)
         except Exception as e:
-        # except pymysql.err.IntegrityError as e:
-            raise DatabaseRuntimeError(f"Cannot execute query: {e}", filename=__file__, line=sys._getframe().f_lineno)
+            # except pymysql.err.IntegrityError
+            raise DatabaseRuntimeError(
+                f"Cannot execute query: {e}", filename=__file__, line=sys._getframe().f_lineno)
 
-        if sql.startswith(('SELECT ','select ')):
+        if sql.startswith(('SELECT ', 'select ')):
             self.Status = DatabaseConnectionStatus.QueryCached
         else:
             self.Status = DatabaseConnectionStatus.CursorEstablished

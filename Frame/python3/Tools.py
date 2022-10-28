@@ -1,18 +1,25 @@
-from typing import Any
-from Frame.python3.DatabaseConnector import DatabaseConnector
-from Frame.python3.CustomResponsePackage import IllegalValueError
-from Frame.python3.ClientInfo import ClientInfo
-from Frame.python3.Logger import Logger
-from Frame.python3.Authorization import Auth
-import sys
 import re
 import datetime
-import json
+from typing import Any
 from flask import session
+from Frame.python3.Logger import Logger
+from Frame.python3.Authorization import Auth
+from Frame.python3.ClientInfo import ClientInfo
+from Frame.python3.DatabaseConnector import DatabaseConnector
 
 
 @Logger
-def LoginDeviceRecorder(formDict : dict, loginResult : bool, database : DatabaseConnector) -> dict[str,str]:
+def LoginDeviceRecorder(formDict: dict, loginResult: bool, database: DatabaseConnector) -> dict[str, str]:
+    """Detect login device, login time, and login successfully or not. And record info in database.
+
+    Args:
+        formDict (dict): flask.request.form
+        loginResult (bool): True when login successfully, and False when login error like username not exists or wrong password.
+        database (DatabaseConnector): Reuse exist database connection.
+
+    Returns:
+        dict[str,str]: Result of recode process. Not used currently.
+    """
     clientInfo = ClientInfo()
     clientInfo["studentID"] = formDict["StudentID"]
     clientInfo["time"] = datetime.datetime.now().isoformat()
@@ -22,12 +29,23 @@ def LoginDeviceRecorder(formDict : dict, loginResult : bool, database : Database
         "INSERT IGNORE INTO LogInfo (student_id,agent,ip,address,language,time,login_result) \
         VALUES (%(studentID)s,%(agent)s,%(IP)s,%(address)s,%(language)s,%(time)s,%(login_result)s);",
         clientInfo)
-    return {"warning":"", "message":"", "data":""}
+    return {"warning": "", "message": "", "data": ""}
 
 
-@Logger # TODO: Not Finished Yet !!! password not check and others
-@Auth(({'department_id':None, 'actor':None},))
-def ChangeInfoCheck(formDict : dict, database : DatabaseConnector) -> dict[str,Any]:
+@Logger
+@Auth(({'department_id': None, 'actor': None},))
+# TODO: Not Finished Yet !!! password not check and others
+def ChangeInfoCheck(formDict: dict, database: DatabaseConnector) -> dict[str, Any]:
+    """Check input data for personal info change.
+
+    Args:
+        formDict (dict): flask.request.form
+        database (DatabaseConnector): Reuse exist database connection.
+
+    Returns:
+        dict[str,Any]: 'data':True if there is no illegal values, and 'data':False if there are some.
+                        When 'data':False, 'message' will save info about which value is illegal.
+    """
     if "name" not in formDict.keys() and \
         "gender" not in formDict.keys() and \
         "ethnicity" not in formDict.keys() and \
@@ -44,8 +62,8 @@ def ChangeInfoCheck(formDict : dict, database : DatabaseConnector) -> dict[str,A
         "application_name" not in formDict.keys() and \
         "application_student_id" not in formDict.keys() and \
         "subsidyDossier" not in formDict.keys() and \
-        "wageRemark" not in formDict.keys():
-        return {"warning":"", "message": "除备注和密码外，其余信息均为必填项，请确认", "data": False}
+            "wageRemark" not in formDict.keys():
+        return {"warning": "", "message": "除备注和密码外，其余信息均为必填项，请确认", "data": False}
 
     returnMessage = ""
     formDict["studentID"] = session["userID"]
@@ -66,7 +84,7 @@ def ChangeInfoCheck(formDict : dict, database : DatabaseConnector) -> dict[str,A
     if pattern.match(formDict["application_student_id"]) is None:
         returnMessage += "工资领取人学号应为10~15长度的数字字母组合，请检查。"
 
-    if formDict["gender"] not in ['男','女']:
+    if formDict["gender"] not in ['男', '女']:
         returnMessage += "信息提交出错，请联系管理员修改网站。error: gender。"
 
     pattern = re.compile(r"^[\u4E00-\u9FA5]{2,8}$")
@@ -76,7 +94,8 @@ def ChangeInfoCheck(formDict : dict, database : DatabaseConnector) -> dict[str,A
     if not 0 < len(formDict["hometown"]) <= 20:
         returnMessage += "籍贯信息过长或未填写，仅需省市县，请限制在20字符以内。"
 
-    pattern = re.compile(r"^1((34[0-8])|(8\d{2})|(([35][0-35-9]|4[579]|66|7[35678]|9[1389])\d{1}))\d{7}$")
+    pattern = re.compile(
+        r"^1((34[0-8])|(8\d{2})|(([35][0-35-9]|4[579]|66|7[35678]|9[1389])\d{1}))\d{7}$")
     if pattern.match(formDict["phone"]) is None:
         returnMessage += "手机号码有误。"
 
@@ -92,16 +111,16 @@ def ChangeInfoCheck(formDict : dict, database : DatabaseConnector) -> dict[str,A
     else:
         formDict["schoolID"] = database.fetchall()[0]["school_id"]
 
-    if formDict["dormitory_yuan"] not in ["学知苑","硕丰苑","校内","校外"]:
+    if formDict["dormitory_yuan"] not in ["学知苑", "硕丰苑", "校内", "校外"]:
         returnMessage += "信息提交出错，请联系管理员修改网站。error: dormitory_yuan。"
-    
+
     if formDict["dormitory_yuan"] != "校外":
         pattern = re.compile(r"^[0-9]+$")
         if pattern.match(formDict["dormitory_dong"]) is None:
             returnMessage += "宿舍楼栋输入有误。"
         elif not 0 < int(formDict["dormitory_dong"]) < 100:
             returnMessage += "宿舍楼栋输入有误。"
-        
+
         pattern = re.compile(r"^[0-9]+$")
         if pattern.match(formDict["dormitory_hao"]) is None:
             returnMessage += "宿舍楼栋输入有误。"
@@ -115,14 +134,25 @@ def ChangeInfoCheck(formDict : dict, database : DatabaseConnector) -> dict[str,A
     if pattern.match(formDict["application_bankcard"]) is None:
         returnMessage += "银行卡号有误。"
 
-    formDict["subsidyDossier"] = True if formDict["subsidyDossier"]=='true' else False
+    formDict["subsidyDossier"] = True if formDict["subsidyDossier"] == 'true' else False
 
     returnBool = False if len(returnMessage) > 0 else True
-    return {"warning":"", "message": returnMessage, "data": returnBool}
+    return {"warning": "", "message": returnMessage, "data": returnBool}
 
 
 @Logger
-def RegisterCheck(formDict : dict, database : DatabaseConnector) -> dict[str,Any]: # TODO: Not Finished Yet !!! password not check
+# TODO: Not Finished Yet !!! password not check
+def RegisterCheck(formDict: dict, database: DatabaseConnector) -> dict[str, Any]:
+    """Check input data for person register.
+
+    Args:
+        formDict (dict): flask.request.form
+        database (DatabaseConnector): Reuse exist database connection.
+
+    Returns:
+        dict[str,Any]: 'data':True if there is no illegal values, and 'data':False if there are some.
+                        When 'data':False, 'message' will save info about which value is illegal.
+    """
     if "name" not in formDict.keys() and \
         "studentID" not in formDict.keys() and \
         "gender" not in formDict.keys() and \
@@ -137,8 +167,8 @@ def RegisterCheck(formDict : dict, database : DatabaseConnector) -> dict[str,Any
         "dormitory_hao" not in formDict.keys() and \
         "bank" not in formDict.keys() and \
         "subsidyDossier" not in formDict.keys() and \
-        "password" not in formDict.keys():
-        return {"warning":"", "message": "所有信息均为必填项，请确认", "data": False}
+            "password" not in formDict.keys():
+        return {"warning": "", "message": "所有信息均为必填项，请确认", "data": False}
 
     returnMessage = ""
 
@@ -151,7 +181,7 @@ def RegisterCheck(formDict : dict, database : DatabaseConnector) -> dict[str,Any
     if pattern.match(formDict["studentID"]) is None:
         returnMessage += "学号应为10~15长度的数字字母组合，请检查。"
 
-    if formDict["gender"] not in ['男','女']:
+    if formDict["gender"] not in ['男', '女']:
         returnMessage += "信息提交出错，请联系管理员修改网站。error: gender。"
 
     pattern = re.compile(r"^[\u4E00-\u9FA5]{2,8}$")
@@ -161,7 +191,8 @@ def RegisterCheck(formDict : dict, database : DatabaseConnector) -> dict[str,Any
     if not 0 < len(formDict["hometown"]) <= 20:
         returnMessage += "籍贯信息过长或未填写，仅需省市县，请限制在20字符以内。"
 
-    pattern = re.compile(r"^1((34[0-8])|(8\d{2})|(([35][0-35-9]|4[579]|66|7[35678]|9[1389])\d{1}))\d{7}$")
+    pattern = re.compile(
+        r"^1((34[0-8])|(8\d{2})|(([35][0-35-9]|4[579]|66|7[35678]|9[1389])\d{1}))\d{7}$")
     if pattern.match(formDict["phone"]) is None:
         returnMessage += "手机号码有误。"
 
@@ -177,16 +208,16 @@ def RegisterCheck(formDict : dict, database : DatabaseConnector) -> dict[str,Any
     else:
         formDict["schoolID"] = database.fetchall()[0]["school_id"]
 
-    if formDict["dormitory_yuan"] not in ["学知苑","硕丰苑","校内","校外"]:
+    if formDict["dormitory_yuan"] not in ["学知苑", "硕丰苑", "校内", "校外"]:
         returnMessage += "信息提交出错，请联系管理员修改网站。error: dormitory_yuan。"
-    
+
     if formDict["dormitory_yuan"] != "校外":
         pattern = re.compile(r"^[0-9]+$")
         if pattern.match(formDict["dormitory_dong"]) is None:
             returnMessage += "宿舍楼栋输入有误。"
         elif not 0 < int(formDict["dormitory_dong"]) < 100:
             returnMessage += "宿舍楼栋输入有误。"
-        
+
         pattern = re.compile(r"^[0-9]+$")
         if pattern.match(formDict["dormitory_hao"]) is None:
             returnMessage += "宿舍楼栋输入有误。"
@@ -200,7 +231,7 @@ def RegisterCheck(formDict : dict, database : DatabaseConnector) -> dict[str,Any
     if pattern.match(formDict["bank"]) is None:
         returnMessage += "银行卡号有误。"
 
-    formDict["subsidyDossier"] = True if formDict["subsidyDossier"]=='true' else False
+    formDict["subsidyDossier"] = True if formDict["subsidyDossier"] == 'true' else False
 
     returnBool = False if len(returnMessage) > 0 else True
-    return {"warning":"", "message": returnMessage, "data": returnBool}
+    return {"warning": "", "message": returnMessage, "data": returnBool}

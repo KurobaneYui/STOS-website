@@ -70,7 +70,8 @@ def not_found_405(error):
 if __name__ == "__main__":
     with open("./config/Flask.conf", 'r') as f:
         config = json.load(f)
-    app.config["SEND_FILE_MAX_AGE_DEFAULT"] = timedelta(**config["send_file_max_age_default"])
+    app.config["SEND_FILE_MAX_AGE_DEFAULT"] = timedelta(
+        **config["send_file_max_age_default"])
     if config["proxy_enable"]:
         app.wsgi_app = ProxyFix(
             app.wsgi_app, x_for=config["x_for"], x_proto=config["x_proto"], x_host=config["x_host"], x_prefix=config["x_prefix"])
@@ -85,7 +86,7 @@ if __name__ == "__main__":
     if config["ssl_context"]:
         app.run(debug=config["debug"], threaded=config["threaded"],
                 host=config["host"], port=config["port"],
-                ssl_context=(config["cert"],config["key"]))
+                ssl_context=(config["cert"], config["key"]))
     else:
         app.run(debug=config["debug"], threaded=config["threaded"],
                 host=config["host"], port=config["port"])
