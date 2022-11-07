@@ -78,12 +78,6 @@ function render_point(num) {
     if (num == 0) return `<img height="15" width="15" src-data="red_point">`;
 }
 
-function replace_point() {
-    $("img[src-data='red_point']").prop("src", window.red_point);
-    $("img[src-data='green_point']").prop("src", window.green_point);
-    $("img[src-data='yellow_point']").prop("src", window.yellow_point);
-}
-
 function get_work_basic_info() {
     $.get(
         "/Ajax/Users/get_work_basic_info",

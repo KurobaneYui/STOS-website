@@ -39,11 +39,26 @@ def AssetsRoutes(additionalURL):
     return send_file("assets/"+additionalURL)
 
 
-@app.route("/Users/<path:additionalURL>", methods=['GET', 'POST'])
-def UsersRoutes(additionalURL):
-    if additionalURL == "Authentication/login.html" and checkIfLogin()["data"]:
+@app.route("/Users/Authentication/<path:additionalURL>", methods=['GET', 'POST'])
+def LoginRoutes(additionalURL):
+    if additionalURL == "login.html" and checkIfLogin()["data"]:
         return redirect("/Users/UserCenter/index.html")
-    return send_file("Users/"+additionalURL)
+    return send_file("Users/Authentication/"+additionalURL)
+
+
+@app.route("/Users/UserCenter/<path:additionalURL>", methods=['GET', 'POST'])
+def UsersRoutes(additionalURL):
+    return send_file("Users/UserCenter/"+additionalURL)
+
+
+@app.route("/Users/TeacherCenter/<path:additionalURL>", methods=['GET', 'POST'])
+def TeachersRoutes(additionalURL):
+    return send_file("Users/TeacherCenter/"+additionalURL)
+
+
+@app.route("/tmpFiles/<path:additionalURL>", methods=['GET'])
+def TmpFilesRoutes(additionalURL):
+    return send_file("tmpFiles/"+additionalURL)
 
 
 @app.route("/")

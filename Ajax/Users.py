@@ -1,3 +1,10 @@
+"""
+This file is for user manager (self).
+In this file, all URL apis are designed for manage user data self.
+Usually, all functions need form user auth.
+"""
+
+
 import flask
 from flask import session, request
 from Frame.python3.Authorization import Auth

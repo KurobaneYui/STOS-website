@@ -1,3 +1,10 @@
+"""
+This file is for group manager.
+In this file, all URL apis are designed for manage group data.
+Usually, all functions need group leader auth.
+"""
+
+
 import flask
 from flask import session, request
 from Frame.python3.Authorization import Auth
@@ -51,7 +58,7 @@ def GroupManager(app : flask.Flask) -> None:
     def remove_member():
         if "student_id" not in request.form.keys() or "group_id" not in request.form.keys():
             raise IllegalValueError("Not all required data received.", filename=__file__, line=sys._getframe().f_lineno)
-        raise MaintenanceError("Not all required data received.", filename=__file__, line=sys._getframe().f_lineno)
+
         results = function_groupManager.remove_member_functions[int(request.form["group_id"])](request.form["student_id"])
         
         return {"warning":"", "message":results["message"], "data":results["data"]}
