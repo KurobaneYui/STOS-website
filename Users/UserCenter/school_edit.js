@@ -76,7 +76,7 @@ function fill_school_table(data) {
                 <input type="text" class="form-control-plaintext editable-readonly-input text-center" style="min-width: 150px;" value="${one_school['campus']}" readonly/>
             </td>
             <td>
-                <button class="btn btn-danger btn-sm rounded-pill">删除</button>
+                <button class="btn btn-danger btn-sm rounded-pill" onclick="delete_school(this)">删除</button>
             </td>
         </tr>
         `)
@@ -138,6 +138,147 @@ function upload_school(element_row) {
                     if (returnCode === 301) { window.console.log('修改学院信息函数移至新位置'); }
                     //状态码200，处理data
                     showToast('success', "成功", "数据已修改，如有问题可刷新重试。")
+                }
+            }
+            else
+                alert("请检查网络状况。");
+        })
+}
+
+function add_row_for_add_school() {
+    let table_body = $("#school-table-body");
+    table_body.append(`
+    <tr>
+        <td>
+            <input type="number" min="1" max="50" class="form-control text-center" style="min-width: 20px;"/>
+        </td>
+        <td>
+            <input type="text" class="form-control text-center" style="min-width: 120px;"/>
+        </td>
+        <td>
+            <input type="text" class="form-control text-center" style="min-width: 150px;"/>
+        </td>
+        <td>
+            <button class="btn btn-primary btn-sm rounded-pill" onclick="add_school(this)">确定</button>
+        </td>
+    </tr>
+    `);
+}
+
+function add_school(element) {
+    let element_row = $(element).parent().parent();
+    let selector = element_row.children().first();
+    let school_id = eval(selector.children().first().val());
+    selector = selector.next();
+    let name = selector.children().first().val();
+    selector = selector.next();
+    let campus = selector.children().first().val();
+
+    $.post(
+        "/Ajax/DataManager/add_school",
+        { "school_id": school_id, "name": name, "campus": campus },
+        function (data, status) {
+            if (status === "success") {
+                get_school();
+                let returnCode = data['code'];
+                if (returnCode === 400) {
+                    showToast('error', "提供的数据有误", data['message']);
+                }
+                else if (returnCode === 401) {
+                    showToast('error', "权限错误", data['message']);
+                }
+                else if (returnCode === 404) {
+                    swal({
+                        title: "功能不存在，请联系管理员",
+                        icon: "warning",
+                    });
+                }
+                else if (returnCode === 417) {
+                    swal({
+                        title: "功能错误，请联系管理员",
+                        icon: "warning",
+                    });
+                }
+                else if (returnCode === 498) {
+                    swal({
+                        title: "数据库异常，请联系管理员",
+                        icon: "warning",
+                    });
+                }
+                else if (returnCode === 499) {
+                    swal({
+                        title: "功能维护中，暂不允许添加学院信息",
+                        icon: "warning",
+                    });
+                }
+                else if (returnCode === 200 || returnCode === 301) {
+                    //状态码301，提醒转移函数
+                    if (returnCode === 301) { window.console.log('添加学院信息函数移至新位置'); }
+                    //状态码200，处理data
+                    showToast('success', "成功", "数据已添加，如有问题可刷新重试。")
+                }
+            }
+            else
+                alert("请检查网络状况。");
+        })
+}
+
+function delete_school(element) {
+    let element_row = $(element).parent().parent();
+    let selector = element_row.children().first();
+    let school_id = eval(selector.children().first().val());
+    selector = selector.next();
+    let name = selector.children().first().val();
+    selector = selector.next();
+    let campus = selector.children().first().val();
+    let old_school_id = eval(element_row.attr("old-data"));
+
+    if (school_id === undefined || school_id < 1 || school_id > 50) {
+        alert("请检编号应在1~50之间");
+    }
+
+    $.post(
+        "/Ajax/DataManager/delete_school",
+        { "school_id": school_id, "name": name, "campus": campus, "old_school_id": old_school_id },
+        function (data, status) {
+            if (status === "success") {
+                get_school();
+                let returnCode = data['code'];
+                if (returnCode === 400) {
+                    showToast('error', "提供的数据有误", data['message']);
+                }
+                else if (returnCode === 401) {
+                    showToast('error', "权限错误", data['message']);
+                }
+                else if (returnCode === 404) {
+                    swal({
+                        title: "功能不存在，请联系管理员",
+                        icon: "warning",
+                    });
+                }
+                else if (returnCode === 417) {
+                    swal({
+                        title: "功能错误，请联系管理员",
+                        icon: "warning",
+                    });
+                }
+                else if (returnCode === 498) {
+                    swal({
+                        title: "数据库异常，请联系管理员",
+                        icon: "warning",
+                    });
+                }
+                else if (returnCode === 499) {
+                    swal({
+                        title: "功能维护中，暂不允许删除学院信息",
+                        icon: "warning",
+                    });
+                }
+                else if (returnCode === 200 || returnCode === 301) {
+                    //状态码301，提醒转移函数
+                    if (returnCode === 301) { window.console.log('删除学院信息函数移至新位置'); }
+                    //状态码200，处理data
+                    showToast('success', "成功", "数据已删除，如有问题可刷新重试。")
                 }
             }
             else

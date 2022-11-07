@@ -1,9 +1,16 @@
+"""
+This file is for background data manager.
+In this file, all URL apis are designed for manage STSA background data.
+Usually, all functions need team leader, Data-Management-Group member or leader auth.
+"""
+
+
 import flask
 from flask import session, request
 from Frame.python3.Authorization import Auth
 from Frame.python3.Logger import Logger
 from Frame.python3.DatabaseConnector import DatabaseConnector
-from Frame.python3.CustomResponsePackage import CustomResponsePackage, IllegalValueError
+from Frame.python3.CustomResponsePackage import CustomResponsePackage, IllegalValueError, MaintenanceError
 import sys
 import Ajax.function_departmentManager as function_departmentManager
 
@@ -47,5 +54,25 @@ def DataManager(app : flask.Flask) -> None:
         DBAffectRows = connection.execute(
             "UPDATE `School` SET school_id=%(school_id)s,name=%(name)s,campus=%(campus)s WHERE school_id=%(old_school_id)s;",
             formDict)
+        
+        return {"warning":"", "message":"", "data":""}
+    
+    
+    @app.route("/Ajax/DataManager/delete_school", methods=['POST'])
+    @CustomResponsePackage
+    @Logger
+    @Auth(({"department_id":3,"actor":"10"},{"department_id":1,"actor":None}))
+    def delete_school():
+        raise MaintenanceError("Function has not been developed yet.", filename=__file__, line=sys._getframe().f_lineno)
+        
+        return {"warning":"", "message":"", "data":""}
+    
+    
+    @app.route("/Ajax/DataManager/add_school", methods=['POST'])
+    @CustomResponsePackage
+    @Logger
+    @Auth(({"department_id":3,"actor":"10"},{"department_id":1,"actor":None}))
+    def add_school():
+        raise MaintenanceError("Function has not been developed yet.", filename=__file__, line=sys._getframe().f_lineno)
         
         return {"warning":"", "message":"", "data":""}

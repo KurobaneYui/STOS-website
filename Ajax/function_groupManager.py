@@ -8,7 +8,7 @@ import sys
 
 
 @Logger
-@Auth(({"department_id":1,"actor":None},{"department_id":None,"actor":"10"}))
+@Auth(({"department_id": 1, "actor": None}, {"department_id": None, "actor": "10"}))
 def get_all_groups_members():
     connection = DatabaseConnector()
     connection.startCursor()
@@ -38,14 +38,15 @@ def get_all_groups_members():
     returns = dict()
     for row in getDatas:
         if row['department_id'] not in returns.keys():
-            returns[row['department_id']] = {'group_name':row['department_name'],'members':list()}
+            returns[row['department_id']] = {
+                'group_name': row['department_name'], 'members': list()}
         returns[row['department_id']]['members'].append(row)
 
-    return {"warning":"", "message":"", "data":returns}
+    return {"warning": "", "message": "", "data": returns}
 
 
 @Logger
-@Auth(({"department_id":1,"actor":None},{"department_id":None,"actor":"10"}))
+@Auth(({"department_id": 1, "actor": None}, {"department_id": None, "actor": "10"}))
 def search_member():
     connection = DatabaseConnector()
     connection.startCursor()
@@ -59,17 +60,17 @@ def search_member():
             WHERE MemberExtend.student_id IN ({});".format(query_part),
         data=student_ids)
     results = connection.fetchall()
-    return {'warning':'', 'message':'', 'data':results}
+    return {'warning': '', 'message': '', 'data': results}
 
 
 @Logger
-@Auth(({"department_id":1,"actor":None},{"department_id":None,"actor":"10"}))
-def _add_member(student_id,group_id):
+@Auth(({"department_id": 1, "actor": None}, {"department_id": None, "actor": "10"}))
+def _add_member(student_id, group_id):
     connection = DatabaseConnector()
     connection.startCursor()
     connection.execute(
         sql="SELECT actor FROM Authority WHERE student_id=%s AND department_id=%s;",
-        data=(student_id,group_id))
+        data=(student_id, group_id))
     results = connection.fetchall()
     if len(results) != 0 and results[0]['actor'][0] == '1':
         job = "组长，组员"
@@ -77,267 +78,292 @@ def _add_member(student_id,group_id):
         wage = 650
     else:
         job = "组员"
-        actor="01"
+        actor = "01"
         wage = 300
-    if group_id==1:
+    if group_id == 1:
         job = "队长"
 
     DBAffectedRows = connection.execute(
         sql="INSERT INTO Authority (student_id, department_id, actor) VALUES \
             (%s,%s,%s) \
             ON DUPLICATE KEY UPDATE actor=%s;",
-        data=(student_id,group_id,actor,actor),
+        data=(student_id, group_id, actor, actor),
         autoCommit=False)
-    if DBAffectedRows not in [0,1,2]:
+    if DBAffectedRows not in [0, 1, 2]:
         print(DBAffectedRows)
         connection.rollback()
-        raise DatabaseRuntimeError("Insert or Update authority info error.", filename=__file__, line=sys._getframe().f_lineno)
+        raise DatabaseRuntimeError(
+            "Insert or Update authority info error.", filename=__file__, line=sys._getframe().f_lineno)
 
     DBAffectedRows = connection.execute(
         sql="INSERT INTO Work (student_id,department_id,job,wage,remark) \
             VALUES (%s,%s,%s,%s,%s) \
             ON DUPLICATE KEY UPDATE job=%s,wage=%s;",
-        data=(student_id,group_id,job,wage,"",job,wage),
+        data=(student_id, group_id, job, wage, "", job, wage),
         autoCommit=False
     )
-    if DBAffectedRows not in [0,1,2]:
+    if DBAffectedRows not in [0, 1, 2]:
         connection.rollback()
-        raise DatabaseRuntimeError("Insert or Update work info error.", filename=__file__, line=sys._getframe().f_lineno)
+        raise DatabaseRuntimeError(
+            "Insert or Update work info error.", filename=__file__, line=sys._getframe().f_lineno)
 
     connection.commit()
 
-    return {"warning":"", "message":"", "data":""}
+    return {"warning": "", "message": "", "data": ""}
 
 
 @Logger
-@Auth(({"department_id":1,"actor":None},))
+@Auth(({"department_id": 1, "actor": None},))
 def add_member_No1(student_id):
-    returns = _add_member(student_id,1)
+    returns = _add_member(student_id, 1)
     returns["warning"] = ""
     return returns
 
 
 @Logger
-@Auth(({"department_id":1,"actor":None},{"department_id":2,"actor":"10"}))
+@Auth(({"department_id": 1, "actor": None}, {"department_id": 2, "actor": "10"}))
 def add_member_No2(student_id):
-    returns = _add_member(student_id,2)
+    returns = _add_member(student_id, 2)
     returns["warning"] = ""
     return returns
 
 
 @Logger
-@Auth(({"department_id":1,"actor":None},{"department_id":3,"actor":"10"}))
+@Auth(({"department_id": 1, "actor": None}, {"department_id": 3, "actor": "10"}))
 def add_member_No3(student_id):
-    returns = _add_member(student_id,3)
+    returns = _add_member(student_id, 3)
     returns["warning"] = ""
     return returns
 
 
 @Logger
-@Auth(({"department_id":1,"actor":None},{"department_id":4,"actor":"10"}))
+@Auth(({"department_id": 1, "actor": None}, {"department_id": 4, "actor": "10"}))
 def add_member_No4(student_id):
-    returns = _add_member(student_id,4)
+    returns = _add_member(student_id, 4)
     returns["warning"] = ""
     return returns
 
 
 @Logger
-@Auth(({"department_id":1,"actor":None},{"department_id":5,"actor":"10"}))
+@Auth(({"department_id": 1, "actor": None}, {"department_id": 5, "actor": "10"}))
 def add_member_No5(student_id):
-    returns = _add_member(student_id,5)
+    returns = _add_member(student_id, 5)
     returns["warning"] = ""
     return returns
 
 
 @Logger
-@Auth(({"department_id":1,"actor":None},{"department_id":6,"actor":"10"}))
+@Auth(({"department_id": 1, "actor": None}, {"department_id": 6, "actor": "10"}))
 def add_member_No6(student_id):
-    returns = _add_member(student_id,6)
+    returns = _add_member(student_id, 6)
     returns["warning"] = ""
     return returns
 
 
 @Logger
-@Auth(({"department_id":1,"actor":None},{"department_id":7,"actor":"10"}))
+@Auth(({"department_id": 1, "actor": None}, {"department_id": 7, "actor": "10"}))
 def add_member_No7(student_id):
-    returns = _add_member(student_id,7)
+    returns = _add_member(student_id, 7)
     returns["warning"] = ""
     return returns
 
 
 @Logger
-@Auth(({"department_id":1,"actor":None},{"department_id":8,"actor":"10"}))
+@Auth(({"department_id": 1, "actor": None}, {"department_id": 8, "actor": "10"}))
 def add_member_No8(student_id):
-    returns = _add_member(student_id,8)
+    returns = _add_member(student_id, 8)
     returns["warning"] = ""
     return returns
 
 
 @Logger
-@Auth(({"department_id":1,"actor":None},{"department_id":9,"actor":"10"}))
+@Auth(({"department_id": 1, "actor": None}, {"department_id": 9, "actor": "10"}))
 def add_member_No9(student_id):
-    returns = _add_member(student_id,9)
+    returns = _add_member(student_id, 9)
     returns["warning"] = ""
     return returns
 
 
 @Logger
-@Auth(({"department_id":1,"actor":None},{"department_id":10,"actor":"10"}))
+@Auth(({"department_id": 1, "actor": None}, {"department_id": 10, "actor": "10"}))
 def add_member_No10(student_id):
-    returns = _add_member(student_id,10)
+    returns = _add_member(student_id, 10)
     returns["warning"] = ""
     return returns
 
 
 @Logger
-@Auth(({"department_id":1,"actor":None},{"department_id":None,"actor":"10"}))
-def _remove_member(student_id,group_id):
+@Auth(({"department_id": 1, "actor": None}, {"department_id": None, "actor": "10"}))
+def _remove_member(student_id, group_id):
     connection = DatabaseConnector()
     connection.startCursor()
     connection.execute(
         sql="SELECT actor FROM Authority WHERE student_id=%s AND department_id=%s;",
-        data=(student_id,group_id))
+        data=(student_id, group_id))
     results = connection.fetchall()
+    
     if len(results) != 0 and results[0]['actor'][0] == '1':
-        job = "组长，组员"
-        actor = "11"
-        wage = 650
+        canDelete = False
+        job = "组长"
+        actor = "10"
+        wage = 350
+        if group_id == 1:
+            job = "队长"
     else:
-        job = "组员"
-        actor="01"
-        wage = 300
-    if group_id==1:
-        job = "队长"
+        canDelete = True
+        
+    if canDelete:
+        DBAffectedRows = connection.execute(
+            sql="DELETE FROM Authority WHERE student_id=%s AND department_id=%s;",
+            data=(student_id, group_id),
+            autoCommit=False
+        )
+        if DBAffectedRows not in [0, 1]:
+            connection.rollback()
+            raise DatabaseRuntimeError(
+                "Delete authority info error.", filename=__file__, line=sys._getframe().f_lineno)
+            
+        DBAffectedRows = connection.execute(
+            sql="DELETE FROM Work WHERE student_id=%s AND department_id=%s;",
+            data=(student_id, group_id),
+            autoCommit=False
+        )
+        if DBAffectedRows not in [0, 1]:
+            connection.rollback()
+            raise DatabaseRuntimeError(
+                "Delete work info error.", filename=__file__, line=sys._getframe().f_lineno)
+    else:
+        DBAffectedRows = connection.execute(
+            sql="INSERT INTO Authority (student_id, department_id, actor) VALUES \
+                (%s,%s,%s) \
+                ON DUPLICATE KEY UPDATE actor=%s;",
+            data=(student_id, group_id, actor, actor),
+            autoCommit=False)
+        if DBAffectedRows not in [0, 1, 2]:
+            print(DBAffectedRows)
+            connection.rollback()
+            raise DatabaseRuntimeError(
+                "Insert or Update authority info error.", filename=__file__, line=sys._getframe().f_lineno)
 
-    DBAffectedRows = connection.execute(
-        sql="INSERT INTO Authority (student_id, department_id, actor) VALUES \
-            (%s,%s,%s) \
-            ON DUPLICATE KEY UPDATE actor=%s;",
-        data=(student_id,group_id,actor,actor),
-        autoCommit=False)
-    if DBAffectedRows not in [0,1,2]:
-        print(DBAffectedRows)
-        connection.rollback()
-        raise DatabaseRuntimeError("Insert or Update authority info error.", filename=__file__, line=sys._getframe().f_lineno)
-
-    DBAffectedRows = connection.execute(
-        sql="INSERT INTO Work (student_id,department_id,job,wage,remark) \
-            VALUES (%s,%s,%s,%s,%s) \
-            ON DUPLICATE KEY UPDATE job=%s,wage=%s;",
-        data=(student_id,group_id,job,wage,"",job,wage),
-        autoCommit=False
-    )
-    if DBAffectedRows not in [0,1,2]:
-        connection.rollback()
-        raise DatabaseRuntimeError("Insert or Update work info error.", filename=__file__, line=sys._getframe().f_lineno)
+        DBAffectedRows = connection.execute(
+            sql="INSERT INTO Work (student_id,department_id,job,wage,remark) \
+                VALUES (%s,%s,%s,%s,%s) \
+                ON DUPLICATE KEY UPDATE job=%s,wage=%s;",
+            data=(student_id, group_id, job, wage, "", job, wage),
+            autoCommit=False
+        )
+        if DBAffectedRows not in [0, 1, 2]:
+            connection.rollback()
+            raise DatabaseRuntimeError(
+                "Insert or Update work info error.", filename=__file__, line=sys._getframe().f_lineno)
 
     connection.commit()
 
-    return {"warning":"", "message":"", "data":""}
+    return {"warning": "", "message": "", "data": ""}
 
 
 @Logger
-@Auth(({"department_id":1,"actor":None},))
+@Auth(({"department_id": 1, "actor": None},))
 def remove_member_No1(student_id):
-    returns = _remove_member(student_id,1)
+    returns = _remove_member(student_id, 1)
     returns["warning"] = ""
     return returns
 
 
 @Logger
-@Auth(({"department_id":1,"actor":None},{"department_id":2,"actor":"10"}))
+@Auth(({"department_id": 1, "actor": None}, {"department_id": 2, "actor": "10"}))
 def remove_member_No2(student_id):
-    returns = _remove_member(student_id,2)
+    returns = _remove_member(student_id, 2)
     returns["warning"] = ""
     return returns
 
 
 @Logger
-@Auth(({"department_id":1,"actor":None},{"department_id":3,"actor":"10"}))
+@Auth(({"department_id": 1, "actor": None}, {"department_id": 3, "actor": "10"}))
 def remove_member_No3(student_id):
-    returns = _remove_member(student_id,3)
+    returns = _remove_member(student_id, 3)
     returns["warning"] = ""
     return returns
 
 
 @Logger
-@Auth(({"department_id":1,"actor":None},{"department_id":4,"actor":"10"}))
+@Auth(({"department_id": 1, "actor": None}, {"department_id": 4, "actor": "10"}))
 def remove_member_No4(student_id):
-    returns = _remove_member(student_id,4)
+    returns = _remove_member(student_id, 4)
     returns["warning"] = ""
     return returns
 
 
 @Logger
-@Auth(({"department_id":1,"actor":None},{"department_id":5,"actor":"10"}))
+@Auth(({"department_id": 1, "actor": None}, {"department_id": 5, "actor": "10"}))
 def remove_member_No5(student_id):
-    returns = _remove_member(student_id,5)
+    returns = _remove_member(student_id, 5)
     returns["warning"] = ""
     return returns
 
 
 @Logger
-@Auth(({"department_id":1,"actor":None},{"department_id":6,"actor":"10"}))
+@Auth(({"department_id": 1, "actor": None}, {"department_id": 6, "actor": "10"}))
 def remove_member_No6(student_id):
-    returns = _remove_member(student_id,6)
+    returns = _remove_member(student_id, 6)
     returns["warning"] = ""
     return returns
 
 
 @Logger
-@Auth(({"department_id":1,"actor":None},{"department_id":7,"actor":"10"}))
+@Auth(({"department_id": 1, "actor": None}, {"department_id": 7, "actor": "10"}))
 def remove_member_No7(student_id):
-    returns = _remove_member(student_id,7)
+    returns = _remove_member(student_id, 7)
     returns["warning"] = ""
     return returns
 
 
 @Logger
-@Auth(({"department_id":1,"actor":None},{"department_id":8,"actor":"10"}))
+@Auth(({"department_id": 1, "actor": None}, {"department_id": 8, "actor": "10"}))
 def remove_member_No8(student_id):
-    returns = _remove_member(student_id,8)
+    returns = _remove_member(student_id, 8)
     returns["warning"] = ""
     return returns
 
 
 @Logger
-@Auth(({"department_id":1,"actor":None},{"department_id":9,"actor":"10"}))
+@Auth(({"department_id": 1, "actor": None}, {"department_id": 9, "actor": "10"}))
 def remove_member_No9(student_id):
-    returns = _remove_member(student_id,9)
+    returns = _remove_member(student_id, 9)
     returns["warning"] = ""
     return returns
 
 
 @Logger
-@Auth(({"department_id":1,"actor":None},{"department_id":10,"actor":"10"}))
+@Auth(({"department_id": 1, "actor": None}, {"department_id": 10, "actor": "10"}))
 def remove_member_No10(student_id):
-    returns = _remove_member(student_id,10)
+    returns = _remove_member(student_id, 10)
     returns["warning"] = ""
     return returns
 
 
 add_member_functions = {
-    1:add_member_No1,
-    2:add_member_No2,
-    3:add_member_No3,
-    4:add_member_No4,
-    5:add_member_No5,
-    6:add_member_No6,
-    7:add_member_No7,
-    8:add_member_No8,
-    9:add_member_No9,
-    10:add_member_No10
+    1: add_member_No1,
+    2: add_member_No2,
+    3: add_member_No3,
+    4: add_member_No4,
+    5: add_member_No5,
+    6: add_member_No6,
+    7: add_member_No7,
+    8: add_member_No8,
+    9: add_member_No9,
+    10: add_member_No10
 }
 
 remove_member_functions = {
-    1:remove_member_No1,
-    2:remove_member_No2,
-    3:remove_member_No3,
-    4:remove_member_No4,
-    5:remove_member_No5,
-    6:remove_member_No6,
-    7:remove_member_No7,
-    8:remove_member_No8,
-    9:remove_member_No9,
-    10:remove_member_No10
+    1: remove_member_No1,
+    2: remove_member_No2,
+    3: remove_member_No3,
+    4: remove_member_No4,
+    5: remove_member_No5,
+    6: remove_member_No6,
+    7: remove_member_No7,
+    8: remove_member_No8,
+    9: remove_member_No9,
+    10: remove_member_No10
 }

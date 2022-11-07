@@ -69,6 +69,7 @@
                             aria-label="breadcrumb">
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="./index.html">个人中心</a></li>
+                                <li class="breadcrumb-item"><a href="./index.html">其他数据</a></li>
                                 <li class="breadcrumb-item active" aria-current="page">学院管理</li>
                             </ol>
                         </nav>
@@ -84,11 +85,13 @@
 
                         <div class="card">
                             <h5 class="card-header">学院管理</h5>
-                            <h6 class="card-subtitle mb-2 ms-3 text-muted">
-                                校区名称：双击需要修改的内容即可编辑。<span class="text-primary fw-bold">选填：“清水河”或“沙河”</span><br />
-                                学院名称：双击需要修改的内容即可编辑。<span class="text-primary fw-bold">学院名称完整填写，如：英才实验学院</span><br />
-                                保存方式：点击修改内容以外的其他地方即可保存修改，修改成功与否会通过右侧气泡展示
-                            </h6>
+                            <div class="card-body">
+                                <p class="card-subtitle text-muted">
+                                    校区名称：双击需要修改的内容即可编辑。<span class="text-primary fw-bold">选填：“清水河”或“沙河”</span><br />
+                                    学院名称：双击需要修改的内容即可编辑。<span class="text-primary fw-bold">学院名称完整填写，如：英才实验学院</span><br />
+                                    保存方式：点击修改内容以外的其他地方即可保存修改，修改成功与否会通过右侧气泡展示
+                                </p>
+                            </div>
                             <div class="table-responsive text-nowrap">
                                 <table class="table table-hover table-striped mb-3 text-center">
                                     <thead>
@@ -102,7 +105,7 @@
                                     <tbody id="school-table-body">
                                     </tbody>
                                 </table>
-                                <button class="btn btn-primary btn-sm rounded-pill mb-3 ms-3">添加</button>
+                                <button class="btn btn-primary btn-sm rounded-pill mb-3 ms-3" onclick="add_row_for_add_school()">添加</button>
                             </div>
                         </div>
                         <!--/ Layout Demo -->

@@ -1,10 +1,20 @@
+"""
+This file is for team manager.
+In this file, all URL apis are designed for manage team data.
+Usually, all functions need team leader auth.
+"""
+
+
 import flask
-from flask import session, request
-from Frame.python3.Authorization import Auth
+from flask import request
 from Frame.python3.Logger import Logger
+from Frame.python3.Authorization import Auth
 from Frame.python3.DatabaseConnector import DatabaseConnector
 from Frame.python3.CustomResponsePackage import CustomResponsePackage, IllegalValueError
+import Program.python.FinanceProcess as FinanceProcess 
 import sys
+import random
+import datetime
 import Ajax.function_departmentManager as function_departmentManager
 
 
@@ -57,3 +67,23 @@ def TeamManager(app : flask.Flask) -> None:
         
         returns = function_departmentManager.departmentManager(formDict=formDict)
         return {"warning":"", "message":returns["message"], "data":returns["data"]}
+    
+    
+    @app.route("/Ajax/TeamManager/download_finance_EXCEL", methods=['POST'])
+    @CustomResponsePackage
+    @Logger
+    @Auth(({"department_id":1,"actor":"11"},))
+    def download_finance_EXCEL():
+        connection = DatabaseConnector()
+        connection.startCursor()
+        
+        path = f"tmpFiles/finance_EXCEL_{str(int(random.random()*10e5))}.xlsx"
+        params = dict(request.form)
+        params["path"] = path
+        params["database"] = connection
+        params["date"] = datetime.datetime.strptime(params["date"],"%Y-%m")
+        
+        FinanceProcess.writedata(**params)
+        FinanceProcess.SetStyle(path)
+        
+        return {"warning":"", "message":"", "data":"/"+path}
