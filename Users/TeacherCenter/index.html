@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+
+<html lang="zh, en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default"
+    data-assets-path="/assets/" data-template="vertical-menu-template-free">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+
+    <title>个人中心</title>
+
+    <meta name="description" content="电子科技大学学风督导队" />
+    <meta name="author" content="罗寅松，学风督导队数据组">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/img/users/STSA_small.png">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap"
+        rel="stylesheet" />
+
+    <!-- Icons. Uncomment required icon fonts -->
+    <link rel="stylesheet" href="/assets/vendor/fonts/boxicons.css" />
+
+    <!-- Core CSS -->
+    <link rel="stylesheet" href="/assets/vendor/css/core.css" class="template-customizer-core-css" />
+    <link rel="stylesheet" href="/assets/vendor/css/theme-default.css" class="template-customizer-theme-css" />
+    <link rel="stylesheet" href="/assets/css/demo.css" />
+
+    <!-- Vendors CSS -->
+    <link rel="stylesheet" href="/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.css" />
+
+    <!-- Page CSS -->
+
+    <!-- Helpers -->
+    <script src="/assets/vendor/js/helpers.js"></script>
+
+    <!--! Template customizer & Theme config files MUST be included after core stylesheets and helpers.js in the <head> section -->
+    <!--? Config:  Mandatory theme config file contain global vars & default theme options, Set your preferred theme option in this file.  -->
+    <script src="/assets/js/config.js"></script>
+</head>
+
+<body>
+    <!-- Layout wrapper -->
+    <div class="row m-3">
+        <div class="col-12">
+            <div class="nav-align-top mb-4">
+                <ul class="nav nav-pills mb-3" role="tablist">
+                    <li class="nav-item me-2">
+                        <button type="button" class="nav-link rounded-pill active" role="tab" data-bs-toggle="tab"
+                            data-bs-target="#navs-pills-top-home" aria-controls="navs-pills-top-home"
+                            aria-selected="false">
+                            查早数据
+                        </button>
+                    </li>
+                    <li class="nav-item me-2">
+                        <button type="button" class="nav-link rounded-pill" role="tab" data-bs-toggle="tab"
+                            data-bs-target="#navs-pills-top-profile" aria-controls="navs-pills-top-profile"
+                            aria-selected="false">
+                            查课数据
+                        </button>
+                    </li>
+                    <li class="nav-item me-2">
+                        <button type="button" class="nav-link rounded-pill" role="tab" data-bs-toggle="tab"
+                            data-bs-target="#navs-pills-top-messages" aria-controls="navs-pills-top-messages"
+                            aria-selected="true">
+                            数据导出
+                        </button>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div class="tab-pane fade active show" id="navs-pills-top-home" role="tabpanel">
+                        <ul class="list-group">
+                            <!--li class="list-group-item list-group-item-danger">周汇总时，请假学生计入总应到人数，故和每日汇总结果有一定偏差，望知晓<br/>本页展示的每日数据均为原始数据，每周末会对存在问题的数据（如：数据缺失）进行处理。处理后的数据会和每日数据有一定不同</li-->
+                            <li class="list-group-item list-group-item-dark">当天的数据请在9:00后查看，确保督导队组员录入完毕</li>
+                            <li class="list-group-item list-group-item-dark">
+                                当日出勤率：<br>出勤率=(出勤1+出勤2)/2/应到人数<br>出勤1为7:35统计的人数<br>出勤2为8:00统计的人数</li>
+                            <li class="list-group-item list-group-item-dark">
+                                出勤率为程序自动生成，如果教室数据存在特殊情况，出勤率并不准确，请不用担心，周末我们会对特殊教室统一处理<br>若数据存在问题请尽快与督导队联系</li>
+                        </ul>
+                        <div class="row mt-3 g-3">
+                            <div class="col-12 col-sm-5 col-md-3 col-xl-2">
+                                <label for="date" class="form-label fs-6">选择日期</label>
+                                <input id="date" type="date" class="form-control" required/>
+                            </div>
+                            <div class="col-12 col-sm-7 col-md-5 col-xl-3">
+                                <label for="date" class="form-label fs-6">选择学院</label>
+                                <select id="date" class="form-control" required>
+                                    <option value="xxz">xxz</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="navs-pills-top-profile" role="tabpanel">
+                        <ul class="list-group">
+                            <!--li class="list-group-item list-group-item-danger">周汇总时，请假学生计入总应到人数，故和每日汇总结果有一定偏差，望知晓<br/>本页展示的每日数据均为原始数据，每周末会对存在问题的数据（如：数据缺失）进行处理。处理后的数据会和每日数据有一定不同</li-->
+                            <li class="list-group-item list-group-item-dark">当天数据可能不能及时在当天展示，希望理解<br>出勤率为程序自动生成，如果教室数据存在特殊情况，出勤率并不准确，请不用担心，周末我们会对特殊教室统一处理</li>
+                            <li class="list-group-item list-group-item-dark">当日出勤率：<br>出勤率=(出勤1+出勤2)/2/应到人数<br>出勤1为第一节小课的出勤人数<br>出勤2为第二次小课出勤的人数</li>
+                            <li class="list-group-item list-group-item-dark">若数据存在问题请尽快与督导队联系</li>
+                        </ul>
+                    </div>
+                    <div class="tab-pane fade" id="navs-pills-top-messages" role="tabpanel">
+                        <h3>
+                            暂不支持
+                        </h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Overlay -->
+        <div class="layout-overlay layout-menu-toggle"></div>
+    </div>
+    <!-- / Layout wrapper -->
+
+    <!-- Core JS -->
+    <!-- build:js assets/vendor/js/core.js -->
+    <script src="/assets/vendor/libs/jquery/jquery.js"></script>
+    <script src="/assets/vendor/libs/popper/popper.js"></script>
+    <script src="/assets/vendor/js/bootstrap.js"></script>
+    <script src="/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
+    <script src="/assets/vendor/js/menu.js"></script>
+    <!-- endbuild -->
+
+    <!-- Vendors JS -->
+
+    <!-- Main JS -->
+    <script src="/assets/js/main.js"></script>
+
+    <!--  Sweet Alert Javascript  -->
+    <script src="https://cdn.bootcdn.net/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+
+    <!-- Page JS -->
+
+</body>
+
+</html>
