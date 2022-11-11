@@ -45,10 +45,10 @@ def writedata(path: str, database: DatabaseConnector,
     # 读数据库
     database.execute("select * from AllMemberWageInfo;")
     results = database.fetchall()
-    column_names = ["姓名","学号","部门名称","岗位","基本工资","工资备注",
-                    "工资领取人姓名","工资领取人学号","银行卡号","建档立卡"]  # 表头信息
-    column_database_name = ["name","student_id","department_name","job","wage","wageinfo_remark",
-                            "application_name","application_student_id","application_bankcard","subsidy_dossier"]  # 表头对应的数据库列名
+    column_names = ["姓名", "学号", "部门名称", "岗位", "基本工资", "岗位备注",
+                    "工资领取人姓名", "工资领取人学号", "银行卡号", "建档立卡", "个人备注"]  # 表头信息
+    column_database_name = ["name", "student_id", "department_name", "job", "wage", "work_remark",
+                            "application_name", "application_student_id", "application_bankcard", "subsidy_dossier", "wageinfo_remark"]  # 表头对应的数据库列名
     # Wage表单写入表头
     ws_sheet1.cell(row=1, column=1, value='{}年{}月勤工助学补助'.format(
         date.year, date.month))
@@ -96,10 +96,10 @@ def SetStyle(path: str):
     '''
     wb = openpyxl.load_workbook(path)
     ws_sheet2 = wb['Info']  # 咱们先处理表二
-    ws_sheet2.merge_cells('A1:K1')  # 前四行合并
-    ws_sheet2.merge_cells('A2:K2')
-    ws_sheet2.merge_cells('A3:K3')
-    ws_sheet2.merge_cells('A4:K4')
+    ws_sheet2.merge_cells('A1:L1')  # 前四行合并
+    ws_sheet2.merge_cells('A2:L2')
+    ws_sheet2.merge_cells('A3:L3')
+    ws_sheet2.merge_cells('A4:L4')
 
     # 先设置第一行标题
     ws_sheet2.row_dimensions[1].height = 32  # 设置行高
@@ -165,12 +165,12 @@ def SetStyle(path: str):
     # 根据列的数字返回字母
     for i in range(len(col_width)):
         col_letter = get_column_letter(i + 1)
-        # 当宽度大于10，宽度设置为10
+        # 当宽度小于等于10，宽度设置为16
         if col_width[i] < 10 or col_width[i] == 10:
-            ws_sheet2.column_dimensions[col_letter].width = 10
+            ws_sheet2.column_dimensions[col_letter].width = 16
         # 只有当宽度大于10，才设置列宽
         elif col_width[i] > 10:
-            ws_sheet2.column_dimensions[col_letter].width = col_width[i] + 6
+            ws_sheet2.column_dimensions[col_letter].width = 2*col_width[i] + 6
 
     # 设置边框
     for r in range(1, trows + 1):
@@ -215,10 +215,10 @@ def SetStyle(path: str):
                 u'楷体', size=12,  color='000000')
 
     ws_sheet1 = wb['Wage']  # 咱再处理表一
-    ws_sheet1.merge_cells('A1:K1')  # 前四行合并
-    ws_sheet1.merge_cells('A2:K2')
-    ws_sheet1.merge_cells('A3:K3')
-    ws_sheet1.merge_cells('A4:K4')
+    ws_sheet1.merge_cells('A1:L1')  # 前四行合并
+    ws_sheet1.merge_cells('A2:L2')
+    ws_sheet1.merge_cells('A3:L3')
+    ws_sheet1.merge_cells('A4:L4')
 
     # 先设置第一行标题
     ws_sheet1.row_dimensions[1].height = 32  # 设置行高

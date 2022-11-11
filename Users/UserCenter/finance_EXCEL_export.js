@@ -73,7 +73,7 @@ function download_EXCEL() {
                     //状态码301，提醒转移函数
                     if (returnCode === 301) { window.console.log('下载财务报表函数移至新位置'); }
                     //状态码200，处理data
-                    window.location.href = data["data"]
+                    window.open(data["data"]);
                 }
             }
             else
