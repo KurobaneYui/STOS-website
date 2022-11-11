@@ -62,40 +62,48 @@ function getTopbarInfo() {
 function update_topbar(data) {
     let name = data['name'];
     $("#topbar-name").text(name);
-    $("#formal-member").text(
-        data['GroupScoreRank'].length === 0 ? "预备队员" : "正式队员"
-    );
-    update_badges(data['GroupScoreRank']);
+    $("#formal-member").text(data['memberType']);
+    update_badges(data['memberType']);
 }
 
 
 function update_badges(data) {
     $("#self-status-badges").html("")
     let counter = 0;
-    for (let i of data) {
-        counter++;
-        if (counter > 1) isHide = 'd-none d-sm-block';
-        else isHide = '';
-        let badge = `
+
+    let currentDate = new Date();
+    let endMonthDate = new Date();
+    endMonthDate.setMonth(endMonthDate.getMonth() + 1);
+    endMonthDate.setDate(0);
+
+    let badge = ``;
+    badge = `
+    <div class="col-auto">
+        <span class="badge rounded-pill bg-label-success fs-6">查早：完成</span>
+    </div>`;
+    $("#self-status-badges").append(badge);
+    badge = `
+    <div class="col-auto">
+        <span class="badge rounded-pill bg-label-warning fs-6">查课：未确认</span>
+    </div>`;
+    $("#self-status-badges").append(badge);
+    badge = `
+    <div class="col-auto">
+        <span class="badge rounded-pill bg-label-danger fs-6">查课：未完成</span>
+    </div>`;
+    $("#self-status-badges").append(badge);
+    if (endMonthDate.getDate() - currentDate.getDate() <= 10) {
+        badge = `
         <div class="col-auto">
-            <span class="badge rounded-pill bg-label-primary fs-6 ${isHide}">${i['name']}-${i['score']}'-#${i['group_rank']}</span>
+            <span class="badge rounded-pill bg-label-success fs-6">${`距&yen还剩` + String(endMonthDate.getDate() - currentDate.getDate()) + '天'}</span>
         </div>`;
-        $("#self-status-badges").append(badge);
     }
-    let badge = `
-    <div class="col-auto">
-        <span class="badge rounded-pill bg-label-${31 - new Date().getDate() <= 10 ? 'success' : "secondary"} fs-6">${31 - new Date().getDate() <= 10 ? `距&yen还剩` + String(31 - new Date().getDate()) + '天' : "钱离的还远"}</span>
-    </div>`;
-    $("#self-status-badges").append(badge);
-    badge = `
-    <div class="col-auto">
-        <span class="badge rounded-pill bg-label-success fs-6">今日查早：完成</span>
-    </div>`;
-    $("#self-status-badges").append(badge);
-    badge = `
-    <div class="col-auto">
-        <span class="badge rounded-pill bg-label-warning fs-6">今日查课：未完成</span>
-    </div>`;
+    else {
+        badge = `
+        <div class="col-auto">
+            <span class="badge rounded-pill bg-label-secondary fs-6">钱离的还远</span>
+        </div>`;
+    }
     $("#self-status-badges").append(badge);
 }
 

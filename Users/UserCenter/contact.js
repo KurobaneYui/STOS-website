@@ -72,7 +72,7 @@ function fill_contact(data) {
 }
 
 function render_gender(gender) {
-    if (gender === '男') return "<span class='badge bg-label-info me-1'>男</span>";
-    else if (gender === "女") return "<span class='badge bg-label-danger me-1'>女</span>";
-    else return "<span class='badge bg-label-dark me-1'>-</span>";
+    if (gender === '男') return "<span class='badge bg-label-info'>男</span>";
+    else if (gender === "女") return "<span class='badge bg-label-danger'>女</span>";
+    else return "<span class='badge bg-label-dark'>-</span>";
 }

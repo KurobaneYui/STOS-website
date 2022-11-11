@@ -109,7 +109,7 @@ function fill_score_details_table(data, id) {
 }
 
 function render_score(score) {
-    if (score > 0) return `<span class='badge bg-label-primary me-1'>${score}</span>`;
-    else if (score < 0) return `<span class='badge bg-label-danger me-1'>${score}</span>`;
-    else return `<span class='badge bg-label-dark me-1'>${score}</span>`;
+    if (score > 0) return `<span class='badge bg-label-primary'>${score}</span>`;
+    else if (score < 0) return `<span class='badge bg-label-danger'>${score}</span>`;
+    else return `<span class='badge bg-label-dark'>${score}</span>`;
 }

@@ -102,18 +102,36 @@ def Users(app : flask.Flask) -> None:
         database.startCursor()
         
         DBAffectRows = database.execute(
-            sql="SELECT Department.department_id as department_id,name, group_rank, score FROM `Work` \
-                LEFT JOIN `Department` ON `Work`.department_id=Department.department_id \
-                LEFT JOIN RankAndScoreInGroup ON \
-                    `Work`.department_id=RankAndScoreInGroup.department_id AND `Work`.student_id=RankAndScoreInGroup.student_id \
-                WHERE `Work`.student_id=%s;",
+            sql="SELECT job FROM `Work` WHERE student_id=%s;",
             data=(session['userID'],)
         )
-        results = database.fetchall()  
-        for i in results:
-            i['score'] = float(i['score'])
+        database.fetchall()  
+        results = "正式队员" if DBAffectRows > 0 else "预备队员"
         
-        return {"warning":"", "message":"", "data":{"name":session["name"], "GroupScoreRank":results}}
+        return {"warning":"", "message":"", "data":{"name":session["name"], "memberType":results}}
+
+
+    # @app.route("/Ajax/Users/indexInfo", methods=['GET'])
+    # @CustomResponsePackage
+    # @Logger
+    # @Auth(({'department_id':None,'actor':None},))
+    # def indexInfo():
+    #     database = DatabaseConnector()
+    #     database.startCursor()
+        
+    #     DBAffectRows = database.execute(
+    #         sql="SELECT Department.department_id as department_id,name, group_rank, score FROM `Work` \
+    #             LEFT JOIN `Department` ON `Work`.department_id=Department.department_id \
+    #             LEFT JOIN RankAndScoreInGroup ON \
+    #                 `Work`.department_id=RankAndScoreInGroup.department_id AND `Work`.student_id=RankAndScoreInGroup.student_id \
+    #             WHERE `Work`.student_id=%s;",
+    #         data=(session['userID'],)
+    #     )
+    #     results = database.fetchall()  
+    #     for i in results:
+    #         i['score'] = float(i['score'])
+        
+    #     return {"warning":"", "message":"", "data":{"name":session["name"], "GroupScoreRank":results}}
         
         
     @app.route("/Ajax/Users/get_contact", methods=['GET'])

@@ -5,9 +5,10 @@ services:
         ports:
          - "5580:80"
         volumes:
-         - "/home/ubuntu/all_websites/STSA/website:/home/STSA"
+         - "/home/ubuntu/all_websites/STSA:/home/STSA"
         depends_on:
          - 'STSA-Database'
+        tty: true
     
     STSA-Database:
         image: "mysql"

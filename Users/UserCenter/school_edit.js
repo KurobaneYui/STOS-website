@@ -50,7 +50,6 @@ function get_school() {
                     if (returnCode === 301) { window.console.log('获取学院信息函数移至新位置'); }
                     //状态码200，处理data
                     fill_school_table(data['data']);
-                    editable_readonly_input();
                 }
             }
             else
@@ -66,24 +65,43 @@ function fill_school_table(data) {
     for (let one_school of data) {
         table_body.append(`
         <tr old-data='${one_school['school_id']}'>
-            <td>
-                <input type="number" min="1" max="50" class="form-control-plaintext editable-readonly-input text-center" style="min-width: 20px;" value="${one_school['school_id']}" readonly required/>
-            </td>
-            <td>
-                <input type="text" class="form-control-plaintext editable-readonly-input text-center" style="min-width: 120px;" value="${one_school['name']}" readonly/>
-            </td>
-            <td>
-                <input type="text" class="form-control-plaintext editable-readonly-input text-center" style="min-width: 150px;" value="${one_school['campus']}" readonly/>
-            </td>
-            <td>
-                <button class="btn btn-danger btn-sm rounded-pill" onclick="delete_school(this)">删除</button>
-            </td>
+            <td>${one_school['school_id']}</td>
+            <td>${one_school['name']}</td>
+            <td>${render_campus(one_school['campus'])}</td>
+            <td><button class="btn btn-warning btn-sm rounded-pill" onclick="change_to_editable_row(this)">编辑</button></td>
         </tr>
-        `)
+        `);
     }
 }
 
-function upload_school(element_row) {
+function change_to_editable_row(button) {
+    let row = $(button).parent().parent();
+    let cells = row.children();
+    
+    $(button).parent().append(`<button class="btn btn-primary btn-sm rounded-pill" onclick="upload_school(this)">提交</button><button class="btn btn-danger btn-sm rounded-pill" onclick="delete_school(this)">删除</button>`);
+    $(button).remove();
+
+    // 改序号格式
+    let cell = cells.first();
+    let tmp = cell.text();
+    cell.html(`<input type="number" min="1" max="50" class="form-control text-center" style="min-width: 20px;" required/>`);
+    cell.children().first().val(tmp);
+    // 改名称格式
+    cell = cell.next();
+    tmp = cell.text();
+    cell.html(`<input type="text" class="form-control text-center" style="min-width: 120px;" required/>`);
+    cell.children().first().val(tmp);
+    // 改校区格式
+    cell = cell.next();
+    tmp = cell.text();
+    cell.html(`<input type="text" class="form-control text-center" style="min-width: 150px;" required/>`);
+    cell.children().first().val(tmp);
+}
+
+function upload_school(button) {
+    let element_row = $(button).parent().parent();
+    $(button).parent().html("");
+
     let selector = element_row.children().first();
     let school_id = eval(selector.children().first().val());
     selector = selector.next();
@@ -318,15 +336,7 @@ function showToast(status, title, text) {
     }
 }
 
-function change_content_editable(element) {
-    $(element).prop("readonly", false);
-    $(element).removeClass('form-control-plaintext')
-    $(element).addClass('form-control')
-}
-
-function change_content_uneditable(element) {
-    $(element).prop("readonly", true);
-    $(element).removeClass('form-control');
-    $(element).addClass('form-control-plaintext');
-    upload_school($(element).parent().parent());
+function render_campus(campus) {
+    if (campus === "清水河") return `<span class='badge bg-label-primary'>${campus}</span>`;
+    else if (campus === "沙河") return `<span class='badge bg-label-warning'>${campus}</span>`;
 }

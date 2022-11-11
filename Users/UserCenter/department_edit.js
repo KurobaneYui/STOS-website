@@ -50,7 +50,6 @@ function get_department() {
                     if (returnCode === 301) { window.console.log('获取部门信息函数移至新位置'); }
                     //状态码200，处理data
                     fill_department_table(data['data']);
-                    editable_readonly_input();
                 }
             }
             else
@@ -65,27 +64,52 @@ function fill_department_table(data) {
 
     for (let one_department of data) {
         table_body.append(`
-        <tr id='test'>
+        <tr>
             <td>${one_department['department_id']}</td>
             <td>${one_department['department_name']}</td>
-            <td>
-                <input type="number" min="0" max="50" class="form-control-plaintext editable-readonly-input text-center" style="min-width: 20px;" value="${one_department['job_available']}" readonly required/>
-            </td>
-            <td>
-                <input type="text" class="form-control-plaintext editable-readonly-input text-center" style="min-width: 120px;" value="${one_department['student_name']}--${one_department['student_id']}" readonly/>
-            </td>
-            <td>
-                <input type="text" class="form-control-plaintext editable-readonly-input text-center" style="min-width: 150px;" value="${one_department['remark']}" readonly/>
-            </td>
-            <td>
-                <button class="btn btn-danger btn-sm rounded-pill">删除</button>
-                </td>
+            <td>${one_department['job_available']}</td>
+            <td>${one_department['student_name']}--${one_department['student_id']}</td>
+            <td>${one_department['remark']}</td>
+            <td><button class="btn btn-warning btn-sm rounded-pill" onclick="change_to_editable_row(this)">编辑</button></td>
         </tr>
         `)
     }
 }
 
-function upload_department(element_row) {
+function change_to_editable_row(button) {
+    let row = $(button).parent().parent();
+    let cells = row.children();
+    
+    $(button).parent().append(`<button class="btn btn-primary btn-sm rounded-pill" onclick="upload_department(this)">提交</button><button class="btn btn-danger btn-sm rounded-pill">删除</button>`);
+    $(button).remove();
+
+    // 序号跳过
+    let cell = cells.first();
+    let tmp = cell.text();
+    // 名称跳过
+    cell = cell.next();
+    tmp = cell.text();
+    // 改人数上限格式
+    cell = cell.next();
+    tmp = cell.text();
+    cell.html(`<input type="number" min="0" max="50" class="form-control text-center" style="min-width: 20px;" required/>`);
+    cell.children().first().val(tmp);
+    // 改组长格式
+    cell = cell.next();
+    tmp = cell.text();
+    cell.html(`<input type="text" class="form-control text-center" style="min-width: 120px;" required"/>`);
+    cell.children().first().val(tmp);
+    // 改备注格式
+    cell = cell.next();
+    tmp = cell.text();
+    cell.html(`<input type="text" class="form-control text-center" style="min-width: 150px;" required/>`);
+    cell.children().first().val(tmp);
+}
+
+function upload_department(button) {
+    let element_row = $(button).parent().parent();
+    $(button).parent().html("");
+
     let selector = element_row.children().first();
     let department_id = selector.text();
     selector = selector.next().next().children().first();
@@ -185,17 +209,4 @@ function showToast(status, title, text) {
         let a = new bootstrap.Toast(container.children().last());
         a.show();
     }
-}
-
-function change_content_editable(element) {
-    $(element).prop("readonly", false);
-    $(element).removeClass('form-control-plaintext')
-    $(element).addClass('form-control')
-}
-
-function change_content_uneditable(element) {
-    $(element).prop("readonly", true);
-    $(element).removeClass('form-control')
-    $(element).addClass('form-control-plaintext')
-    upload_department($(element).parent().parent())
 }

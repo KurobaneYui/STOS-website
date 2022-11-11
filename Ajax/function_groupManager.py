@@ -5,6 +5,7 @@ from Frame.python3.Authorization import Auth
 from Frame.python3.Logger import Logger
 from flask import session, request
 import sys
+import datetime
 
 
 @Logger
@@ -106,6 +107,21 @@ def _add_member(student_id, group_id):
         connection.rollback()
         raise DatabaseRuntimeError(
             "Insert or Update work info error.", filename=__file__, line=sys._getframe().f_lineno)
+        
+    DBAffectRows = connection.execute(
+        sql="SELECT record_id FROM `Score` WHERE student_id=%s AND department_id=%s;",
+        data=(student_id, group_id),
+        autoCommit=False)
+    connection.fetchall()
+    if DBAffectRows <= 0:
+        DBAffectRows = connection.execute(
+            sql="INSERT INTO `Score` (student_id,department_id,date,reason,variant) VALUES \
+                (%(student_id)s,%(department_id)s,%(date)s,'岗位初始',5);",
+            data=(student_id, group_id,datetime.datetime.now().date()),
+            autoCommit=False)
+        if DBAffectRows != 1:
+            connection.rollback()
+            raise DatabaseRuntimeError("Insert score info error.", filename=__file__, line=sys._getframe().f_lineno)
 
     connection.commit()
 
