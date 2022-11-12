@@ -194,6 +194,7 @@ function fill_personal_info(data) {
     $("#phone").val(data["phone"]);
     $("#qq").val(data["qq"]);
     $("#campus").val(data["campus"]);
+    get_school();
     $("#school").val(data["school"]);
     $("#dormitory_yuan").val(data["dormitory_yuan"]);
     $("#dormitory_dong").val(data["dormitory_dong"]);
