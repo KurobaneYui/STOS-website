@@ -116,7 +116,7 @@ def _add_member(student_id, group_id):
     if DBAffectRows <= 0:
         DBAffectRows = connection.execute(
             sql="INSERT INTO `Score` (student_id,department_id,date,reason,variant) VALUES \
-                (%(student_id)s,%(department_id)s,%(date)s,'岗位初始',5);",
+                (%s,%s,%s,'岗位初始',5);",
             data=(student_id, group_id,datetime.datetime.now().date()),
             autoCommit=False)
         if DBAffectRows != 1:
