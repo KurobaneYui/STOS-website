@@ -51,6 +51,19 @@ def DataManager(app: flask.Flask) -> None:
         returns = connection.fetchall()
         return {"warning": "", "message": "", "data": returns}
 
+    @app.route("/Ajax/DataManager/get_classroom", methods=['POST'])
+    @CustomResponsePackage
+    @Logger
+    @Auth(({"department_id": 3, "actor": "10"}, {"department_id": 1, "actor": None}))
+    def get_classroom():
+        connection = DatabaseConnector()
+        connection.startCursor()
+        DBAffectRows = connection.execute(
+            "SELECT building,area,room,sit_available FROM `Classroom` WHERE campus=%(campus)s;",
+            request.form)
+        returns = connection.fetchall()
+        return {"warning": "", "message": "", "data": returns}
+
     @app.route("/Ajax/DataManager/update_school", methods=['POST'])
     @CustomResponsePackage
     @Logger

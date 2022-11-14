@@ -73,31 +73,82 @@
                                 <li class="breadcrumb-item active" aria-current="page">早自习教室信息</li>
                             </ol>
                         </nav>
+
+                        <div class="modal fade" id="select-saved-selfstudy-classroom" tabindex="-1"
+                            data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="exampleModalLabel"
+                            aria-hidden="true">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">选择源日期数据</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <p class="text-muted">
+                                            只列出最近15次提交记录
+                                        </p>
+                                        <form>
+                                            <div class="table-responsive text-nowrap mb-3">
+                                                <table class="table table-sm table-hover table-striped">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>日期</th>
+                                                            <th>操作</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="import-table-body">
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Layout Demo -->
                         <div class="row">
-                            <div class="col">
+                            <div class="col-12 alert alert-primary" role="alert">
+                                * 直接添加新教室、选择日期，在全部添加完毕后点击提交即可。如果选择的日期下已有提交数据则覆盖。<br />
+                                * 如果已有过往日期的数据，则点击“导入已有数据”按钮，选择记录导入即可。导入完成后按需修改并选择日期，点击提交即可完成<br />
+                                * 请为每日查早均提交一份教室数据。
+                            </div>
+                            <div class="col-12 alert alert-danger" role="alert">
+                                * 任何数据的修改都会实时反映在组员查早表单中。<br />
+                                * 请尽量选择修改数据而不是删除再添加数据，删除数据会导致对应的组员排班被删除，哪怕重新添加了一份一样的数据。
+                            </div>
+                            <div class="col-12">
                                 <div class="card">
                                     <h5 class="card-header">编辑早自习教室</h5>
                                     <div class="card-body">
                                         <div class="row">
+                                            <div class="col mb-3">
+                                                <button class="btn btn-sm btn-info rounded-pill" data-bs-toggle="modal"
+                                                    data-bs-target="#select-saved-selfstudy-classroom" onclick="get_submitted_selfstudy_date()">导入已有数据</button>
+                                            </div>
+                                        </div>
+                                        <div class="row">
                                             <div class="col-8 col-sm-6 col-md-4 col-xl-3">
-                                                <input type="date" class="form-control"/>
+                                                <input type="date" class="form-control" />
                                             </div>
                                             <div class="col-4 col-md-3 col-lg-2">
-                                                <button type="button" class="btn btn-primary rounded-pill">确定</button>
+                                                <button type="button" class="btn btn-sm btn-primary rounded-pill"
+                                                    onclick="submit()">提交</button>
                                             </div>
                                         </div>
                                         <div class="row g-2">
                                             <div class="col-12 table-responsive text-nowrap">
-                                                <table class="table table-striped table-hover">
+                                                <table class="table table-striped table-hover text-center">
                                                     <thead>
                                                         <tr>
                                                             <th>#</th>
                                                             <th>校区</th>
-                                                            <th>教学楼</th>
-                                                            <th>区域</th>
-                                                            <th>编号</th>
+                                                            <th>教室</th>
+                                                            <th>容纳人数</th>
+                                                            <th>学院</th>
                                                             <th>应到人数</th>
+                                                            <th>备注</th>
                                                             <th>操作</th>
                                                         </tr>
                                                     </thead>
@@ -107,17 +158,19 @@
                                                         <tr>
                                                             <th>#</th>
                                                             <th>校区</th>
-                                                            <th>教学楼</th>
-                                                            <th>区域</th>
-                                                            <th>编号</th>
+                                                            <th>教室</th>
+                                                            <th>容纳人数</th>
+                                                            <th>学院</th>
                                                             <th>应到人数</th>
+                                                            <th>备注</th>
                                                             <th>操作</th>
                                                         </tr>
                                                     </tfoot>
                                                 </table>
                                             </div>
-                                            <div class="col-12">
-                                                <button class="btn btn-sm btn-primary rounded-pill">新增</button>
+                                            <div class="col">
+                                                <button class="btn btn-sm btn-warning rounded-pill"
+                                                    onclick="change_to_editable_row(this)">编辑</button>
                                             </div>
                                         </div>
                                     </div>
@@ -192,6 +245,8 @@
     <script src="https://cdn.bootcdn.net/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
 
     <!-- Page JS -->
+    <script src="./selfstudy_classroom_editor.js"></script>
+    <script src="./get_campus_classroom_school copy.js"></script>
 
 </body>
 

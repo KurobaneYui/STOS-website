@@ -1,3 +1,5 @@
+const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay));
+
 function changeInfo() { // 点击确定按钮的功能
     let name = $("#username").val();
     let gender = $("input[name='gender']:checked").val(); // female是女，male是男
