@@ -1,22 +1,28 @@
+import json
+from datetime import timedelta
+
 import flask
 from flask import Flask, request, redirect, send_file, url_for, abort, session, render_template
 from werkzeug.middleware.proxy_fix import ProxyFix
-from Ajax.Users import Users
-from Ajax.TeamManager import TeamManager
-from Ajax.GroupManager import GroupManager
-from Ajax.DataManager import DataManager
-from Frame.python3.Authorization import checkIfLogin
-from datetime import timedelta
-import json
+
+from Frame.python3.Ajax.Users import Users
+from Frame.python3.Ajax.GroupManager import GroupManager
+from Frame.python3.Ajax.TeamManager import TeamManager
+from Frame.python3.Ajax.DataManager import DataManager
+from Frame.python3.BaseComponents.Authorization import checkIfLogin
 
 
-# set template_folder for 'render_template' function
-app = Flask(__name__, template_folder="Frame/html5/")
+# app = Flask(__name__, template_folder="Frame/html5/") # set template_folder for 'render_template' function
+app = Flask(__name__)
 
+
+# @app.route("/Frame/html5/<path:additionalURL>")
+# def HTMLFrameRoutes(additionalURL):
+#     return render_template(additionalURL)
 
 @app.route("/Frame/html5/<path:additionalURL>")
 def HTMLFrameRoutes(additionalURL):
-    return render_template(additionalURL)
+    return send_file("Frame/html5/"+additionalURL)
 
 
 @app.route("/css/<path:additionalURL>")
@@ -41,7 +47,7 @@ def AssetsRoutes(additionalURL):
 
 @app.route("/Users/Authentication/<path:additionalURL>", methods=['GET', 'POST'])
 def LoginRoutes(additionalURL):
-    if additionalURL == "login.html" and checkIfLogin()["data"]:
+    if additionalURL == "login.html" and checkIfLogin():
         return redirect("/Users/UserCenter/index.html")
     return send_file("Users/Authentication/"+additionalURL)
 
@@ -71,7 +77,7 @@ def index():
 @app.errorhandler(404)
 def not_found_404(error):
     print("Try to access not exist URL: ", flask.request.url)
-    return render_template("404.html"), 404
+    return send_file("Frame/html5/404.html"), 404
 
 # handle when '405 not found' error
 
@@ -79,7 +85,15 @@ def not_found_404(error):
 @app.errorhandler(405)
 def not_found_405(error):
     print("Try to access URL with illegal method: ", flask.request.url)
-    return render_template("405.html"), 405
+    return send_file("Frame/html5/405.html"), 405
+
+# handle when '500 not found' error
+
+
+@app.errorhandler(500)
+def not_found_500(error):
+    print("Try to access URL with illegal method: ", flask.request.url)
+    return send_file("Frame/html5/500.html"), 500
 
 
 if __name__ == "__main__":

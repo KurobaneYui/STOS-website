@@ -143,7 +143,7 @@ function add_work_basic_info_card(data) {
                     <div class="row fs-5 g-3 ms-2">
                         <span class="col-1 col-lg-2"></span>
                         <p class="col-auto badge bg-label-primary">岗位</p>
-                        <p class="col">${data["job"]}</p>
+                        <p class="col">${data["job"] == 1 ? (data["department_id"] == 1 ? "队长" : "组长") : (data["department_id"] == 1 ? "副队长" : "组员")}</p>
                         <span class="col-1 col-lg-2"></span>
                     </div>
                     <div class="row fs-5 g-3 ms-2">

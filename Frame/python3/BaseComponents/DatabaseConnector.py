@@ -1,10 +1,9 @@
 import sys
 import json
 from enum import Enum
-from typing import Optional
 import pymysql
 from pymysql.cursors import DictCursor
-from Frame.python3.CustomResponsePackage import DatabaseConnectionError, DatabaseBufferError, DatabaseRuntimeError
+from Frame.python3.BaseComponents.CustomError import DatabaseConnectionError, DatabaseBufferError, DatabaseRuntimeError
 
 
 class DatabaseConnectionStatus(Enum):
@@ -45,11 +44,11 @@ class DatabaseConnector:
             # read config file and try to connect the database
             with open(configFile, 'r') as f:
                 config = json.load(f)
-            Host = config['host']
-            Port = config['port']
-            User = config['user']
-            Password = config['password']
-            Database = config['database']
+            Host: str = config['host']
+            Port: int = int(config['port'])
+            User: str = config['user']
+            Password: str = config['password']
+            Database: str = config['database']
             self.Session = pymysql.connect(
                 host=Host,
                 port=Port,
@@ -115,7 +114,7 @@ class DatabaseConnector:
             self.Cursor = None
             self.Status = DatabaseConnectionStatus.ConnectionEstablished
 
-    def execute(self, sql: str, data: Optional[tuple or list or dict] = None, autoCommit: bool = True) -> int:
+    def execute(self, sql: str, data: tuple | list | dict | None = None, autoCommit: bool = True) -> int:
         """Execute a query with multiply data.
 
         When a cursor exists, execute sql query in that cursor and cache the results.
@@ -153,7 +152,7 @@ class DatabaseConnector:
             raise DatabaseRuntimeError(
                 f"Cannot execute query: {e}", filename=__file__, line=sys._getframe().f_lineno)
 
-        if sql.startswith(('SELECT ', 'select ')):
+        if sql.startswith(('SELECT ', 'select ', 'Drop ', 'drop ', 'CREATE ', 'create ')):
             self.Status = DatabaseConnectionStatus.QueryCached
         else:
             self.Status = DatabaseConnectionStatus.CursorEstablished

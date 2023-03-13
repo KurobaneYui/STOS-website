@@ -3,7 +3,8 @@ function login() { // 点击登录按钮的功能
     let password = $("input[placeholder='密码']").val();
     let login_info = {
         StudentID: student,
-        Password: password
+        Password: password,
+        Work: 0
     };
     $.post("/Ajax/Users/login",
         login_info,
