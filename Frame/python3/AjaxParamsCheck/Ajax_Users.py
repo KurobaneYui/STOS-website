@@ -217,6 +217,12 @@ class Ajax_Users:
                 "Need StudentID and Password.", filename=__file__, line=sys._getframe().f_lineno)
 
     @staticmethod
+    def loginAsSpecifiedWorkParamsCheck(flaskRequest: Request) -> None:
+        if 'department_id' not in flaskRequest.form.keys() or 'job' not in flaskRequest.form.keys():
+            raise IllegalValueError(
+                "Need department_id and job.", filename=__file__, line=sys._getframe().f_lineno)
+
+    @staticmethod
     def resetPasswordParamsCheck(flaskRequest: Request) -> None:
         if 'Name' not in flaskRequest.form.keys() or 'StudentID' not in flaskRequest.form.keys() \
                 or 'School' not in flaskRequest.form.keys() or 'Hometown' not in flaskRequest.form.keys():
@@ -225,7 +231,7 @@ class Ajax_Users:
 
     @staticmethod
     def deletePersonalInfoParamsCheck(flaskRequest: Request) -> None:
-        if 'confirmDelete' not in flaskRequest.form.form.keys() or flaskRequest.form.form['confirmDelete'] != 'confirm':
+        if 'confirmDelete' not in flaskRequest.form.keys() or flaskRequest.form['confirmDelete'] != 'confirm':
             raise IllegalValueError(
                 "请填写正确确认文字，如有问题请联系管理员！", filename=__file__, line=sys._getframe().f_lineno)
 

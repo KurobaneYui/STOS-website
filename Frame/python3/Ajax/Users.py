@@ -34,20 +34,59 @@ def Users(app: flask.Flask) -> None:
                 database = DatabaseConnector()
                 database.startCursor()
                 DatabaseBasicOperations_Users.login(request, database)
-                studentName = DatabaseBasicOperations_Users.getName(
-                    request.form["StudentID"], database)
-                CustomSession.setSession(
-                    studentID=request.form["StudentID"], name=studentName, logTime=datetime.datetime.now().isoformat())
-                flask.g.isLogin = True
+                results = DatabaseBasicOperations_Users.getLoginWorks(database)
                 # ========================
                 # 准备函数返回值和响应与日志
                 returns = {"message": "",
-                           "data": "/Users/UserCenter/index.html"}
+                           "data": results}
                 customResponse.setMessageAndData(**returns)
                 logger.funcReturns = returns
         return customResponse.getResponse()
 
-    @app.route("/Ajax/Users/resetPassword", methods=['POST'])
+    @app.route("/Ajax/Users/get_login_works", methods=['GET'])
+    def getLoginWorks():
+        with CustomResponse() as customResponse:
+            with Logger(funcName="Users.getLoginWorks()") as logger:
+                # ===============
+                # 检查接口调用权限
+                Authorization.check(rightsNeeded=tuple(), needLogin=True)
+                # =========================================
+                # 执行接口流程，并获取用户名信息以完成会话建立
+                results = DatabaseBasicOperations_Users.getLoginWorks()
+                # ========================
+                # 准备函数返回值和响应与日志
+                returns = {"message": "",
+                           "data": results}
+                customResponse.setMessageAndData(**returns)
+                logger.funcReturns = returns
+        return customResponse.getResponse()
+
+    @app.route("/Ajax/Users/login_as_specified_work", methods=['POST'])
+    def loginAsSpecifiedWork():
+        with CustomResponse() as customResponse:
+            with Logger(funcName="Users.loginAsSpecifiedWork()") as logger:
+                # ===============
+                # 检查接口调用权限
+                Authorization.check(rightsNeeded=tuple(), needLogin=True)
+                # ========================
+                # 检查接口输入参数并记录日志
+                Ajax_Users.loginAsSpecifiedWorkParamsCheck(request)
+                logger.funcArgs = request.form
+                # =========================================
+                # 执行接口流程，并获取用户名信息以完成会话建立
+                database = DatabaseConnector()
+                database.startCursor()
+                results = DatabaseBasicOperations_Users.loginAsSpecifiedWork(
+                    request, database)
+                # ========================
+                # 准备函数返回值和响应与日志
+                returns = {"message": "",
+                           "data": results}
+                customResponse.setMessageAndData(**returns)
+                logger.funcReturns = returns
+        return customResponse.getResponse()
+
+    @ app.route("/Ajax/Users/resetPassword", methods=['POST'])
     def resetPassword():
         with CustomResponse() as customResponse:
             with Logger(funcName="Users.resetPassword()") as logger:
@@ -69,7 +108,7 @@ def Users(app: flask.Flask) -> None:
                 logger.funcReturns = returns
         return customResponse.getResponse()
 
-    @app.route("/Ajax/Users/delete_personal_info", methods=['POST'])
+    @ app.route("/Ajax/Users/delete_personal_info", methods=['POST'])
     def deletePersonalInfo():
         with CustomResponse() as customResponse:
             with Logger(funcName="Users.deletePersonalInfo()") as logger:
@@ -92,7 +131,7 @@ def Users(app: flask.Flask) -> None:
                 logger.funcReturns = returns
         return customResponse.getResponse()
 
-    @app.route("/Ajax/Users/register", methods=['POST'])
+    @ app.route("/Ajax/Users/register", methods=['POST'])
     def register():
         with CustomResponse() as customResponse:
             with Logger(funcName="Users.register()") as logger:
@@ -119,7 +158,7 @@ def Users(app: flask.Flask) -> None:
                 logger.funcReturns = returns
         return customResponse.getResponse()
 
-    @app.route("/Ajax/Users/logout", methods=['GET', 'POST'])
+    @ app.route("/Ajax/Users/logout", methods=['GET', 'POST'])
     def logout():
         with CustomResponse() as customResponse:
             with Logger(funcName="Users.logout()") as logger:
@@ -137,7 +176,7 @@ def Users(app: flask.Flask) -> None:
                 logger.funcReturns = returns
         return customResponse.getResponse()
 
-    @app.route("/Ajax/Users/topbarInfo", methods=['GET'])
+    @ app.route("/Ajax/Users/topbarInfo", methods=['GET'])
     def topbarInfo():
         with CustomResponse() as customResponse:
             with Logger(funcName="Users.topbarInfo()") as logger:
@@ -149,8 +188,7 @@ def Users(app: flask.Flask) -> None:
                 results = DatabaseBasicOperations_Users.topbarInfo()
                 # ========================
                 # 准备函数返回值和响应与日志
-                returns = {"message": "", "data": {
-                    "name": CustomSession.getSession()["userName"], "memberType": results}}
+                returns = {"message": "", "data": results}
                 customResponse.setMessageAndData(**returns)
                 logger.funcReturns = returns
         return customResponse.getResponse()
@@ -177,7 +215,7 @@ def Users(app: flask.Flask) -> None:
 
     #     return {"warning":"", "message":"", "data":{"name":session["name"], "GroupScoreRank":results}}
 
-    @app.route("/Ajax/Users/get_contact", methods=['GET'])
+    @ app.route("/Ajax/Users/get_contact", methods=['GET'])
     def getContact():
         with CustomResponse() as customResponse:
             with Logger(funcName="Users.getContact()") as logger:
@@ -195,7 +233,7 @@ def Users(app: flask.Flask) -> None:
                 logger.funcReturns = returns
         return customResponse.getResponse()
 
-    @app.route("/Ajax/Users/get_personal_info", methods=['GET'])
+    @ app.route("/Ajax/Users/get_personal_info", methods=['GET'])
     def getPersonalInfo():
         with CustomResponse() as customResponse:
             with Logger(funcName="Users.getPersonalInfo()") as logger:
@@ -212,7 +250,7 @@ def Users(app: flask.Flask) -> None:
                 logger.funcReturns = returns
         return customResponse.getResponse()
 
-    @app.route("/Ajax/Users/change_personal_info", methods=['POST'])
+    @ app.route("/Ajax/Users/change_personal_info", methods=['POST'])
     def changePersonalInfo():
         with CustomResponse() as customResponse:
             with Logger(funcName="Users.changePersonalInfo()") as logger:
@@ -236,7 +274,7 @@ def Users(app: flask.Flask) -> None:
                 logger.funcReturns = returns
         return customResponse.getResponse()
 
-    @app.route("/Ajax/Users/get_empty_time_info", methods=['GET'])
+    @ app.route("/Ajax/Users/get_empty_time_info", methods=['GET'])
     def getEmptyTimeInfo():
         with CustomResponse() as customResponse:
             with Logger(funcName="Users.getEmptyTimeInfo()") as logger:
@@ -253,7 +291,7 @@ def Users(app: flask.Flask) -> None:
                 logger.funcReturns = returns
         return customResponse.getResponse()
 
-    @app.route("/Ajax/Users/get_work_basic_info", methods=['GET'])
+    @ app.route("/Ajax/Users/get_work_basic_info", methods=['GET'])
     def getWorkBasicInfo():
         with CustomResponse() as customResponse:
             with Logger(funcName="Users.getWorkBasicInfo()") as logger:
@@ -271,7 +309,7 @@ def Users(app: flask.Flask) -> None:
                 logger.funcReturns = returns
         return customResponse.getResponse()
 
-    @app.route("/Ajax/Users/get_score_details", methods=['GET'])
+    @ app.route("/Ajax/Users/get_score_details", methods=['GET'])
     def getScoreDetails():
         with CustomResponse() as customResponse:
             with Logger(funcName="Users.getScoreDetails()") as logger:

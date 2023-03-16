@@ -3,6 +3,7 @@ import numpy
 import hashlib
 import datetime
 from typing import Any
+import flask
 from flask import Request
 from Frame.python3.BaseComponents.ClientInfo import ClientInfo
 from Frame.python3.BaseComponents.CustomSession import CustomSession
@@ -10,7 +11,7 @@ from Frame.python3.BaseComponents.DatabaseConnector import DatabaseConnector
 from Frame.python3.BaseComponents.CustomError import PermissionDenyError, IllegalValueError, DatabaseRuntimeError
 
 
-def LoginDeviceRecorder(flaskRequest: Request, loginResult: bool, databaseConnector: DatabaseConnector | None = None) -> None:
+def LoginDeviceRecorder(infoForm: dict, loginResult: bool, databaseConnector: DatabaseConnector | None = None) -> None:
     """Detect login device, login time, and login successfully or not. And record info in database.
 
     Args:
@@ -31,16 +32,17 @@ def LoginDeviceRecorder(flaskRequest: Request, loginResult: bool, databaseConnec
     # ========================================
     # 获取客户端信息，并补充提供登录记录的额外信息
     clientInfo = ClientInfo.getInfo()
-    clientInfo["studentID"] = flaskRequest.form["StudentID"]
+    clientInfo["studentID"] = infoForm["StudentID"]
     clientInfo["time"] = datetime.datetime.now().isoformat()
     clientInfo["login_result"] = loginResult
     clientInfo["address"] = str(clientInfo["address"])
-    clientInfo["work"] = flaskRequest.form["Work"]
+    clientInfo["department_id"] = infoForm["department_id"]
+    clientInfo["job"] = infoForm["job"]
     # ===================================
     # 插入数据库，使用IGNORE参数忽略主键重复
     _ = database.execute(
-        "INSERT IGNORE INTO LogInfo (student_id,agent,ip,address,language,time, work,login_result) \
-        VALUES (%(studentID)s,%(agent)s,%(IP)s,%(address)s,%(language)s,%(time)s,%(work)s,%(login_result)s);",
+        "INSERT IGNORE INTO LogInfo (student_id,agent,ip,address,language,time, department_id, job, login_result) \
+        VALUES (%(studentID)s,%(agent)s,%(IP)s,%(address)s,%(language)s,%(time)s,%(department_id)s,%(job)s,%(login_result)s);",
         clientInfo)
 
 
@@ -56,20 +58,97 @@ class DatabaseBasicOperations_Users:
             database = databaseConnector
         # ==========================
         # 根据提供的密码和学号进行查询
+        infoForm = dict(flaskRequest.form)
+        infoForm["department_id"] = 0
+        infoForm["job"] = 0
         DBAffectRows = database.execute(
             "SELECT student_id FROM `Password` WHERE student_id = %s and passhash = %s;",
-            (flaskRequest.form["StudentID"], hashlib.sha512(flaskRequest.form["Password"].encode()).digest()))
+            (infoForm["StudentID"], hashlib.sha512(infoForm["Password"].encode()).digest()))
         database.fetchall()
         # =================================
         # 必须为单一记录才判定为用户名密码正确
         # 即使登录失败，也记录用户登录失败信息
         if DBAffectRows != 1:
-            LoginDeviceRecorder(flaskRequest, False, database)
+            LoginDeviceRecorder(infoForm, False, database)
             raise PermissionDenyError(
                 "Username or password error.", filename=__file__, line=sys._getframe().f_lineno)
         # ===============
         # 记录用户登录信息
-        LoginDeviceRecorder(flaskRequest, True, database)
+        LoginDeviceRecorder(infoForm, True, database)
+        # ====================
+        # 获取姓名以设置Session
+        studentName = DatabaseBasicOperations_Users.getName(
+            infoForm["StudentID"], database)
+        flask.g.isLogin = True
+        CustomSession.setSession(
+            studentID=infoForm["StudentID"], name=studentName, logTime=datetime.datetime.now().isoformat())
+
+    @staticmethod
+    def getLoginWorks(databaseConnector: DatabaseConnector | None = None) -> list[dict] | tuple[dict]:
+        # =====================================
+        # 如果提供已经建立的数据库连接，则直接使用
+        if databaseConnector is None:
+            database = DatabaseConnector()
+            database.startCursor()
+        else:
+            database = databaseConnector
+        # ========================
+        # 查询工作表单获取可登录岗位
+        _ = database.execute(
+            "SELECT Work.department_id as department_id,name,job FROM `Work`,`Department` \
+            WHERE Department.department_id = Work.department_id AND \
+                student_id = %(userID)s AND \
+                Work.department_id != 0 \
+            ORDER BY Work.department_id ASC, job DESC;", CustomSession.getSession())
+        # =================
+        # 整理查询数据并返回
+        results = database.fetchall()
+        if len(results) == 0:
+            results = ({'department_id': 0, "job": 0, "name": "预备队员"},)
+        return results
+
+    @staticmethod
+    def loginAsSpecifiedWork(flaskRequest: Request, databaseConnector: DatabaseConnector | None = None) -> str:
+        # =====================================
+        # 如果提供已经建立的数据库连接，则直接使用
+        if databaseConnector is None:
+            database = DatabaseConnector()
+            database.startCursor()
+        else:
+            database = databaseConnector
+        # ===============================================
+        # 查询工作表单验证可登录岗位
+        # 如果登录部门是0岗位也是0，说明是预备队员，直接放过
+        infoForm = dict(flaskRequest.form)
+        infoForm["department_id"] = int(infoForm["department_id"])
+        infoForm["job"] = int(infoForm["job"])
+        infoForm["StudentID"] = CustomSession.getSession()['userID']
+        infoForm["StudentName"] = CustomSession.getSession()['userName']
+        DBAffectedRows = database.execute(
+            "SELECT * FROM `Work` \
+            WHERE department_id = %(department_id)s AND job = %(job)s AND student_id = %(StudentID)s;",
+            infoForm)
+        database.fetchall()
+        if (infoForm["department_id"] != 0 or infoForm["job"] != 0) and DBAffectedRows != 1:
+            raise IllegalValueError(
+                "The work you want to login is not permitted.", filename=__file__, line=sys._getframe().f_lineno)
+        # ===================
+        # 添加新的LogInfo记录
+        LoginDeviceRecorder(infoForm, True, database)
+        # ==============================
+        # 查询部门名称，并更新Session信息
+        DBAffectedRows = database.execute(
+            "SELECT name FROM `Department` WHERE department_id = %(department_id)s;", infoForm)
+        if DBAffectedRows <= 0:
+            database.fetchall()
+            name = '预备队员'
+        else:
+            name = database.fetchall()[0]['name']
+        CustomSession.setSession(
+            studentID=infoForm["StudentID"], name=infoForm["StudentName"], logTime=datetime.datetime.now().isoformat(), department_id=infoForm["department_id"], job=infoForm["job"], department_name=name)
+        flask.g.isLogin = True
+
+        return "/Users/UserCenter/index.html"
 
     @staticmethod
     def getName(studentId: str, databaseConnector: DatabaseConnector | None = None) -> str:
@@ -212,23 +291,10 @@ class DatabaseBasicOperations_Users:
         database.commit()
 
     @staticmethod
-    def topbarInfo(databaseConnector: DatabaseConnector | None = None) -> str:
-        # =====================================
-        # 如果提供已经建立的数据库连接，则直接使用
-        if databaseConnector is None:
-            database = DatabaseConnector()
-            database.startCursor()
-        else:
-            database = databaseConnector
-        # ===================================
-        # 查询成员是否有工作岗位
-        # 有岗位则为正式成员，无岗位则为预备队员
-        DBAffectRows = database.execute(
-            sql="SELECT job FROM `Work` WHERE student_id=%(userID)s;",
-            data=(CustomSession.getSession(),)
-        )
-        database.fetchall()
-        return "正式队员" if DBAffectRows > 0 else "预备队员"
+    def topbarInfo() -> str:
+        # ============================
+        # 查询Session保存的登录岗位信息
+        return {"name": CustomSession.getSession()["userName"], "department_id": CustomSession.getSession()["department_id"], "department_name": CustomSession.getSession()["department_name"], "job": CustomSession.getSession()["job"]}
 
     @staticmethod
     def getContact(databaseConnector: DatabaseConnector | None = None) -> list[dict] | tuple[dict]:

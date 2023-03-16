@@ -57,6 +57,7 @@
                 <!-- Navbar -->
                 <nav class="layout-navbar container-fluid navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme rounded-pill"
                     id="layout-navbar"></nav>
+                <div id="select-login-work-container"></div>
                 <!-- / Navbar -->
 
                 <!-- Content wrapper -->
@@ -179,6 +180,11 @@
     <script src="/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
     <script>
         $.ajax({
+            async: false, url: "/Frame/html5/get_login_work.html", success: function (result) {
+                $("#select-login-work-container").html(result);
+            }
+        });
+        $.ajax({
             async: false, url: "/Frame/html5/user_center_topbar_frame.html", success: function (result) {
                 $("#layout-navbar").html(result);
             }
@@ -188,6 +194,7 @@
                 $("#layout-menu").html(result);
             }
         });
+        $.getScript("/Frame/html5/get_login_work.js");
         $.getScript("/Frame/html5/topbar.js");
         let item = $(`a.menu-link[href='${window.location.pathname}']`).parent()
         item.addClass("active")

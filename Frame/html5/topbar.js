@@ -61,9 +61,24 @@ function getTopbarInfo() {
 
 function update_topbar(data) {
     let name = data['name'];
+    let department_id = data['department_id'];
+    let department_name = data['department_name'];
+    let job = "";
+    let formal_member = "";
+    if (department_id === 0) {
+        formal_member = department_name;
+    }
+    else if (department_id === 1) {
+        job = data['job'] === 1 ? "队长" : "副队长";
+        formal_member = department_name + " - " + job;
+    }
+    else {
+        job = data['job'] === 1 ? "组长" : "组员";
+        formal_member = department_name + " - " + job;
+    }
     $("#topbar-name").text(name);
-    $("#formal-member").text(data['memberType']);
-    update_badges(data['memberType']);
+    $("#formal-member").text(formal_member);
+    update_badges(data);
 }
 
 
