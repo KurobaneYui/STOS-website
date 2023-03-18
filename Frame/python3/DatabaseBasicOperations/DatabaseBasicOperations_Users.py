@@ -138,7 +138,7 @@ class DatabaseBasicOperations_Users:
         # ==============================
         # 查询部门名称，并更新Session信息
         DBAffectedRows = database.execute(
-            "SELECT name FROM `Department` WHERE department_id = %(department_id)s;", infoForm)
+            "SELECT name FROM `Department` WHERE department_id = %(department_id)s AND department_id != 0;", infoForm)
         if DBAffectedRows <= 0:
             database.fetchall()
             name = '预备队员'

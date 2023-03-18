@@ -74,8 +74,8 @@ class Authorization:
 
                     if DBAffectedRow > 0:
                         break
-                    else:
-                        raise PermissionDenyError(
-                            "Authority check error. Have no rights to execute function.", filename=__file__, line=sys._getframe().f_lineno)
+                else:
+                    raise PermissionDenyError(
+                        "Authority check error. Have no rights to execute function.", filename=__file__, line=sys._getframe().f_lineno)
 
             logger.funcReturns = "Authority check pass."
