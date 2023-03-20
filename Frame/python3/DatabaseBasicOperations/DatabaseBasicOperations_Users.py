@@ -452,7 +452,17 @@ class DatabaseBasicOperations_Users:
                 LEFT JOIN Department ON Work.department_id=Department.department_id \
                 WHERE student_id=%(userID)s;",
             data=CustomSession.getSession())
-        return database.fetchall()
+        # ==========================
+        # 根据当前登录岗位补充岗位信息
+        works = database.fetchall()
+        loginDepartmentID = CustomSession().getSession()['department_id']
+        loginJob = CustomSession().getSession()['job']
+        for work in works:
+            if work['department_id'] == loginDepartmentID and work['job'] == loginJob:
+                work["loginWork"] = True
+            else:
+                work["loginWork"] = False
+        return works
 
     @staticmethod
     def getScoreDetails(databaseConnector: DatabaseConnector | None = None) -> dict:

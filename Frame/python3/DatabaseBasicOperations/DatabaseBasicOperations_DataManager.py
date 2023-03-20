@@ -148,7 +148,7 @@ class DatabaseBasicOperations_DataManager:
         # =======================
         # 获取提交的早自习教室详情
         _ = database.execute("SELECT Classroom.campus AS campus,building,area,room,sit_available, \
-                                     School.name AS school_name,selfstudy_id,student_supposed,remark \
+                                School.name AS school_name,selfstudy_id,student_supposed,remark \
                              FROM SelfstudyInfo \
                              LEFT JOIN Classroom ON SelfstudyInfo.classroom_id=Classroom.classroom_id \
                              LEFT JOIN School ON SelfstudyInfo.school_id=School.school_id AND School.campus=Classroom.campus \

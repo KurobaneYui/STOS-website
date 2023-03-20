@@ -137,6 +137,9 @@ function add_work_basic_info_card(data) {
     let card =
         `<div class="col-12 col-sm-6 col-md-4 col-lg-4 col-xxl-3">
             <div class="card">
+                <span class="position-absolute top-0 start-100 translate-middle p-2 ${data["loginWork"]===true?"bg-success":"bg-secondary"} border border-light rounded-circle">
+                    <span class="visually-hidden">New alerts</span>
+                </span>
                 <img class="card-img-top random-card-personInfoImg" src="/assets/img/users/personInfoImg" alt="UESTC campus" />
                 <div class="card-body">
                     <h3 class="card-title text-center mb-3">${data["name"]}</h3>
