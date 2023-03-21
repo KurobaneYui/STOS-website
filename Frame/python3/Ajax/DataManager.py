@@ -46,7 +46,8 @@ def DataManager(app: flask.Flask) -> None:
                 # logger.funcArgs = request.form
                 # =========================================
                 # 执行接口流程，并获取用户名信息以完成会话建立
-                results = DatabaseBasicOperations_DataManager.getSchoolForForm(request)
+                results = DatabaseBasicOperations_DataManager.getSchoolForForm(
+                    request)
                 # ========================
                 # 准备函数返回值和响应与日志
                 returns = {"message": "",
@@ -202,6 +203,106 @@ def DataManager(app: flask.Flask) -> None:
                 # 执行接口流程，并获取用户名信息以完成会话建立
                 results = DatabaseBasicOperations_DataManager.getSelfstudyClassroomDetails(
                     request)
+                # ========================
+                # 准备函数返回值和响应与日志
+                returns = {"message": "",
+                           "data": results}
+                customResponse.setMessageAndData(**returns)
+                logger.funcReturns = returns
+        return customResponse.getResponse()
+
+    @app.route("/Ajax/DataManager/upload_selfstudy_classroom", methods=['POST'])
+    def uploadSelfstudyClassroom():
+        with CustomResponse() as customResponse:
+            with Logger(funcName="DataManager.uploadSelfstudyClassroom()") as logger:
+                # ===============
+                # 检查接口调用权限
+                Authorization.check(rightsNeeded=({"department_id": 0, "actor": 1}, {
+                                    "department_id": 3, "actor": 1}), needLogin=True)
+                # ========================
+                # 检查接口输入参数并记录日志
+                infoForm = request.get_json()
+                Ajax_DataManager.uploadSelfstudyClassroomParamsCheck(infoForm)
+                logger.funcArgs = request.get_json()
+                # =========================================
+                # 执行接口流程，并获取用户名信息以完成会话建立
+                DatabaseBasicOperations_DataManager.uploadSelfstudyClassroom(
+                    infoForm)
+                # ========================
+                # 准备函数返回值和响应与日志
+                returns = {"message": "",
+                           "data": ""}
+                customResponse.setMessageAndData(**returns)
+                logger.funcReturns = returns
+        return customResponse.getResponse()
+
+    @app.route("/Ajax/DataManager/submit_selfstudy_schedule", methods=['POST'])
+    def submitSelfstudySchedule():
+        with CustomResponse() as customResponse:
+            with Logger(funcName="DataManager.submitSelfstudySchedule()") as logger:
+                # ===============
+                # 检查接口调用权限
+                Authorization.check(rightsNeeded=({"department_id": 0, "actor": 1}, {
+                                    "department_id": 3, "actor": 1}), needLogin=True)
+                # ========================
+                # 检查接口输入参数并记录日志
+                infoForm = request.get_json()
+                Ajax_DataManager.submitSelfstudyScheduleParamsCheck(infoForm)
+                logger.funcArgs = request.get_json()
+                # =========================================
+                # 执行接口流程，并获取用户名信息以完成会话建立
+                DatabaseBasicOperations_DataManager.submitSelfstudySchedule(
+                    infoForm)
+                # ========================
+                # 准备函数返回值和响应与日志
+                returns = {"message": "",
+                           "data": ""}
+                customResponse.setMessageAndData(**returns)
+                logger.funcReturns = returns
+        return customResponse.getResponse()
+
+    @app.route("/Ajax/DataManager/remove_selfstudy_schedule", methods=['POST'])
+    def removeSelfstudySchedule():
+        with CustomResponse() as customResponse:
+            with Logger(funcName="DataManager.removeSelfstudySchedule()") as logger:
+                # ===============
+                # 检查接口调用权限
+                Authorization.check(rightsNeeded=({"department_id": 0, "actor": 1}, {
+                                    "department_id": 3, "actor": 1}), needLogin=True)
+                # ========================
+                # 检查接口输入参数并记录日志
+                infoForm = dict(request.form)
+                Ajax_DataManager.removeSelfstudyScheduleParamsCheck(infoForm)
+                logger.funcArgs = request.form
+                # =========================================
+                # 执行接口流程，并获取用户名信息以完成会话建立
+                DatabaseBasicOperations_DataManager.removeSelfstudySchedule(
+                    infoForm)
+                # ========================
+                # 准备函数返回值和响应与日志
+                returns = {"message": "",
+                           "data": ""}
+                customResponse.setMessageAndData(**returns)
+                logger.funcReturns = returns
+        return customResponse.getResponse()
+
+    @app.route("/Ajax/DataManager/get_schedule_on_date", methods=['POST'])
+    def getScheduleOnDate():
+        with CustomResponse() as customResponse:
+            with Logger(funcName="DataManager.getScheduleOnDate()") as logger:
+                # ===============
+                # 检查接口调用权限
+                Authorization.check(rightsNeeded=({"department_id": 0, "actor": 1}, {
+                                    "department_id": 3, "actor": 1}), needLogin=True)
+                # ========================
+                # 检查接口输入参数并记录日志
+                infoForm = dict(request.form)
+                Ajax_DataManager.getScheduleOnDateParamsCheck(infoForm)
+                logger.funcArgs = request.form
+                # =========================================
+                # 执行接口流程，并获取用户名信息以完成会话建立
+                results = DatabaseBasicOperations_DataManager.getScheduleOnDate(
+                    infoForm)
                 # ========================
                 # 准备函数返回值和响应与日志
                 returns = {"message": "",

@@ -46,6 +46,7 @@ function get_selfstudy_classroom_details(date) {
                     //状态码301，提醒转移函数
                     if (returnCode === 301) { window.console.log('获取早自习教室函数移至新位置'); }
                     //状态码200，处理data
+                    $("#form-date").val(date);
                     fill_selfstudy_classroom_table(data['data']);
                 }
             }
@@ -256,8 +257,91 @@ function import_data(button) {
 }
 
 function submit() {
-    swal({
-        title: "功能维护中，暂不允许提交早自习教室信息",
-        icon: "warning",
+    let table_content = $("#selfstudy-classroom-editor-table-body").children();
+    let classrooms = Array();
+    for (row of table_content) {
+        let current_cell = $(row).children().first().next();
+        campus = current_cell.children().first().val();
+        current_cell = current_cell.next();
+        classroom_name = current_cell.children().first().val();
+        current_cell = current_cell.next().next();
+        school_name = current_cell.children().first().val();
+        current_cell = current_cell.next();
+        student_supposed = parseInt(current_cell.children().first().val());
+        current_cell = current_cell.next();
+        remark = current_cell.children().first().val();
+
+        classrooms.push({
+            campus: campus,
+            classroom_name: classroom_name,
+            school_name: school_name,
+            student_supposed: student_supposed,
+            remark: remark
+        })
+    }
+    let selfstudy_classrooms_data = JSON.stringify({
+        "date": $("#form-date").val(),
+        "data": classrooms
     });
+    $.ajax({
+        url: "/Ajax/DataManager/upload_selfstudy_classroom",
+        method: "POST",
+        data: selfstudy_classrooms_data,
+        // data: JSON.stringify(selfstudy_classrooms_data),
+        contentType: 'application/json',
+        success: function(data, status) {
+            if (status === "success") {
+                let returnCode = data['code'];
+                if (returnCode === 400) {
+                    swal({
+                        title: "提供的数据错误，请联系管理员",
+                        icon: "error",
+                    });
+                }
+                else if (returnCode === 401) {
+                    swal({
+                        title: "权限错误",
+                        text: "仅数据组可编辑。",
+                        icon: "error",
+                    });
+                }
+                else if (returnCode === 404) {
+                    swal({
+                        title: "功能不存在，请联系管理员",
+                        icon: "warning",
+                    });
+                }
+                else if (returnCode === 417) {
+                    swal({
+                        title: "功能错误，请联系管理员",
+                        icon: "warning",
+                    });
+                }
+                else if (returnCode === 498) {
+                    swal({
+                        title: "数据库异常，请联系管理员",
+                        icon: "warning",
+                    });
+                }
+                else if (returnCode === 499) {
+                    swal({
+                        title: "功能维护中，暂不允许提交早自习教室信息",
+                        icon: "warning",
+                    });
+                }
+                else if (returnCode === 200 || returnCode === 301) {
+                    //状态码301，提醒转移函数
+                    if (returnCode === 301) { window.console.log('提交早自习教室函数移至新位置'); }
+                    //状态码200，处理data
+                    swal({
+                        title: "提交成功",
+                        icon: "success",
+                    });
+                    get_selfstudy_classroom_details($("#form-date").val());
+                }
+            }
+            else
+                alert("请检查网络状况。");
+        }
+    })
 }

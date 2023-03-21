@@ -59,7 +59,7 @@ class DatabaseConnector:
             self.Cursor = None
             self.Status = DatabaseConnectionStatus.ConnectionEstablished
         except Exception as e:
-            # if any error occured
+            # if any error occurred
             self.Session = None
             self.Cursor = None
             self.Status = DatabaseConnectionStatus.NoConnection
@@ -152,7 +152,7 @@ class DatabaseConnector:
             raise DatabaseRuntimeError(
                 f"Cannot execute query: {e}", filename=__file__, line=sys._getframe().f_lineno)
 
-        if sql.startswith(('SELECT ', 'select ', 'Drop ', 'drop ', 'CREATE ', 'create ')):
+        if sql.startswith(('SELECT ', 'select ', 'Select ')):
             self.Status = DatabaseConnectionStatus.QueryCached
         else:
             self.Status = DatabaseConnectionStatus.CursorEstablished
