@@ -120,3 +120,37 @@ class Ajax_DataManager:
         except:
             raise IllegalValueError(
                 "Date is wrong or in wrong format. Should be YYYY-MM-DD.", filename=__file__, line=sys._getframe().f_lineno)
+
+    @staticmethod
+    def resetScheduleOnDateParamsCheck(infoForm: dict) -> None:
+        if "date" not in infoForm.keys()or "campus" not in infoForm.keys():
+            raise IllegalValueError(
+                "Date and campus is required.", filename=__file__, line=sys._getframe().f_lineno)
+            
+        if infoForm['campus'] not in ['qingshuihe','shahe']:
+            raise IllegalValueError(
+                "Campus is not right, should be one of 'qingshuihe' and 'shahe'.", filename=__file__, line=sys._getframe().f_lineno)
+
+        try:
+            infoForm["date"] = datetime.datetime.strptime(
+                infoForm["date"], "%Y-%m-%d").strftime("%Y-%m-%d")
+        except:
+            raise IllegalValueError(
+                "Date is wrong or in wrong format. Should be YYYY-MM-DD.", filename=__file__, line=sys._getframe().f_lineno)
+
+    @staticmethod
+    def randomScheduleOnDateParamsCheck(infoForm: dict) -> None:
+        if "date" not in infoForm.keys()or "campus" not in infoForm.keys():
+            raise IllegalValueError(
+                "Date and campus is required.", filename=__file__, line=sys._getframe().f_lineno)
+            
+        if infoForm['campus'] not in ['qingshuihe','shahe']:
+            raise IllegalValueError(
+                "Campus is not right, should be one of 'qingshuihe' and 'shahe'.", filename=__file__, line=sys._getframe().f_lineno)
+
+        try:
+            infoForm["date"] = datetime.datetime.strptime(
+                infoForm["date"], "%Y-%m-%d").strftime("%Y-%m-%d")
+        except:
+            raise IllegalValueError(
+                "Date is wrong or in wrong format. Should be YYYY-MM-DD.", filename=__file__, line=sys._getframe().f_lineno)

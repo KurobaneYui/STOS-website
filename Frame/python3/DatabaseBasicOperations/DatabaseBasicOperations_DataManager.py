@@ -362,10 +362,138 @@ class DatabaseBasicOperations_DataManager:
                 LEFT JOIN MemberExtend ON Work.student_id = MemberExtend.student_id \
                 LEFT JOIN School ON School.school_id = MemberExtend.school_id \
                 WHERE Work.job = 0 AND Department.name LIKE %s \
-                    AND Work.student_id NOT IN (SELECT DISTINCT schedule_student_id FROM SelfstudyCheckScheduleView WHERE date = %s AND schedule_student_id IS NOT NULL) \
+                    AND Work.student_id NOT IN ( \
+                        SELECT DISTINCT schedule_student_id \
+                        FROM SelfstudyCheckScheduleView \
+                        WHERE date = %s AND schedule_student_id IS NOT NULL) \
                 ORDER BY School.campus ASC, Department.name ASC, Work.student_id ASC;",
             data=('现场组%', infoForm['date']))
         results["unscheduled"] = database.fetchall()
         # ============
         # 返回结果字典
         return results
+
+    @staticmethod
+    def resetScheduleOnDate(infoForm: dict, databaseConnector: DatabaseConnector | None = None) -> dict:
+        # =====================================
+        # 如果提供已经建立的数据库连接，则直接使用
+        if databaseConnector is None:
+            database = DatabaseConnector()
+            database.startCursor()
+        else:
+            database = databaseConnector
+        # ==============
+        # 准备返回值字典
+        results = {"date": infoForm['date']}
+        # ============================================
+        # 获取指定日期前最近一日的排班信息和对应的队员信息
+        _ = database.execute(
+            sql="SELECT classroom_name,campus,school_name,schedule_student_id \
+                FROM SelfstudyCheckScheduleView \
+                WHERE schedule_student_department_name like %s \
+                    AND campus = %s \
+                    AND date IN ( \
+                        SELECT DISTINCT date \
+                        FROM SelfstudyCheckSchedule \
+                        LEFT JOIN SelfstudyInfo ON SelfstudyCheckSchedule.selfstudy_id = SelfstudyInfo.selfstudy_id \
+                        WHERE date < %s \
+                        ORDER BY date DESC \
+                        LIMIT 1);",
+            data=("现场组%", infoForm['campus'], infoForm['date']))
+        # ======================
+        # 将最近的排班列表存入字典
+        recentScheduleDict = dict()
+        for one_schedule in database.fetchall():
+            recentScheduleDict[one_schedule['campus']+one_schedule['school_name'] + one_schedule['classroom_name']] = {
+                "schedule_student_id": one_schedule['schedule_student_id'],
+                "schedule_student_name": one_schedule['schedule_student_name'],
+                "schedule_student_department_name": one_schedule['schedule_student_department_name']
+            }
+        # ==============
+        # 搜索当日待查表
+        _ = database.execute(
+            sql="SELECT selfstudy_id,classroom_name,campus,school_name,selfstudy_info+remark,schedule_student_id,schedule_student_name,schedule_student_department_name \
+                FROM SelfstudyCheckScheduleView \
+                WHERE campus = %s AND date = %s;",
+            data=(infoForm['campus'], infoForm['date']))
+        currentSchedule = database.fetchall()
+        # =================================================================
+        # 对当日待查表遍历，如果最近排班字典中有则加入，没有则清除（均指成员信息）
+        scheduledStudentID = set()
+        for one_schedule in currentSchedule:
+            key = one_schedule['campus']+one_schedule['school_name'] + \
+                one_schedule['classroom_name']
+            if key in recentScheduleDict.keys():
+                scheduledStudentID.add(
+                    recentScheduleDict[key]["schedule_student_id"])
+                one_schedule['schedule_student_id'] = recentScheduleDict[key]['schedule_student_id']
+                one_schedule['schedule_student_name'] = recentScheduleDict[key]['schedule_student_name']
+                one_schedule['schedule_student_department_name'] = recentScheduleDict[key]['schedule_student_department_name']
+            else:
+                one_schedule['schedule_student_id'] = ''
+                one_schedule['schedule_student_name'] = ''
+                one_schedule['schedule_student_department_name'] = ''
+        # =====================
+        # 获取所有现场组队员信息
+        _ = database.execute(
+            sql="SELECT School.campus AS campus, Work.student_id AS student_id, MemberBasic.name AS student_name, Department.name AS student_department_name \
+                FROM Work \
+                LEFT JOIN Department ON Work.department_id = Department.department_id \
+                LEFT JOIN MemberBasic ON Work.student_id = MemberBasic.student_id \
+                LEFT JOIN MemberExtend ON Work.student_id = MemberExtend.student_id \
+                LEFT JOIN School ON School.school_id = MemberExtend.school_id \
+                WHERE Work.job = 0 AND Department.name LIKE %s AND campus = %s \
+                ORDER BY School.campus ASC, Department.name ASC, Work.student_id ASC;",
+            data=('现场组%', infoForm['campus']))
+        # =====================
+        # 获取没有排班的成员信息
+        unscheduledStudent = list()
+        for student_info in database.fetchall():
+            if student_info['student_id'] in scheduledStudentID:
+                continue
+            unscheduledStudent.append({
+                "student_id": student_info['student_id'],
+                "student_name": student_info['student_name'],
+                "student_department_name": student_info['student_department_name']
+            })
+        # ============
+        # 整理结果字典
+        results['scheduled'] = currentSchedule
+        results['unscheduled'] = unscheduledStudent
+        # ============
+        # 返回结果字典
+        return results
+
+    @staticmethod
+    def randomScheduleOnDate(infoForm: dict, databaseConnector: DatabaseConnector | None = None) -> dict:
+        # =====================================
+        # 如果提供已经建立的数据库连接，则直接使用
+        if databaseConnector is None:
+            database = DatabaseConnector()
+            database.startCursor()
+        else:
+            database = databaseConnector
+        # ================================
+        # 获取最近一次排班的第一位成员的组号
+        _ = database.execute(
+            sql="SELECT schedule_student_department_name \
+                FROM SelfstudyCheckScheduleView \
+                WHERE schedule_student_department_name like %s \
+                    AND campus = %s \
+                    AND date IN ( \
+                        SELECT DISTINCT date \
+                        FROM SelfstudyCheckSchedule \
+                        LEFT JOIN SelfstudyInfo ON SelfstudyCheckSchedule.selfstudy_id = SelfstudyInfo.selfstudy_id \
+                        WHERE date < %s \
+                        ORDER BY date DESC \
+                        LIMIT 1) \
+                LIMIT 1;",
+            data=("现场组%", infoForm['campus'], infoForm['date']))
+        recentGroupName = database.fetchall()
+        pattern = r'^现场组(\d)组$'
+        match = re.match(pattern, recentGroupName)
+        # ==============================
+        # 获取所有现场组组员，并计算总人数
+        ..................
+        tmp = ("现场组%s组" % (i) for i in range(1, n+1))
+        tmp = tmp[j:]+tmp[:j]
