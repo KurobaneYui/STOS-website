@@ -1,5 +1,6 @@
 import re
 import sys
+import random
 from flask import Request
 from Frame.python3.BaseComponents.DatabaseConnector import DatabaseConnector
 from Frame.python3.BaseComponents.CustomError import IllegalValueError
@@ -329,7 +330,10 @@ class DatabaseBasicOperations_DataManager:
         # 删除指定日期的早自习排班
         _ = database.execute(
             sql="DELETE FROM SelfstudyCheckSchedule \
-                WHERE selfstudy_id IN (SELECT selfstudy_id FROM SelfstudyInfo WHERE date=%(date)s);",
+                WHERE selfstudy_id IN ( \
+                    SELECT selfstudy_id \
+                    FROM SelfstudyInfo \
+                    WHERE date=%(date)s);",
             data=infoForm)
 
     @staticmethod
@@ -436,15 +440,14 @@ class DatabaseBasicOperations_DataManager:
         # =====================
         # 获取所有现场组队员信息
         _ = database.execute(
-            sql="SELECT School.campus AS campus, Work.student_id AS student_id, MemberBasic.name AS student_name, Department.name AS student_department_name \
+            sql="SELECT Work.student_id AS student_id, MemberBasic.name AS student_name, Department.name AS student_department_name \
                 FROM Work \
                 LEFT JOIN Department ON Work.department_id = Department.department_id \
                 LEFT JOIN MemberBasic ON Work.student_id = MemberBasic.student_id \
                 LEFT JOIN MemberExtend ON Work.student_id = MemberExtend.student_id \
-                LEFT JOIN School ON School.school_id = MemberExtend.school_id \
-                WHERE Work.job = 0 AND Department.name LIKE %s AND campus = %s \
-                ORDER BY School.campus ASC, Department.name ASC, Work.student_id ASC;",
-            data=('现场组%', infoForm['campus']))
+                WHERE Work.job = 0 AND Department.name LIKE %s \
+                ORDER BY Department.name ASC, Work.student_id ASC;",
+            data=("现场组%组" if infoForm['campus'] == "qingshuihe" else "现场组沙河",))
         # =====================
         # 获取没有排班的成员信息
         unscheduledStudent = list()
@@ -492,8 +495,84 @@ class DatabaseBasicOperations_DataManager:
         recentGroupName = database.fetchall()
         pattern = r'^现场组(\d)组$'
         match = re.match(pattern, recentGroupName)
-        # ==============================
-        # 获取所有现场组组员，并计算总人数
-        ..................
-        tmp = ("现场组%s组" % (i) for i in range(1, n+1))
-        tmp = tmp[j:]+tmp[:j]
+        if match is None:
+            recentFirstGroupNumber = 1
+        else:
+            recentFirstGroupNumber = int(match.group(1))
+        # ===================
+        # 获取校区下现场组数量
+        _ = database.execute(
+            sql="SELECT DISTINCT name FROM Department WHERE Department.name LIKE %s;",
+            data=("现场组%组" if infoForm['campus'] == "qingshuihe" else "现场组沙河",))
+        groupCounter = len(database.fetchall())
+        # =================
+        # 生成本次现场组组序
+        tmp = ("现场组%s组" % (i) for i in range(1, groupCounter+1))
+        tmp = tmp[recentFirstGroupNumber:]+tmp[:recentFirstGroupNumber]
+        # ======================
+        # 按组序获取各组组员并打乱
+        if infoForm['campus'] == 'qingshuihe':
+            allMembers = list()
+            for one_group_name in tmp:
+                _ = database.execute(
+                    sql="SELECT MemberBasic.student_id AS schedule_student_id, MemberBasic.name AS schedule_student_name, Department.name AS schedule_student_department_name \
+                        FROM Work \
+                        LEFT JOIN MemberBasic ON MemberBasic.student_id = Work.student_id \
+                        LEFT JOIN Department ON Work.department_id = Department.department_id \
+                        WHERE Work.job = 0 AND Department.name = %s \
+                        ORDER BY Department.name ASC, Work.student_id ASC;",
+                    data=(one_group_name,))
+                members = list(database.fetchall())
+                random.shuffle(members)
+                allMembers.extend(members)
+        elif infoForm['campus'] == 'shahe':
+            _ = database.execute(
+                sql="SELECT MemberBasic.student_id AS schedule_student_id, MemberBasic.name AS schedule_student_name, Department.name AS schedule_student_department_name \
+                    FROM Work \
+                    LEFT JOIN MemberBasic ON MemberBasic.student_id = Work.student_id \
+                    LEFT JOIN Department ON Work.department_id = Department.department_id \
+                    WHERE Work.job = 0 AND Department.name = '现场组沙河' \
+                    ORDER BY Department.name ASC, Work.student_id ASC;")
+            allMembers = list(database.fetchall())
+            random.shuffle(allMembers)
+        else:
+            raise IllegalValueError(
+                "Campus must be one of 'qingshuihe' and 'shahe'.", filename=__file__, line=sys._getframe().f_lineno)
+        # ============
+        # 获取所有排班
+        _ = database.execute(
+            sql="SELECT selfstudy_id, classroom_name, school_name, selfstudy_info_remark, campus \
+                FROM SelfstudyCheckScheduleView \
+                WHERE campus = %s AND date = %s;",
+            data=("清水河" if infoForm['campus'] == "qingshuihe" else "沙河", infoForm['date']))
+        allSchedules = list(database.fetchall())
+        # =========================
+        # 将所有组员依次填入排班表中
+        unscheduled_students = list()
+        maxCoOrderNumber = min(len(allSchedules), len(allMembers))
+        for orderNumber in range(maxCoOrderNumber):
+            allSchedules[orderNumber].update(allMembers[orderNumber])
+        for orderNumber in range(maxCoOrderNumber, len(allSchedules)):
+            allSchedules[orderNumber].update({
+                "schedule_student_id": '',
+                "schedule_student_name": '',
+                "schedule_student_department_name": ''
+            })
+        for orderNumber in range(maxCoOrderNumber, len(allMembers)):
+            unscheduled_students.append({
+                "student_id": allMembers[orderNumber]["schedule_student_id"],
+                "student_name": allMembers[orderNumber]["schedule_student_name"],
+                "student_department_name": allMembers[orderNumber]["schedule_student_department_name"]
+            })
+        # ============
+        # 整合所有数据
+        results = {
+            "date": infoForm['date'],
+            "data": {
+                "scheduled": allSchedules,
+                "unscheduled": unscheduled_students
+            }
+        }
+        # ========
+        # 返回数据
+        return results

@@ -200,6 +200,146 @@ function submit() {
     })
 }
 
+function reset_member(campus) {
+    if (campus === "清水河") { campus_e = "qingshuihe"; }
+    else if (campus === "沙河") { campus_e = "shahe"; }
+    else {
+        swal({
+            title: "提供的校区错误，请联系管理员",
+            icon: "error",
+        });
+        return;
+    }
+    $.post(
+        "/Ajax/DataManager/reset_schedule_on_date",
+        {
+            date: $("#form-date").val(),
+            campus: campus_e
+        },
+        function (data, status) {
+            if (status === "success") {
+                let returnCode = data['code'];
+                if (returnCode === 400) {
+                    swal({
+                        title: "提供的数据错误，请联系管理员",
+                        icon: "error",
+                    });
+                }
+                else if (returnCode === 401) {
+                    swal({
+                        title: "权限错误",
+                        text: "请先登录",
+                        icon: "error",
+                    });
+                }
+                else if (returnCode === 404) {
+                    swal({
+                        title: "功能不存在，请联系管理员",
+                        icon: "warning",
+                    });
+                }
+                else if (returnCode === 417) {
+                    swal({
+                        title: "功能错误，请联系管理员",
+                        icon: "warning",
+                    });
+                }
+                else if (returnCode === 498) {
+                    swal({
+                        title: "数据库异常，请联系管理员",
+                        icon: "warning",
+                    });
+                }
+                else if (returnCode === 499) {
+                    swal({
+                        title: "功能维护中，暂不允许重置排班",
+                        icon: "warning",
+                    });
+                }
+                else if (returnCode === 200 || returnCode === 301) {
+                    //状态码301，提醒转移函数
+                    if (returnCode === 301) { window.console.log('重置排班函数移至新位置'); }
+                    //状态码200，处理data
+                    if (campus === "清水河") fill_qingshuihe_schedule_table(data['data']);
+                    else if (campus === "沙河") fill_shahe_schedule_table(data['data']);
+                    refreshRowOrderNumber();
+                }
+            }
+            else
+                alert("请检查网络状况。");
+        })
+}
+
+function random_member(campus) {
+    if (campus === "清水河") { campus_e = "qingshuihe"; }
+    else if (campus === "沙河") { campus_e = "shahe"; }
+    else {
+        swal({
+            title: "提供的校区错误，请联系管理员",
+            icon: "error",
+        });
+        return;
+    }
+    $.post(
+        "/Ajax/DataManager/random_schedule_on_date",
+        {
+            date: $("#form-date").val(),
+            campus: campus_e
+        },
+        function (data, status) {
+            if (status === "success") {
+                let returnCode = data['code'];
+                if (returnCode === 400) {
+                    swal({
+                        title: "提供的数据错误，请联系管理员",
+                        icon: "error",
+                    });
+                }
+                else if (returnCode === 401) {
+                    swal({
+                        title: "权限错误",
+                        text: "请先登录",
+                        icon: "error",
+                    });
+                }
+                else if (returnCode === 404) {
+                    swal({
+                        title: "功能不存在，请联系管理员",
+                        icon: "warning",
+                    });
+                }
+                else if (returnCode === 417) {
+                    swal({
+                        title: "功能错误，请联系管理员",
+                        icon: "warning",
+                    });
+                }
+                else if (returnCode === 498) {
+                    swal({
+                        title: "数据库异常，请联系管理员",
+                        icon: "warning",
+                    });
+                }
+                else if (returnCode === 499) {
+                    swal({
+                        title: "功能维护中，暂不允许随机排班",
+                        icon: "warning",
+                    });
+                }
+                else if (returnCode === 200 || returnCode === 301) {
+                    //状态码301，提醒转移函数
+                    if (returnCode === 301) { window.console.log('随机排班函数移至新位置'); }
+                    //状态码200，处理data
+                    if (campus === "清水河") fill_qingshuihe_schedule_table(data['data']);
+                    else if (campus === "沙河") fill_shahe_schedule_table(data['data']);
+                    refreshRowOrderNumber();
+                }
+            }
+            else
+                alert("请检查网络状况。");
+        })
+}
+
 function fill_selfstudy_schedule_card(data) {
     $("#form-date").val(data["date"]);
     let shaheData = { scheduled: Array(), unscheduled: Array() };
