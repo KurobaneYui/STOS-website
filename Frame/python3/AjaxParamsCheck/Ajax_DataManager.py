@@ -62,7 +62,7 @@ class Ajax_DataManager:
         # "date" and "data" should be infoForm's keys
         # infoForm["date"] should be "YYYY-MM-DD"
         # infoForm["data"] is an array of dict which has unique campus+classroom_name and student_supposed must not negative
-        if "date" not in infoForm.keys() or "data" not in infoForm.keys() or "清水河" not in infoForm['data'].keys() or "沙河" not in infoForm['data'].keys():
+        if "date" not in infoForm.keys() or "data" not in infoForm.keys() or "qingshuihe" not in infoForm['data'].keys() or "shahe" not in infoForm['data'].keys():
             raise IllegalValueError(
                 "Not all required data received.", filename=__file__, line=sys._getframe().f_lineno)
         try:
@@ -74,7 +74,7 @@ class Ajax_DataManager:
         # =================
         # 检查沙河部分的数据
         selfstudy_id_set = set()
-        for item in infoForm["data"]["沙河"]:
+        for item in infoForm["data"]["shahe"]:
             if "selfstudy_id" not in item.keys() or "student_id" not in item.keys():
                 raise IllegalValueError(
                     "Not all required data received.", filename=__file__, line=sys._getframe().f_lineno)
@@ -85,7 +85,7 @@ class Ajax_DataManager:
                 selfstudy_id_set.add(item["selfstudy_id"])
         # ===================
         # 检查清水河部分的数据
-        for item in infoForm["data"]["清水河"]:
+        for item in infoForm["data"]["qingshuihe"]:
             if "selfstudy_id" not in item.keys() or "student_id" not in item.keys():
                 raise IllegalValueError(
                     "Not all required data received.", filename=__file__, line=sys._getframe().f_lineno)

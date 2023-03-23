@@ -239,11 +239,13 @@ class DatabaseBasicOperations_DataManager:
         # =====================
         # 删除指定日期的已有数据
         _ = database.execute(
-            sql="DELETE FROM SelfstudyCheckSchedule WHERE date = %s;", data=infoForm['date'], autoCommit=False)
+            sql="DELETE FROM SelfstudyCheckSchedule \
+                WHERE selfstudy_id IN (SELECT selfstudy_id FROM SelfstudyInfo WHERE date=%s);",
+            data=infoForm['date'], autoCommit=False)
         # =========================================================
         # 遍历每一条数据，检查数据，存储到列表中。先处理沙河再处理清水河
         data_upload = list()
-        for row in infoForm['data']['沙河']:
+        for row in infoForm['data']['shahe']:
             # ==============
             # 检查自习表ID存在
             DBAffectedRows = database.execute(
@@ -262,8 +264,8 @@ class DatabaseBasicOperations_DataManager:
             DBAffectedRows = database.execute(
                 sql="SELECT student_id FROM Work \
                     LEFT JOIN Department ON Work.department_id = Department.department_id \
-                    WHERE student_id = %(student_id)s AND job = 0 AND Department.name LIKE '现场组%';",
-                data=row,
+                    WHERE student_id = %s AND job = 0 AND Department.name LIKE %s;",
+                data=(row['student_id'], '现场组%'),
                 autoCommit=False)
             if DBAffectedRows != 1:
                 database.rollback()
@@ -274,7 +276,7 @@ class DatabaseBasicOperations_DataManager:
             # 存储数据
             data_upload.append(
                 (row["selfstudy_id"], row["student_id"], row["student_id"], ''))
-        for row in infoForm['data']['清水河']:
+        for row in infoForm['data']['qingshuihe']:
             # ==============
             # 检查自习表ID存在
             DBAffectedRows = database.execute(
@@ -293,8 +295,8 @@ class DatabaseBasicOperations_DataManager:
             DBAffectedRows = database.execute(
                 sql="SELECT student_id FROM Work \
                     LEFT JOIN Department ON Work.department_id = Department.department_id \
-                    WHERE student_id = %(student_id)s AND job = 0 AND Department.name LIKE '现场组%';",
-                data=row,
+                    WHERE student_id = %s AND job = 0 AND Department.name LIKE %s;",
+                data=(row["student_id"], '现场组%'),
                 autoCommit=False)
             if DBAffectedRows != 1:
                 database.rollback()
@@ -304,7 +306,7 @@ class DatabaseBasicOperations_DataManager:
             # ========
             # 存储数据
             data_upload.append(
-                (row["selfstudy_id"], row["student_id"], row["student_id"], ''))
+                (int(row["selfstudy_id"]), row["student_id"], row["student_id"], ''))
         # ============
         # 提交所有数据
         if len(data_upload) > 0:
@@ -326,7 +328,8 @@ class DatabaseBasicOperations_DataManager:
         # =======================
         # 删除指定日期的早自习排班
         _ = database.execute(
-            sql="DELETE FROM SelfstudyCheckSchedule WHERE date=%(date)s;",
+            sql="DELETE FROM SelfstudyCheckSchedule \
+                WHERE selfstudy_id IN (SELECT selfstudy_id FROM SelfstudyInfo WHERE date=%(date)s);",
             data=infoForm)
 
     @staticmethod
@@ -344,7 +347,7 @@ class DatabaseBasicOperations_DataManager:
         # ==========================
         # 获取排班信息和对应的队员信息
         _ = database.execute(
-            sql="SELECT classroom_name,campus,school_name,selfstudy_info_remark,schedule_student_name,schedule_student_id,schedule_student_department_name \
+            sql="SELECT selfstudy_id, classroom_name,campus,school_name,selfstudy_info_remark,schedule_student_name,schedule_student_id,schedule_student_department_name \
                 FROM SelfstudyCheckScheduleView \
                 WHERE date = %s;",
             data=(infoForm['date'],))
@@ -358,10 +361,10 @@ class DatabaseBasicOperations_DataManager:
                 LEFT JOIN MemberBasic ON Work.student_id = MemberBasic.student_id \
                 LEFT JOIN MemberExtend ON Work.student_id = MemberExtend.student_id \
                 LEFT JOIN School ON School.school_id = MemberExtend.school_id \
-                WHERE Work.job = 0 AND Department.name LIKE '现场组%' \
+                WHERE Work.job = 0 AND Department.name LIKE %s \
                     AND Work.student_id NOT IN (SELECT DISTINCT schedule_student_id FROM SelfstudyCheckScheduleView WHERE date = %s AND schedule_student_id IS NOT NULL) \
                 ORDER BY School.campus ASC, Department.name ASC, Work.student_id ASC;",
-            data=(infoForm['date'],))
+            data=('现场组%', infoForm['date']))
         results["unscheduled"] = database.fetchall()
         # ============
         # 返回结果字典
