@@ -10,7 +10,7 @@ import numpy as np
 import openpyxl
 from openpyxl.utils.dataframe import dataframe_to_rows
 from openpyxl.styles import Border, Side, Alignment, Font
-from Frame.python3.DatabaseConnector import DatabaseConnector
+from Frame.python3.BaseComponents.DatabaseConnector import DatabaseConnector
 from openpyxl.utils import get_column_letter
 
 # 写入Excel文件数据

@@ -65,7 +65,8 @@ function fill_contact(data) {
             <td>${render_gender(one_contact['gender'])}</td>
             <td>${one_contact['phone']}</td>
             <td>${one_contact['qq']}</td>
-            <td>${one_contact['job']}</td>
+            <td>${one_contact["job"] == 1 ? (one_contact["department_id"] == 1 ? "队长" : "组长") : (one_contact["department_id"] == 1 ? "副队长" : "组员")}</td>
+            
         </tr>
         `)
     }

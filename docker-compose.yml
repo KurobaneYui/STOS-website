@@ -1,19 +1,23 @@
-version: '3.5'
+version: '3.9'
 services:
     STSA-server:
         image: "kurobaneyui/stsa_flask_server:3.0"
+        networks:
+            - STSA-Network
         ports:
-         - "5580:80"
+         - "6680:80"
         volumes:
          - "/home/ubuntu/all_websites/STSA:/home/STSA"
-        depends_on:
-         - 'STSA-Database'
         tty: true
     
     STSA-Database:
         image: "mysql"
+        networks:
+            - STSA-Network
         ports:
-         - "5506:3306"
-         - "5560:33060"
+         - "6606:3306"
         environment:
             MYSQL_ROOT_PASSWORD: "localtest"
+    
+networks:
+    STSA-Network:

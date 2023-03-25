@@ -47,6 +47,25 @@
 
 <body>
     <!-- Content -->
+    <div class="modal fade" id="select-login-work" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false"
+        aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">选择登录岗位</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                        onclick="logout()"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row" id="work-list-container">
+                        <div class="spinner-border text-primary" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="container-xxl">
         <div class="authentication-wrapper authentication-basic container-p-y">

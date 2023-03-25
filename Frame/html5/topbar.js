@@ -61,9 +61,24 @@ function getTopbarInfo() {
 
 function update_topbar(data) {
     let name = data['name'];
+    let department_id = data['department_id'];
+    let department_name = data['department_name'];
+    let job = "";
+    let formal_member = "";
+    if (department_id === 0) {
+        formal_member = department_name;
+    }
+    else if (department_id === 1) {
+        job = data['job'] === 1 ? "队长" : "副队长";
+        formal_member = department_name + " - " + job;
+    }
+    else {
+        job = data['job'] === 1 ? "组长" : "组员";
+        formal_member = department_name + " - " + job;
+    }
     $("#topbar-name").text(name);
-    $("#formal-member").text(data['memberType']);
-    update_badges(data['memberType']);
+    $("#formal-member").text(formal_member);
+    update_badges(data);
 }
 
 
@@ -81,17 +96,17 @@ function update_badges(data) {
     <div class="col-auto">
         <span class="badge rounded-pill bg-label-success fs-6">查早：完成</span>
     </div>`;
-    $("#self-status-badges").append(badge);
+    // $("#self-status-badges").append(badge);
     badge = `
     <div class="col-auto">
         <span class="badge rounded-pill bg-label-warning fs-6">查课：未确认</span>
     </div>`;
-    $("#self-status-badges").append(badge);
+    // $("#self-status-badges").append(badge);
     badge = `
     <div class="col-auto">
         <span class="badge rounded-pill bg-label-danger fs-6">查课：未完成</span>
     </div>`;
-    $("#self-status-badges").append(badge);
+    // $("#self-status-badges").append(badge);
     if (endMonthDate.getDate() - currentDate.getDate() <= 10) {
         badge = `
         <div class="col-auto">

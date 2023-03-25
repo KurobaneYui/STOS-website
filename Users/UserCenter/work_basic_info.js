@@ -137,13 +137,16 @@ function add_work_basic_info_card(data) {
     let card =
         `<div class="col-12 col-sm-6 col-md-4 col-lg-4 col-xxl-3">
             <div class="card">
+                <span class="position-absolute top-0 start-100 translate-middle p-2 ${data["loginWork"]===true?"bg-success":"bg-secondary"} border border-light rounded-circle">
+                    <span class="visually-hidden">New alerts</span>
+                </span>
                 <img class="card-img-top random-card-personInfoImg" src="/assets/img/users/personInfoImg" alt="UESTC campus" />
                 <div class="card-body">
                     <h3 class="card-title text-center mb-3">${data["name"]}</h3>
                     <div class="row fs-5 g-3 ms-2">
                         <span class="col-1 col-lg-2"></span>
                         <p class="col-auto badge bg-label-primary">岗位</p>
-                        <p class="col">${data["job"]}</p>
+                        <p class="col">${data["job"] == 1 ? (data["department_id"] == 1 ? "队长" : "组长") : (data["department_id"] == 1 ? "副队长" : "组员")}</p>
                         <span class="col-1 col-lg-2"></span>
                     </div>
                     <div class="row fs-5 g-3 ms-2">

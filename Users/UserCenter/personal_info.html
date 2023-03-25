@@ -57,6 +57,7 @@
                 <!-- Navbar -->
                 <nav class="layout-navbar container-fluid navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme rounded-pill"
                     id="layout-navbar"></nav>
+                <div id="select-login-work-container"></div>
                 <!-- / Navbar -->
 
                 <!-- Content wrapper -->
@@ -314,7 +315,7 @@
                                                     </ul>
                                                     <p class="fw-bold text-primary">
                                                         注意：为了保证已提交的工作数据可以朔源，我们会保留个人学号和姓名的记录，但其余信息不保留。</p>
-                                                    <p class="fw-bold text-danger">确认注销请输入：我已知晓删除账户的影响且确认注销账户</p>
+                                                    <p class="fw-bold text-danger">确认注销请输入：我已知晓且确认注销账户</p>
                                                     <input type="text" class="form-control" id="deleteConfirm" required>
                                                 </div>
                                                 <div class="modal-footer">
@@ -369,6 +370,11 @@
     <script src="/assets/vendor/libs/perfect-scrollbar/perfect-scrollbar.js"></script>
     <script>
         $.ajax({
+            async: false, url: "/Frame/html5/get_login_work.html", success: function (result) {
+                $("#select-login-work-container").html(result);
+            }
+        });
+        $.ajax({
             async: false, url: "/Frame/html5/user_center_topbar_frame.html", success: function (result) {
                 $("#layout-navbar").html(result);
             }
@@ -378,6 +384,7 @@
                 $("#layout-menu").html(result);
             }
         });
+        $.getScript("/Frame/html5/get_login_work.js");
         $.getScript("/Frame/html5/topbar.js");
         let item = $(`a.menu-link[href='${window.location.pathname}']`).parent()
         item.addClass("active")
