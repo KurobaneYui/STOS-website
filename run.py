@@ -12,17 +12,15 @@ from Frame.python3.Ajax.DataManager import DataManager
 from Frame.python3.BaseComponents.Authorization import checkIfLogin
 
 
-# app = Flask(__name__, template_folder="Frame/html5/") # set template_folder for 'render_template' function
-app = Flask(__name__)
+app = Flask(__name__, template_folder="Frame/html5/") # set template_folder for 'render_template' function
 
-
-# @app.route("/Frame/html5/<path:additionalURL>")
-# def HTMLFrameRoutes(additionalURL):
-#     return render_template(additionalURL)
 
 @app.route("/Frame/html5/<path:additionalURL>")
 def HTMLFrameRoutes(additionalURL):
-    return send_file("Frame/html5/"+additionalURL)
+    if 'job' in session.keys(): # 以job判断一下session是否存有所需的信息
+        return render_template(additionalURL, department_id=session['department_id'], department_name=session['department_name'], job=session['job'])
+    else:
+        return render_template(additionalURL, department_id=0, department_name='预备队员', job=0)
 
 
 @app.route("/css/<path:additionalURL>")

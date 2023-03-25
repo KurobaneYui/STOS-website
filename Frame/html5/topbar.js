@@ -96,17 +96,17 @@ function update_badges(data) {
     <div class="col-auto">
         <span class="badge rounded-pill bg-label-success fs-6">查早：完成</span>
     </div>`;
-    $("#self-status-badges").append(badge);
+    // $("#self-status-badges").append(badge);
     badge = `
     <div class="col-auto">
         <span class="badge rounded-pill bg-label-warning fs-6">查课：未确认</span>
     </div>`;
-    $("#self-status-badges").append(badge);
+    // $("#self-status-badges").append(badge);
     badge = `
     <div class="col-auto">
         <span class="badge rounded-pill bg-label-danger fs-6">查课：未完成</span>
     </div>`;
-    $("#self-status-badges").append(badge);
+    // $("#self-status-badges").append(badge);
     if (endMonthDate.getDate() - currentDate.getDate() <= 10) {
         badge = `
         <div class="col-auto">

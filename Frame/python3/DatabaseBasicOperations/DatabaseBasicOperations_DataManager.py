@@ -1,5 +1,6 @@
 import re
 import sys
+import time
 import random
 from flask import Request
 from Frame.python3.BaseComponents.DatabaseConnector import DatabaseConnector
@@ -391,18 +392,35 @@ class DatabaseBasicOperations_DataManager:
         results = {"date": infoForm['date']}
         # ============================================
         # 获取指定日期前最近一日的排班信息和对应的队员信息
+        # _ = database.execute(
+        #     sql="SELECT classroom_name,campus,school_name,schedule_student_id \
+        #         FROM SelfstudyCheckScheduleView \
+        #         WHERE schedule_student_department_name like %s \
+        #             AND campus = %s \
+        #             AND date IN ( \
+        #                 SELECT DISTINCT date \
+        #                 FROM SelfstudyCheckSchedule \
+        #                 LEFT JOIN SelfstudyInfo ON SelfstudyCheckSchedule.selfstudy_id = SelfstudyInfo.selfstudy_id \
+        #                 WHERE date < %s \
+        #                 ORDER BY date DESC \
+        #                 LIMIT 1);",
+        #     data=("现场组%", infoForm['campus'], infoForm['date']))
+        # 不用上面的语句是因为MySQL还没有支持在IN子句内使用LIMIT子句
         _ = database.execute(
-            sql="SELECT classroom_name,campus,school_name,schedule_student_id \
+            sql="SELECT classroom_name,campus,school_name,schedule_student_id,schedule_student_name,schedule_student_department_name \
                 FROM SelfstudyCheckScheduleView \
                 WHERE schedule_student_department_name like %s \
                     AND campus = %s \
                     AND date IN ( \
-                        SELECT DISTINCT date \
-                        FROM SelfstudyCheckSchedule \
-                        LEFT JOIN SelfstudyInfo ON SelfstudyCheckSchedule.selfstudy_id = SelfstudyInfo.selfstudy_id \
-                        WHERE date < %s \
-                        ORDER BY date DESC \
-                        LIMIT 1);",
+                        SELECT a.* \
+                        FROM ( \
+                            SELECT DISTINCT date \
+                            FROM SelfstudyCheckSchedule \
+                            LEFT JOIN SelfstudyInfo ON SelfstudyCheckSchedule.selfstudy_id = SelfstudyInfo.selfstudy_id \
+                            WHERE date < %s \
+                            ORDER BY date DESC \
+                            LIMIT 1) AS a \
+                    );",
             data=("现场组%", infoForm['campus'], infoForm['date']))
         # ======================
         # 将最近的排班列表存入字典
@@ -416,7 +434,7 @@ class DatabaseBasicOperations_DataManager:
         # ==============
         # 搜索当日待查表
         _ = database.execute(
-            sql="SELECT selfstudy_id,classroom_name,campus,school_name,selfstudy_info+remark,schedule_student_id,schedule_student_name,schedule_student_department_name \
+            sql="SELECT selfstudy_id,classroom_name,campus,school_name,selfstudy_info_remark,schedule_student_id,schedule_student_name,schedule_student_department_name \
                 FROM SelfstudyCheckScheduleView \
                 WHERE campus = %s AND date = %s;",
             data=(infoForm['campus'], infoForm['date']))
@@ -447,7 +465,7 @@ class DatabaseBasicOperations_DataManager:
                 LEFT JOIN MemberExtend ON Work.student_id = MemberExtend.student_id \
                 WHERE Work.job = 0 AND Department.name LIKE %s \
                 ORDER BY Department.name ASC, Work.student_id ASC;",
-            data=("现场组%组" if infoForm['campus'] == "qingshuihe" else "现场组沙河",))
+            data=("现场组%组" if infoForm['campus'] == "清水河" else "现场组沙河",))
         # =====================
         # 获取没有排班的成员信息
         unscheduledStudent = list()
@@ -478,40 +496,62 @@ class DatabaseBasicOperations_DataManager:
             database = databaseConnector
         # ================================
         # 获取最近一次排班的第一位成员的组号
-        _ = database.execute(
+        # _ = database.execute(
+        #     sql="SELECT schedule_student_department_name \
+        #         FROM SelfstudyCheckScheduleView \
+        #         WHERE schedule_student_department_name like %s \
+        #             AND campus = %s \
+        #             AND date IN ( \
+        #                 SELECT DISTINCT date \
+        #                 FROM SelfstudyCheckSchedule \
+        #                 LEFT JOIN SelfstudyInfo ON SelfstudyCheckSchedule.selfstudy_id = SelfstudyInfo.selfstudy_id \
+        #                 WHERE date < %s \
+        #                 ORDER BY date DESC \
+        #                 LIMIT 1) \
+        #         LIMIT 1;",
+        #     data=("现场组%", infoForm['campus'], infoForm['date']))
+        # 不用上面的语句是因为MySQL目前还没有支持IN子句内使用LIMIT子句
+        DBAffectedRows = database.execute(
             sql="SELECT schedule_student_department_name \
                 FROM SelfstudyCheckScheduleView \
                 WHERE schedule_student_department_name like %s \
                     AND campus = %s \
                     AND date IN ( \
-                        SELECT DISTINCT date \
-                        FROM SelfstudyCheckSchedule \
-                        LEFT JOIN SelfstudyInfo ON SelfstudyCheckSchedule.selfstudy_id = SelfstudyInfo.selfstudy_id \
-                        WHERE date < %s \
-                        ORDER BY date DESC \
-                        LIMIT 1) \
+                        SELECT a.* \
+                        FROM ( \
+                            SELECT DISTINCT date \
+                            FROM SelfstudyCheckSchedule \
+                            LEFT JOIN SelfstudyInfo ON SelfstudyCheckSchedule.selfstudy_id = SelfstudyInfo.selfstudy_id \
+                            WHERE date < %s \
+                            ORDER BY date DESC \
+                            LIMIT 1) AS a \
+                    ) \
                 LIMIT 1;",
             data=("现场组%", infoForm['campus'], infoForm['date']))
         recentGroupName = database.fetchall()
-        pattern = r'^现场组(\d)组$'
-        match = re.match(pattern, recentGroupName)
-        if match is None:
-            recentFirstGroupNumber = 1
+        if DBAffectedRows==0:
+            recentFirstGroupNumber = 0
         else:
-            recentFirstGroupNumber = int(match.group(1))
+            pattern = r'^现场组(\d)组$'
+            match = re.match(pattern, recentGroupName[0]["schedule_student_department_name"])
+            if match is None:
+                recentFirstGroupNumber = 0
+            else:
+                recentFirstGroupNumber = int(match.group(1))
         # ===================
         # 获取校区下现场组数量
         _ = database.execute(
             sql="SELECT DISTINCT name FROM Department WHERE Department.name LIKE %s;",
-            data=("现场组%组" if infoForm['campus'] == "qingshuihe" else "现场组沙河",))
+            data=("现场组%组" if infoForm['campus'] == "清水河" else "现场组沙河",))
         groupCounter = len(database.fetchall())
         # =================
         # 生成本次现场组组序
-        tmp = ("现场组%s组" % (i) for i in range(1, groupCounter+1))
+        tmp = ["现场组%s组" % (i) for i in range(1, groupCounter+1)]
         tmp = tmp[recentFirstGroupNumber:]+tmp[:recentFirstGroupNumber]
         # ======================
         # 按组序获取各组组员并打乱
-        if infoForm['campus'] == 'qingshuihe':
+        random.seed(time.time())
+        if infoForm['campus'] == '清水河':
             allMembers = list()
             for one_group_name in tmp:
                 _ = database.execute(
@@ -525,7 +565,7 @@ class DatabaseBasicOperations_DataManager:
                 members = list(database.fetchall())
                 random.shuffle(members)
                 allMembers.extend(members)
-        elif infoForm['campus'] == 'shahe':
+        elif infoForm['campus'] == '沙河':
             _ = database.execute(
                 sql="SELECT MemberBasic.student_id AS schedule_student_id, MemberBasic.name AS schedule_student_name, Department.name AS schedule_student_department_name \
                     FROM Work \
@@ -537,14 +577,14 @@ class DatabaseBasicOperations_DataManager:
             random.shuffle(allMembers)
         else:
             raise IllegalValueError(
-                "Campus must be one of 'qingshuihe' and 'shahe'.", filename=__file__, line=sys._getframe().f_lineno)
+                "Campus must be one of '清水河' and '沙河'.", filename=__file__, line=sys._getframe().f_lineno)
         # ============
         # 获取所有排班
         _ = database.execute(
             sql="SELECT selfstudy_id, classroom_name, school_name, selfstudy_info_remark, campus \
                 FROM SelfstudyCheckScheduleView \
                 WHERE campus = %s AND date = %s;",
-            data=("清水河" if infoForm['campus'] == "qingshuihe" else "沙河", infoForm['date']))
+            data=("清水河" if infoForm['campus'] == "清水河" else "沙河", infoForm['date']))
         allSchedules = list(database.fetchall())
         # =========================
         # 将所有组员依次填入排班表中
@@ -568,10 +608,8 @@ class DatabaseBasicOperations_DataManager:
         # 整合所有数据
         results = {
             "date": infoForm['date'],
-            "data": {
-                "scheduled": allSchedules,
-                "unscheduled": unscheduled_students
-            }
+            "scheduled": allSchedules,
+            "unscheduled": unscheduled_students
         }
         # ========
         # 返回数据

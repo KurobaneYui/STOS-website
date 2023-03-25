@@ -81,7 +81,7 @@ function fill_work_list_container(data) {
             pillContent = workName + " - " + workJob;
         }
         let button_pill = `
-        <div class='col'>
+        <div class='col-auto'>
             <button class="btn btn-outline-primary rounded-pill" onclick="loginAsSpecifiedWork(${department_id},${one_work['job']})">
                 ${pillContent}
             </button>

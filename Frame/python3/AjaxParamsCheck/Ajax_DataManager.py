@@ -127,9 +127,9 @@ class Ajax_DataManager:
             raise IllegalValueError(
                 "Date and campus is required.", filename=__file__, line=sys._getframe().f_lineno)
             
-        if infoForm['campus'] not in ['qingshuihe','shahe']:
+        if infoForm['campus'] not in ['清水河','沙河']:
             raise IllegalValueError(
-                "Campus is not right, should be one of 'qingshuihe' and 'shahe'.", filename=__file__, line=sys._getframe().f_lineno)
+                "Campus is not right, should be one of '清水河' and '沙河'.", filename=__file__, line=sys._getframe().f_lineno)
 
         try:
             infoForm["date"] = datetime.datetime.strptime(
@@ -144,9 +144,9 @@ class Ajax_DataManager:
             raise IllegalValueError(
                 "Date and campus is required.", filename=__file__, line=sys._getframe().f_lineno)
             
-        if infoForm['campus'] not in ['qingshuihe','shahe']:
+        if infoForm['campus'] not in ['清水河','沙河']:
             raise IllegalValueError(
-                "Campus is not right, should be one of 'qingshuihe' and 'shahe'.", filename=__file__, line=sys._getframe().f_lineno)
+                "Campus is not right, should be one of '清水河' and '沙河'.", filename=__file__, line=sys._getframe().f_lineno)
 
         try:
             infoForm["date"] = datetime.datetime.strptime(

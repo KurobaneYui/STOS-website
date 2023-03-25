@@ -201,9 +201,7 @@ function submit() {
 }
 
 function reset_member(campus) {
-    if (campus === "清水河") { campus_e = "qingshuihe"; }
-    else if (campus === "沙河") { campus_e = "shahe"; }
-    else {
+    if (campus !== "清水河" && campus !=="沙河") {
         swal({
             title: "提供的校区错误，请联系管理员",
             icon: "error",
@@ -214,7 +212,7 @@ function reset_member(campus) {
         "/Ajax/DataManager/reset_schedule_on_date",
         {
             date: $("#form-date").val(),
-            campus: campus_e
+            campus: campus
         },
         function (data, status) {
             if (status === "success") {
@@ -271,9 +269,7 @@ function reset_member(campus) {
 }
 
 function random_member(campus) {
-    if (campus === "清水河") { campus_e = "qingshuihe"; }
-    else if (campus === "沙河") { campus_e = "shahe"; }
-    else {
+    if (campus !== "清水河" && campus !=="沙河") {
         swal({
             title: "提供的校区错误，请联系管理员",
             icon: "error",
@@ -284,7 +280,7 @@ function random_member(campus) {
         "/Ajax/DataManager/random_schedule_on_date",
         {
             date: $("#form-date").val(),
-            campus: campus_e
+            campus: campus
         },
         function (data, status) {
             if (status === "success") {
