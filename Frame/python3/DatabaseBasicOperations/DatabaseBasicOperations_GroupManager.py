@@ -16,39 +16,46 @@ class DatabaseBasicOperations_GroupManager:
             database.startCursor()
         else:
             database = databaseConnector
-        # ===================================
-        # 设置临时变量，记录查询到的正副队长学号
-        _ = database.execute("SET @groupLeaderID='';")
-        _ = database.execute(
-            sql="SELECT student_id INTO @groupLeaderID FROM Work WHERE student_id=%(userID)s and department_id=1;",
-            data=CustomSession.getSession())
-        database.fetchall()
-        # ==========================
-        # 利用查询到的学号搜索组员信息
-        _ = database.execute(
-            sql="SELECT MemberExtend.student_id AS student_id, MemberBasic.`name` as student_name, gender, \
-                    Department.`name` as department_name, Department.department_id AS department_id \
-                FROM `Work` \
-                LEFT JOIN Department ON Department.department_id=`Work`.department_id \
-                LEFT JOIN MemberExtend ON `Work`.student_id=MemberExtend.student_id \
-                LEFT JOIN MemberBasic ON MemberExtend.student_id=MemberBasic.student_id \
-                WHERE job != 1 AND Department.department_id in ( \
-                    SELECT department_id FROM Work \
-                        WHERE CASE WHEN @groupLeaderID=%s \
-                        THEN true \
-                        ELSE job = %s AND student_id=%s \
-                        END) \
-                ORDER BY department_id ASC;",
-            data=(CustomSession.getSession()['userID'], 1, CustomSession.getSession()['userID']))
-        # ===============
-        # 按组分门别类返回
+        # =================================================================
+        # 获取管理的部门，如果是队长组，直接获取所有部门，如果不是则获取管理的组
+        if CustomSession().getSession()["department_id"] == 1:
+            _ = database.execute(
+                sql="SELECT DISTINCT department_id, name AS department_name \
+                    FROM Department \
+                    ORDER BY department_id ASC;",
+                data=CustomSession().getSession())
+        else:
+            _ = database.execute(
+                sql="SELECT DISTINCT Work.department_id AS department_id, Department.name AS department_name \
+                    FROM Work \
+                    LEFT JOIN Department ON Work.department_id = Department.department_id \
+                    WHERE student_id = %(userID)s AND (job = 1 OR Work.department_id = 1) \
+                    ORDER BY Work.department_id ASC;",
+                data=CustomSession().getSession())
+        groupsInManagement = database.fetchall()
+        # =================
+        # 搜索管理的组的组员
         results = dict()
-        for row in database.fetchall():
-            if row['department_id'] not in results.keys():
-                results[row['department_id']] = {
-                    'group_name': row['department_name'], 'members': list()}
-            results[row['department_id']]['members'].append(row)
-
+        for groupInfo in groupsInManagement:
+            if groupInfo["department_id"] in results.keys():
+                continue
+            _ = database.execute(
+                sql="SELECT MemberExtend.student_id AS student_id, MemberBasic.`name` as student_name, gender, \
+                        Department.`name` as department_name, Department.department_id AS department_id \
+                    FROM `Work` \
+                    LEFT JOIN Department ON Department.department_id=`Work`.department_id \
+                    LEFT JOIN MemberExtend ON `Work`.student_id=MemberExtend.student_id \
+                    LEFT JOIN MemberBasic ON MemberExtend.student_id=MemberBasic.student_id \
+                    WHERE job = 0 AND Department.department_id = %(department_id)s \
+                    ORDER BY department_id ASC;",
+                data=groupInfo)
+            members = database.fetchall()
+            results[groupInfo["department_id"]] = {
+                "group_name": groupInfo["department_name"],
+                "members": members
+            }
+        # ========
+        # 返回内容
         return results
 
     @staticmethod
