@@ -22,6 +22,7 @@ class DatabaseBasicOperations_GroupManager:
             _ = database.execute(
                 sql="SELECT DISTINCT department_id, name AS department_name \
                     FROM Department \
+                    WHERE department_id != 0 \
                     ORDER BY department_id ASC;",
                 data=CustomSession().getSession())
         else:
@@ -29,7 +30,7 @@ class DatabaseBasicOperations_GroupManager:
                 sql="SELECT DISTINCT Work.department_id AS department_id, Department.name AS department_name \
                     FROM Work \
                     LEFT JOIN Department ON Work.department_id = Department.department_id \
-                    WHERE student_id = %(userID)s AND (job = 1 OR Work.department_id = 1) \
+                    WHERE student_id = %(userID)s AND (job = 1 OR Work.department_id = 1) AND department_id != 0 \
                     ORDER BY Work.department_id ASC;",
                 data=CustomSession().getSession())
         groupsInManagement = database.fetchall()
