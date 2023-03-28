@@ -40,7 +40,7 @@ class Logger:
         self.logDir: None | str = None
         self.logMode: None | str = None
         self.funcName = funcName
-        self.time_postfix = datetime.datetime.now().strftime(r"%Y%m%d")
+        self.time_postfix = datetime.datetime.now().strftime(r"%Y%m%d-%H%M")
 
         if logMode is None or logDir is None:
             self.logDir, self.logMode = "./log", "Warning"

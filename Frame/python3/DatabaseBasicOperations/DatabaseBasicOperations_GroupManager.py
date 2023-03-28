@@ -30,7 +30,7 @@ class DatabaseBasicOperations_GroupManager:
                 sql="SELECT DISTINCT Work.department_id AS department_id, Department.name AS department_name \
                     FROM Work \
                     LEFT JOIN Department ON Work.department_id = Department.department_id \
-                    WHERE student_id = %(userID)s AND (job = 1 OR Work.department_id = 1) AND department_id != 0 \
+                    WHERE student_id = %(userID)s AND (job = 1 OR Work.department_id = 1) AND Work.department_id != 0 \
                     ORDER BY Work.department_id ASC;",
                 data=CustomSession().getSession())
         groupsInManagement = database.fetchall()
@@ -48,7 +48,7 @@ class DatabaseBasicOperations_GroupManager:
                     LEFT JOIN MemberExtend ON `Work`.student_id=MemberExtend.student_id \
                     LEFT JOIN MemberBasic ON MemberExtend.student_id=MemberBasic.student_id \
                     WHERE job = 0 AND Department.department_id = %(department_id)s \
-                    ORDER BY department_id ASC;",
+                    ORDER BY Work.department_id ASC;",
                 data=groupInfo)
             members = database.fetchall()
             results[groupInfo["department_id"]] = {
