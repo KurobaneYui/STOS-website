@@ -79,7 +79,7 @@ function fill_department_table(data) {
 function change_to_editable_row(button) {
     let row = $(button).parent().parent();
     let cells = row.children();
-    
+
     $(button).parent().append(`<button class="btn btn-primary btn-sm rounded-pill" onclick="upload_department(this)">提交</button><button class="btn btn-danger btn-sm rounded-pill">删除</button>`);
     $(button).remove();
 
@@ -108,7 +108,8 @@ function change_to_editable_row(button) {
 
 function upload_department(button) {
     let element_row = $(button).parent().parent();
-    $(button).parent().html("");
+    let buttonParent = $(button).parent();
+    buttonParent.html("");
 
     let selector = element_row.children().first();
     let department_id = selector.text();
@@ -174,8 +175,10 @@ function upload_department(button) {
                     get_department();
                 }
             }
-            else
+            else {
                 alert("请检查网络状况。");
+            }
+            buttonParent.append(`<button class="btn btn-primary btn-sm rounded-pill" onclick="upload_department(this)">提交</button><button class="btn btn-danger btn-sm rounded-pill">删除</button>`);
         })
 }
 
