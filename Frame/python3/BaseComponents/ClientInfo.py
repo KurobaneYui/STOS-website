@@ -33,7 +33,7 @@ class ClientInfo():
                 address = json.loads(requests.get(
                     f"http://ip-api.com/json/{ip}?lang=zh-CN", timeout=1).text)
                 address["url"] = "http://ip-api.com"
-            except requests.exceptions.ProxyError:
+            except (requests.exceptions.ReadTimeout, requests.exceptions.ProxyError):
                 print(
                     "Cannot connect to https://whois.pconline.com.cn nor http://ip-api.com.")
                 address = {"url": ""}

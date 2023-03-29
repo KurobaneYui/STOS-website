@@ -78,12 +78,12 @@
                         <!-- Layout Demo -->
                         <div class="row">
                             <div class="col-12 alert alert-primary" role="alert">
-                                * 点击“编辑”按钮以修改教室信息；
-                                * 点击“提交”按钮以提交变动。
+                                * 点击“编辑”按钮以修改教室信息；<br/>
+                                * 点击“提交”按钮以提交变动。<br/>
                                 * 教室排序自动依以下字段排序：校区、教学楼、区域、编号
                             </div>
                             <div class="col-12 alert alert-danger" role="alert">
-                                * 教室信息直接关联查早、查课数据。请尽量以修改代替删除后新增；
+                                * 教室信息直接关联查早、查课数据。请尽量以修改代替删除后新增；<br/>
                                 * 比如一个教室信息已经关联了查早且有数据提交，删除此教室将同步删除相应查早排班和数据，哪怕重新添加了同样的教室。此时应选择修改教室信息以避免上述情况发生。
                             </div>
                             <div class="col-12">
@@ -97,7 +97,7 @@
                                             </div>
                                             <div class="col-auto">
                                                 <button class="btn btn-sm btn-warning rounded-pill"
-                                                    onclick="change_to_editable_row(this)">编辑</button>
+                                                    onclick="change_to_editable_row()">编辑</button>
                                             </div>
                                         </div>
                                         <div class="row g-2">
@@ -111,11 +111,31 @@
                                                             <th>区域</th>
                                                             <th>编号</th>
                                                             <th>容纳人数</th>
-                                                            <th>备注</th>
                                                             <th>操作</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody id="selfstudy-classroom-editor-table-body">
+                                                        <tr>
+                                                            <td>1</td>
+                                                            <td>
+                                                                <input type="text" class="form-control" value="" />
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" class="form-control" value="" />
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" class="form-control" value="" />
+                                                            </td>
+                                                            <td>
+                                                                <input type="text" class="form-control" value="" />
+                                                            </td>
+                                                            <td>
+                                                                <input type="number" min="0" max="300" class="form-control" value="" />
+                                                            </td>
+                                                            <td>
+                                                                <button type="button" class="btn btn-sm rounded-pill btn-danger">删除</button>
+                                                            </td>
+                                                        </tr>
                                                     </tbody>
                                                     <tfoot>
                                                         <tr>
@@ -132,7 +152,7 @@
                                             </div>
                                             <div class="col">
                                                 <button class="btn btn-sm btn-warning rounded-pill"
-                                                    onclick="add_one(this)">添加</button>
+                                                    onclick="add_one()">添加</button>
                                             </div>
                                         </div>
                                     </div>

@@ -68,7 +68,7 @@ function fill_page_tables(data) {
 
 function add_table_template(group_id, group_name) {
     let table =
-        `<div class="col-12 col-lg-6">
+        `<div class="col-12 col-lg-6 col-xxl-4">
         <div class="card">
             <h5 class="card-header">${group_name}</h5>
             <div class="table-responsive text-nowrap">

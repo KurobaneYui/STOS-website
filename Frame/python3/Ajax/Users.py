@@ -86,7 +86,7 @@ def Users(app: flask.Flask) -> None:
                 logger.funcReturns = returns
         return customResponse.getResponse()
 
-    @ app.route("/Ajax/Users/resetPassword", methods=['POST'])
+    @app.route("/Ajax/Users/resetPassword", methods=['POST'])
     def resetPassword():
         with CustomResponse() as customResponse:
             with Logger(funcName="Users.resetPassword()") as logger:
@@ -108,7 +108,7 @@ def Users(app: flask.Flask) -> None:
                 logger.funcReturns = returns
         return customResponse.getResponse()
 
-    @ app.route("/Ajax/Users/delete_personal_info", methods=['POST'])
+    @app.route("/Ajax/Users/delete_personal_info", methods=['POST'])
     def deletePersonalInfo():
         with CustomResponse() as customResponse:
             with Logger(funcName="Users.deletePersonalInfo()") as logger:
@@ -131,7 +131,7 @@ def Users(app: flask.Flask) -> None:
                 logger.funcReturns = returns
         return customResponse.getResponse()
 
-    @ app.route("/Ajax/Users/register", methods=['POST'])
+    @app.route("/Ajax/Users/register", methods=['POST'])
     def register():
         with CustomResponse() as customResponse:
             with Logger(funcName="Users.register()") as logger:
@@ -158,7 +158,7 @@ def Users(app: flask.Flask) -> None:
                 logger.funcReturns = returns
         return customResponse.getResponse()
 
-    @ app.route("/Ajax/Users/logout", methods=['GET', 'POST'])
+    @app.route("/Ajax/Users/logout", methods=['GET', 'POST'])
     def logout():
         with CustomResponse() as customResponse:
             with Logger(funcName="Users.logout()") as logger:
@@ -176,7 +176,7 @@ def Users(app: flask.Flask) -> None:
                 logger.funcReturns = returns
         return customResponse.getResponse()
 
-    @ app.route("/Ajax/Users/topbarInfo", methods=['GET'])
+    @app.route("/Ajax/Users/topbarInfo", methods=['GET'])
     def topbarInfo():
         with CustomResponse() as customResponse:
             with Logger(funcName="Users.topbarInfo()") as logger:
@@ -215,7 +215,7 @@ def Users(app: flask.Flask) -> None:
 
     #     return {"warning":"", "message":"", "data":{"name":session["name"], "GroupScoreRank":results}}
 
-    @ app.route("/Ajax/Users/get_contact", methods=['GET'])
+    @app.route("/Ajax/Users/get_contact", methods=['GET'])
     def getContact():
         with CustomResponse() as customResponse:
             with Logger(funcName="Users.getContact()") as logger:
@@ -233,7 +233,7 @@ def Users(app: flask.Flask) -> None:
                 logger.funcReturns = returns
         return customResponse.getResponse()
 
-    @ app.route("/Ajax/Users/get_personal_info", methods=['GET'])
+    @app.route("/Ajax/Users/get_personal_info", methods=['GET'])
     def getPersonalInfo():
         with CustomResponse() as customResponse:
             with Logger(funcName="Users.getPersonalInfo()") as logger:
@@ -250,7 +250,7 @@ def Users(app: flask.Flask) -> None:
                 logger.funcReturns = returns
         return customResponse.getResponse()
 
-    @ app.route("/Ajax/Users/change_personal_info", methods=['POST'])
+    @app.route("/Ajax/Users/change_personal_info", methods=['POST'])
     def changePersonalInfo():
         with CustomResponse() as customResponse:
             with Logger(funcName="Users.changePersonalInfo()") as logger:
@@ -274,7 +274,7 @@ def Users(app: flask.Flask) -> None:
                 logger.funcReturns = returns
         return customResponse.getResponse()
 
-    @ app.route("/Ajax/Users/get_empty_time_info", methods=['GET'])
+    @app.route("/Ajax/Users/get_empty_time_info", methods=['GET'])
     def getEmptyTimeInfo():
         with CustomResponse() as customResponse:
             with Logger(funcName="Users.getEmptyTimeInfo()") as logger:
@@ -291,7 +291,7 @@ def Users(app: flask.Flask) -> None:
                 logger.funcReturns = returns
         return customResponse.getResponse()
 
-    @ app.route("/Ajax/Users/get_work_basic_info", methods=['GET'])
+    @app.route("/Ajax/Users/get_work_basic_info", methods=['GET'])
     def getWorkBasicInfo():
         with CustomResponse() as customResponse:
             with Logger(funcName="Users.getWorkBasicInfo()") as logger:
@@ -309,7 +309,7 @@ def Users(app: flask.Flask) -> None:
                 logger.funcReturns = returns
         return customResponse.getResponse()
 
-    @ app.route("/Ajax/Users/get_score_details", methods=['GET'])
+    @app.route("/Ajax/Users/get_score_details", methods=['GET'])
     def getScoreDetails():
         with CustomResponse() as customResponse:
             with Logger(funcName="Users.getScoreDetails()") as logger:
@@ -320,6 +320,29 @@ def Users(app: flask.Flask) -> None:
                 # ===========
                 # 执行接口流程
                 results = DatabaseBasicOperations_Users.getScoreDetails()
+                # ========================
+                # 准备函数返回值和响应与日志
+                returns = {"message": "", "data": results}
+                customResponse.setMessageAndData(**returns)
+                logger.funcReturns = returns
+        return customResponse.getResponse()
+
+    @app.route("/Ajax/Users/get_schedule_history", methods=['GET'])
+    def getScheduleHistory():
+        with CustomResponse() as customResponse:
+            with Logger(funcName="Users.getScheduleHistory()") as logger:
+                # ===============
+                # 检查接口调用权限
+                Authorization.check(rightsNeeded=({"department_id": 5, "actor": 0},
+                                                  {"department_id": 6, "actor": 0},
+                                                  {"department_id": 7, "actor": 0},
+                                                  {"department_id": 8, "actor": 0},
+                                                  {"department_id": 9, "actor": 0},
+                                                  {"department_id": 10, "actor": 0},
+                                                  {"department_id": 11, "actor": 0}), needLogin=True)
+                # ===========
+                # 执行接口流程
+                results = DatabaseBasicOperations_Users.getScheduleHistory()
                 # ========================
                 # 准备函数返回值和响应与日志
                 returns = {"message": "", "data": results}
