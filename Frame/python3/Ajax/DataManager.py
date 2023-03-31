@@ -360,3 +360,51 @@ def DataManager(app: flask.Flask) -> None:
                 customResponse.setMessageAndData(**returns)
                 logger.funcReturns = returns
         return customResponse.getResponse()
+    
+    @app.route("/Ajax/DataManager/get_schedule_history", methods=['GET'])
+    def getScheduleHistory():
+        with CustomResponse() as customResponse:
+            with Logger(funcName="Users.getScheduleHistory()") as logger:
+                # ===============
+                # 检查接口调用权限
+                Authorization.check(rightsNeeded=({"department_id": 5, "actor": 0},
+                                                  {"department_id": 6, "actor": 0},
+                                                  {"department_id": 7, "actor": 0},
+                                                  {"department_id": 8, "actor": 0},
+                                                  {"department_id": 9, "actor": 0},
+                                                  {"department_id": 10, "actor": 0},
+                                                  {"department_id": 11, "actor": 0}), needLogin=True)
+                # ===========
+                # 执行接口流程
+                results = DatabaseBasicOperations_DataManager.getScheduleHistory()
+                # ========================
+                # 准备函数返回值和响应与日志
+                returns = {"message": "", "data": results}
+                customResponse.setMessageAndData(**returns)
+                logger.funcReturns = returns
+        return customResponse.getResponse()
+    
+    @app.route("/Ajax/DataManager/get_selfstudy_check_data", methods=['GET'])
+    def getSelfstudyCheckData():
+        with CustomResponse() as customResponse:
+            with Logger(funcName="Users.getSelfstudyCheckData()") as logger:
+                # ===============
+                # 检查接口调用权限
+                Authorization.check(rightsNeeded=({"department_id": 5, "actor": 0},
+                                                  {"department_id": 6, "actor": 0},
+                                                  {"department_id": 7, "actor": 0},
+                                                  {"department_id": 8, "actor": 0},
+                                                  {"department_id": 9, "actor": 0},
+                                                  {"department_id": 10, "actor": 0},
+                                                  {"department_id": 11, "actor": 0}), needLogin=True)
+                # ===========
+                # 执行接口流程
+                results = DatabaseBasicOperations_DataManager.getSelfstudyCheckData()
+                # ========================
+                # 准备函数返回值和响应与日志
+                returns = {"message": "", "data": results}
+                customResponse.setMessageAndData(**returns)
+                logger.funcReturns = returns
+        return customResponse.getResponse()
+    
+    

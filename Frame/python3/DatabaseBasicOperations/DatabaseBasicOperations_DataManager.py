@@ -2,9 +2,11 @@ import re
 import sys
 import time
 import random
+import datetime
 from flask import Request
-from Frame.python3.BaseComponents.DatabaseConnector import DatabaseConnector
+from Frame.python3.BaseComponents.CustomSession import CustomSession
 from Frame.python3.BaseComponents.CustomError import IllegalValueError
+from Frame.python3.BaseComponents.DatabaseConnector import DatabaseConnector
 
 
 class DatabaseBasicOperations_DataManager:
@@ -529,11 +531,12 @@ class DatabaseBasicOperations_DataManager:
                 LIMIT 1;",
             data=("现场组%", infoForm['campus'], infoForm['date']))
         recentGroupName = database.fetchall()
-        if DBAffectedRows==0:
+        if DBAffectedRows == 0:
             recentFirstGroupNumber = 0
         else:
             pattern = r'^现场组(\d)组$'
-            match = re.match(pattern, recentGroupName[0]["schedule_student_department_name"])
+            match = re.match(
+                pattern, recentGroupName[0]["schedule_student_department_name"])
             if match is None:
                 recentFirstGroupNumber = 0
             else:
@@ -611,6 +614,141 @@ class DatabaseBasicOperations_DataManager:
             "scheduled": allSchedules,
             "unscheduled": unscheduled_students
         }
+        # ========
+        # 返回数据
+        return results
+
+    # TODO: 这里只提供了早自习历史任务，未来加入查课历史任务
+    @staticmethod
+    def getScheduleHistory(databaseConnector: DatabaseConnector | None = None) -> dict:
+        # =====================================
+        # 如果提供已经建立的数据库连接，则直接使用
+        if databaseConnector is None:
+            database = DatabaseConnector()
+            database.startCursor()
+        else:
+            database = databaseConnector
+        # =========================
+        # 获取当日日期，和前20日日期
+        currentDate = datetime.datetime.now()
+        past20Date = currentDate - datetime.timedelta(days=20)
+        currentDate = currentDate.strftime("%Y-%m-%d")
+        past20Date = past20Date.strftime("%Y-%m-%d")
+        # ==============================
+        # 查询日期范围内，此组员的排班信息
+        DBAffectedRows = database.execute(
+            sql="SELECT selfstudy_id, date, classroom_name \
+                FROM SelfstudyCheckActualView \
+                WHERE SelfstudyCheckActualView.actual_student_id = %s \
+                    AND (SelfstudyCheckActualView.date >= %s AND SelfstudyCheckActualView.date <= %s) \
+                ORDER BY SelfstudyCheckActualView.date DESC, SelfstudyCheckActualView.classroom_name ASC;",
+            data=(CustomSession.getSession()["userID"], past20Date, currentDate))
+        historyData = list(database.fetchall())
+        # ===================
+        # 查询排班对应的数据表
+        for one_history in historyData:
+            # ==============================
+            # 处理一下日期，转化为可以JSON化的
+            one_history["date"] = one_history["date"].strftime("%Y-%m-%d")
+            # ======
+            # 数据表
+            DBAffectedRows = database.execute(
+                sql="SELECT groupleader_recheck \
+                    FROM SelfstudyCheckData \
+                    WHERE selfstudy_id = %s \
+                    ORDER BY submission_time DESC \
+                    LIMIT 1;",
+                data=(one_history['selfstudy_id'],))
+            if DBAffectedRows == 0:
+                database.fetchall()
+                one_history.update({"groupleader_recheck": 0})
+                one_history['submitted'] = False
+                one_history['recheck'] = False
+            else:
+                tmpData = database.fetchall()[0]
+                one_history.update(tmpData)
+                one_history['submitted'] = True
+                one_history['recheck'] = int(
+                    tmpData["groupleader_recheck"]) == 1
+        # ========
+        # 整合数据
+        results = dict()
+        results['selfstudy'] = historyData
+        results['courses'] = list()
+        # ========
+        # 返回数据
+        return results
+
+    @staticmethod
+    def getSelfstudyCheckData(databaseConnector: DatabaseConnector | None = None) -> dict:
+        # =====================================
+        # 如果提供已经建立的数据库连接，则直接使用
+        if databaseConnector is None:
+            database = DatabaseConnector()
+            database.startCursor()
+        else:
+            database = databaseConnector
+        # ================================
+        # 获取当日日期后3日日期，和前5日日期
+        past5Date = (datetime.datetime.now() - datetime.timedelta(days=5)).strftime("%Y-%m-%d")
+        post3Date = (datetime.datetime.now() + datetime.timedelta(days=3)).strftime("%Y-%m-%d")
+        # ==============================
+        # 查询日期范围内，此组员的排班信息
+        DBAffectedRows = database.execute(
+            sql="SELECT selfstudy_id, date, classroom_name, campus, school_name, student_supposed \
+                FROM SelfstudyCheckActualView \
+                WHERE SelfstudyCheckActualView.actual_student_id = %s \
+                    AND (SelfstudyCheckActualView.date >= %s AND SelfstudyCheckActualView.date <= %s) \
+                ORDER BY SelfstudyCheckActualView.date DESC, SelfstudyCheckActualView.classroom_name ASC;",
+            data=(CustomSession.getSession()["userID"], past5Date, post3Date))
+        historyData = list(database.fetchall())
+        # ===================================
+        # 查询排班对应的数据表，并按排班编号整理
+        results = list()
+        for one_history in historyData:
+            # ==============================
+            # 处理一下日期，转化为可以JSON化的
+            one_history["date"] = one_history["date"].strftime("%Y-%m-%d")
+            # ======
+            # 数据表
+            DBAffectedRows = database.execute(
+                sql="SELECT check_result \
+                    FROM SelfstudyCheckData \
+                    WHERE selfstudy_id = %s \
+                    ORDER BY submission_time DESC \
+                    LIMIT 1;",
+                data=(one_history['selfstudy_id'],))
+            if DBAffectedRows==0:
+                database.fetchall()
+                selfstudyRecord = "{}"
+            else:
+                selfstudyRecord = database.fetchall()[0]["check_result"]
+            # ======
+            # 缺勤表
+            DBAffectedRows = database.execute(
+                sql="SELECT check_result \
+                    FROM SelfstudyCheckAbsent \
+                    WHERE selfstudy_id = %s \
+                    ORDER BY submission_time DESC \
+                    LIMIT 1;",
+                data=(one_history['selfstudy_id'],))
+            if DBAffectedRows==0:
+                selfstudyAbsentList = "[]"
+                database.fetchall()
+            else:
+                selfstudyAbsentList = database.fetchall()[0]["check_result"]
+            # ========
+            # 整合数据
+            results.append({
+                'date': one_history['date'],
+                'selfstudy_id': one_history['selfstudy_id'],
+                'classroom_name': one_history['classroom_name'],
+                'school_name': one_history['school_name'],
+                'campus': one_history['campus'],
+                'student_supposed': one_history['student_supposed'],
+                'record': selfstudyRecord,
+                'absent': selfstudyAbsentList
+            })
         # ========
         # 返回数据
         return results

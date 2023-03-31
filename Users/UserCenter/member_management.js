@@ -67,31 +67,32 @@ function fill_page_tables(data) {
 
 
 function add_table_template(group_id, group_name) {
-    let table =
-        `<div class="col-12 col-lg-6 col-xxl-4">
-        <div class="card">
-            <h5 class="card-header">${group_name}</h5>
-            <div class="table-responsive text-nowrap">
-                <table class="table table-hover table-striped mb-3">
-                    <thead>
-                        <tr>
-                        <th>#</th>
-                        <th>姓名</th>
-                        <th>性别</th>
-                        <th>学号</th>
-                        <th>操作</th>
-                        </tr>
-                    </thead>
-                    <tbody id="${group_id}">
-                    </tbody>
-                </table>
-                <button class="btn btn-sm btn-primary rounded-pill mb-3 ms-3"
-                        data-bs-toggle="modal" data-bs-target="#add-member"
-                        onclick="set_modal_header(this)">
-                        添加</button>
+    let table = `
+        <div class="col-12 col-lg-6 col-xxl-4">
+            <div class="card">
+                <h5 class="card-header">${group_name}</h5>
+                <div class="table-responsive text-nowrap">
+                    <table class="table table-hover table-striped mb-3">
+                        <thead>
+                            <tr>
+                            <th>#</th>
+                            <th>姓名</th>
+                            <th>性别</th>
+                            <th>学号</th>
+                            <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="${group_id}">
+                        </tbody>
+                    </table>
+                    <button class="btn btn-sm btn-primary rounded-pill mb-3 ms-3"
+                            data-bs-toggle="modal" data-bs-target="#add-member"
+                            onclick="set_modal_header(this)">
+                            添加</button>
+                </div>
             </div>
         </div>
-    </div>`;
+    `;
 
     $("#group-card-container").append(table);
 }
