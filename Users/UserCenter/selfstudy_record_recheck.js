@@ -1,4 +1,4 @@
-var AllAbsentListData = {};
+var allRecheckRemark = {};
 
 $(function () {
     get_records();
@@ -6,7 +6,7 @@ $(function () {
 
 function get_records() {
     $.get(
-        "/Ajax/DataManager/get_selfstudy_check_data",
+        "/Ajax/DataManager/get_group_selfstudy_check_data",
         function (data, status) {
             if (status === "success") {
                 let returnCode = data['code'];
@@ -19,7 +19,7 @@ function get_records() {
                 else if (returnCode === 401) {
                     swal({
                         title: "权限错误",
-                        text: "非现场组组员无早自习数据查看权限。",
+                        text: "非现场组组长或队长无组内早自习数据查看权限。",
                         icon: "error",
                     });
                 }
@@ -43,15 +43,15 @@ function get_records() {
                 }
                 else if (returnCode === 499) {
                     swal({
-                        title: "功能维护中，暂不允许获取早自习数据",
+                        title: "功能维护中，暂不允许获取组内早自习数据",
                         icon: "warning",
                     });
                 }
                 else if (returnCode === 200 || returnCode === 301) {
                     //状态码301，提醒转移函数
-                    if (returnCode === 301) { window.console.log('获取早自习数据函数移至新位置'); }
+                    if (returnCode === 301) { window.console.log('获取组内早自习数据函数移至新位置'); }
                     //状态码200，处理data
-                    fill_selfstudy_check_data(data['data']);
+                    fill_group_selfstudy_check_data(data['data']);
                 }
             }
             else
@@ -59,98 +59,134 @@ function get_records() {
         })
 }
 
-function fill_selfstudy_check_data(data) {
-    let selfstudy_record_table_body = $("#selfstudy-record-table-body");
-    selfstudy_record_table_body.html("");
+function fill_group_selfstudy_check_data(data) {
+    let card_container = $("#card-container");
+    card_container.html("");
 
-    for (one_records of data) {
-        AllAbsentListData[one_records["selfstudy_id"]] = one_records["absent"];
+    for (department_id in data) {
+        let one_department = data[department_id];
+        let department_name = one_department['department_name'];
 
-        let record = JSON.parse(one_records['record']);
-        let row = `
-            <tr data-bs-toggle="modal"
-                data-bs-target="#update-selfstudy-record"
-                onclick="fill_data_into_modal(this)"
-                selfstudy_id=${one_records["selfstudy_id"]}>
-                <td>${one_records["date"]}</td>
-                <td>${one_records["classroom_name"]}</td>
-                <td>${one_records["student_supposed"]}</td>
-                <td>${record["firstPresent"] || ""}</td>
-                <td>${record["absent"] || ""}</td>
-                <td>${record["secondPresent"] || ""}</td>
-                <td>${record["leaveEarly"] || ""}</td>
-                <td>${record["remark"] || ""}</td>
-                <td>${one_records["school_name"]}</td>
-            </tr>
-        `;
-        selfstudy_record_table_body.append(row)
+        let table_container = add_card(card_container, department_name, department_id);
+
+        for (date in one_department["data"]) {
+            let table_body = add_table(table_container, department_id, date);
+
+            for (one_schedule of one_department["data"][date]) {
+                add_row(table_body, one_schedule);
+                allRecheckRemark[one_schedule["selfstudy_id"]] = one_schedule["recheck_remark"];
+            }
+        }
     }
+}
+
+function add_card(card_container, department_name, department_id) {
+    let card = `
+        <div class="col-12">
+            <div class="card">
+                <h5 class="card-header">${department_name}</h5>
+                <div class="card-body">
+                    <div class="row g-2" id="${department_id}-table-container">
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    card_container.append(card);
+    return $(`#${department_id}-table-container`);
+}
+
+function add_table(table_container, department_id, date) {
+    let table = `
+        <h6 class="card-text mt-3 mb-0">${date}</h6>
+        <div class="col-12 table-responsive text-nowrap">
+            <table class="table table-hover text-center">
+                <thead>
+                    <tr>
+                        <th>姓名</th>
+                        <th>学号</th>
+                        <th>教室</th>
+                        <th>应到</th>
+                        <th>第一次出勤</th>
+                        <th>迟到</th>
+                        <th>第二次出勤</th>
+                        <th>早退</th>
+                        <th>备注</th>
+                        <th>学院</th>
+                    </tr>
+                </thead>
+                <tbody id="selfstudy-record-table-body-${department_id}-${date}">
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th>姓名</th>
+                        <th>学号</th>
+                        <th>教室</th>
+                        <th>应到</th>
+                        <th>第一次出勤</th>
+                        <th>迟到</th>
+                        <th>第二次出勤</th>
+                        <th>早退</th>
+                        <th>备注</th>
+                        <th>学院</th>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    `;
+    table_container.append(table);
+    return $(`#selfstudy-record-table-body-${department_id}-${date}`);
+}
+
+function add_row(table_body, one_schedule) {
+    let record = JSON.parse(one_schedule['record']);
+    let row_color = '';
+    if (one_schedule.submitted === false) row_color = "bg-label-danger";
+    else if (one_schedule.recheck === false) row_color = "bg-label-warning";
+    else row_color = "bg-label-success";
+    let row = `
+        <tr data-bs-toggle="modal"
+            data-bs-target="#recheck-selfstudy-record"
+            onclick="fill_data_into_modal(this)"
+            selfstudy_id=${one_schedule["selfstudy_id"]}
+            class="${row_color} text-gray">
+            <td>${one_schedule["actual_student_name"]}</td>
+            <td>${one_schedule["actual_student_id"]}</td>
+            <td>${one_schedule["classroom_name"]}</td>
+            <td>${one_schedule["student_supposed"]}</td>
+            <td>${record["firstPresent"] || ""}</td>
+            <td>${record["absent"] || ""}</td>
+            <td>${record["secondPresent"] || ""}</td>
+            <td>${record["leaveEarly"] || ""}</td>
+            <td>${record["remark"] || ""}</td>
+            <td>${one_schedule["school_name"]}</td>
+        </tr>
+    `;
+    table_body.append(row);
 }
 
 function fill_data_into_modal(row) {
     let selfstudy_id = $(row).attr("selfstudy_id");
-    let date = $($(row).children()[0]).text();
-    let classroomName = $($(row).children()[1]).text();
-    let firstPresent = $($(row).children()[3]).text();
-    let absent = $($(row).children()[4]).text();
-    let secondPresent = $($(row).children()[5]).text();
-    let leaveEarly = $($(row).children()[6]).text();
-    let remark = $($(row).children()[7]).text();
-    let schoolName = $($(row).children()[8]).text();
+    let date = $(row).parent().parent().parent().prev().text();
+    let student_name = $($(row).children()[0]).text();
+    let classroomName = $($(row).children()[2]).text();
+    let notSubmitted = $(row).attr("class").includes("bg-label-danger");
+    let recheck = $(row).attr("class").includes("bg-label-success");
+    let recheck_remark = allRecheckRemark[selfstudy_id];
 
-    let modal_head = `${date} ${schoolName} ${classroomName}`;
-    $("#firstPresent").val(parseInt(firstPresent) || 0);
-    $("#absent").val(parseInt(absent) || 0);
-    $("#secondPresent").val(parseInt(secondPresent) || 0);
-    $("#leaveEarly").val(parseInt(leaveEarly) || 0);
-    $("#remark").val(remark);
+    let modal_head = `${date} ${student_name} ${classroomName}`;
     $("#modal-subtitle").html(modal_head);
     $("#modal-subtitle").attr("selfstudy_id", selfstudy_id || 0);
 
-    $("#student_name").val('')
-    $("#student_id").val('')
-
-    let absent_table_body = $("#selfstudy-absent-list-table-body");
-    absent_table_body.html("");
-
-    let absentList = JSON.parse(AllAbsentListData[selfstudy_id]);
-    for (one_student of absentList) {
-        let row = `
-            <tr>
-                <td>${one_student['student_name']}</td>
-                <td>${one_student['student_id']}</td>
-                <td>
-                    <button class="btn btn-danger btn-sm rounded-pill" onclick="delete_absent_student(this)">删除</button>
-                </td>
-            </tr>
-        `;
-        absent_table_body.append(row);
-    }
-}
-
-function delete_absent_student(button) {
-    $(button).parent().parent().remove();
-}
-
-function add_absent_student() {
-    let student_name = $("#student_name").val();
-    let student_id = $("#student_id").val();
-
-    let row = `
-        <tr>
-            <td>${student_name}</td>
-            <td>${student_id}</td>
-            <td>
-                <button class="btn btn-danger btn-sm rounded-pill" onclick="delete_absent_student(this)">删除</button>
-            </td>
-        </tr>
-    `;
-
-    $("#selfstudy-absent-list-table-body").append(row);
+    $("#recheck").prop("checked",recheck);
+    $("#recheck").prop("disabled",notSubmitted);
+    $("#remark").val(recheck_remark);
+    $("#remark").prop("disabled",notSubmitted);
 }
 
 function submit() {
     try {
+        throw "暂不提供此功能";
         let selfstudy_id = parseInt($("#modal-subtitle").attr("selfstudy_id"));
         if (selfstudy_id === 0) { throw "Selfstudy ID Illegal !"; }
 
@@ -242,8 +278,12 @@ function submit() {
         })
     } catch (error) {
         swal({
-            title: "提供的数据错误，请检查或联系管理员。",
+            title: "暂不提供此功能",
             icon: "error",
         });
+        // swal({
+        //     title: "提供的数据错误，请检查或联系管理员。",
+        //     icon: "error",
+        // });
     }
 }

@@ -103,18 +103,18 @@
     </li>
     {% endif %}
     {% if ("现场组" in department_name and job==1) or department_id==1 %}
-    <li class="menu-item text-decoration-line-through" auth_require="x1">
+    <li class="menu-item" auth_require="x1">
         <a href="javascript:void(0);" class="menu-link menu-toggle">
             <i class="menu-icon tf-icons bx bx-task"></i>
             <div data-i18n="数据确认">数据确认</div>
         </a>
         <ul class="menu-sub">
             <li class="menu-item">
-                <a href="#" class="menu-link">
+                <a href="/Users/UserCenter/selfstudy_record_recheck.html" class="menu-link">
                     <div data-i18n="查早">查早</div>
                 </a>
             </li>
-            <li class="menu-item">
+            <li class="menu-item text-decoration-line-through">
                 <a href="#" class="menu-link">
                     <div data-i18n="查课">查课</div>
                 </a>
