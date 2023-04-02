@@ -53,9 +53,9 @@ class Ajax_DataManager:
                     "Classroom must be unique.", filename=__file__, line=sys._getframe().f_lineno)
             else:
                 campus_set.add(item["campus"]+item["classroom_name"])
-            if not 0 <= int(item["student_supposed"]) <= 100:
+            if not 0 <= int(item["student_supposed"]) <= 300:
                 raise IllegalValueError(
-                    "学生人数目前支持1~100之间", filename=__file__, line=sys._getframe().f_lineno)
+                    "学生人数目前支持1~300之间", filename=__file__, line=sys._getframe().f_lineno)
 
     @staticmethod
     def submitSelfstudyScheduleParamsCheck(infoForm: dict) -> None:
