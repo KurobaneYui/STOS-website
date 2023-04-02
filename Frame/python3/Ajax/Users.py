@@ -266,7 +266,7 @@ def Users(app: flask.Flask) -> None:
                 logger.funcArgs = request.form
                 # ===========
                 # 执行接口流程
-                results = DatabaseBasicOperations_Users.changePersonalInfo()
+                results = DatabaseBasicOperations_Users.changePersonalInfo(infoDict)
                 # ========================
                 # 准备函数返回值和响应与日志
                 returns = {"message": results, "data": ""}

@@ -53,9 +53,9 @@ class Ajax_DataManager:
                     "Classroom must be unique.", filename=__file__, line=sys._getframe().f_lineno)
             else:
                 campus_set.add(item["campus"]+item["classroom_name"])
-            if not 0 <= int(item["student_supposed"]) <= 100:
+            if not 0 <= int(item["student_supposed"]) <= 300:
                 raise IllegalValueError(
-                    "学生人数目前支持1~100之间", filename=__file__, line=sys._getframe().f_lineno)
+                    "学生人数目前支持1~300之间", filename=__file__, line=sys._getframe().f_lineno)
 
     @staticmethod
     def submitSelfstudyScheduleParamsCheck(infoForm: dict) -> None:
@@ -123,11 +123,11 @@ class Ajax_DataManager:
 
     @staticmethod
     def resetScheduleOnDateParamsCheck(infoForm: dict) -> None:
-        if "date" not in infoForm.keys()or "campus" not in infoForm.keys():
+        if "date" not in infoForm.keys() or "campus" not in infoForm.keys():
             raise IllegalValueError(
                 "Date and campus is required.", filename=__file__, line=sys._getframe().f_lineno)
-            
-        if infoForm['campus'] not in ['清水河','沙河']:
+
+        if infoForm['campus'] not in ['清水河', '沙河']:
             raise IllegalValueError(
                 "Campus is not right, should be one of '清水河' and '沙河'.", filename=__file__, line=sys._getframe().f_lineno)
 
@@ -140,11 +140,11 @@ class Ajax_DataManager:
 
     @staticmethod
     def randomScheduleOnDateParamsCheck(infoForm: dict) -> None:
-        if "date" not in infoForm.keys()or "campus" not in infoForm.keys():
+        if "date" not in infoForm.keys() or "campus" not in infoForm.keys():
             raise IllegalValueError(
                 "Date and campus is required.", filename=__file__, line=sys._getframe().f_lineno)
-            
-        if infoForm['campus'] not in ['清水河','沙河']:
+
+        if infoForm['campus'] not in ['清水河', '沙河']:
             raise IllegalValueError(
                 "Campus is not right, should be one of '清水河' and '沙河'.", filename=__file__, line=sys._getframe().f_lineno)
 
@@ -154,3 +154,40 @@ class Ajax_DataManager:
         except:
             raise IllegalValueError(
                 "Date is wrong or in wrong format. Should be YYYY-MM-DD.", filename=__file__, line=sys._getframe().f_lineno)
+
+    @staticmethod
+    def submitSelfstudyRecordParamsCheck(infoForm: dict) -> None:
+        if "absentList" not in infoForm.keys() or "record" not in infoForm.keys() or "selfstudy_id" not in infoForm.keys():
+            raise IllegalValueError(
+                "Not all data are provided.", filename=__file__, line=sys._getframe().f_lineno)
+
+        if "absent" not in infoForm["record"].keys() \
+                or "firstPresent" not in infoForm["record"].keys() \
+                or "leaveEarly" not in infoForm["record"].keys() \
+                or "secondPresent" not in infoForm["record"].keys() \
+                or "remark" not in infoForm["record"].keys():
+            raise IllegalValueError(
+                "Not all data are provided.", filename=__file__, line=sys._getframe().f_lineno)
+
+        try:
+            infoForm["selfstudy_id"] = int(infoForm["selfstudy_id"])
+            assert infoForm["selfstudy_id"] > 0
+        except:
+            raise IllegalValueError(
+                "selfstudy_id is wrong or not positive integer.", filename=__file__, line=sys._getframe().f_lineno)
+
+        try:
+            infoForm["record"]["firstPresent"] = int(
+                infoForm["record"]["firstPresent"])
+            infoForm["record"]["absent"] = int(infoForm["record"]["absent"])
+            infoForm["record"]["secondPresent"] = int(
+                infoForm["record"]["secondPresent"])
+            infoForm["record"]["leaveEarly"] = int(
+                infoForm["record"]["leaveEarly"])
+            assert infoForm["record"]["firstPresent"] >= 0
+            assert infoForm["record"]["absent"] >= 0
+            assert infoForm["record"]["secondPresent"] >= 0
+            assert infoForm["record"]["leaveEarly"] >= 0
+        except:
+            raise IllegalValueError(
+                "Record is wrong or not nonnegative integer.", filename=__file__, line=sys._getframe().f_lineno)

@@ -1,6 +1,7 @@
 import re
 import sys
 import time
+import json
 import random
 import datetime
 from flask import Request
@@ -690,8 +691,10 @@ class DatabaseBasicOperations_DataManager:
             database = databaseConnector
         # ================================
         # 获取当日日期后3日日期，和前5日日期
-        past5Date = (datetime.datetime.now() - datetime.timedelta(days=5)).strftime("%Y-%m-%d")
-        post3Date = (datetime.datetime.now() + datetime.timedelta(days=3)).strftime("%Y-%m-%d")
+        past5Date = (datetime.datetime.now() -
+                     datetime.timedelta(days=5)).strftime("%Y-%m-%d")
+        post3Date = (datetime.datetime.now() +
+                     datetime.timedelta(days=3)).strftime("%Y-%m-%d")
         # ==============================
         # 查询日期范围内，此组员的排班信息
         DBAffectedRows = database.execute(
@@ -718,7 +721,7 @@ class DatabaseBasicOperations_DataManager:
                     ORDER BY submission_time DESC \
                     LIMIT 1;",
                 data=(one_history['selfstudy_id'],))
-            if DBAffectedRows==0:
+            if DBAffectedRows == 0:
                 database.fetchall()
                 selfstudyRecord = "{}"
             else:
@@ -732,7 +735,7 @@ class DatabaseBasicOperations_DataManager:
                     ORDER BY submission_time DESC \
                     LIMIT 1;",
                 data=(one_history['selfstudy_id'],))
-            if DBAffectedRows==0:
+            if DBAffectedRows == 0:
                 selfstudyAbsentList = "[]"
                 database.fetchall()
             else:
@@ -749,6 +752,156 @@ class DatabaseBasicOperations_DataManager:
                 'record': selfstudyRecord,
                 'absent': selfstudyAbsentList
             })
+        # ========
+        # 返回数据
+        return results
+
+    @staticmethod
+    def submitSelfstudyRecord(infoForm: dict, databaseConnector: DatabaseConnector | None = None) -> None:
+        # =====================================
+        # 如果提供已经建立的数据库连接，则直接使用
+        if databaseConnector is None:
+            database = DatabaseConnector()
+            database.startCursor()
+        else:
+            database = databaseConnector
+        # ==========================================
+        # 查找早自习排班编号对应的实际查早组员是否为本人
+        DBAffectedRows = database.execute(
+            sql="SELECT selfstudy_id \
+                FROM SelfstudyCheckActualView \
+                WHERE SelfstudyCheckActualView.actual_student_id = %s \
+                    AND SelfstudyCheckActualView.selfstudy_id = %s;",
+            data=(CustomSession.getSession()["userID"], infoForm['selfstudy_id']))
+        database.fetchall()
+        if DBAffectedRows == 0:
+            raise PermissionError(
+                "此早自习排班的实际检查组员与本人核验不匹配，请联系管理员.", filename=__file__, line=sys._getframe().f_lineno)
+        # ============
+        # 提交查早数据
+        check_result = json.dumps(infoForm['record'], ensure_ascii=False)
+        DBAffectedRows = database.execute(
+            sql="INSERT INTO SelfstudyCheckData \
+                    (selfstudy_id,check_result,submit_student_id,groupleader_recheck,remark) \
+                VALUES \
+                    (%s,%s,%s,0,'');",
+            data=(infoForm['selfstudy_id'], check_result,
+                  CustomSession.getSession()["userID"]),
+            autoCommit=False)
+
+        check_result = json.dumps(infoForm['absentList'], ensure_ascii=False)
+        DBAffectedRows = database.execute(
+            sql="INSERT INTO SelfstudyCheckAbsent \
+                    (selfstudy_id,check_result,submit_student_id) \
+                VALUES \
+                    (%s,%s,%s);",
+            data=(infoForm['selfstudy_id'], check_result,
+                  CustomSession.getSession()["userID"]),
+            autoCommit=False)
+        # ========
+        # 提交数据
+        database.commit()
+
+    @staticmethod
+    def getGroupSelfstudyCheckData(databaseConnector: DatabaseConnector | None = None) -> dict:
+        # =====================================
+        # 如果提供已经建立的数据库连接，则直接使用
+        if databaseConnector is None:
+            database = DatabaseConnector()
+            database.startCursor()
+        else:
+            database = databaseConnector
+        # ================================
+        # 获取当日日期后3日日期，和前7日日期
+        past7Date = datetime.datetime.now() - datetime.timedelta(days=7)
+        post3Date = datetime.datetime.now() + datetime.timedelta(days=3)
+        date_list = [d.strftime("%Y-%m-%d") for d in (past7Date + datetime.timedelta(days=x)
+                                                      for x in range((post3Date - past7Date).days + 1))]
+        # =============================================
+        # 获取登录组，如果是队长则登录组列表填入所有现场组
+        if CustomSession.getSession()["department_id"] == 1:
+            DBAffectedRows = database.execute(
+                sql="SELECT department_id \
+                    FROM Department \
+                    WHERE name LIKE %s;",
+                data=("现场组%",))
+            department_list = list(database.fetchall())
+        elif CustomSession.getSession()["department_id"] != 0:
+            department_list = [
+                {"department_id": CustomSession.getSession()["department_id"]},]
+        else:
+            raise PermissionError(
+                "没有权限查看组内提交早自习数据.", filename=__file__, line=sys._getframe().f_lineno)
+        # ================================================
+        # 对每个登录组，按日期顺序获取对应日期的组员排班和数据
+        results = dict()
+        for department_id in department_list:
+            department_id = department_id['department_id']
+            # ============
+            # 按组获取数据
+            DBAffectedRows = database.execute(
+                sql="SELECT department_id, name AS department_name \
+                    FROM Department \
+                    WHERE name LIKE %s AND department_id = %s;",
+                data=("现场组%", department_id))
+            if DBAffectedRows != 1:
+                continue
+            results[department_id] = database.fetchall()[0]
+            results[department_id]["data"] = dict()
+            for date in date_list:
+                # =================
+                # 子项按日期获取数据
+                DBAffectedRows = database.execute(
+                    sql="SELECT selfstudy_id, classroom_name, campus, school_name, student_supposed, actual_student_id, actual_student_name \
+                        FROM SelfstudyCheckActualView \
+                        WHERE SelfstudyCheckActualView.actual_student_department_id = %s \
+                            AND SelfstudyCheckActualView.date = %s \
+                        ORDER BY SelfstudyCheckActualView.actual_student_id ASC,SelfstudyCheckActualView.classroom_name ASC;",
+                    data=(department_id, date))
+                all_schedules = database.fetchall()
+                if DBAffectedRows != 0:
+                    results[department_id]["data"][date] = list()
+                for one_schedules in all_schedules:
+                    # =======================
+                    # 对每一个排班获取提交数据
+                    selfstudy_id = one_schedules['selfstudy_id']
+                    # ======
+                    # 数据表
+                    DBAffectedRows = database.execute(
+                        sql="SELECT check_result, groupleader_recheck, remark \
+                            FROM SelfstudyCheckData \
+                            WHERE selfstudy_id = %s \
+                            ORDER BY submission_time DESC \
+                            LIMIT 1;",
+                        data=(selfstudy_id,))
+                    info = database.fetchall()
+                    if DBAffectedRows == 0:
+                        one_schedules.update({"record": "{}",
+                                              "recheck_remark":"",
+                                              "recheck": False,
+                                              "submitted": False})
+                    else:
+                        one_schedules.update({"record": info[0]["check_result"],
+                                              "recheck_remark":info[0]["remark"],
+                                              "recheck": int(info[0]["groupleader_recheck"]) == 1,
+                                              "submitted": True})
+                    # ======
+                    # 缺勤表
+                    DBAffectedRows = database.execute(
+                        sql="SELECT check_result AS absentList \
+                            FROM SelfstudyCheckAbsent \
+                            WHERE selfstudy_id = %s \
+                            ORDER BY submission_time DESC \
+                            LIMIT 1;",
+                        data=(selfstudy_id,))
+                    if DBAffectedRows == 0:
+                        one_schedules.update({"absentList": "[]"})
+                        database.fetchall()
+                    else:
+                        one_schedules.update(database.fetchall()[0])
+                    # =================
+                    # 排班和数据一并存入
+                    results[department_id]["data"][date].append(one_schedules)
         # ========
         # 返回数据
         return results
