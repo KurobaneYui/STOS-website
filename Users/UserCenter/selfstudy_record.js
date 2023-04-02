@@ -1,6 +1,10 @@
 var AllAbsentListData = {};
 
 $(function () {
+    get_records();
+})
+
+function get_records() {
     $.get(
         "/Ajax/DataManager/get_selfstudy_check_data",
         function (data, status) {
@@ -53,7 +57,7 @@ $(function () {
             else
                 alert("请检查网络状况。");
         })
-})
+}
 
 function fill_selfstudy_check_data(data) {
     let selfstudy_record_table_body = $("#selfstudy-record-table-body");
@@ -103,6 +107,10 @@ function fill_data_into_modal(row) {
     $("#leaveEarly").val(parseInt(leaveEarly) || 0);
     $("#remark").val(remark);
     $("#modal-subtitle").html(modal_head);
+    $("#modal-subtitle").attr("selfstudy_id", selfstudy_id || 0);
+
+    $("#student_name").val('')
+    $("#student_id").val('')
 
     let absent_table_body = $("#selfstudy-absent-list-table-body");
     absent_table_body.html("");
@@ -144,7 +152,102 @@ function add_absent_student() {
 }
 
 function submit() {
-    ;
+    try {
+        let selfstudy_id = parseInt($("#modal-subtitle").attr("selfstudy_id"));
+        if (selfstudy_id === 0) { throw "Selfstudy ID Illegal !"; }
+
+        let firstPresent = parseInt($("#firstPresent").val());
+        let absent = parseInt($("#absent").val());
+        let secondPresent = parseInt($("#secondPresent").val());
+        let leaveEarly = parseInt($("#leaveEarly").val());
+        let remark = $("#remark").val().trim();
+
+        let absent_table_body = $("#selfstudy-absent-list-table-body");
+        let absent_list = Array();
+        for (row of absent_table_body.children()) {
+            let student_name = $(row).children().first().text().trim();
+            let student_id = $(row).children().first().next().text().trim();
+
+            absent_list.push({ student_name: student_name, student_id: student_id });
+        }
+
+        $.ajax({
+            url: "/Ajax/DataManager/submit_selfstudy_record",
+            method: "POST",
+            data: JSON.stringify({
+                selfstudy_id: selfstudy_id,
+                record: {
+                    firstPresent: firstPresent,
+                    absent: absent,
+                    secondPresent: secondPresent,
+                    leaveEarly: leaveEarly,
+                    remark: remark,
+                },
+                absentList: absent_list
+            }),
+            // data: JSON.stringify(selfstudy_classrooms_data),
+            contentType: 'application/json',
+            success: function (data, status) {
+                if (status === "success") {
+                    let returnCode = data['code'];
+                    if (returnCode === 400) {
+                        swal({
+                            title: "提供的数据错误，请联系管理员",
+                            icon: "error",
+                        });
+                    }
+                    else if (returnCode === 401) {
+                        swal({
+                            title: "权限错误",
+                            text: "仅现场组可编辑。",
+                            icon: "error",
+                        });
+                    }
+                    else if (returnCode === 404) {
+                        swal({
+                            title: "功能不存在，请联系管理员",
+                            icon: "warning",
+                        });
+                    }
+                    else if (returnCode === 417) {
+                        swal({
+                            title: "功能错误，请联系管理员",
+                            icon: "warning",
+                        });
+                    }
+                    else if (returnCode === 498) {
+                        swal({
+                            title: "数据库异常，请联系管理员",
+                            icon: "warning",
+                        });
+                    }
+                    else if (returnCode === 499) {
+                        swal({
+                            title: "功能维护中，暂不允许提交早自习记录信息",
+                            icon: "warning",
+                        });
+                    }
+                    else if (returnCode === 200 || returnCode === 301) {
+                        //状态码301，提醒转移函数
+                        if (returnCode === 301) { window.console.log('提交早自习记录函数移至新位置'); }
+                        //状态码200，处理data
+                        get_records();
+                        swal({
+                            title: "提交成功",
+                            icon: "success",
+                        });
+                    }
+                }
+                else
+                    alert("请检查网络状况。");
+            }
+        })
+    } catch (error) {
+        swal({
+            title: "提供的数据错误，请检查或联系管理员。",
+            icon: "error",
+        });
+    }
 }
 
 function render_campus(campus) {
