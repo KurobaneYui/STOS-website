@@ -67,8 +67,20 @@ function fill_selfstudy_check_data(data) {
         AllAbsentListData[one_records["selfstudy_id"]] = one_records["absent"];
 
         let record = JSON.parse(one_records['record']);
+        Date.prototype.format = function (formatStr) {
+            var str = formatStr;
+            var Week = ['日', '一', '二', '三', '四', '五', '六'];
+            str = str.replace(/yyyy|YYYY/, this.getFullYear());
+            str = str.replace(/MM/, (this.getMonth() + 1) > 9 ? (this.getMonth() + 1).toString() : '0' + (this.getMonth() + 1));
+            str = str.replace(/dd|DD/, this.getDate() > 9 ? this.getDate().toString() : '0' + this.getDate());
+            return str;
+        }
+        let currentDate = (new Date()).format("yyyy-MM-dd");
+        let bg_class = '';
+        if (currentDate === one_records['date']) bg_class = "class='bg-label-primary'";
         let row = `
-            <tr data-bs-toggle="modal"
+            <tr ${bg_class}
+                data-bs-toggle="modal"
                 data-bs-target="#update-selfstudy-record"
                 onclick="fill_data_into_modal(this)"
                 selfstudy_id=${one_records["selfstudy_id"]}>

@@ -817,6 +817,7 @@ class DatabaseBasicOperations_DataManager:
         post3Date = datetime.datetime.now() + datetime.timedelta(days=3)
         date_list = [d.strftime("%Y-%m-%d") for d in (past7Date + datetime.timedelta(days=x)
                                                       for x in range((post3Date - past7Date).days + 1))]
+        date_list.reverse()
         # =============================================
         # 获取登录组，如果是队长则登录组列表填入所有现场组
         if CustomSession.getSession()["department_id"] == 1:
@@ -868,7 +869,7 @@ class DatabaseBasicOperations_DataManager:
                     # ======
                     # 数据表
                     DBAffectedRows = database.execute(
-                        sql="SELECT check_result, groupleader_recheck, remark \
+                        sql="SELECT selfstudycheckdata_id, check_result, groupleader_recheck, remark \
                             FROM SelfstudyCheckData \
                             WHERE selfstudy_id = %s \
                             ORDER BY submission_time DESC \
@@ -876,26 +877,31 @@ class DatabaseBasicOperations_DataManager:
                         data=(selfstudy_id,))
                     info = database.fetchall()
                     if DBAffectedRows == 0:
-                        one_schedules.update({"record": "{}",
-                                              "recheck_remark":"",
+                        one_schedules.update({"selfstudycheckdata_id": -1,
+                                              "record": "{}",
+                                              "recheck_remark": "",
                                               "recheck": False,
                                               "submitted": False})
                     else:
-                        one_schedules.update({"record": info[0]["check_result"],
-                                              "recheck_remark":info[0]["remark"],
+                        one_schedules.update({"selfstudycheckdata_id": info[0]["selfstudycheckdata_id"],
+                                              "record": info[0]["check_result"],
+                                              "recheck_remark": info[0]["remark"],
                                               "recheck": int(info[0]["groupleader_recheck"]) == 1,
                                               "submitted": True})
                     # ======
                     # 缺勤表
                     DBAffectedRows = database.execute(
-                        sql="SELECT check_result AS absentList \
+                        sql="SELECT selfstudycheckabsent_id, check_result AS absentList \
                             FROM SelfstudyCheckAbsent \
                             WHERE selfstudy_id = %s \
                             ORDER BY submission_time DESC \
                             LIMIT 1;",
                         data=(selfstudy_id,))
                     if DBAffectedRows == 0:
-                        one_schedules.update({"absentList": "[]"})
+                        one_schedules.update({
+                            "selfstudycheckabsent_id": -1,
+                            "absentList": "[]"
+                        })
                         database.fetchall()
                     else:
                         one_schedules.update(database.fetchall()[0])
@@ -905,3 +911,46 @@ class DatabaseBasicOperations_DataManager:
         # ========
         # 返回数据
         return results
+
+    @staticmethod
+    def submitSelfstudyRecordRecheck(infoForm: dict, databaseConnector: DatabaseConnector | None = None) -> dict:
+        # =====================================
+        # 如果提供已经建立的数据库连接，则直接使用
+        if databaseConnector is None:
+            database = DatabaseConnector()
+            database.startCursor()
+        else:
+            database = databaseConnector
+        # ================================
+        # 核验早自习编号和早自习数据编号匹配
+        DBAffectedRows = database.execute(
+            sql="SELECT selfstudycheckdata_id \
+                FROM SelfstudyCheckData \
+                WHERE selfstudycheckdata_id = %(selfstudycheckdata_id)s \
+                    AND selfstudy_id = %(selfstudy_id)s;",
+            data=infoForm)
+        database.fetchall()
+        if DBAffectedRows == 0:
+            raise PermissionError(
+                "早自习数据编号和早自习排班编号不匹配.", filename=__file__, line=sys._getframe().f_lineno)
+        # ==============================
+        # 核验早自习编号对应组员为本组组员
+        DBAffectedRows = database.execute(
+            sql="SELECT selfstudy_id \
+                FROM SelfstudyCheckActualView \
+                WHERE selfstudy_id = %s \
+                    AND actual_student_department_id = %s;",
+            data=(infoForm['selfstudy_id'], CustomSession.getSession()['department_id']))
+        database.fetchall()
+        if DBAffectedRows == 0:
+            raise PermissionError(
+                "数据对应早自习排班的组员不属于本组.", filename=__file__, line=sys._getframe().f_lineno)
+        # ============
+        # 提交确认信息
+        DBAffectedRows = database.execute(
+            sql="UPDATE SelfstudyCheckData \
+                SET groupleader_recheck = %(rechecked)s, \
+                    remark = %(recheck_remark)s \
+                WHERE selfstudycheckdata_id = %(selfstudycheckdata_id)s;",
+            data=infoForm,
+            autoCommit=True)

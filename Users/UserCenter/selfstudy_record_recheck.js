@@ -1,4 +1,4 @@
-var allRecheckRemark = {};
+var allData = {};
 
 $(function () {
     get_records();
@@ -74,7 +74,14 @@ function fill_group_selfstudy_check_data(data) {
 
             for (one_schedule of one_department["data"][date]) {
                 add_row(table_body, one_schedule);
-                allRecheckRemark[one_schedule["selfstudy_id"]] = one_schedule["recheck_remark"];
+                allData[one_schedule["selfstudy_id"]] = {
+                    selfstudycheckdata_id: one_schedule['selfstudycheckdata_id'],
+                    recheck_remark: one_schedule['recheck_remark'],
+                    recheck: one_schedule['recheck'],
+                    submitted: one_schedule['submitted'],
+                    selfstudycheckabsent_id: one_schedule['selfstudycheckabsent_id'],
+                    absentList: one_schedule['absentList']
+                };
             }
         }
     }
@@ -170,58 +177,43 @@ function fill_data_into_modal(row) {
     let date = $(row).parent().parent().parent().prev().text();
     let student_name = $($(row).children()[0]).text();
     let classroomName = $($(row).children()[2]).text();
-    let notSubmitted = $(row).attr("class").includes("bg-label-danger");
-    let recheck = $(row).attr("class").includes("bg-label-success");
-    let recheck_remark = allRecheckRemark[selfstudy_id];
+    let selfstudycheckdata_id = allData[selfstudy_id].selfstudycheckdata_id;
+    let selfstudycheckabsent_id = allData[selfstudy_id].selfstudycheckabsent_id;
+    let submitted = allData[selfstudy_id].submitted;
+    let recheck = allData[selfstudy_id].recheck;
+    let recheck_remark = allData[selfstudy_id].recheck_remark;
 
     let modal_head = `${date} ${student_name} ${classroomName}`;
     $("#modal-subtitle").html(modal_head);
     $("#modal-subtitle").attr("selfstudy_id", selfstudy_id || 0);
+    $("#modal-subtitle").attr("selfstudycheckdata_id", selfstudycheckdata_id || 0);
+    $("#modal-subtitle").attr("selfstudycheckabsent_id", selfstudycheckabsent_id || 0);
 
-    $("#recheck").prop("checked",recheck);
-    $("#recheck").prop("disabled",notSubmitted);
+    $("#recheck").prop("checked", recheck);
+    $("#recheck").prop("disabled", !submitted);
     $("#remark").val(recheck_remark);
-    $("#remark").prop("disabled",notSubmitted);
+    $("#remark").prop("disabled", !submitted);
+    $("#submit-button").prop("disabled", !submitted);
 }
 
 function submit() {
     try {
-        throw "暂不提供此功能";
-        let selfstudy_id = parseInt($("#modal-subtitle").attr("selfstudy_id"));
-        if (selfstudy_id === 0) { throw "Selfstudy ID Illegal !"; }
+        let selfstudy_id = parseInt($("#modal-subtitle").attr("selfstudy_id")) || -1;
+        let selfstudycheckdata_id = parseInt($("#modal-subtitle").attr("selfstudycheckdata_id")) || -1;
+        let selfstudycheckabsent_id = parseInt($("#modal-subtitle").attr("selfstudycheckabsent_id")) || -1;
+        let rechecked = $("#recheck").prop("checked");
+        let recheck_remark = $("#remark").val().trim();
 
-        let firstPresent = parseInt($("#firstPresent").val());
-        let absent = parseInt($("#absent").val());
-        let secondPresent = parseInt($("#secondPresent").val());
-        let leaveEarly = parseInt($("#leaveEarly").val());
-        let remark = $("#remark").val().trim();
-
-        let absent_table_body = $("#selfstudy-absent-list-table-body");
-        let absent_list = Array();
-        for (row of absent_table_body.children()) {
-            let student_name = $(row).children().first().text().trim();
-            let student_id = $(row).children().first().next().text().trim();
-
-            absent_list.push({ student_name: student_name, student_id: student_id });
-        }
-
-        $.ajax({
-            url: "/Ajax/DataManager/submit_selfstudy_record",
-            method: "POST",
-            data: JSON.stringify({
+        $.post(
+            "/Ajax/DataManager/submit_selfstudy_record_recheck",
+            {
                 selfstudy_id: selfstudy_id,
-                record: {
-                    firstPresent: firstPresent,
-                    absent: absent,
-                    secondPresent: secondPresent,
-                    leaveEarly: leaveEarly,
-                    remark: remark,
-                },
-                absentList: absent_list
-            }),
-            // data: JSON.stringify(selfstudy_classrooms_data),
-            contentType: 'application/json',
-            success: function (data, status) {
+                selfstudycheckdata_id: selfstudycheckdata_id,
+                selfstudycheckabsent_id: selfstudycheckabsent_id,
+                rechecked: rechecked,
+                recheck_remark: recheck_remark
+            },
+            function (data, status) {
                 if (status === "success") {
                     let returnCode = data['code'];
                     if (returnCode === 400) {
@@ -233,7 +225,7 @@ function submit() {
                     else if (returnCode === 401) {
                         swal({
                             title: "权限错误",
-                            text: "仅现场组可编辑。",
+                            text: "非现场组组长或队长无组内早自习数据确认权限。",
                             icon: "error",
                         });
                     }
@@ -257,33 +249,32 @@ function submit() {
                     }
                     else if (returnCode === 499) {
                         swal({
-                            title: "功能维护中，暂不允许提交早自习记录信息",
+                            title: "功能维护中，暂不允许确认组内早自习数据",
                             icon: "warning",
                         });
                     }
                     else if (returnCode === 200 || returnCode === 301) {
                         //状态码301，提醒转移函数
-                        if (returnCode === 301) { window.console.log('提交早自习记录函数移至新位置'); }
+                        if (returnCode === 301) { window.console.log('确认组内早自习数据函数移至新位置'); }
                         //状态码200，处理data
-                        get_records();
                         swal({
-                            title: "提交成功",
+                            title: "成功。",
                             icon: "success",
                         });
+                        if (rechecked === true) $(`tr[selfstudy_id=${selfstudy_id}]`).attr('class', 'bg-label-success text-gray');
+                        else if (allData[selfstudy_id].submitted === false) $(`tr[selfstudy_id=${selfstudy_id}]`).attr('class', 'bg-label-danger text-gray');
+                        else $(`tr[selfstudy_id=${selfstudy_id}]`).attr('class', 'bg-label-warning text-gray');
+                        allData[selfstudy_id].recheck = rechecked;
+                        allData[selfstudy_id].recheck_remark = recheck_remark;
                     }
                 }
                 else
                     alert("请检查网络状况。");
-            }
-        })
+            })
     } catch (error) {
         swal({
-            title: "暂不提供此功能",
+            title: "提供的数据错误，请联系管理员。",
             icon: "error",
         });
-        // swal({
-        //     title: "提供的数据错误，请检查或联系管理员。",
-        //     icon: "error",
-        // });
     }
 }
