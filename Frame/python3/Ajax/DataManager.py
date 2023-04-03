@@ -465,4 +465,33 @@ def DataManager(app: flask.Flask) -> None:
                 logger.funcReturns = returns
         return customResponse.getResponse()
     
+    @app.route("/Ajax/DataManager/submit_selfstudy_record_recheck", methods=['POST'])
+    def submitSelfstudyRecordRecheck():
+        with CustomResponse() as customResponse:
+            with Logger(funcName="Users.submitSelfstudyRecordRecheck()") as logger:
+                # ===============
+                # 检查接口调用权限
+                Authorization.check(rightsNeeded=({"department_id": 5, "actor": 1},
+                                                  {"department_id": 6, "actor": 1},
+                                                  {"department_id": 7, "actor": 1},
+                                                  {"department_id": 8, "actor": 1},
+                                                  {"department_id": 9, "actor": 1},
+                                                  {"department_id": 10, "actor": 1},
+                                                  {"department_id": 11, "actor": 1},
+                                                  {"department_id": 0, "actor": 1}), needLogin=True)
+                # ========================
+                # 检查接口输入参数并记录日志
+                infoForm = dict(request.form)
+                Ajax_DataManager.submitSelfstudyRecordRecheckParamsCheck(infoForm)
+                logger.funcArgs = request.form
+                # ===========
+                # 执行接口流程
+                DatabaseBasicOperations_DataManager.submitSelfstudyRecordRecheck(infoForm)
+                # ========================
+                # 准备函数返回值和响应与日志
+                returns = {"message": "", "data": ""}
+                customResponse.setMessageAndData(**returns)
+                logger.funcReturns = returns
+        return customResponse.getResponse()
+    
     
