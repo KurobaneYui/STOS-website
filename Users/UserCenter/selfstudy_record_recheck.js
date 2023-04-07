@@ -118,6 +118,7 @@ function add_table(table_container, department_id, date) {
                         <th>迟到</th>
                         <th>第二次出勤</th>
                         <th>早退</th>
+                        <th>请假</th>
                         <th>备注</th>
                         <th>学院</th>
                     </tr>
@@ -134,6 +135,7 @@ function add_table(table_container, department_id, date) {
                         <th>迟到</th>
                         <th>第二次出勤</th>
                         <th>早退</th>
+                        <th>请假</th>
                         <th>备注</th>
                         <th>学院</th>
                     </tr>
@@ -165,6 +167,7 @@ function add_row(table_body, one_schedule) {
             <td>${record["absent"] || ""}</td>
             <td>${record["secondPresent"] || ""}</td>
             <td>${record["leaveEarly"] || ""}</td>
+            <td>${record["askForLeave"] || ""}</td>
             <td>${record["remark"] || ""}</td>
             <td>${one_schedule["school_name"]}</td>
         </tr>
