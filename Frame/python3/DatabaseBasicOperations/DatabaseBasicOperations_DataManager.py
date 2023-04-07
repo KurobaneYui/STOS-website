@@ -913,7 +913,7 @@ class DatabaseBasicOperations_DataManager:
         return results
 
     @staticmethod
-    def submitSelfstudyRecordRecheck(infoForm: dict, databaseConnector: DatabaseConnector | None = None) -> dict:
+    def submitSelfstudyRecordRecheck(infoForm: dict, databaseConnector: DatabaseConnector | None = None) -> None:
         # =====================================
         # 如果提供已经建立的数据库连接，则直接使用
         if databaseConnector is None:
@@ -954,3 +954,88 @@ class DatabaseBasicOperations_DataManager:
                 WHERE selfstudycheckdata_id = %(selfstudycheckdata_id)s;",
             data=infoForm,
             autoCommit=True)
+
+    @staticmethod
+    def getGroupEmptyTable(databaseConnector: DatabaseConnector | None = None) -> dict:
+        # =====================================
+        # 如果提供已经建立的数据库连接，则直接使用
+        if databaseConnector is None:
+            database = DatabaseConnector()
+            database.startCursor()
+        else:
+            database = databaseConnector
+        # =========================================
+        # 获取登录组id，并以此获取组员学号姓名和空课表
+        _ = database.execute(
+            sql="SELECT MemberBasic.name AS student_name, MemberBasic.student_id AS student_id, mon, tue, wed, thu, fri, sat, sun, EmptyTime.remark as emptyTimeRemark \
+                FROM EmptyTime \
+                LEFT JOIN MemberBasic ON EmptyTime.student_id = MemberBasic.student_id \
+                LEFT JOIN Work ON EmptyTime.student_id = Work.student_id \
+                LEFT JOIN Department ON Work.department_id = Department.department_id \
+                WHERE Department.department_id = %(department_id)s \
+                    AND Work.job = 0;",
+            data=CustomSession().getSession())
+        return database.fetchall()
+
+    @staticmethod
+    def setMemberEmptyTable(infoForm: dict, databaseConnector: DatabaseConnector | None = None) -> None:
+        # =====================================
+        # 如果提供已经建立的数据库连接，则直接使用
+        if databaseConnector is None:
+            database = DatabaseConnector()
+            database.startCursor()
+        else:
+            database = databaseConnector
+        # =========================
+        # 确认修改成员是登录组的成员
+        DBAffectedRows = database.execute(
+            sql="SELECT student_id FROM Work \
+                WHERE department_id = %s \
+                    AND student_id = %s\
+                    AND Work.job = 0;",
+            data=(CustomSession().getSession()[
+                  "department_id"], infoForm["student_id"]),
+            autoCommit=False)
+        database.fetchall()
+        if DBAffectedRows == 0:
+            raise PermissionError(
+                "只能修改登录组组员的空课表.", filename=__file__, line=sys._getframe().f_lineno)
+        # ==============
+        # 获取某日空课表
+        DBAffectedRows = database.execute(
+            sql="SELECT * FROM EmptyTime WHERE student_id = %(student_id)s;",
+            data=infoForm,
+            autoCommit=False)
+        if DBAffectedRows == 0:
+            raise IllegalValueError()(
+                "查询不到组员指定的空课表.", filename=__file__, line=sys._getframe().f_lineno)
+        emptyString = database.fetchall()[0][infoForm["weekName"]]
+        emptyBit = int(emptyString[infoForm["timePeriodOrder"]])
+        oddEmpty = emptyBit in [1, 3]
+        evenEmpty = emptyBit in [2, 3]
+        # ==========
+        # 修改对应位
+        if infoForm["evenOrNot"]:
+            evenEmpty = infoForm["emptyOrNot"]
+        else:
+            oddEmpty = infoForm["emptyOrNot"]
+
+        emptyBit = 0
+        if oddEmpty:
+            emptyBit += 1
+        if evenEmpty:
+            emptyBit += 2
+
+        emptyString = emptyString[:infoForm["timePeriodOrder"]] + \
+            str(emptyBit)+emptyString[infoForm["timePeriodOrder"]+1:]
+        # ============
+        # 再提交空课表
+        DBAffectedRows = database.execute(
+            sql=f"UPDATE EmptyTime \
+                SET {infoForm['weekName']} = %s \
+                WHERE student_id = %s;",
+            data=(emptyString, infoForm["student_id"]),
+            autoCommit=False)
+        # ========
+        # 提交修改
+        database.commit()
