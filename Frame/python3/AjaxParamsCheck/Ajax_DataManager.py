@@ -165,6 +165,7 @@ class Ajax_DataManager:
                 or "firstPresent" not in infoForm["record"].keys() \
                 or "leaveEarly" not in infoForm["record"].keys() \
                 or "secondPresent" not in infoForm["record"].keys() \
+                or "askForLeave" not in infoForm["record"].keys() \
                 or "remark" not in infoForm["record"].keys():
             raise IllegalValueError(
                 "Not all data are provided.", filename=__file__, line=sys._getframe().f_lineno)
@@ -184,10 +185,13 @@ class Ajax_DataManager:
                 infoForm["record"]["secondPresent"])
             infoForm["record"]["leaveEarly"] = int(
                 infoForm["record"]["leaveEarly"])
+            infoForm["record"]["askForLeave"] = int(
+                infoForm["record"]["askForLeave"])
             assert infoForm["record"]["firstPresent"] >= 0
             assert infoForm["record"]["absent"] >= 0
             assert infoForm["record"]["secondPresent"] >= 0
             assert infoForm["record"]["leaveEarly"] >= 0
+            assert infoForm["record"]["askForLeave"] >= 0
         except:
             raise IllegalValueError(
                 "Record is wrong or not nonnegative integer.", filename=__file__, line=sys._getframe().f_lineno)

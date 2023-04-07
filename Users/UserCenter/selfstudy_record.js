@@ -91,6 +91,7 @@ function fill_selfstudy_check_data(data) {
                 <td>${record["absent"] || ""}</td>
                 <td>${record["secondPresent"] || ""}</td>
                 <td>${record["leaveEarly"] || ""}</td>
+                <td>${record["askForLeave"] || ""}</td>
                 <td>${record["remark"] || ""}</td>
                 <td>${one_records["school_name"]}</td>
             </tr>
@@ -107,14 +108,16 @@ function fill_data_into_modal(row) {
     let absent = $($(row).children()[4]).text();
     let secondPresent = $($(row).children()[5]).text();
     let leaveEarly = $($(row).children()[6]).text();
-    let remark = $($(row).children()[7]).text();
-    let schoolName = $($(row).children()[8]).text();
+    let askForLeave = $($(row).children()[7]).text();
+    let remark = $($(row).children()[8]).text();
+    let schoolName = $($(row).children()[9]).text();
 
     let modal_head = `${date} ${schoolName} ${classroomName}`;
     $("#firstPresent").val(parseInt(firstPresent) || 0);
     $("#absent").val(parseInt(absent) || 0);
     $("#secondPresent").val(parseInt(secondPresent) || 0);
     $("#leaveEarly").val(parseInt(leaveEarly) || 0);
+    $("#askForLeave").val(parseInt(askForLeave) || 0);
     $("#remark").val(remark);
     $("#modal-subtitle").html(modal_head);
     $("#modal-subtitle").attr("selfstudy_id", selfstudy_id || 0);
@@ -170,6 +173,7 @@ function submit() {
         let absent = parseInt($("#absent").val());
         let secondPresent = parseInt($("#secondPresent").val());
         let leaveEarly = parseInt($("#leaveEarly").val());
+        let askForLeave = parseInt($("#askForLeave").val());
         let remark = $("#remark").val().trim();
 
         let absent_table_body = $("#selfstudy-absent-list-table-body");
@@ -191,6 +195,7 @@ function submit() {
                     absent: absent,
                     secondPresent: secondPresent,
                     leaveEarly: leaveEarly,
+                    askForLeave: askForLeave,
                     remark: remark,
                 },
                 absentList: absent_list
