@@ -6,7 +6,7 @@ $(function () {
 
 function get_records() {
     $.get(
-        "/Ajax/DataManager/get_group_selfstudy_check_data",
+        "/Ajax/GroupManager/get_group_selfstudy_check_data",
         function (data, status) {
             if (status === "success") {
                 let returnCode = data['code'];
@@ -208,7 +208,7 @@ function submit() {
         let recheck_remark = $("#remark").val().trim();
 
         $.post(
-            "/Ajax/DataManager/submit_selfstudy_record_recheck",
+            "/Ajax/GroupManager/submit_selfstudy_record_recheck",
             {
                 selfstudy_id: selfstudy_id,
                 selfstudycheckdata_id: selfstudycheckdata_id,

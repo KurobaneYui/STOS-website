@@ -156,81 +156,18 @@ class Ajax_DataManager:
                 "Date is wrong or in wrong format. Should be YYYY-MM-DD.", filename=__file__, line=sys._getframe().f_lineno)
 
     @staticmethod
-    def submitSelfstudyRecordParamsCheck(infoForm: dict) -> None:
-        if "absentList" not in infoForm.keys() or "record" not in infoForm.keys() or "selfstudy_id" not in infoForm.keys():
+    def downloadSelfstudyAllDataParamsCheck(infoForm: dict) -> None:
+        if "startDate" not in infoForm.keys() or "endDate" not in infoForm.keys():
             raise IllegalValueError(
-                "Not all data are provided.", filename=__file__, line=sys._getframe().f_lineno)
-
-        if "absent" not in infoForm["record"].keys() \
-                or "firstPresent" not in infoForm["record"].keys() \
-                or "leaveEarly" not in infoForm["record"].keys() \
-                or "secondPresent" not in infoForm["record"].keys() \
-                or "askForLeave" not in infoForm["record"].keys() \
-                or "remark" not in infoForm["record"].keys():
-            raise IllegalValueError(
-                "Not all data are provided.", filename=__file__, line=sys._getframe().f_lineno)
+                "startDate and endDate is required.", filename=__file__, line=sys._getframe().f_lineno)
 
         try:
-            infoForm["selfstudy_id"] = int(infoForm["selfstudy_id"])
-            assert infoForm["selfstudy_id"] > 0
+            infoForm["startDate"] = datetime.datetime.strptime(
+                infoForm["startDate"], "%Y-%m-%d").strftime("%Y-%m-%d")
+            infoForm["endDate"] = datetime.datetime.strptime(
+                infoForm["endDate"], "%Y-%m-%d").strftime("%Y-%m-%d")
         except:
             raise IllegalValueError(
-                "selfstudy_id is wrong or not positive integer.", filename=__file__, line=sys._getframe().f_lineno)
+                "Date is wrong or in wrong format. Should be YYYY-MM-DD.", filename=__file__, line=sys._getframe().f_lineno)
 
-        try:
-            infoForm["record"]["firstPresent"] = int(
-                infoForm["record"]["firstPresent"])
-            infoForm["record"]["absent"] = int(infoForm["record"]["absent"])
-            infoForm["record"]["secondPresent"] = int(
-                infoForm["record"]["secondPresent"])
-            infoForm["record"]["leaveEarly"] = int(
-                infoForm["record"]["leaveEarly"])
-            infoForm["record"]["askForLeave"] = int(
-                infoForm["record"]["askForLeave"])
-            assert infoForm["record"]["firstPresent"] >= 0
-            assert infoForm["record"]["absent"] >= 0
-            assert infoForm["record"]["secondPresent"] >= 0
-            assert infoForm["record"]["leaveEarly"] >= 0
-            assert infoForm["record"]["askForLeave"] >= 0
-        except:
-            raise IllegalValueError(
-                "Record is wrong or not nonnegative integer.", filename=__file__, line=sys._getframe().f_lineno)
 
-    @staticmethod
-    def submitSelfstudyRecordRecheckParamsCheck(infoForm: dict) -> None:
-        if "selfstudy_id" not in infoForm.keys() or "selfstudycheckdata_id" not in infoForm.keys() or "selfstudycheckabsent_id" not in infoForm.keys() \
-                or "rechecked" not in infoForm.keys() or "recheck_remark" not in infoForm.keys():
-            raise IllegalValueError(
-                "Not all data are provided.", filename=__file__, line=sys._getframe().f_lineno)
-
-        try:
-            infoForm["selfstudy_id"] = int(infoForm["selfstudy_id"])
-            infoForm["selfstudycheckdata_id"] = int(
-                infoForm["selfstudycheckdata_id"])
-            infoForm["selfstudycheckabsent_id"] = int(
-                infoForm["selfstudycheckabsent_id"])
-            infoForm["rechecked"] = infoForm["rechecked"] == 'true'
-            assert infoForm["selfstudy_id"] >= 0
-            assert infoForm["selfstudycheckdata_id"] >= 0
-            assert infoForm["selfstudycheckabsent_id"] >= 0
-        except:
-            raise IllegalValueError(
-                "Provided data is wrong or not nonnegative integer.", filename=__file__, line=sys._getframe().f_lineno)
-
-    @staticmethod
-    def setMemberEmptyTableParamsCheck(infoForm: dict) -> None:
-        if "student_id" not in infoForm.keys() or "weekName" not in infoForm.keys() or "timePeriodOrder" not in infoForm.keys() \
-                or "evenOrNot" not in infoForm.keys() or "emptyOrNot" not in infoForm.keys():
-            raise IllegalValueError(
-                "Not all data are provided.", filename=__file__, line=sys._getframe().f_lineno)
-
-        try:
-            infoForm["timePeriodOrder"] = int(infoForm["timePeriodOrder"])
-            infoForm["evenOrNot"] = infoForm["evenOrNot"] == 'true'
-            infoForm["emptyOrNot"] = infoForm["emptyOrNot"] == 'true'
-            assert 0 <= infoForm["timePeriodOrder"] <= 4
-            assert infoForm["weekName"] in [
-                "mon", "tue", "wed", "thu", "fri", "sat", "sun"]
-        except:
-            raise IllegalValueError(
-                "Provided data is illegal.", filename=__file__, line=sys._getframe().f_lineno)
