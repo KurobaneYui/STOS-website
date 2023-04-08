@@ -6,7 +6,7 @@ $(function () {
 
 function get_records() {
     $.get(
-        "/Ajax/DataManager/get_selfstudy_check_data",
+        "/Ajax/Users/get_selfstudy_check_data",
         function (data, status) {
             if (status === "success") {
                 let returnCode = data['code'];
@@ -186,7 +186,7 @@ function submit() {
         }
 
         $.ajax({
-            url: "/Ajax/DataManager/submit_selfstudy_record",
+            url: "/Ajax/Users/submit_selfstudy_record",
             method: "POST",
             data: JSON.stringify({
                 selfstudy_id: selfstudy_id,

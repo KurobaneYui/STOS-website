@@ -309,7 +309,7 @@ def SetStyle(path: str):
 
 if __name__ == '__main__':
     '''
-    一下是所需参数及其顺序和类型:
+    以下是所需参数及其顺序和类型:
         path:str 文件保存路径目录
         date:datetime 日期
         teacherName:str 指导老师姓名
@@ -353,7 +353,6 @@ if __name__ == '__main__':
         else:
             raise Exception('程序输入参数数量与需求不一致，获得了{}个参数'.format(input_len))
     except Exception as e:
-        import json
         errors = {'ReturnCode': '417', 'ReturnString': '程序出错',
                   'ShowMessage': repr(e), 'Data': ''}
         print(json.dumps(errors, ensure_ascii=False))

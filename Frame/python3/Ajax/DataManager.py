@@ -367,184 +367,48 @@ def DataManager(app: flask.Flask) -> None:
                 logger.funcReturns = returns
         return customResponse.getResponse()
 
-    @app.route("/Ajax/DataManager/get_schedule_history", methods=['GET'])
-    def getScheduleHistory():
+    @app.route("/Ajax/DataManager/download_selfstudy_all_data", methods=['POST'])
+    def downloadSelfstudyAllData():
         with CustomResponse() as customResponse:
-            with Logger(funcName="Users.getScheduleHistory()") as logger:
+            with Logger(funcName="DataManager.downloadSelfstudyAllData()") as logger:
                 # ===============
                 # 检查接口调用权限
-                Authorization.check(rightsNeeded=({"department_id": 5, "actor": 0},
-                                                  {"department_id": 6, "actor": 0},
-                                                  {"department_id": 7, "actor": 0},
-                                                  {"department_id": 8, "actor": 0},
-                                                  {"department_id": 9, "actor": 0},
-                                                  {"department_id": 10, "actor": 0},
-                                                  {"department_id": 11, "actor": 0}), needLogin=True)
-                # ===========
-                # 执行接口流程
-                results = DatabaseBasicOperations_DataManager.getScheduleHistory()
-                # ========================
-                # 准备函数返回值和响应与日志
-                returns = {"message": "", "data": results}
-                customResponse.setMessageAndData(**returns)
-                logger.funcReturns = returns
-        return customResponse.getResponse()
-
-    @app.route("/Ajax/DataManager/get_selfstudy_check_data", methods=['GET'])
-    def getSelfstudyCheckData():
-        with CustomResponse() as customResponse:
-            with Logger(funcName="Users.getSelfstudyCheckData()") as logger:
-                # ===============
-                # 检查接口调用权限
-                Authorization.check(rightsNeeded=({"department_id": 5, "actor": 0},
-                                                  {"department_id": 6, "actor": 0},
-                                                  {"department_id": 7, "actor": 0},
-                                                  {"department_id": 8, "actor": 0},
-                                                  {"department_id": 9, "actor": 0},
-                                                  {"department_id": 10, "actor": 0},
-                                                  {"department_id": 11, "actor": 0}), needLogin=True)
-                # ===========
-                # 执行接口流程
-                results = DatabaseBasicOperations_DataManager.getSelfstudyCheckData()
-                # ========================
-                # 准备函数返回值和响应与日志
-                returns = {"message": "", "data": results}
-                customResponse.setMessageAndData(**returns)
-                logger.funcReturns = returns
-        return customResponse.getResponse()
-
-    @app.route("/Ajax/DataManager/submit_selfstudy_record", methods=['POST'])
-    def submitSelfstudyRecord():
-        with CustomResponse() as customResponse:
-            with Logger(funcName="Users.submitSelfstudyRecord()") as logger:
-                # ===============
-                # 检查接口调用权限
-                Authorization.check(rightsNeeded=({"department_id": 5, "actor": 0},
-                                                  {"department_id": 6, "actor": 0},
-                                                  {"department_id": 7, "actor": 0},
-                                                  {"department_id": 8, "actor": 0},
-                                                  {"department_id": 9, "actor": 0},
-                                                  {"department_id": 10, "actor": 0},
-                                                  {"department_id": 11, "actor": 0}), needLogin=True)
-                # ========================
-                # 检查接口输入参数并记录日志
-                infoForm = dict(request.get_json())
-                Ajax_DataManager.submitSelfstudyRecordParamsCheck(infoForm)
-                logger.funcArgs = request.get_json()
-                # ===========
-                # 执行接口流程
-                DatabaseBasicOperations_DataManager.submitSelfstudyRecord(
-                    infoForm)
-                # ========================
-                # 准备函数返回值和响应与日志
-                returns = {"message": "", "data": ""}
-                customResponse.setMessageAndData(**returns)
-                logger.funcReturns = returns
-        return customResponse.getResponse()
-
-    @app.route("/Ajax/DataManager/get_group_selfstudy_check_data", methods=['GET'])
-    def getGroupSelfstudyCheckData():
-        with CustomResponse() as customResponse:
-            with Logger(funcName="Users.getGroupSelfstudyCheckData()") as logger:
-                # ===============
-                # 检查接口调用权限
-                Authorization.check(rightsNeeded=({"department_id": 5, "actor": 1},
-                                                  {"department_id": 6, "actor": 1},
-                                                  {"department_id": 7, "actor": 1},
-                                                  {"department_id": 8, "actor": 1},
-                                                  {"department_id": 9, "actor": 1},
-                                                  {"department_id": 10, "actor": 1},
-                                                  {"department_id": 11, "actor": 1},
-                                                  {"department_id": 0, "actor": 1}), needLogin=True)
-                # ===========
-                # 执行接口流程
-                results = DatabaseBasicOperations_DataManager.getGroupSelfstudyCheckData()
-                # ========================
-                # 准备函数返回值和响应与日志
-                returns = {"message": "", "data": results}
-                customResponse.setMessageAndData(**returns)
-                logger.funcReturns = returns
-        return customResponse.getResponse()
-
-    @app.route("/Ajax/DataManager/submit_selfstudy_record_recheck", methods=['POST'])
-    def submitSelfstudyRecordRecheck():
-        with CustomResponse() as customResponse:
-            with Logger(funcName="Users.submitSelfstudyRecordRecheck()") as logger:
-                # ===============
-                # 检查接口调用权限
-                Authorization.check(rightsNeeded=({"department_id": 5, "actor": 1},
-                                                  {"department_id": 6, "actor": 1},
-                                                  {"department_id": 7, "actor": 1},
-                                                  {"department_id": 8, "actor": 1},
-                                                  {"department_id": 9, "actor": 1},
-                                                  {"department_id": 10, "actor": 1},
-                                                  {"department_id": 11, "actor": 1},
-                                                  {"department_id": 0, "actor": 1}), needLogin=True)
+                Authorization.check(rightsNeeded=({"department_id": 0, "actor": 1},
+                                                  {"department_id": 3, "actor": 0},
+                                                  {"department_id": 3, "actor": 1}), needLogin=True)
                 # ========================
                 # 检查接口输入参数并记录日志
                 infoForm = dict(request.form)
-                Ajax_DataManager.submitSelfstudyRecordRecheckParamsCheck(
-                    infoForm)
+                Ajax_DataManager.downloadSelfstudyAllDataParamsCheck(infoForm)
                 logger.funcArgs = request.form
-                # ===========
-                # 执行接口流程
-                DatabaseBasicOperations_DataManager.submitSelfstudyRecordRecheck(
+                # =========================================
+                # 执行接口流程，并获取用户名信息以完成会话建立
+                results = DatabaseBasicOperations_DataManager.downloadSelfstudyAllData(
                     infoForm)
                 # ========================
                 # 准备函数返回值和响应与日志
-                returns = {"message": "", "data": ""}
+                returns = {"message": "",
+                           "data": results}
                 customResponse.setMessageAndData(**returns)
                 logger.funcReturns = returns
         return customResponse.getResponse()
 
-    @app.route("/Ajax/DataManager/get_group_empty_table", methods=['GET'])
-    def getGroupEmptyTable():
+    @app.route("/Ajax/DataManager/download_empty_time_all_data", methods=['GET'])
+    def downloadEmptyTimeAllData():
         with CustomResponse() as customResponse:
-            with Logger(funcName="Users.getGroupEmptyTable()") as logger:
+            with Logger(funcName="DataManager.downloadEmptyTimeAllData()") as logger:
                 # ===============
                 # 检查接口调用权限
-                Authorization.check(rightsNeeded=({"department_id": 5, "actor": 1},
-                                                  {"department_id": 6, "actor": 1},
-                                                  {"department_id": 7, "actor": 1},
-                                                  {"department_id": 8, "actor": 1},
-                                                  {"department_id": 9, "actor": 1},
-                                                  {"department_id": 10, "actor": 1},
-                                                  {"department_id": 11, "actor": 1}), needLogin=True)
-                # ===========
-                # 执行接口流程
-                results = DatabaseBasicOperations_DataManager.getGroupEmptyTable()
+                Authorization.check(rightsNeeded=({"department_id": 0, "actor": 1},
+                                                  {"department_id": 3, "actor": 0},
+                                                  {"department_id": 3, "actor": 1}), needLogin=True)
+                # =========================================
+                # 执行接口流程，并获取用户名信息以完成会话建立
+                results = DatabaseBasicOperations_DataManager.downloadEmptyTimeAllData()
                 # ========================
                 # 准备函数返回值和响应与日志
-                returns = {"message": "", "data": results}
-                customResponse.setMessageAndData(**returns)
-                logger.funcReturns = returns
-        return customResponse.getResponse()
-
-    @app.route("/Ajax/DataManager/set_member_empty_table", methods=['POST'])
-    def setMemberEmptyTable():
-        with CustomResponse() as customResponse:
-            with Logger(funcName="Users.setMemberEmptyTable()") as logger:
-                # ===============
-                # 检查接口调用权限
-                Authorization.check(rightsNeeded=({"department_id": 5, "actor": 1},
-                                                  {"department_id": 6, "actor": 1},
-                                                  {"department_id": 7, "actor": 1},
-                                                  {"department_id": 8, "actor": 1},
-                                                  {"department_id": 9, "actor": 1},
-                                                  {"department_id": 10, "actor": 1},
-                                                  {"department_id": 11, "actor": 1}), needLogin=True)
-                # ========================
-                # 检查接口输入参数并记录日志
-                infoForm = dict(request.form)
-                Ajax_DataManager.setMemberEmptyTableParamsCheck(
-                    infoForm)
-                logger.funcArgs = request.form
-                # ===========
-                # 执行接口流程
-                results = DatabaseBasicOperations_DataManager.setMemberEmptyTable(infoForm)
-                # ========================
-                # 准备函数返回值和响应与日志
-                returns = {"message": "", "data": results}
+                returns = {"message": "",
+                           "data": results}
                 customResponse.setMessageAndData(**returns)
                 logger.funcReturns = returns
         return customResponse.getResponse()

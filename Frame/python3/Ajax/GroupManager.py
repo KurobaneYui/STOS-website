@@ -101,3 +101,111 @@ def GroupManager(app: flask.Flask) -> None:
                 customResponse.setMessageAndData(**returns)
                 logger.funcReturns = returns
         return customResponse.getResponse()
+
+    @app.route("/Ajax/GroupManager/get_group_selfstudy_check_data", methods=['GET'])
+    def getGroupSelfstudyCheckData():
+        with CustomResponse() as customResponse:
+            with Logger(funcName="Users.getGroupSelfstudyCheckData()") as logger:
+                # ===============
+                # 检查接口调用权限
+                Authorization.check(rightsNeeded=({"department_id": 5, "actor": 1},
+                                                  {"department_id": 6, "actor": 1},
+                                                  {"department_id": 7, "actor": 1},
+                                                  {"department_id": 8, "actor": 1},
+                                                  {"department_id": 9, "actor": 1},
+                                                  {"department_id": 10, "actor": 1},
+                                                  {"department_id": 11, "actor": 1},
+                                                  {"department_id": 0, "actor": 1}), needLogin=True)
+                # ===========
+                # 执行接口流程
+                results = DatabaseBasicOperations_GroupManager.getGroupSelfstudyCheckData()
+                # ========================
+                # 准备函数返回值和响应与日志
+                returns = {"message": "", "data": results}
+                customResponse.setMessageAndData(**returns)
+                logger.funcReturns = returns
+        return customResponse.getResponse()
+
+    @app.route("/Ajax/GroupManager/submit_selfstudy_record_recheck", methods=['POST'])
+    def submitSelfstudyRecordRecheck():
+        with CustomResponse() as customResponse:
+            with Logger(funcName="Users.submitSelfstudyRecordRecheck()") as logger:
+                # ===============
+                # 检查接口调用权限
+                Authorization.check(rightsNeeded=({"department_id": 5, "actor": 1},
+                                                  {"department_id": 6, "actor": 1},
+                                                  {"department_id": 7, "actor": 1},
+                                                  {"department_id": 8, "actor": 1},
+                                                  {"department_id": 9, "actor": 1},
+                                                  {"department_id": 10, "actor": 1},
+                                                  {"department_id": 11, "actor": 1},
+                                                  {"department_id": 0, "actor": 1}), needLogin=True)
+                # ========================
+                # 检查接口输入参数并记录日志
+                infoForm = dict(request.form)
+                Ajax_GroupManager.submitSelfstudyRecordRecheckParamsCheck(
+                    infoForm)
+                logger.funcArgs = request.form
+                # ===========
+                # 执行接口流程
+                DatabaseBasicOperations_GroupManager.submitSelfstudyRecordRecheck(
+                    infoForm)
+                # ========================
+                # 准备函数返回值和响应与日志
+                returns = {"message": "", "data": ""}
+                customResponse.setMessageAndData(**returns)
+                logger.funcReturns = returns
+        return customResponse.getResponse()
+
+    @app.route("/Ajax/GroupManager/get_group_empty_table", methods=['GET'])
+    def getGroupEmptyTable():
+        with CustomResponse() as customResponse:
+            with Logger(funcName="Users.getGroupEmptyTable()") as logger:
+                # ===============
+                # 检查接口调用权限
+                Authorization.check(rightsNeeded=({"department_id": 5, "actor": 1},
+                                                  {"department_id": 6, "actor": 1},
+                                                  {"department_id": 7, "actor": 1},
+                                                  {"department_id": 8, "actor": 1},
+                                                  {"department_id": 9, "actor": 1},
+                                                  {"department_id": 10, "actor": 1},
+                                                  {"department_id": 11, "actor": 1}), needLogin=True)
+                # ===========
+                # 执行接口流程
+                results = DatabaseBasicOperations_GroupManager.getGroupEmptyTable()
+                # ========================
+                # 准备函数返回值和响应与日志
+                returns = {"message": "", "data": results}
+                customResponse.setMessageAndData(**returns)
+                logger.funcReturns = returns
+        return customResponse.getResponse()
+
+    @app.route("/Ajax/GroupManager/set_member_empty_table", methods=['POST'])
+    def setMemberEmptyTable():
+        with CustomResponse() as customResponse:
+            with Logger(funcName="Users.setMemberEmptyTable()") as logger:
+                # ===============
+                # 检查接口调用权限
+                Authorization.check(rightsNeeded=({"department_id": 5, "actor": 1},
+                                                  {"department_id": 6, "actor": 1},
+                                                  {"department_id": 7, "actor": 1},
+                                                  {"department_id": 8, "actor": 1},
+                                                  {"department_id": 9, "actor": 1},
+                                                  {"department_id": 10, "actor": 1},
+                                                  {"department_id": 11, "actor": 1}), needLogin=True)
+                # ========================
+                # 检查接口输入参数并记录日志
+                infoForm = dict(request.form)
+                Ajax_GroupManager.setMemberEmptyTableParamsCheck(
+                    infoForm)
+                logger.funcArgs = request.form
+                # ===========
+                # 执行接口流程
+                results = DatabaseBasicOperations_GroupManager.setMemberEmptyTable(
+                    infoForm)
+                # ========================
+                # 准备函数返回值和响应与日志
+                returns = {"message": "", "data": results}
+                customResponse.setMessageAndData(**returns)
+                logger.funcReturns = returns
+        return customResponse.getResponse()

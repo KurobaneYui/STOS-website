@@ -266,7 +266,8 @@ def Users(app: flask.Flask) -> None:
                 logger.funcArgs = request.form
                 # ===========
                 # 执行接口流程
-                results = DatabaseBasicOperations_Users.changePersonalInfo(infoDict)
+                results = DatabaseBasicOperations_Users.changePersonalInfo(
+                    infoDict)
                 # ========================
                 # 准备函数返回值和响应与日志
                 returns = {"message": results, "data": ""}
@@ -323,6 +324,81 @@ def Users(app: flask.Flask) -> None:
                 # ========================
                 # 准备函数返回值和响应与日志
                 returns = {"message": "", "data": results}
+                customResponse.setMessageAndData(**returns)
+                logger.funcReturns = returns
+        return customResponse.getResponse()
+
+    @app.route("/Ajax/Users/get_schedule_history", methods=['GET'])
+    def getScheduleHistory():
+        with CustomResponse() as customResponse:
+            with Logger(funcName="Users.getScheduleHistory()") as logger:
+                # ===============
+                # 检查接口调用权限
+                Authorization.check(rightsNeeded=({"department_id": 5, "actor": 0},
+                                                  {"department_id": 6, "actor": 0},
+                                                  {"department_id": 7, "actor": 0},
+                                                  {"department_id": 8, "actor": 0},
+                                                  {"department_id": 9, "actor": 0},
+                                                  {"department_id": 10, "actor": 0},
+                                                  {"department_id": 11, "actor": 0}), needLogin=True)
+                # ===========
+                # 执行接口流程
+                results = DatabaseBasicOperations_Users.getScheduleHistory()
+                # ========================
+                # 准备函数返回值和响应与日志
+                returns = {"message": "", "data": results}
+                customResponse.setMessageAndData(**returns)
+                logger.funcReturns = returns
+        return customResponse.getResponse()
+
+    @app.route("/Ajax/Users/get_selfstudy_check_data", methods=['GET'])
+    def getSelfstudyCheckData():
+        with CustomResponse() as customResponse:
+            with Logger(funcName="Users.getSelfstudyCheckData()") as logger:
+                # ===============
+                # 检查接口调用权限
+                Authorization.check(rightsNeeded=({"department_id": 5, "actor": 0},
+                                                  {"department_id": 6, "actor": 0},
+                                                  {"department_id": 7, "actor": 0},
+                                                  {"department_id": 8, "actor": 0},
+                                                  {"department_id": 9, "actor": 0},
+                                                  {"department_id": 10, "actor": 0},
+                                                  {"department_id": 11, "actor": 0}), needLogin=True)
+                # ===========
+                # 执行接口流程
+                results = DatabaseBasicOperations_Users.getSelfstudyCheckData()
+                # ========================
+                # 准备函数返回值和响应与日志
+                returns = {"message": "", "data": results}
+                customResponse.setMessageAndData(**returns)
+                logger.funcReturns = returns
+        return customResponse.getResponse()
+
+    @app.route("/Ajax/Users/submit_selfstudy_record", methods=['POST'])
+    def submitSelfstudyRecord():
+        with CustomResponse() as customResponse:
+            with Logger(funcName="Users.submitSelfstudyRecord()") as logger:
+                # ===============
+                # 检查接口调用权限
+                Authorization.check(rightsNeeded=({"department_id": 5, "actor": 0},
+                                                  {"department_id": 6, "actor": 0},
+                                                  {"department_id": 7, "actor": 0},
+                                                  {"department_id": 8, "actor": 0},
+                                                  {"department_id": 9, "actor": 0},
+                                                  {"department_id": 10, "actor": 0},
+                                                  {"department_id": 11, "actor": 0}), needLogin=True)
+                # ========================
+                # 检查接口输入参数并记录日志
+                infoForm = dict(request.get_json())
+                Ajax_Users.submitSelfstudyRecordParamsCheck(infoForm)
+                logger.funcArgs = request.get_json()
+                # ===========
+                # 执行接口流程
+                DatabaseBasicOperations_Users.submitSelfstudyRecord(
+                    infoForm)
+                # ========================
+                # 准备函数返回值和响应与日志
+                returns = {"message": "", "data": ""}
                 customResponse.setMessageAndData(**returns)
                 logger.funcReturns = returns
         return customResponse.getResponse()

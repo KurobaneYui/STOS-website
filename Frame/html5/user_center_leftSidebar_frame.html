@@ -122,7 +122,7 @@
         </ul>
     </li>
     {% endif %}
-    {% if department_id==3 or department_id==1 %}
+    {% if department_id==3 %}
     <li class="menu-item" auth_require="01,31">
         <a href="javascript:void(0);" class="menu-link menu-toggle">
             <i class="menu-icon tf-icons bx bx-data"></i>
@@ -132,6 +132,11 @@
             <li class="menu-item text-decoration-line-through">
                 <a href="#" class="menu-link">
                     <div data-i18n="变更锁定时间">变更锁定时间</div>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="/Users/UserCenter/data_export.html" class="menu-link">
+                    <div data-i18n="数据导出">数据导出</div>
                 </a>
             </li>
             <li class="menu-item text-decoration-line-through">

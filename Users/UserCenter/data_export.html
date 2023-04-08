@@ -8,7 +8,7 @@
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
-    <title>空课表变更</title>
+    <title>数据导出</title>
 
     <meta name="description" content="电子科技大学学风督导队" />
     <meta name="author" content="罗寅松，学风督导队数据组">
@@ -70,12 +70,82 @@
                             aria-label="breadcrumb">
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="./index.html">个人中心</a></li>
-                                <li class="breadcrumb-item"><a href="./index.html">组内管理</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">空课表变更</li>
+                                <li class="breadcrumb-item"><a href="./index.html">后台数据管理</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">数据导出</li>
                             </ol>
                         </nav>
                         <!-- Layout Demo -->
-                        <div class="row g-2" id="card-container">
+                        <div class="alert alert-primary" role="alert">
+                            * 空课表导出暂只支持清水河校区现场组，沙河现场组查课自行安排
+                        </div>
+                        <div class="row g-3">
+                            <div class="col-12 col-sm-6 col-lg-4">
+                                <div class="card">
+                                    <h5 class="card-header">早自习数据导出</h5>
+                                    <div class="card-body">
+                                        <div class="row g-2">
+                                            <div class="col-12">
+                                                <label class="form-label" for="selfstudy-start-date">
+                                                    选择起始日期
+                                                </label>
+                                                <input class="form-control" type="date" id="selfstudy-start-date"
+                                                    required />
+                                            </div>
+                                            <div class="col-12">
+                                                <label class="form-label" for="selfstudy-end-date">
+                                                    选择结束日期
+                                                </label>
+                                                <input class="form-control" type="date" id="selfstudy-end-date"
+                                                    required />
+                                            </div>
+                                            <div class="col-12 d-flex justify-content-center">
+                                                <button type="button" class="btn btn-primary rounded-pill"
+                                                    onclick="download_selfstudy_all_data()">下载</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6 col-lg-4">
+                                <div class="card">
+                                    <h5 class="card-header">查课数据导出</h5>
+                                    <div class="card-body">
+                                        <div class="row g-2">
+                                            <div class="col-12">
+                                                <label class="form-label" for="courses-start-date">
+                                                    选择起始日期
+                                                </label>
+                                                <input class="form-control" type="date" id="courses-start-date"
+                                                    required />
+                                            </div>
+                                            <div class="col-12">
+                                                <label class="form-label" for="courses-end-date">
+                                                    选择结束日期
+                                                </label>
+                                                <input class="form-control" type="date" id="courses-end-date"
+                                                    required />
+                                            </div>
+                                            <div class="col-12 d-flex justify-content-center">
+                                                <button type="button" class="btn btn-primary rounded-pill"
+                                                    onclick="download_corses_check_all_data()">下载</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-sm-6 col-lg-4">
+                                <div class="card">
+                                    <h5 class="card-header">空课表</h5>
+                                    <div class="card-body">
+                                        <div class="row g-2">
+                                            <div class="col-12 d-flex justify-content-center">
+                                                <button type="button" class="btn btn-primary rounded-pill"
+                                                    onclick="download_empty_time_all_data()">下载</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <!--/ Layout Demo -->
                     </div>
@@ -151,8 +221,7 @@
     <script src="https://cdn.bootcdn.net/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
 
     <!-- Page JS -->
-    <script src="/assets/img/users/small-point.js"></script>
-    <script src="./emtpy_time_editor.js?ver=3.0.2"></script>
+    <script src="./data_export.js"></script>
 
 </body>
 

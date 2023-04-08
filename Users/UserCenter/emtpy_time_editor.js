@@ -13,7 +13,7 @@ function change_point(cell) {
     let emptyOrNot = (pointColor === "red_point");
     
     $.post(
-        "/Ajax/DataManager/set_member_empty_table",
+        "/Ajax/GroupManager/set_member_empty_table",
         {
             student_id: student_id,
             weekName: weekName,
@@ -83,7 +83,7 @@ function change_point(cell) {
 
 function get_empty_table() {
     $.get(
-        "/Ajax/DataManager/get_group_empty_table",
+        "/Ajax/GroupManager/get_group_empty_table",
         function (data, status) {
             if (status === "success") {
                 let returnCode = data['code'];
