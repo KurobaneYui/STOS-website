@@ -66,10 +66,10 @@ def writedata(path: str, database: DatabaseConnector):
                 assert isinstance(ws, Worksheet)
                 ws.append([one_student["student_id"],
                           "周一", "周二", "周三", "周四", "周五"])
-                ws.append(["12节", mon[0], tue[0], wed[0], thu[0], fri[0]])
-                ws.append(["34节", mon[1], tue[1], wed[1], thu[1], fri[1]])
-                ws.append(["56节", mon[2], tue[2], wed[2], thu[2], fri[2]])
-                ws.append(["78节", mon[3], tue[3], wed[3], thu[3], fri[3]])
+                ws.append(["12节", int(mon[0]), int(tue[0]), int(wed[0]), int(thu[0]), int(fri[0])])
+                ws.append(["34节", int(mon[1]), int(tue[1]), int(wed[1]), int(thu[1]), int(fri[1])])
+                ws.append(["56节", int(mon[2]), int(tue[2]), int(wed[2]), int(thu[2]), int(fri[2])])
+                ws.append(["78节", int(mon[3]), int(tue[3]), int(wed[3]), int(thu[3]), int(fri[3])])
 
             del wb['removable']
 
