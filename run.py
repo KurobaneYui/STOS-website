@@ -97,6 +97,8 @@ def not_found_500(error):
 if __name__ == "__main__":
     with open("./config/Flask.conf", 'r') as f:
         config = json.load(f)
+    app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(
+        **config["permanent_session_lifetime"])
     app.config["SEND_FILE_MAX_AGE_DEFAULT"] = timedelta(
         **config["send_file_max_age_default"])
     if config["proxy_enable"]:
