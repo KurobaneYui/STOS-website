@@ -176,10 +176,10 @@ function add_row(table_body, one_schedule) {
 }
 
 function fill_data_into_modal(row) {
-    let selfstudy_id = $(row).attr("selfstudy_id");
-    let date = $(row).parent().parent().parent().prev().text();
-    let student_name = $($(row).children()[0]).text();
-    let classroomName = $($(row).children()[2]).text();
+    let selfstudy_id = $(row).attr("selfstudy_id").trim();
+    let date = $(row).parent().parent().parent().prev().text().trim();
+    let student_name = $($(row).children()[0]).text().trim();
+    let classroomName = $($(row).children()[2]).text().trim();
     let selfstudycheckdata_id = allData[selfstudy_id].selfstudycheckdata_id;
     let selfstudycheckabsent_id = allData[selfstudy_id].selfstudycheckabsent_id;
     let submitted = allData[selfstudy_id].submitted;
@@ -201,9 +201,9 @@ function fill_data_into_modal(row) {
 
 function submit() {
     try {
-        let selfstudy_id = parseInt($("#modal-subtitle").attr("selfstudy_id")) || -1;
-        let selfstudycheckdata_id = parseInt($("#modal-subtitle").attr("selfstudycheckdata_id")) || -1;
-        let selfstudycheckabsent_id = parseInt($("#modal-subtitle").attr("selfstudycheckabsent_id")) || -1;
+        let selfstudy_id = parseInt($("#modal-subtitle").attr("selfstudy_id").trim()) || -1;
+        let selfstudycheckdata_id = parseInt($("#modal-subtitle").attr("selfstudycheckdata_id").trim()) || -1;
+        let selfstudycheckabsent_id = parseInt($("#modal-subtitle").attr("selfstudycheckabsent_id").trim()) || -1;
         let rechecked = $("#recheck").prop("checked");
         let recheck_remark = $("#remark").val().trim();
 

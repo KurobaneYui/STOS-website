@@ -275,6 +275,14 @@ class Ajax_Users:
             raise IllegalValueError(
                 "Not all data are provided.", filename=__file__, line=sys._getframe().f_lineno)
 
+        for one_student in infoForm["absentList"]:
+            if one_student["student_name"] == "" or one_student["student_id"] == "":
+                raise IllegalValueError(
+                    "Student name or ID in absent list is empty.", filename=__file__, line=sys._getframe().f_lineno)
+            if any(char.isdigit() for char in one_student["student_name"]):
+                raise IllegalValueError(
+                    "Student name in absent list is wrong.", filename=__file__, line=sys._getframe().f_lineno)
+
         if "absent" not in infoForm["record"].keys() \
                 or "firstPresent" not in infoForm["record"].keys() \
                 or "leaveEarly" not in infoForm["record"].keys() \
