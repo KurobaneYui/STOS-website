@@ -89,6 +89,8 @@ function fill_courses_history(data) {
         let row = `
             <tr>
                 <td>${one_data['date']}</td>
+                <td>${one_data['period']}</td>
+                <td>${one_data['course_order']}</td>
                 <td>${one_data['classroom_name']}</td>
                 <td><img height="15" width="15" src-data="${status}"></td>
             </tr>

@@ -317,3 +317,41 @@ class Ajax_Users:
         except:
             raise IllegalValueError(
                 "Record is wrong or not nonnegative integer.", filename=__file__, line=sys._getframe().f_lineno)
+
+    @staticmethod
+    def submitCoursesRecordParamsCheck(infoForm: dict) -> None:
+        if "record" not in infoForm.keys() or "course_id" not in infoForm.keys():
+            raise IllegalValueError(
+                "Not all data are provided.", filename=__file__, line=sys._getframe().f_lineno)
+
+        if "firstPresent" not in infoForm["record"].keys() \
+                or "firstDisciplinary" not in infoForm["record"].keys() \
+                or "secondPresent" not in infoForm["record"].keys() \
+                or "secondDisciplinary" not in infoForm["record"].keys() \
+                or "remark" not in infoForm["record"].keys():
+            raise IllegalValueError(
+                "Not all data are provided.", filename=__file__, line=sys._getframe().f_lineno)
+
+        try:
+            infoForm["course_id"] = int(infoForm["course_id"])
+            assert infoForm["course_id"] > 0
+        except:
+            raise IllegalValueError(
+                "course_id is wrong or not positive integer.", filename=__file__, line=sys._getframe().f_lineno)
+
+        try:
+            infoForm["record"]["firstPresent"] = int(
+                infoForm["record"]["firstPresent"])
+            infoForm["record"]["firstDisciplinary"] = int(
+                infoForm["record"]["firstDisciplinary"])
+            infoForm["record"]["secondPresent"] = int(
+                infoForm["record"]["secondPresent"])
+            infoForm["record"]["secondDisciplinary"] = int(
+                infoForm["record"]["secondDisciplinary"])
+            assert infoForm["record"]["firstPresent"] >= 0
+            assert infoForm["record"]["firstDisciplinary"] >= 0
+            assert infoForm["record"]["secondPresent"] >= 0
+            assert infoForm["record"]["secondDisciplinary"] >= 0
+        except:
+            raise IllegalValueError(
+                "Record is wrong or not nonnegative integer.", filename=__file__, line=sys._getframe().f_lineno)
