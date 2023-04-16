@@ -81,8 +81,9 @@ def DataManager(app: flask.Flask) -> None:
             with Logger(funcName="DataManager.getClassroom()") as logger:
                 # ===============
                 # 检查接口调用权限
-                Authorization.check(rightsNeeded=({"department_id": 0, "actor": 1}, {
-                                    "department_id": 3, "actor": 1}), needLogin=True)
+                Authorization.check(rightsNeeded=({"department_id": 0, "actor": 1},
+                                                  {"department_id": 3, "actor": 0},
+                                                  {"department_id": 3, "actor": 1}), needLogin=True)
                 # # ========================
                 # # 检查接口输入参数并记录日志
                 # Ajax_DataManager.getClassroomParamsCheck(request)

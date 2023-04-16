@@ -8,7 +8,7 @@
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
-    <title>早自习数据数据确认</title>
+    <title>录入查课数据</title>
 
     <meta name="description" content="电子科技大学学风督导队" />
     <meta name="author" content="罗寅松，学风督导队数据组">
@@ -70,35 +70,55 @@
                             aria-label="breadcrumb">
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="./index.html">个人中心</a></li>
-                                <li class="breadcrumb-item"><a href="./index.html">数据确认</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">查早</li>
+                                <li class="breadcrumb-item"><a href="./index.html">数据填写</a></li>
+                                <li class="breadcrumb-item active" aria-current="page">查课</li>
                             </ol>
                         </nav>
 
-                        <div class="modal fade" id="recheck-selfstudy-record" tabindex="-1" data-bs-backdrop="static"
+                        <div class="modal fade" id="update-courses-record" tabindex="-1" data-bs-backdrop="static"
                             data-bs-keyboard="false" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                            <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <h5>数据确认</h5>
+                                        <h5 class="modal-title">填写数据</h5>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
                                             aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
-                                        <p id="modal-subtitle"></p>
-                                        <div class="form-check mb-3">
-                                                <input class="form-check-input" type="checkbox" value=""
-                                                    id="recheck">
-                                                <label class="form-check-label" for="recheck">
-                                                    确认数据无误
-                                                </label>
+                                        <p id="modal-subtitle">
+                                        </p>
+                                        <div class="mb-3">
+                                            <label for="firstPresent" class="form-label">第一次出勤</label>
+                                            <input type="number" min="0" max="300" class="form-control"
+                                                id="firstPresent" name="firstPresent" placeholder="" autofocus
+                                                required />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="firstDisciplinary" class="form-label">第一次违纪</label>
+                                            <input type="number" min="0" max="300" class="form-control"
+                                                id="firstDisciplinary" name="firstDisciplinary" placeholder="" autofocus
+                                                required />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="secondPresent" class="form-label">第二次出勤</label>
+                                            <input type="number" min="0" max="300" class="form-control"
+                                                id="secondPresent" name="secondPresent" placeholder="" autofocus
+                                                required />
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="secondDisciplinary" class="form-label">第二次违纪</label>
+                                            <input type="number" min="0" max="300" class="form-control"
+                                                id="secondDisciplinary" name="secondDisciplinary" placeholder=""
+                                                autofocus required />
                                         </div>
                                         <div class="mb-3">
                                             <label for="remark" class="form-label">备注</label>
                                             <input type="text" class="form-control" id="remark" name="remark"
                                                 placeholder="" autofocus required />
                                         </div>
-                                        <button type="button" class="btn btn-primary rounded-pill" id="submit-button"
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-primary rounded-pill"
                                             data-bs-dismiss="modal" aria-label="Close" onclick="submit()">确定</button>
                                     </div>
                                 </div>
@@ -108,14 +128,13 @@
                         <!-- Layout Demo -->
                         <div class="row">
                             <div class="col-12 alert alert-primary" role="alert">
-                                * 组员数据提供过去7天和未来3天的录入信息（包括已录入的和未录入的）。<br />
-                                * 点击某条数据，在弹出框中确认数据。<br />
-                                * 数据背景颜色含义：红色-组员未提交数据、黄色-组长未确认数据、绿色-数据已确认。<br />
-                                * 组员修改数据后数据会重置为未确认状态。<br />
-                                * 备注实例：组员迟到第一次出勤未记录、数据错误且已无法核实……
+                                * 已填数据提供过去5天和未来3天的录入信息（包括已录入的和未录入的）。<br />
+                                * 按日期折叠，当日查课会自动展开，或手动点击日期展开<br/>
+                                *点击某条数据，在弹出框中录入或修改数据。<br />
+                                * 数据有输入检查。可选在查课结束后统一录入；亦可先提交部分数据，其余以0代替等待更新。
                             </div>
                             <div class="col-12">
-                                <div class="row" id="card-container">
+                                <div class="row g-2" id="courses-card-container">
                                 </div>
                             </div>
                         </div>
@@ -193,7 +212,7 @@
     <script src="https://cdn.bootcdn.net/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
 
     <!-- Page JS -->
-    <script src="./selfstudy_record_recheck.js?ver=3.1.0"></script>
+    <script src="./courses_record.js?ver=3.1.0"></script>
 
 </body>
 

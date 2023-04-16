@@ -494,7 +494,6 @@ class DatabaseBasicOperations_Users:
 
         return returns
 
-    # TODO: 这里只提供了早自习历史任务，未来加入查课历史任务
     @staticmethod
     def getScheduleHistory(databaseConnector: DatabaseConnector | None = None) -> dict:
         # =====================================
@@ -510,8 +509,8 @@ class DatabaseBasicOperations_Users:
         past20Date = currentDate - datetime.timedelta(days=20)
         currentDate = currentDate.strftime("%Y-%m-%d")
         past20Date = past20Date.strftime("%Y-%m-%d")
-        # ==============================
-        # 查询日期范围内，此组员的排班信息
+        # ====================================
+        # 查询日期范围内，此组员的早自习排班信息
         DBAffectedRows = database.execute(
             sql="SELECT selfstudy_id, date, classroom_name \
                 FROM SelfstudyCheckActualView \
@@ -519,10 +518,10 @@ class DatabaseBasicOperations_Users:
                     AND (SelfstudyCheckActualView.date >= %s AND SelfstudyCheckActualView.date <= %s) \
                 ORDER BY SelfstudyCheckActualView.date DESC, SelfstudyCheckActualView.classroom_name ASC;",
             data=(CustomSession.getSession()["userID"], past20Date, currentDate))
-        historyData = list(database.fetchall())
-        # ===================
-        # 查询排班对应的数据表
-        for one_history in historyData:
+        selfstudyHistoryData = list(database.fetchall())
+        # =========================
+        # 查询早自习排班对应的数据表
+        for one_history in selfstudyHistoryData:
             # ==============================
             # 处理一下日期，转化为可以JSON化的
             one_history["date"] = one_history["date"].strftime("%Y-%m-%d")
@@ -546,11 +545,47 @@ class DatabaseBasicOperations_Users:
                 one_history['submitted'] = True
                 one_history['recheck'] = int(
                     tmpData["groupleader_recheck"]) == 1
+        # ==================================
+        # 查询日期范围内，此组员的查课排班信息
+        DBAffectedRows = database.execute(
+            sql="SELECT course_id, date, period, course_order, classroom_name \
+                FROM CourseCheckActualView \
+                WHERE CourseCheckActualView.actual_student_id = %s \
+                    AND (CourseCheckActualView.date >= %s AND CourseCheckActualView.date <= %s) \
+                ORDER BY CourseCheckActualView.date DESC, CourseCheckActualView.course_order ASC, CourseCheckActualView.classroom_name ASC;",
+            data=(CustomSession.getSession()["userID"], past20Date, currentDate))
+        coursesHistoryData = list(database.fetchall())
+        # =======================
+        # 查询查课排班对应的数据表
+        for one_history in coursesHistoryData:
+            # ==============================
+            # 处理一下日期，转化为可以JSON化的
+            one_history["date"] = one_history["date"].strftime("%Y-%m-%d")
+            # ======
+            # 数据表
+            DBAffectedRows = database.execute(
+                sql="SELECT groupleader_recheck \
+                    FROM CourseCheckData \
+                    WHERE course_id = %s \
+                    ORDER BY submission_time DESC \
+                    LIMIT 1;",
+                data=(one_history['course_id'],))
+            if DBAffectedRows == 0:
+                database.fetchall()
+                one_history.update({"groupleader_recheck": 0})
+                one_history['submitted'] = False
+                one_history['recheck'] = False
+            else:
+                tmpData = database.fetchall()[0]
+                one_history.update(tmpData)
+                one_history['submitted'] = True
+                one_history['recheck'] = int(
+                    tmpData["groupleader_recheck"]) == 1
         # ========
         # 整合数据
         results = dict()
-        results['selfstudy'] = historyData
-        results['courses'] = list()
+        results['selfstudy'] = selfstudyHistoryData
+        results['courses'] = coursesHistoryData
         # ========
         # 返回数据
         return results
@@ -671,6 +706,110 @@ class DatabaseBasicOperations_Users:
                 VALUES \
                     (%s,%s,%s);",
             data=(infoForm['selfstudy_id'], check_result,
+                  CustomSession.getSession()["userID"]),
+            autoCommit=False)
+        # ========
+        # 提交数据
+        database.commit()
+
+    @staticmethod
+    def getCoursesCheckData(databaseConnector: DatabaseConnector | None = None) -> dict:
+        # =====================================
+        # 如果提供已经建立的数据库连接，则直接使用
+        if databaseConnector is None:
+            database = DatabaseConnector()
+            database.startCursor()
+        else:
+            database = databaseConnector
+        # ================================
+        # 获取当日日期后3日日期，和前5日日期
+        past5Date = (datetime.datetime.now() -
+                     datetime.timedelta(days=5)).strftime("%Y-%m-%d")
+        post3Date = (datetime.datetime.now() +
+                     datetime.timedelta(days=3)).strftime("%Y-%m-%d")
+        # ==============================
+        # 查询日期范围内，此组员的排班信息
+        DBAffectedRows = database.execute(
+            sql="SELECT course_id, date, period, classroom_name, campus, school_name, student_supposed, course_name, grade, course_order \
+                FROM CourseCheckActualView \
+                WHERE CourseCheckActualView.actual_student_id = %s \
+                    AND (CourseCheckActualView.date >= %s AND CourseCheckActualView.date <= %s) \
+                ORDER BY CourseCheckActualView.date DESC, CourseCheckActualView.period ASC, CourseCheckActualView.course_order ASC,CourseCheckActualView.classroom_name ASC;",
+            data=(CustomSession.getSession()["userID"], past5Date, post3Date))
+        historyData = list(database.fetchall())
+        # ===================================
+        # 查询排班对应的数据表，并按排班编号整理
+        results = dict()
+        for one_history in historyData:
+            # ==============================
+            # 处理一下日期，转化为可以JSON化的
+            one_history["date"] = one_history["date"].strftime("%Y-%m-%d")
+            # ======
+            # 数据表
+            DBAffectedRows = database.execute(
+                sql="SELECT check_result \
+                    FROM CourseCheckData \
+                    WHERE course_id = %s \
+                    ORDER BY submission_time DESC \
+                    LIMIT 1;",
+                data=(one_history['course_id'],))
+            if DBAffectedRows == 0:
+                database.fetchall()
+                courseRecord = "{}"
+            else:
+                courseRecord = database.fetchall()[0]["check_result"]
+            # ========
+            # 整合数据
+            if (one_history['date']+'_'+one_history['period']) not in results.keys():
+                results[one_history['date']+'_' +
+                        one_history['period']] = list()
+            results[one_history['date']+'_'+one_history['period']].append({
+                'date': one_history['date'],
+                'period': one_history['period'],
+                'course_id': one_history['course_id'],
+                'classroom_name': one_history['classroom_name'],
+                'school_name': one_history['school_name'],
+                'campus': one_history['campus'],
+                'student_supposed': one_history['student_supposed'],
+                'course_name': one_history['course_name'],
+                'grade': one_history['grade'],
+                'course_order': one_history['course_order'],
+                'record': courseRecord
+            })
+        # ========
+        # 返回数据
+        return results
+
+    @staticmethod
+    def submitCoursesRecord(infoForm: dict, databaseConnector: DatabaseConnector | None = None) -> None:
+        # =====================================
+        # 如果提供已经建立的数据库连接，则直接使用
+        if databaseConnector is None:
+            database = DatabaseConnector()
+            database.startCursor()
+        else:
+            database = databaseConnector
+        # ==========================================
+        # 查找查课排班编号对应的实际查早组员是否为本人
+        DBAffectedRows = database.execute(
+            sql="SELECT course_id \
+                FROM CourseCheckActualView \
+                WHERE CourseCheckActualView.actual_student_id = %s \
+                    AND CourseCheckActualView.course_id = %s;",
+            data=(CustomSession.getSession()["userID"], infoForm['course_id']))
+        database.fetchall()
+        if DBAffectedRows == 0:
+            raise PermissionError(
+                "此查课排班的实际检查组员与本人核验不匹配，请联系管理员.", filename=__file__, line=sys._getframe().f_lineno)
+        # ============
+        # 提交查课数据
+        check_result = json.dumps(infoForm['record'], ensure_ascii=False)
+        DBAffectedRows = database.execute(
+            sql="INSERT INTO CourseCheckData \
+                    (course_id,check_result,submit_student_id,groupleader_recheck,remark) \
+                VALUES \
+                    (%s,%s,%s,0,'');",
+            data=(infoForm['course_id'], check_result,
                   CustomSession.getSession()["userID"]),
             autoCommit=False)
         # ========

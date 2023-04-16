@@ -87,11 +87,11 @@ function fill_selfstudy_check_data(data) {
                 <td>${one_records["date"]}</td>
                 <td>${one_records["classroom_name"]}</td>
                 <td>${one_records["student_supposed"]}</td>
-                <td>${record["firstPresent"] || ""}</td>
-                <td>${record["absent"] || ""}</td>
-                <td>${record["secondPresent"] || ""}</td>
-                <td>${record["leaveEarly"] || ""}</td>
-                <td>${record["askForLeave"] || ""}</td>
+                <td>${record["firstPresent"] !== undefined && record["firstPresent"] !== null ? record["firstPresent"] : ""}</td>
+                <td>${record["absent"] !== undefined && record["absent"] !== null ? record["absent"] : ""}</td>
+                <td>${record["secondPresent"] !== undefined && record["secondPresent"] !== null ? record["secondPresent"] : ""}</td>
+                <td>${record["leaveEarly"] !== undefined && record["leaveEarly"] !== null ? record["leaveEarly"] : ""}</td>
+                <td>${record["askForLeave"] !== undefined && record["askForLeave"] !== null ? record["askForLeave"] : ""}</td>
                 <td>${record["remark"] || ""}</td>
                 <td>${one_records["school_name"]}</td>
             </tr>
@@ -101,16 +101,16 @@ function fill_selfstudy_check_data(data) {
 }
 
 function fill_data_into_modal(row) {
-    let selfstudy_id = $(row).attr("selfstudy_id");
-    let date = $($(row).children()[0]).text();
-    let classroomName = $($(row).children()[1]).text();
-    let firstPresent = $($(row).children()[3]).text();
-    let absent = $($(row).children()[4]).text();
-    let secondPresent = $($(row).children()[5]).text();
-    let leaveEarly = $($(row).children()[6]).text();
-    let askForLeave = $($(row).children()[7]).text();
-    let remark = $($(row).children()[8]).text();
-    let schoolName = $($(row).children()[9]).text();
+    let selfstudy_id = $(row).attr("selfstudy_id").trim();
+    let date = $($(row).children()[0]).text().trim();
+    let classroomName = $($(row).children()[1]).text().trim();
+    let firstPresent = $($(row).children()[3]).text().trim();
+    let absent = $($(row).children()[4]).text().trim();
+    let secondPresent = $($(row).children()[5]).text().trim();
+    let leaveEarly = $($(row).children()[6]).text().trim();
+    let askForLeave = $($(row).children()[7]).text().trim();
+    let remark = $($(row).children()[8]).text().trim();
+    let schoolName = $($(row).children()[9]).text().trim();
 
     let modal_head = `${date} ${schoolName} ${classroomName}`;
     $("#firstPresent").val(parseInt(firstPresent) || 0);
@@ -148,8 +148,8 @@ function delete_absent_student(button) {
 }
 
 function add_absent_student() {
-    let student_name = $("#student_name").val();
-    let student_id = $("#student_id").val();
+    let student_name = $("#student_name").val().trim();
+    let student_id = $("#student_id").val().trim();
 
     let row = `
         <tr>
@@ -166,14 +166,14 @@ function add_absent_student() {
 
 function submit() {
     try {
-        let selfstudy_id = parseInt($("#modal-subtitle").attr("selfstudy_id"));
+        let selfstudy_id = parseInt($("#modal-subtitle").attr("selfstudy_id").trim());
         if (selfstudy_id === 0) { throw "Selfstudy ID Illegal !"; }
 
-        let firstPresent = parseInt($("#firstPresent").val());
-        let absent = parseInt($("#absent").val());
-        let secondPresent = parseInt($("#secondPresent").val());
-        let leaveEarly = parseInt($("#leaveEarly").val());
-        let askForLeave = parseInt($("#askForLeave").val());
+        let firstPresent = parseInt($("#firstPresent").val().trim());
+        let absent = parseInt($("#absent").val().trim());
+        let secondPresent = parseInt($("#secondPresent").val().trim());
+        let leaveEarly = parseInt($("#leaveEarly").val().trim());
+        let askForLeave = parseInt($("#askForLeave").val().trim());
         let remark = $("#remark").val().trim();
 
         let absent_table_body = $("#selfstudy-absent-list-table-body");
