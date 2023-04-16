@@ -1,6 +1,6 @@
 $(function () {
     $.get(
-        "/Ajax/Users/get_schedule_history",
+        "/Ajax/Users/get_schedule_recent",
         function (data, status) {
             if (status === "success") {
                 let returnCode = data['code'];

@@ -328,10 +328,10 @@ def Users(app: flask.Flask) -> None:
                 logger.funcReturns = returns
         return customResponse.getResponse()
 
-    @app.route("/Ajax/Users/get_schedule_history", methods=['GET'])
-    def getScheduleHistory():
+    @app.route("/Ajax/Users/get_schedule_recent", methods=['GET'])
+    def getScheduleRecent():
         with CustomResponse() as customResponse:
-            with Logger(funcName="Users.getScheduleHistory()") as logger:
+            with Logger(funcName="Users.getScheduleRecent()") as logger:
                 # ===============
                 # 检查接口调用权限
                 Authorization.check(rightsNeeded=({"department_id": 5, "actor": 0},
@@ -343,7 +343,7 @@ def Users(app: flask.Flask) -> None:
                                                   {"department_id": 11, "actor": 0}), needLogin=True)
                 # ===========
                 # 执行接口流程
-                results = DatabaseBasicOperations_Users.getScheduleHistory()
+                results = DatabaseBasicOperations_Users.getScheduleRecent()
                 # ========================
                 # 准备函数返回值和响应与日志
                 returns = {"message": "", "data": results}

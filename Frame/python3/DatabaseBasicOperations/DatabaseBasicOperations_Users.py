@@ -495,7 +495,7 @@ class DatabaseBasicOperations_Users:
         return returns
 
     @staticmethod
-    def getScheduleHistory(databaseConnector: DatabaseConnector | None = None) -> dict:
+    def getScheduleRecent(databaseConnector: DatabaseConnector | None = None) -> dict:
         # =====================================
         # 如果提供已经建立的数据库连接，则直接使用
         if databaseConnector is None:
@@ -503,11 +503,13 @@ class DatabaseBasicOperations_Users:
             database.startCursor()
         else:
             database = databaseConnector
-        # =========================
-        # 获取当日日期，和前20日日期
+        # =================================
+        # 获取当日日期后5天日期，和前20日日期
         currentDate = datetime.datetime.now()
+        post5Date = currentDate + datetime.timedelta(days=5)
         past20Date = currentDate - datetime.timedelta(days=20)
         currentDate = currentDate.strftime("%Y-%m-%d")
+        post5Date = post5Date.strftime("%Y-%m-%d")
         past20Date = past20Date.strftime("%Y-%m-%d")
         # ====================================
         # 查询日期范围内，此组员的早自习排班信息
@@ -517,7 +519,7 @@ class DatabaseBasicOperations_Users:
                 WHERE SelfstudyCheckActualView.actual_student_id = %s \
                     AND (SelfstudyCheckActualView.date >= %s AND SelfstudyCheckActualView.date <= %s) \
                 ORDER BY SelfstudyCheckActualView.date DESC, SelfstudyCheckActualView.classroom_name ASC;",
-            data=(CustomSession.getSession()["userID"], past20Date, currentDate))
+            data=(CustomSession.getSession()["userID"], past20Date, post5Date))
         selfstudyHistoryData = list(database.fetchall())
         # =========================
         # 查询早自习排班对应的数据表
@@ -553,7 +555,7 @@ class DatabaseBasicOperations_Users:
                 WHERE CourseCheckActualView.actual_student_id = %s \
                     AND (CourseCheckActualView.date >= %s AND CourseCheckActualView.date <= %s) \
                 ORDER BY CourseCheckActualView.date DESC, CourseCheckActualView.course_order ASC, CourseCheckActualView.classroom_name ASC;",
-            data=(CustomSession.getSession()["userID"], past20Date, currentDate))
+            data=(CustomSession.getSession()["userID"], past20Date, post5Date))
         coursesHistoryData = list(database.fetchall())
         # =======================
         # 查询查课排班对应的数据表
