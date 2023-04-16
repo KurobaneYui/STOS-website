@@ -163,11 +163,11 @@ function add_row(table_body, one_schedule) {
             <td>${one_schedule["actual_student_id"]}</td>
             <td>${one_schedule["classroom_name"]}</td>
             <td>${one_schedule["student_supposed"]}</td>
-            <td>${record["firstPresent"] || ""}</td>
-            <td>${record["absent"] || ""}</td>
-            <td>${record["secondPresent"] || ""}</td>
-            <td>${record["leaveEarly"] || ""}</td>
-            <td>${record["askForLeave"] || ""}</td>
+            <td>${record["firstPresent"] !== undefined && record["firstPresent"] !== null ? record["firstPresent"] : ""}</td>
+            <td>${record["absent"] !== undefined && record["absent"] !== null ? record["absent"] : ""}</td>
+            <td>${record["secondPresent"] !== undefined && record["secondPresent"] !== null ? record["secondPresent"] : ""}</td>
+            <td>${record["leaveEarly"] !== undefined && record["leaveEarly"] !== null ? record["leaveEarly"] : ""}</td>
+            <td>${record["askForLeave"] !== undefined && record["askForLeave"] !== null ? record["askForLeave"] : ""}</td>
             <td>${record["remark"] || ""}</td>
             <td>${one_schedule["school_name"]}</td>
         </tr>

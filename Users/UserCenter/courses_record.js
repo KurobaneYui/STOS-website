@@ -68,7 +68,7 @@ function get_records() {
 
 function fill_page(data) {
     $("#courses-card-container").html("");
-    
+
     for (oneDatePeriod in data) {
         add_card($("#courses-card-container"), oneDatePeriod, data[oneDatePeriod]);
     }
@@ -86,7 +86,7 @@ function add_card(card_container, oneDatePeriod, data) {
     let currentDate = (new Date()).format("yyyy-MM-dd");
     let expanded = 'false';
     let show = '';
-    if(currentDate===data[0]['date']){
+    if (currentDate === data[0]['date']) {
         expanded = 'true';
         show = 'show';
     }
@@ -157,11 +157,11 @@ function add_row(table_container, data) {
             <td>${data["classroom_name"]}</td>
             <td>${data["course_name"]}</td>
             <td>${data["student_supposed"]}</td>
-            <td>${one_records["firstPresent"]}</td>
-            <td>${one_records["firstDisciplinary"]}</td>
-            <td>${one_records["secondPresent"]}</td>
-            <td>${one_records["secondDisciplinary"]}</td>
-            <td>${one_records["remark"]}</td>
+            <td>${one_records["firstPresent"] !== undefined && one_records["firstPresent"] !== null ? one_records["firstPresent"] : ""}</td>
+            <td>${one_records["firstDisciplinary"] !== undefined && one_records["firstDisciplinary"] !== null ? one_records["firstDisciplinary"] : ""}</td>
+            <td>${one_records["secondPresent"] !== undefined && one_records["secondPresent"] !== null ? one_records["secondPresent"] : ""}</td>
+            <td>${one_records["secondDisciplinary"] !== undefined && one_records["secondDisciplinary"] !== null ? one_records["secondDisciplinary"] : ""}</td>
+            <td>${one_records["remark"] || ""}</td>
             <td>${data["grade"]}</td>
             <td>${data["school_name"]}</td>
         </tr>
@@ -212,7 +212,7 @@ function submit() {
                 course_id: course_id,
                 record: {
                     firstPresent: firstPresent,
-                    firstDisciplinary: absent,
+                    firstDisciplinary: firstDisciplinary,
                     secondPresent: secondPresent,
                     secondDisciplinary: secondDisciplinary,
                     remark: remark,

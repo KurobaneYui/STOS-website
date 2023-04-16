@@ -87,11 +87,11 @@ function fill_selfstudy_check_data(data) {
                 <td>${one_records["date"]}</td>
                 <td>${one_records["classroom_name"]}</td>
                 <td>${one_records["student_supposed"]}</td>
-                <td>${record["firstPresent"] || ""}</td>
-                <td>${record["absent"] || ""}</td>
-                <td>${record["secondPresent"] || ""}</td>
-                <td>${record["leaveEarly"] || ""}</td>
-                <td>${record["askForLeave"] || ""}</td>
+                <td>${record["firstPresent"] !== undefined && record["firstPresent"] !== null ? record["firstPresent"] : ""}</td>
+                <td>${record["absent"] !== undefined && record["absent"] !== null ? record["absent"] : ""}</td>
+                <td>${record["secondPresent"] !== undefined && record["secondPresent"] !== null ? record["secondPresent"] : ""}</td>
+                <td>${record["leaveEarly"] !== undefined && record["leaveEarly"] !== null ? record["leaveEarly"] : ""}</td>
+                <td>${record["askForLeave"] !== undefined && record["askForLeave"] !== null ? record["askForLeave"] : ""}</td>
                 <td>${record["remark"] || ""}</td>
                 <td>${one_records["school_name"]}</td>
             </tr>

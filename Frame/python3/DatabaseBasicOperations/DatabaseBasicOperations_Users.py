@@ -761,7 +761,7 @@ class DatabaseBasicOperations_Users:
             # ========
             # 整合数据
             if (one_history['date']+'_'+one_history['period']) not in results.keys():
-                results[one_history['date']+' - ' +
+                results[one_history['date']+'_' +
                         one_history['period']] = list()
             results[one_history['date']+'_'+one_history['period']].append({
                 'date': one_history['date'],
