@@ -72,7 +72,8 @@ def TmpFilesRoutes(additionalURL):
 @app.route("/")
 @app.route("/index.html")
 def index():
-    return send_file("index.html")
+    return redirect("/Users/Authentication/login.html")
+    # return send_file("index.html")
 
 
 # handle when '404 not found' error

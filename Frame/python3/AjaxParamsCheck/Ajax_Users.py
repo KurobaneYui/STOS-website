@@ -279,9 +279,12 @@ class Ajax_Users:
             if one_student["student_name"] == "" or one_student["student_id"] == "":
                 raise IllegalValueError(
                     "Student name or ID in absent list is empty.", filename=__file__, line=sys._getframe().f_lineno)
-            if any(char.isdigit() for char in one_student["student_name"]):
+            if any(char.isdigit() for char in one_student["student_name"]) or not any(char.isalpha() and char.isalnum() for char in one_student["student_name"]):
                 raise IllegalValueError(
                     "Student name in absent list is wrong.", filename=__file__, line=sys._getframe().f_lineno)
+            if not (one_student["student_id"].isalnum() and one_student["student_id"].isascii()):
+                raise IllegalValueError(
+                    "Student ID in absent list is wrong.", filename=__file__, line=sys._getframe().f_lineno)
 
         if "absent" not in infoForm["record"].keys() \
                 or "firstPresent" not in infoForm["record"].keys() \
