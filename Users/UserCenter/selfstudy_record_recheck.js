@@ -228,7 +228,7 @@ function submit() {
                     else if (returnCode === 401) {
                         swal({
                             title: "权限错误",
-                            text: "非现场组组长或队长无组内早自习数据确认权限。",
+                            text: "非本组组长无组内早自习数据确认权限。",
                             icon: "error",
                         });
                     }

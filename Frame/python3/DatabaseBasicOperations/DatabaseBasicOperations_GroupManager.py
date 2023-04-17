@@ -384,6 +384,172 @@ class DatabaseBasicOperations_GroupManager:
             autoCommit=True)
 
     @staticmethod
+    def getXianchangGroupList(databaseConnector: DatabaseConnector | None = None) -> list:
+        # =====================================
+        # 如果提供已经建立的数据库连接，则直接使用
+        if databaseConnector is None:
+            database = DatabaseConnector()
+            database.startCursor()
+        else:
+            database = databaseConnector
+        # ============
+        # 查询部门信息
+        if CustomSession().getSession()['department_id'] == 1:
+            _ = database.execute(
+                sql="SELECT department_id, Department.name as department_name \
+                    FROM Department \
+                    WHERE Department.name like %s;",
+                data=("现场组%",))
+        else:
+            _ = database.execute(
+                sql="SELECT department_id, Department.name as department_name \
+                    FROM Department \
+                    WHERE Department.name like %s AND department_id = %s;",
+                data=("现场组%", CustomSession().getSession()['department_id']))
+        return database.fetchall()
+
+    @staticmethod
+    def getGroupCoursesCheckData(infoForm: dict, databaseConnector: DatabaseConnector | None = None) -> list:
+        # =====================================
+        # 如果提供已经建立的数据库连接，则直接使用
+        if databaseConnector is None:
+            database = DatabaseConnector()
+            database.startCursor()
+        else:
+            database = databaseConnector
+        # ================================
+        # 获取当日日期后3日日期，和前7日日期
+        past7Date = datetime.datetime.now() - datetime.timedelta(days=7)
+        post3Date = datetime.datetime.now() + datetime.timedelta(days=3)
+        date_list = [d.strftime("%Y-%m-%d") for d in (past7Date + datetime.timedelta(days=x)
+                                                      for x in range((post3Date - past7Date).days + 1))]
+        date_list.reverse()
+        # =======================
+        # 检查给定的组符合查看要求
+        # 并整理查看组的信息
+        showDepartmentInfo = dict()
+        for canShowDepartmentInfo in DatabaseBasicOperations_GroupManager.getXianchangGroupList(databaseConnector):
+            showDepartmentInfo[canShowDepartmentInfo['department_id']
+                               ] = canShowDepartmentInfo['department_name']
+        delete_department_ids = []
+        for department_id in showDepartmentInfo.keys():
+            if department_id not in infoForm['group_id_list']:
+                delete_department_ids.append(department_id)
+
+        for department_id in delete_department_ids:
+            del showDepartmentInfo[department_id]
+
+        # 先按日期时段顺序
+        # 再按组和名字顺序
+        # 再列出所有成员的所有数据
+        results = list()
+        # ===================
+        # 按日期和时段获取数据
+        for date in date_list:
+            for period in ['1-2', '3-4', '5-6', '7-8']:
+                results.append({
+                    "date": date,
+                    "period": period,
+                    "data": list()
+                })
+                # ====================================
+                # 对每个查看组，按组员顺序获取排班和数据
+                for department_id, department_name in showDepartmentInfo.items():
+                    results[-1]["data"].append({
+                        "department_id": department_id,
+                        "department_name": department_name,
+                        "data": list()
+                    })
+                    DBAffectedRows = database.execute(
+                        sql="SELECT course_id, course_name, classroom_name, grade, course_order, campus, school_name, student_supposed, actual_student_id, actual_student_name \
+                            FROM CourseCheckActualView \
+                            WHERE CourseCheckActualView.actual_student_department_id = %s \
+                                AND CourseCheckActualView.date = %s \
+                                AND CourseCheckActualView.period = %s;",
+                        data=(department_id, date, period))
+                    results[-1]["data"][-1]['data'] = database.fetchall()
+                    # =======================
+                    # 对每一个排班获取提交数据
+                    for one_schedules in results[-1]["data"][-1]['data']:
+                        course_id = one_schedules['course_id']
+                        # ======
+                        # 数据表
+                        DBAffectedRows = database.execute(
+                            sql="SELECT coursecheckdata_id, check_result, groupleader_recheck, remark \
+                                FROM CourseCheckData \
+                                WHERE course_id = %s \
+                                ORDER BY submission_time DESC \
+                                LIMIT 1;",
+                            data=(course_id,))
+                        info = database.fetchall()
+                        if DBAffectedRows == 0:
+                            one_schedules.update({"coursecheckdata_id": -1,
+                                                  "record": "{}",
+                                                  "recheck_remark": "",
+                                                  "recheck": False,
+                                                  "submitted": False})
+                        else:
+                            one_schedules.update({"coursecheckdata_id": info[0]["coursecheckdata_id"],
+                                                  "record": info[0]["check_result"],
+                                                  "recheck_remark": info[0]["remark"],
+                                                  "recheck": int(info[0]["groupleader_recheck"]) == 1,
+                                                  "submitted": True})
+                    # =====================
+                    # 如果没有数据则删除条目
+                    if len(results[-1]["data"][-1]['data']) == 0:
+                        del results[-1]["data"][-1]
+                # =====================
+                # 如果没有数据则删除条目
+                if len(results[-1]["data"]) == 0:
+                    del results[-1]
+        # ========
+        # 返回数据
+        return results
+
+    @staticmethod
+    def submitCoursesRecordRecheck(infoForm: dict, databaseConnector: DatabaseConnector | None = None) -> None:
+        # =====================================
+        # 如果提供已经建立的数据库连接，则直接使用
+        if databaseConnector is None:
+            database = DatabaseConnector()
+            database.startCursor()
+        else:
+            database = databaseConnector
+        # =============================
+        # 核验查课编号和查课数据编号匹配
+        DBAffectedRows = database.execute(
+            sql="SELECT coursecheckdata_id \
+                FROM CourseCheckData \
+                WHERE coursecheckdata_id = %(coursecheckdata_id)s \
+                    AND course_id = %(course_id)s;",
+            data=infoForm)
+        database.fetchall()
+        if DBAffectedRows == 0:
+            raise PermissionError(
+                "查课数据编号和查课排班编号不匹配.", filename=__file__, line=sys._getframe().f_lineno)
+        # ============================
+        # 核验查课编号对应组员为本组组员
+        DBAffectedRows = database.execute(
+            sql="SELECT course_id \
+                FROM CourseCheckActualView \
+                WHERE course_id = %s \
+                    AND actual_student_department_id = %s;",
+            data=(infoForm['course_id'], CustomSession.getSession()['department_id']))
+        database.fetchall()
+        if DBAffectedRows == 0:
+            raise PermissionError(
+                "数据对应查课排班的组员不属于本组.", filename=__file__, line=sys._getframe().f_lineno)
+        # ============
+        # 提交确认信息
+        DBAffectedRows = database.execute(
+            sql="UPDATE CourseCheckData \
+                SET groupleader_recheck = %(rechecked)s, \
+                    remark = %(recheck_remark)s \
+                WHERE coursecheckdata_id = %(coursecheckdata_id)s;",
+            data=infoForm,
+            autoCommit=True)
+
+    @staticmethod
     def getGroupEmptyTable(databaseConnector: DatabaseConnector | None = None) -> dict:
         # =====================================
         # 如果提供已经建立的数据库连接，则直接使用
