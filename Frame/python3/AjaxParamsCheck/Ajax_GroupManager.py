@@ -44,6 +44,30 @@ class Ajax_GroupManager:
                 "Provided data is wrong or not nonnegative integer.", filename=__file__, line=sys._getframe().f_lineno)
 
     @staticmethod
+    def getGroupCoursesCheckDataParamsCheck(infoForm: dict) -> None:
+        if "group_id_list" not in infoForm.keys():
+            raise IllegalValueError(
+                "Not all data are provided.", filename=__file__, line=sys._getframe().f_lineno)
+
+    @staticmethod
+    def submitCoursesRecordRecheckParamsCheck(infoForm: dict) -> None:
+        if "course_id" not in infoForm.keys() or "coursecheckdata_id" not in infoForm.keys() \
+                or "rechecked" not in infoForm.keys() or "recheck_remark" not in infoForm.keys():
+            raise IllegalValueError(
+                "Not all data are provided.", filename=__file__, line=sys._getframe().f_lineno)
+
+        try:
+            infoForm["course_id"] = int(infoForm["course_id"])
+            infoForm["coursecheckdata_id"] = int(
+                infoForm["coursecheckdata_id"])
+            infoForm["rechecked"] = infoForm["rechecked"] == 'true'
+            assert infoForm["course_id"] >= 0
+            assert infoForm["coursecheckdata_id"] >= 0
+        except:
+            raise IllegalValueError(
+                "Provided data is wrong or not nonnegative integer.", filename=__file__, line=sys._getframe().f_lineno)
+
+    @staticmethod
     def setMemberEmptyTableParamsCheck(infoForm: dict) -> None:
         if "student_id" not in infoForm.keys() or "weekName" not in infoForm.keys() or "timePeriodOrder" not in infoForm.keys() \
                 or "evenOrNot" not in infoForm.keys() or "emptyOrNot" not in infoForm.keys():
