@@ -7,6 +7,7 @@ from flask import Request
 from Frame.python3.BaseComponents.CustomError import IllegalValueError
 from Frame.python3.BaseComponents.DatabaseConnector import DatabaseConnector
 import Program.python.SelfstudyExportProcess as SelfstudyExportProcess
+import Program.python.CourseExportProcess as CourseExportProcess
 import Program.python.EmptyTimeTableProcess as EmptyTimeTableProcess
 
 
@@ -640,6 +641,30 @@ class DatabaseBasicOperations_DataManager:
             infoForm["endDate"], "%Y-%m-%d")
         # 开始调用
         SelfstudyExportProcess.writedata(**infoForm)
+
+        return "/"+path
+
+    @staticmethod
+    def downloadCoursesAllData(infoForm: dict, databaseConnector: DatabaseConnector | None = None) -> str:
+        # =====================================
+        # 如果提供已经建立的数据库连接，则直接使用
+        if databaseConnector is None:
+            database = DatabaseConnector()
+            database.startCursor()
+        else:
+            database = databaseConnector
+        # ====================================
+        # 调用python程序处理财务信息并导出财务表
+        # 整理调用参数
+        path = f"tmpFiles/courses_export_{str(int(random.random()*10e5))}.xlsx"
+        infoForm["path"] = path
+        infoForm["database"] = database
+        infoForm["startDate"] = datetime.datetime.strptime(
+            infoForm["startDate"], "%Y-%m-%d")
+        infoForm["endDate"] = datetime.datetime.strptime(
+            infoForm["endDate"], "%Y-%m-%d")
+        # 开始调用
+        CourseExportProcess.writedata(**infoForm)
 
         return "/"+path
 
