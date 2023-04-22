@@ -90,9 +90,9 @@ def writedata(path: str, database: DatabaseConnector,
     ws_sheet1.append(['日期', '教室', '校区', '学院', '应到人数', '第一次出勤', '迟到人数',
                      '第二次出勤', '早退人数', '请假人数', '备注', '组长确认', '组长备注', '查早组员', '组员学号', '所属组'])
     ws_sheet2.append(['日期', '教室', '校区', '学院', '请假人姓名',
-                     '请假人学号', '查早组员', '组员学号', '所属组'])
+                     '请假人学号', '事由', '查早组员', '组员学号', '所属组'])
 
-    absentOffset = 0
+    absentOffset = 2
     for order, one_schedule in enumerate(schedules, start=2):
         ws_sheet1.cell(row=order, column=1, value=one_schedule['date'])
         ws_sheet1.cell(row=order, column=2,
@@ -120,25 +120,27 @@ def writedata(path: str, database: DatabaseConnector,
                        value=one_schedule['actual_student_department_name'])
 
         for one_absent_student in one_schedule["absentList"]:
-            ws_sheet2.cell(row=order+absentOffset, column=1,
+            ws_sheet2.cell(row=absentOffset, column=1,
                            value=one_schedule['date'])
-            ws_sheet2.cell(row=order+absentOffset, column=2,
+            ws_sheet2.cell(row=absentOffset, column=2,
                            value=one_schedule['classroom_name'])
-            ws_sheet2.cell(row=order+absentOffset, column=3,
+            ws_sheet2.cell(row=absentOffset, column=3,
                            value=one_schedule['campus'])
-            ws_sheet2.cell(row=order+absentOffset, column=4,
+            ws_sheet2.cell(row=absentOffset, column=4,
                            value=one_schedule['school_name'])
 
-            ws_sheet2.cell(row=order+absentOffset, column=5,
+            ws_sheet2.cell(row=absentOffset, column=5,
                            value=one_absent_student['student_name'])
-            ws_sheet2.cell(row=order+absentOffset, column=6,
+            ws_sheet2.cell(row=absentOffset, column=6,
                            value=one_absent_student['student_id'])
+            ws_sheet2.cell(row=absentOffset, column=7,
+                           value=one_absent_student['reason'])
 
-            ws_sheet2.cell(row=order+absentOffset, column=7,
+            ws_sheet2.cell(row=absentOffset, column=8,
                            value=one_schedule['actual_student_name'])
-            ws_sheet2.cell(row=order+absentOffset, column=8,
+            ws_sheet2.cell(row=absentOffset, column=9,
                            value=one_schedule['actual_student_id'])
-            ws_sheet2.cell(row=order+absentOffset, column=9,
+            ws_sheet2.cell(row=absentOffset, column=10,
                            value=one_schedule['actual_student_department_name'])
 
             absentOffset += 1

@@ -134,6 +134,7 @@ function fill_data_into_modal(row) {
             <tr>
                 <td>${one_student['student_name']}</td>
                 <td>${one_student['student_id']}</td>
+                <td>${one_student['reason']}</td>
                 <td>
                     <button class="btn btn-danger btn-sm rounded-pill" onclick="delete_absent_student(this)">删除</button>
                 </td>
@@ -150,11 +151,13 @@ function delete_absent_student(button) {
 function add_absent_student() {
     let student_name = $("#student_name").val().trim();
     let student_id = $("#student_id").val().trim();
+    let reason = $("#reason").val().trim();
 
     let row = `
         <tr>
             <td>${student_name}</td>
             <td>${student_id}</td>
+            <td>${reason}</td>
             <td>
                 <button class="btn btn-danger btn-sm rounded-pill" onclick="delete_absent_student(this)">删除</button>
             </td>
@@ -181,8 +184,9 @@ function submit() {
         for (row of absent_table_body.children()) {
             let student_name = $(row).children().first().text().trim();
             let student_id = $(row).children().first().next().text().trim();
+            let reason = $(row).children().last().text().trim();
 
-            absent_list.push({ student_name: student_name, student_id: student_id });
+            absent_list.push({ student_name: student_name, student_id: student_id, reason: reason });
         }
 
         $.ajax({
