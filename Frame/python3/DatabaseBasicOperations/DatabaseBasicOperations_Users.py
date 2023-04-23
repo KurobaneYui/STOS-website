@@ -652,6 +652,20 @@ class DatabaseBasicOperations_Users:
                 database.fetchall()
             else:
                 selfstudyAbsentList = database.fetchall()[0]["check_result"]
+            # ======
+            # 请假表
+            DBAffectedRows = database.execute(
+                sql="SELECT check_result \
+                    FROM SelfstudyCheckAskForLeave \
+                    WHERE selfstudy_id = %s \
+                    ORDER BY submission_time DESC \
+                    LIMIT 1;",
+                data=(one_history['selfstudy_id'],))
+            if DBAffectedRows == 0:
+                selfstudyAskForLeaveList = "[]"
+                database.fetchall()
+            else:
+                selfstudyAskForLeaveList = database.fetchall()[0]["check_result"]
             # ========
             # 整合数据
             results.append({
@@ -662,7 +676,8 @@ class DatabaseBasicOperations_Users:
                 'campus': one_history['campus'],
                 'student_supposed': one_history['student_supposed'],
                 'record': selfstudyRecord,
-                'absent': selfstudyAbsentList
+                'absent': selfstudyAbsentList,
+                'askForLeave': selfstudyAskForLeaveList
             })
         # ========
         # 返回数据
@@ -704,6 +719,16 @@ class DatabaseBasicOperations_Users:
         check_result = json.dumps(infoForm['absentList'], ensure_ascii=False)
         DBAffectedRows = database.execute(
             sql="INSERT INTO SelfstudyCheckAbsent \
+                    (selfstudy_id,check_result,submit_student_id) \
+                VALUES \
+                    (%s,%s,%s);",
+            data=(infoForm['selfstudy_id'], check_result,
+                  CustomSession.getSession()["userID"]),
+            autoCommit=False)
+
+        check_result = json.dumps(infoForm['askForLeaveList'], ensure_ascii=False)
+        DBAffectedRows = database.execute(
+            sql="INSERT INTO SelfstudyCheckAskForLeave \
                     (selfstudy_id,check_result,submit_student_id) \
                 VALUES \
                     (%s,%s,%s);",
