@@ -28,8 +28,10 @@ def writedata(path: str, database: DatabaseConnector,
     wb = openpyxl.Workbook()
     ws_sheet1 = wb.active
     ws_sheet1.title = '数据'
-    ws_sheet2 = wb.create_sheet('名单')
+    ws_sheet2 = wb.create_sheet('缺勤')
     assert isinstance(ws_sheet2, Worksheet)
+    ws_sheet3 = wb.create_sheet('请假')
+    assert isinstance(ws_sheet3, Worksheet)
 
     # 从排班中获取给定日期范围内的排班，并获取教室、学院、编号、检查人员姓名学号、所属组等信息
     # 便利每一个排班，利用编号搜索数据
@@ -87,12 +89,32 @@ def writedata(path: str, database: DatabaseConnector,
                 "absentList": []
             })
 
+        DBAffectedRows = database.execute("SELECT check_result \
+                        FROM SelfstudyCheckAskForLeave \
+                        WHERE selfstudy_id = %s \
+                        ORDER BY submission_time DESC \
+                        LIMIT 1;",
+                                          data=(one_schedule["selfstudy_id"],))
+        askForLeaveList = database.fetchall()
+        if DBAffectedRows != 0:
+            askForLeaveList = askForLeaveList[0]
+            one_schedule.update({
+                "askForLeaveList": json.loads(askForLeaveList["check_result"])
+            })
+        else:
+            one_schedule.update({
+                "askForLeaveList": []
+            })
+
     ws_sheet1.append(['日期', '教室', '校区', '学院', '应到人数', '第一次出勤', '迟到人数',
                      '第二次出勤', '早退人数', '请假人数', '备注', '组长确认', '组长备注', '查早组员', '组员学号', '所属组'])
-    ws_sheet2.append(['日期', '教室', '校区', '学院', '请假人姓名',
-                     '请假人学号', '查早组员', '组员学号', '所属组'])
+    ws_sheet2.append(['日期', '教室', '校区', '学院', '缺勤人姓名',
+                     '缺勤人学号', '查早组员', '组员学号', '所属组'])
+    ws_sheet3.append(['日期', '教室', '校区', '学院', '请假人姓名',
+                     '请假人学号', '事由', '查早组员', '组员学号', '所属组'])
 
-    absentOffset = 0
+    absentOffset = 2
+    askForLeaveOffset = 2
     for order, one_schedule in enumerate(schedules, start=2):
         ws_sheet1.cell(row=order, column=1, value=one_schedule['date'])
         ws_sheet1.cell(row=order, column=2,
@@ -120,28 +142,54 @@ def writedata(path: str, database: DatabaseConnector,
                        value=one_schedule['actual_student_department_name'])
 
         for one_absent_student in one_schedule["absentList"]:
-            ws_sheet2.cell(row=order+absentOffset, column=1,
+            ws_sheet2.cell(row=absentOffset, column=1,
                            value=one_schedule['date'])
-            ws_sheet2.cell(row=order+absentOffset, column=2,
+            ws_sheet2.cell(row=absentOffset, column=2,
                            value=one_schedule['classroom_name'])
-            ws_sheet2.cell(row=order+absentOffset, column=3,
+            ws_sheet2.cell(row=absentOffset, column=3,
                            value=one_schedule['campus'])
-            ws_sheet2.cell(row=order+absentOffset, column=4,
+            ws_sheet2.cell(row=absentOffset, column=4,
                            value=one_schedule['school_name'])
 
-            ws_sheet2.cell(row=order+absentOffset, column=5,
+            ws_sheet2.cell(row=absentOffset, column=5,
                            value=one_absent_student['student_name'])
-            ws_sheet2.cell(row=order+absentOffset, column=6,
+            ws_sheet2.cell(row=absentOffset, column=6,
                            value=one_absent_student['student_id'])
 
-            ws_sheet2.cell(row=order+absentOffset, column=7,
+            ws_sheet2.cell(row=absentOffset, column=7,
                            value=one_schedule['actual_student_name'])
-            ws_sheet2.cell(row=order+absentOffset, column=8,
+            ws_sheet2.cell(row=absentOffset, column=8,
                            value=one_schedule['actual_student_id'])
-            ws_sheet2.cell(row=order+absentOffset, column=9,
+            ws_sheet2.cell(row=absentOffset, column=9,
                            value=one_schedule['actual_student_department_name'])
 
             absentOffset += 1
+
+        for one_askForLeave_student in one_schedule["askForLeaveList"]:
+            ws_sheet3.cell(row=askForLeaveOffset, column=1,
+                           value=one_schedule['date'])
+            ws_sheet3.cell(row=askForLeaveOffset, column=2,
+                           value=one_schedule['classroom_name'])
+            ws_sheet3.cell(row=askForLeaveOffset, column=3,
+                           value=one_schedule['campus'])
+            ws_sheet3.cell(row=askForLeaveOffset, column=4,
+                           value=one_schedule['school_name'])
+
+            ws_sheet3.cell(row=askForLeaveOffset, column=5,
+                           value=one_askForLeave_student['student_name'])
+            ws_sheet3.cell(row=askForLeaveOffset, column=6,
+                           value=one_askForLeave_student['student_id'])
+            ws_sheet3.cell(row=askForLeaveOffset, column=7,
+                           value=one_askForLeave_student['reason'])
+
+            ws_sheet3.cell(row=askForLeaveOffset, column=8,
+                           value=one_schedule['actual_student_name'])
+            ws_sheet3.cell(row=askForLeaveOffset, column=9,
+                           value=one_schedule['actual_student_id'])
+            ws_sheet3.cell(row=askForLeaveOffset, column=10,
+                           value=one_schedule['actual_student_department_name'])
+
+            askForLeaveOffset += 1
 
     # 保存文件
     wb.save(path)

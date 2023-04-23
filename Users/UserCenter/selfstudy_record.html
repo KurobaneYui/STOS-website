@@ -84,13 +84,19 @@
                                             <li class="nav-item" role="presentation">
                                                 <button class="nav-link active" type="button" id="fill-data-tab"
                                                     data-bs-toggle="tab" data-bs-target="#fill-data" role="tab"
-                                                    aria-controls="fill-data" aria-selected="true">填写数据</button>
+                                                    aria-controls="fill-data" aria-selected="true">数据</button>
                                             </li>
                                             <li class="nav-item" role="presentation">
-                                                <button class="nav-link" type="button" id="fill-name-tab"
-                                                    data-bs-toggle="tab" data-bs-target="#fill-name" type="button"
-                                                    role="tab" aria-controls="fill-name"
-                                                    aria-selected="false">填写名单</button>
+                                                <button class="nav-link" type="button" id="fill-absent-tab"
+                                                    data-bs-toggle="tab" data-bs-target="#fill-absent" type="button"
+                                                    role="tab" aria-controls="fill-absent"
+                                                    aria-selected="false">缺勤</button>
+                                            </li>
+                                            <li class="nav-item" role="presentation">
+                                                <button class="nav-link" type="button" id="fill-askForLeave-tab"
+                                                    data-bs-toggle="tab" data-bs-target="#fill-askForLeave" type="button"
+                                                    role="tab" aria-controls="fill-askForLeave"
+                                                    aria-selected="false">请假</button>
                                             </li>
                                         </ul>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal"
@@ -137,8 +143,8 @@
                                                         placeholder="" autofocus required />
                                                 </div>
                                             </div>
-                                            <div class="tab-pane fade" id="fill-name" role="tabpanel"
-                                                aria-labelledby="fill-name-tab">
+                                            <div class="tab-pane fade" id="fill-absent" role="tabpanel"
+                                                aria-labelledby="fill-absent-tab">
                                                 <div class="row">
                                                     <div class="col-12 col-md-5">
                                                         <div class="mb-3">
@@ -176,6 +182,61 @@
                                                                 <tr>
                                                                     <th>姓名</th>
                                                                     <th>学号</th>
+                                                                    <th>操作</th>
+                                                                </tr>
+                                                            </tfoot>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="tab-pane fade" id="fill-askForLeave" role="tabpanel"
+                                                aria-labelledby="fill-askForLeave-tab">
+                                                <div class="row">
+                                                    <div class="col-12 col-md-5">
+                                                        <div class="mb-3">
+                                                            <label for="student_name_askForLeave" class="form-label">姓名</label>
+                                                            <input type="text" class="form-control" placeholder=""
+                                                                id="student_name_askForLeave" name="student_name_askForLeave" autofocus
+                                                                required />
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-12 col-md-5">
+                                                        <div class="mb-3">
+                                                            <label for="student_id_askForLeave" class="form-label">学号</label>
+                                                            <input type="text" class="form-control" placeholder=""
+                                                                id="student_id_askForLeave" name="student_id_askForLeave" autofocus required />
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-12">
+                                                        <div class="mb-3">
+                                                            <label for="reason" class="form-label">事由</label>
+                                                            <input type="text" class="form-control" placeholder=""
+                                                                id="reason" name="reason" autofocus required />
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-auto d-flex align-items-center">
+                                                        <button class="btn btn-primary btn-sm rounded-pill"
+                                                            onclick="add_askForLeave_student()">添加</button>
+                                                    </div>
+                                                </div>
+                                                <div class="row mt-3">
+                                                    <div class="col-12 table-responsive text-nowrap">
+                                                        <table class="table table-striped table-hover text-center">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>姓名</th>
+                                                                    <th>学号</th>
+                                                                    <th>事由</th>
+                                                                    <th>操作</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody id="selfstudy-askForLeave-list-table-body">
+                                                            </tbody>
+                                                            <tfoot>
+                                                                <tr>
+                                                                    <th>姓名</th>
+                                                                    <th>学号</th>
+                                                                    <th>事由</th>
                                                                     <th>操作</th>
                                                                 </tr>
                                                             </tfoot>
@@ -318,7 +379,7 @@
     <script src="https://cdn.bootcdn.net/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
 
     <!-- Page JS -->
-    <script src="./selfstudy_record.js?ver=3.1.0"></script>
+    <script src="./selfstudy_record.js?ver=3.1.2"></script>
 
 </body>
 

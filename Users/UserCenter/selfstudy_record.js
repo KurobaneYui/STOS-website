@@ -1,4 +1,5 @@
 var AllAbsentListData = {};
+var AllAskForLeaveListData = {};
 
 $(function () {
     get_records();
@@ -65,6 +66,7 @@ function fill_selfstudy_check_data(data) {
 
     for (one_records of data) {
         AllAbsentListData[one_records["selfstudy_id"]] = one_records["absent"];
+        AllAskForLeaveListData[one_records["selfstudy_id"]] = one_records["askForLeave"];
 
         let record = JSON.parse(one_records['record']);
         Date.prototype.format = function (formatStr) {
@@ -135,15 +137,36 @@ function fill_data_into_modal(row) {
                 <td>${one_student['student_name']}</td>
                 <td>${one_student['student_id']}</td>
                 <td>
-                    <button class="btn btn-danger btn-sm rounded-pill" onclick="delete_absent_student(this)">删除</button>
+                    <button class="btn btn-danger btn-sm rounded-pill" onclick="delete_student(this)">删除</button>
                 </td>
             </tr>
         `;
         absent_table_body.append(row);
     }
+
+    $("#student_name_askForLeave").val('')
+    $("#student_id_askForLeave").val('')
+
+    let askForLeave_table_body = $("#selfstudy-askForLeave-list-table-body");
+    askForLeave_table_body.html("");
+
+    let askForLeaveList = JSON.parse(AllAskForLeaveListData[selfstudy_id]);
+    for (one_student of askForLeaveList) {
+        let row = `
+            <tr>
+                <td>${one_student['student_name']}</td>
+                <td>${one_student['student_id']}</td>
+                <td>${one_student['reason']}</td>
+                <td>
+                    <button class="btn btn-danger btn-sm rounded-pill" onclick="delete_student(this)">删除</button>
+                </td>
+            </tr>
+        `;
+        askForLeave_table_body.append(row);
+    }
 }
 
-function delete_absent_student(button) {
+function delete_student(button) {
     $(button).parent().parent().remove();
 }
 
@@ -156,12 +179,31 @@ function add_absent_student() {
             <td>${student_name}</td>
             <td>${student_id}</td>
             <td>
-                <button class="btn btn-danger btn-sm rounded-pill" onclick="delete_absent_student(this)">删除</button>
+                <button class="btn btn-danger btn-sm rounded-pill" onclick="delete_student(this)">删除</button>
             </td>
         </tr>
     `;
 
     $("#selfstudy-absent-list-table-body").append(row);
+}
+
+function add_askForLeave_student() {
+    let student_name = $("#student_name_askForLeave").val().trim();
+    let student_id = $("#student_id_askForLeave").val().trim();
+    let reason = $("#reason").val().trim();
+
+    let row = `
+        <tr>
+            <td>${student_name}</td>
+            <td>${student_id}</td>
+            <td>${reason}</td>
+            <td>
+                <button class="btn btn-danger btn-sm rounded-pill" onclick="delete_student(this)">删除</button>
+            </td>
+        </tr>
+    `;
+
+    $("#selfstudy-askForLeave-list-table-body").append(row);
 }
 
 function submit() {
@@ -185,6 +227,16 @@ function submit() {
             absent_list.push({ student_name: student_name, student_id: student_id });
         }
 
+        let askForLeave_table_body = $("#selfstudy-askForLeave-list-table-body");
+        let askForLeave_list = Array();
+        for (row of askForLeave_table_body.children()) {
+            let student_name = $(row).children().first().text().trim();
+            let student_id = $(row).children().first().next().text().trim();
+            let reason = $(row).children().first().next().next().text().trim();
+
+            askForLeave_list.push({ student_name: student_name, student_id: student_id, reason: reason });
+        }
+
         $.ajax({
             url: "/Ajax/Users/submit_selfstudy_record",
             method: "POST",
@@ -198,7 +250,8 @@ function submit() {
                     askForLeave: askForLeave,
                     remark: remark,
                 },
-                absentList: absent_list
+                absentList: absent_list,
+                askForLeaveList: askForLeave_list
             }),
             // data: JSON.stringify(selfstudy_classrooms_data),
             contentType: 'application/json',
