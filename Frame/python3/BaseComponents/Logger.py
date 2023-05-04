@@ -44,7 +44,7 @@ class Logger:
 
         if logMode is None or logDir is None:
             self.logDir, self.logMode = "./log", "Warning"
-            with open("./config/Log.conf", 'r') as f:
+            with open("./config/STSA_APP.conf", 'r') as f:
                 config = json.load(f)
                 self.logDir, self.logMode = config["LogDir"], config["LogMode"]
 
