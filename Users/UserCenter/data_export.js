@@ -1,4 +1,6 @@
-function download_selfstudy_all_data() {
+function download_selfstudy_all_data(button) {
+    $(button).prop('disabled', true);
+
     let startDate = $("#selfstudy-start-date").val();
     let endDate = $("#selfstudy-end-date").val();
 
@@ -56,12 +58,16 @@ function download_selfstudy_all_data() {
                     window.open(data["data"]);
                 }
             }
-            else
+            else {
                 alert("请检查网络状况。");
+            }
+            $(button).prop('disabled', false);
         })
 }
 
-function download_corses_check_all_data() {
+function download_corses_check_all_data(button) {
+    $(button).prop('disabled', true);
+
     let startDate = $("#courses-start-date").val();
     let endDate = $("#courses-end-date").val();
 
@@ -119,12 +125,16 @@ function download_corses_check_all_data() {
                     window.open(data["data"]);
                 }
             }
-            else
+            else {
                 alert("请检查网络状况。");
+            }
+            $(button).prop('disabled', false);
         })
 }
 
-function download_empty_time_all_data() {
+function download_empty_time_all_data(button) {
+    $(button).prop('disabled', true);
+
     $.get(
         "/Ajax/DataManager/download_empty_time_all_data",
         function (data, status) {
@@ -175,7 +185,9 @@ function download_empty_time_all_data() {
                     window.open(data["data"]);
                 }
             }
-            else
+            else {
                 alert("请检查网络状况。");
+            }
+            $(button).prop('disabled', false);
         })
 }

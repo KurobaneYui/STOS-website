@@ -5,19 +5,33 @@ services:
         networks:
             - STSA-Network
         ports:
-         - "6680:80"
+            - "6680:80"
         volumes:
-         - "/home/ubuntu/all_websites/STSA:/home/STSA"
+            - "/home/ubuntu/all_websites/STSA:/home/STSA"
+            - "/etc/timezone:/etc/timezone:ro"
+            - "/etc/localtime:/etc/localtime:ro"
         tty: true
-    
+
+    STSA-dev-server:
+        image: "kurobaneyui/stsa_flask_server:3.0"
+        networks:
+            - STSA-Network
+        ports:
+            - "6681:80"
+        volumes:
+            - "/home/ubuntu/all_websites/STSA_dev:/home/STSA_dev"
+            - "/etc/timezone:/etc/timezone:ro"
+            - "/etc/localtime:/etc/localtime:ro"
+        tty: true
+
     STSA-Database:
         image: "mysql"
         networks:
             - STSA-Network
         ports:
-         - "6606:3306"
+            - "6606:3306"
         environment:
             MYSQL_ROOT_PASSWORD: "localtest"
-    
+
 networks:
     STSA-Network:
