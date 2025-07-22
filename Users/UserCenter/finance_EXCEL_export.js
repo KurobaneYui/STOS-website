@@ -1,4 +1,6 @@
-function download_EXCEL() {
+function download_EXCEL(button) {
+    $(button).prop('disabled', true);
+
     let date = $("#month").val();
     let teacherName = $("#teacher-name").val();
     let teacherPhone = $("#teacher-phone").val();
@@ -76,7 +78,9 @@ function download_EXCEL() {
                     window.open(data["data"]);
                 }
             }
-            else
+            else {
                 alert("请检查网络状况。");
+            }
+            $(button).prop('disabled', false);
         })
 }

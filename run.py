@@ -126,7 +126,7 @@ def deleteTmpFiles(directory="./tmpFiles", days=10):
 
 
 if __name__ == "__main__":
-    with open("./config/Flask.conf", 'r') as f:
+    with open("./config/STSA_APP.conf", 'r') as f:
         config = json.load(f)
     app.config["PERMANENT_SESSION_LIFETIME"] = datetime.timedelta(
         **config["permanent_session_lifetime"])

@@ -34,7 +34,7 @@ class DatabaseConnector:
         (method) commit: commit last transaction.
     """
 
-    def __init__(self, configFile: str = "./config/DataBase_STSA.conf") -> None:
+    def __init__(self, configFile: str = "./config/STSA_APP.conf") -> None:
         """Inits DatabaseConnector with configFile.
 
         Args:
@@ -44,11 +44,11 @@ class DatabaseConnector:
             # read config file and try to connect the database
             with open(configFile, 'r') as f:
                 config = json.load(f)
-            Host: str = config['host']
-            Port: int = int(config['port'])
-            User: str = config['user']
-            Password: str = config['password']
-            Database: str = config['database']
+            Host: str = config['DBhost']
+            Port: int = int(config['DBport'])
+            User: str = config['DBuser']
+            Password: str = config['DBpassword']
+            Database: str = config['DBdatabase']
             self.Session = pymysql.connect(
                 host=Host,
                 port=Port,

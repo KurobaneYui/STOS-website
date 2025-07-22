@@ -10,7 +10,5 @@ __pycache__/
 .idea/
 .vscode/
 /log/*
-/config/*
-!/config/README.md
 /tmpFiles/*
 !/tmpFiles/README.md
