@@ -8,10 +8,11 @@
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
-    <title>学风督导队-首页</title>
+    <title>学风督导队-登出</title>
 
     <meta name="description" content="电子科技大学学风督导队" />
     <meta name="author" content="罗寅松，学风督导队数据组">
+    <meta http-equiv="refresh" content="3;url=/Authentication/login.html">
 
     <!-- Favicon -->
     <link rel="icon" href="/favicon.ico">
@@ -37,13 +38,16 @@
         import "/src/assets/vendor/css/theme-default.css";
         // Page CSS
         import "/src/assets/vendor/css/pages/page-auth.css";
-        // Page JS
-        // import "../UserCenter/get_campus_school.js";
 
         import { createApp } from 'vue';
-        import App from '/src/App.vue';
+        import Logout from '/src/Logout.vue';
 
-        createApp(App).mount('#app');
+        createApp(Logout).mount('#app');
+
+        // ---------------------- 登出 ----------------------
+        function logout() {
+            fetch("/Ajax/Users/logout", { method: "GET" });
+        }
     </script>
 </body>
 

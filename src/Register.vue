@@ -1,0 +1,218 @@
+<script setup>
+</script>
+
+<template>
+    <!-- Content -->
+    <div class="container-fluid">
+        <div class="row mt-3 mb-3 g-3">
+            <!-- Register Card -->
+            <div class="col-12">
+                <div class="card bg-transparent shadow-none">
+                    <div class="card-body">
+                        <!-- Logo -->
+                        <div class="app-brand justify-content-center">
+                            <a href="/index.html" class="app-brand-link gap-2">
+                                <span class="app-brand-logo demo">
+                                    <image src="/imgs/STSA_small.png" />
+                                </span>
+                                <span class="app-brand-text demo text-body fw-bolder">学风督导队</span>
+                            </a>
+                        </div>
+                        <!-- /Logo -->
+                        <p class="mt-3 mb-0 text-center">队员注册：填写下方信息完成注册，任何问题请联系本组组长、队长或数据组组长</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 col-xl-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">基本信息</h4>
+                        <div class="mb-3">
+                            <label for="username" class="form-label">姓名</label>
+                            <input type="text" class="form-control" id="username" name="username" placeholder="请输入姓名"
+                                autofocus required />
+                        </div>
+                        <div class="mb-3">
+                            <label for="id" class="form-label">学号</label>
+                            <input type="text" class="form-control" id="id" name="id" placeholder="请输入学号" required />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">性别</label>
+                            <div class="row">
+                                <div class="form-check col-2 offset-1">
+                                    <label for="gender_male" class="form-check-label">男</label>
+                                    <input type="radio" class="form-check-input" id="gender_male" name="gender"
+                                        value="male" checked />
+                                </div>
+                                <div class="form-check col-2">
+                                    <label for="gender_female" class="form-check-label">女</label>
+                                    <input type="radio" class="form-check-input" id="gender_female" name="gender"
+                                        value="female" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="ethnicity" class="form-label">民族</label>
+                            <input type="text" class="form-control" id="ethnicity" name="ethnicity" placeholder="请输入民族"
+                                aria-describedby="ethnicityHelp" required />
+                            <div id="ethnicityHelp" class="form-text">完整填写，如：填写“汉族”，而不是“汉”</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="hometown" class="form-label">籍贯</label>
+                            <input type="text" class="form-control" id="hometown" name="hometown" placeholder="请输入籍贯"
+                                required />
+                            <div id="ethnicityHelp" class="form-text">精确至：省市（县）</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 col-xl-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">联系方式</h4>
+                        <div class="mb-3">
+                            <label for="phone" class="form-label">电话</label>
+                            <input type="tel" class="form-control" id="phone" name="phone" placeholder="请输入电话"
+                                required />
+                        </div>
+                        <div class="mb-3">
+                            <label for="qq" class="form-label">QQ</label>
+                            <input type="text" class="form-control" id="qq" name="qq" placeholder="请输入QQ号" required />
+                        </div>
+                        <div class="mb-3">
+                            <label for="campus" class="form-label">校区</label>
+                            <select id="campus" class="form-select" required></select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="school" class="form-label">学院</label>
+                            <select id="school" class="form-select" required></select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="dormitory" class="form-label">寝室</label>
+                            <div id="dormitory" class="input-group">
+                                <select id="dormitory_yuan" class="form-control" aria-describedby="dormitoryHelp"
+                                    required>
+                                    <option value="学知苑" selected>学知苑</option>
+                                    <option value="硕丰苑">硕丰苑</option>
+                                    <option value="校内">沙河校内</option>
+                                    <option value="校外">校外</option>
+                                </select>
+                                <span class="input-group-text">苑</span>
+                                <input id="dormitory_dong" type="number" class="form-control" min="1" max="99"
+                                    placeholder="楼栋" aria-label="dong" required />
+                                <span class="input-group-text">栋</span>
+                                <input id="dormitory_hao" type="number" class="form-control" min="1" max="999"
+                                    placeholder="宿舍号" aria-label="hao" required />
+                                <span class="input-group-text">号</span>
+                            </div>
+                            <div id="dormitoryHelp" class="form-text">第一空若为“校外”，则后两空填0</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-xl-4">
+                <div class="row g-3">
+                    <div class="col-12 col-md-6 col-xl-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title">工资信息</h4>
+                                <div class="mb-3">
+                                    <label for="bank" class="form-label">银行卡号</label>
+                                    <input type="text" class="form-control" id="bank" name="bank" placeholder="请输入银行卡号"
+                                        aria-describedby="bankHelp" required />
+                                    <div id="bankHelp" class="form-text">建议学校的建行卡</div>
+                                </div>
+                                <div class="mb-3">
+                                    <div class="form-check form-switch">
+                                        <label for="subsidyDossier" class="form-check-label">建档立卡</label>
+                                        <input type="checkbox" role="switch" class="form-check-input"
+                                            id="subsidyDossier" name="subsidyDossier"
+                                            aria-describedby="subsidyDossierHelp" required />
+                                        <div id="subsidyDossierHelp" class="form-text">
+                                            扶贫政策，如有办理建档立卡则选择。如没听说过，大概率不是，不用选择。不确定请联系辅导员询问。<span
+                                                class="fw-bold text-primary">数据会核实，请勿作假</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6 col-xl-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="card-title">登录信息</h4>
+                                <div class="mb-3 form-password-toggle">
+                                    <label class="form-label" for="password">登录密码</label>
+                                    <div class="input-group input-group-merge">
+                                        <input type="password" id="password" class="form-control" name="password"
+                                            placeholder="请设置登录密码" aria-describedby="passwordHelp" />
+                                        <span class="input-group-text cursor-pointer"><i class="bx bx-hide"></i></span>
+                                    </div>
+                                    <div id="passwordHelp" class="form-text">可由大小写字母、数字、或这些符号 ! # $ % & * + - / = ? ^ _
+                                        { | } ~ . [ ] 组成
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card col-6 offset-3 bg-transparent shadow-none">
+                <div class="card-body">
+                    <form id="register">
+                        <div class="mb-3 d-flex justify-content-center">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="terms-conditions" name="terms" />
+                                <label class="form-check-label" for="terms-conditions">
+                                    阅读
+                                    <a href="#" data-bs-toggle="modal" data-bs-target="#collectionNotice">信息收集说明</a>
+                                </label>
+                            </div>
+                            <div class="modal fade" id="collectionNotice" data-bs-backdrop="static"
+                                data-bs-keyboard="false">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="backDropModalTitle">信息收集说明</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <dl>
+                                                <dt>全队联系方式公示：</dt>
+                                                <dd class="ms-3">姓名、性别、电话、QQ、所在部门和岗位</dd>
+                                                <dt>仅队长、组长可见信息：</dt>
+                                                <dd class="ms-3">此表所填所有信息</dd>
+                                                <dt>工资信息说明：</dt>
+                                                <dd class="ms-3">工资信息用于每月财务上报，注册后在个人信息页有更详细的内容需要提交。
+                                                    <span
+                                                        class="fw-bold text-primary">财务处和银行对接，需要核对姓名、学号和卡号，请仔细确认</span>
+                                                </dd>
+                                            </dl>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal"
+                                                onclick="document.getElementById('terms-conditions').checked=true;">
+                                                已知晓
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-primary d-grid w-100">注册</button>
+
+                        <p class="text-center mt-3">
+                            <span>已有帐户？</span>
+                            <a href="login.html">
+                                <span>直接登录吧</span>
+                            </a>
+                        </p>
+                    </form>
+                </div>
+            </div>
+            <!-- Register Card -->
+        </div>
+    </div>
+</template>
+
+<style scoped></style>

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+
+<html lang="zh, en" class="light-style customizer-hide" dir="ltr" data-theme="theme-default" data-assets-path="/assets/"
+    data-template="vertical-menu-template-free">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+
+    <title>学风督导队-注册</title>
+
+    <meta name="description" content="电子科技大学学风督导队" />
+    <meta name="author" content="罗寅松，学风督导队数据组">
+
+    <!-- Favicon -->
+    <link rel="icon" href="/favicon.ico">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.loli.net" />
+    <link rel="preconnect" href="https://gstatic.loli.net" crossorigin />
+    <link rel="stylesheet"
+        href="https://fonts.loli.net/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" />
+    <!-- Styles -->
+    <link rel="stylesheet"
+        href="https://cdn.bootcdn.net/ajax/libs/perfect-scrollbar/1.5.6/css/perfect-scrollbar.min.css" />
+</head>
+
+<body>
+    <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/perfect-scrollbar/1.5.6/perfect-scrollbar.min.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+    <div id="app"></div>
+    <script type="module">
+        // Core CSS
+        import "/src/assets/vendor/css/core.css";
+        import "/src/assets/vendor/css/theme-default.css";
+        // Page CSS
+        import "/src/assets/vendor/css/pages/page-auth.css";
+        // Page JS
+        // import "../UserCenter/get_campus_school.js";
+
+        import { createApp } from 'vue';
+        import Register from '/src/Register.vue';
+
+        createApp(Register).mount('#app');
+
+        // ---------------------- 注册 ----------------------
+        function register() {
+            const name = document.getElementById("username").value;
+            const studentID = document.getElementById("id").value;
+            const gender = document.querySelector("input[name='gender']:checked").value;
+            const ethnicity = document.getElementById("ethnicity").value;
+            const hometown = document.getElementById("hometown").value;
+
+            const phone = document.getElementById("phone").value;
+            const qq = document.getElementById("qq").value;
+            const campus = document.getElementById("campus").value;
+            const school = document.getElementById("school").value;
+            const dormitory_yuan = document.getElementById("dormitory_yuan").value;
+            const dormitory_dong = document.getElementById("dormitory_dong").value;
+            const dormitory_hao = document.getElementById("dormitory_hao").value;
+
+            const bank = document.getElementById("bank").value;
+            const subsidyDossier = document.getElementById("subsidyDossier").checked;
+
+            const password = document.getElementById("password").value;
+            const claimBox = document.getElementById("terms-conditions").checked;
+
+            const register_info = {
+                name: name,
+                studentID: studentID,
+                gender: gender === 'male' ? '男' : '女',
+                ethnicity: ethnicity,
+                hometown: hometown,
+                phone: phone,
+                qq: qq,
+                campus: campus,
+                school: school,
+                dormitory_yuan: dormitory_yuan,
+                dormitory_dong: dormitory_dong,
+                dormitory_hao: dormitory_hao,
+                bank: bank,
+                subsidyDossier: subsidyDossier,
+                password: password
+            };
+            if (!claimBox) {
+                document.getElementById("terms-conditions").focus();
+                document.querySelector("label[for=terms-conditions]").style.color = "red";
+                swal("请阅读个人信息说明");
+                return false;
+            }
+
+            fetch("/Ajax/Users/register", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(register_info)
+            })
+                .then(r => r.json())
+                .then(data => {
+                    let returnCode = data['code'];
+                    if (returnCode === 400) {
+                        swal({ title: "内容不符合要求", text: data['message'], icon: "error", });
+                    } else if (returnCode === 401) {
+                        swal({
+                            title: "注册错误",
+                            text: "提供的学号已存在，请检查！",
+                            icon: "error",
+                        });
+                    } else if (returnCode === 404) {
+                        swal({ title: "功能不存在，请联系管理员", icon: "warning", });
+                    } else if (returnCode === 417) {
+                        swal({ title: "功能错误，请联系管理员", icon: "warning", });
+                    } else if (returnCode === 498) {
+                        swal({ title: "数据库异常，请联系管理员", icon: "warning", });
+                    } else if (returnCode === 499) {
+                        swal({ title: "功能维护中，暂不允许注册", icon: "warning", });
+                    } else if (returnCode === 200 || returnCode === 301) {
+                        if (returnCode === 301) window.console.log('注册函数移至新位置');
+                        swal({
+                            title: "注册成功",
+                            text: "请使用学号和密码登录。",
+                            icon: "success",
+                        }).then((_value) => { window.location = data["data"]; });
+                    }
+                })
+                .catch(_ => {
+                    alert('请检查浏览器网络连接，建议刷新后重试');
+                });
+        }
+
+        // ---------------------- 表单事件拦截 ----------------------
+        document.getElementById("register").addEventListener("submit", function (e) {
+            e.preventDefault();
+            register();
+        });
+    </script>
+</body>
+
+</html>
