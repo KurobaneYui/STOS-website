@@ -1,13 +1,13 @@
 <mxfile host="65bd71144e">
     <diagram id="C0lQgqjv7dpuN6OG1wbY" name="Page-1">
-        <mxGraphModel dx="1770" dy="863" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+        <mxGraphModel dx="614" dy="780" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
                 <mxCell id="2" value="Authorization" style="shape=ext;double=1;rounded=0;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=14;" parent="1" vertex="1">
                     <mxGeometry x="250" y="160" width="530" height="40" as="geometry"/>
                 </mxCell>
-                <mxCell id="3" value="DatabaseConnector" style="shape=ext;double=1;rounded=0;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=14;" parent="1" vertex="1">
+                <mxCell id="3" value="SQL Alchemy" style="shape=ext;double=1;rounded=0;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=14;" parent="1" vertex="1">
                     <mxGeometry x="250" y="240" width="160" height="40" as="geometry"/>
                 </mxCell>
                 <mxCell id="6" value="Logger" style="shape=ext;double=1;rounded=0;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=14;" parent="1" vertex="1">
@@ -46,7 +46,7 @@
                 <mxCell id="20" value="Authorization" style="shape=ext;double=1;rounded=0;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=14;glass=0;shadow=0;" parent="1" vertex="1">
                     <mxGeometry x="250" y="520" width="530" height="40" as="geometry"/>
                 </mxCell>
-                <mxCell id="21" value="DatabaseConnector" style="shape=ext;double=1;rounded=0;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=14;" parent="1" vertex="1">
+                <mxCell id="21" value="SQL Alchemy" style="shape=ext;double=1;rounded=0;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=14;" parent="1" vertex="1">
                     <mxGeometry x="250" y="560" width="180" height="40" as="geometry"/>
                 </mxCell>
                 <mxCell id="22" value="Logger" style="shape=ext;double=1;rounded=0;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=14;" parent="1" vertex="1">
@@ -87,6 +87,15 @@
                         <mxPoint x="709.5" y="240" as="sourcePoint"/>
                         <mxPoint x="709.5" y="200" as="targetPoint"/>
                     </mxGeometry>
+                </mxCell>
+                <mxCell id="36" value="SQL Alchemy" style="shape=ext;double=1;rounded=0;whiteSpace=wrap;html=1;align=left;verticalAlign=middle;fontSize=14;" vertex="1" parent="1">
+                    <mxGeometry x="80" y="800" width="300" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="37" value="Connector" style="shape=ext;double=1;rounded=0;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=14;" vertex="1" parent="1">
+                    <mxGeometry x="180" y="820" width="180" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="38" value="Definition" style="shape=ext;double=1;rounded=0;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontSize=14;" vertex="1" parent="1">
+                    <mxGeometry x="180" y="860" width="180" height="40" as="geometry"/>
                 </mxCell>
             </root>
         </mxGraphModel>

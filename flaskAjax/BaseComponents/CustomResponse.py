@@ -1,6 +1,9 @@
 import json
 from flask import Response, make_response
-from Frame.python3.BaseComponents.CustomError import *
+from flaskAjax.BaseComponents.CustomError import (
+    DatabaseBufferError, DatabaseConnectionError, DatabaseRuntimeError,
+    IllegalValueError, PermissionDenyError, MaintenanceError, ResourcesNotFoundError
+)
 
 
 class CustomResponse:
@@ -22,7 +25,10 @@ class CustomResponse:
             self.message = str(exc_val)
             self.data = []
 
-        if isinstance(exc_val, (DatabaseConnectionError, DatabaseBufferError, DatabaseRuntimeError)):
+        if isinstance(
+            exc_val,
+            (DatabaseConnectionError, DatabaseBufferError, DatabaseRuntimeError)
+        ):
             self.code = 498
             return True
         elif isinstance(exc_val, IllegalValueError):
@@ -43,14 +49,15 @@ class CustomResponse:
 
         return False
 
-    def setMessageAndData(self, message: str, data: tuple | list | str, code: int = 200) -> None:
+    def setMessageAndData(
+        self, message: str, data: tuple | list | str, code: int = 200
+    ) -> None:
         self.code = code
         self.message = message
         self.data = data
 
     def getResponse(self) -> Response:
-        returns = {"code": self.code,
-                   "message": self.message, "data": self.data}
+        returns = {"code": self.code, "message": self.message, "data": self.data}
         returns = make_response(json.dumps(returns, ensure_ascii=False))
         returns.headers["Content-Type"] = "application/json;charset=UTF-8"
         return returns

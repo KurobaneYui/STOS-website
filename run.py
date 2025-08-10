@@ -7,16 +7,16 @@ from flask import Flask, request, redirect, send_file, url_for, session, render_
 from flask_apscheduler import APScheduler
 from werkzeug.middleware.proxy_fix import ProxyFix
 
-# from flaskAjax.Ajax.Users import Users
-# from flaskAjax.Ajax.GroupManager import GroupManager
-# from flaskAjax.Ajax.TeamManager import TeamManager
-# from flaskAjax.Ajax.DataManager import DataManager
+from flaskAjax.Users import Users
+# from flaskAjax.GroupManager import GroupManager
+# from flaskAjax.TeamManager import TeamManager
+# from flaskAjax.DataManager import DataManager
 from flaskAjax.BaseComponents.Authorization import checkIfLogin
+from flaskAjax.BaseComponents.DatabaseConnector import initialize_database
 
 # set template_folder for 'render_template' function
 app = Flask(__name__, template_folder="Frame/html5/", root_path="dist/")
 scheduler = APScheduler()
-
 
 # @app.route("/Frame/html5/<path:additionalURL>")
 # def HTMLFrameRoutes(additionalURL):
@@ -32,7 +32,6 @@ scheduler = APScheduler()
 #             additionalURL, department_id=0, department_name='预备队员', job=0
 #         )
 
-
 # @app.route("/css/<path:additionalURL>")
 # def CSSRoutes(additionalURL):
 #     return send_file("css/"+additionalURL)
@@ -41,13 +40,20 @@ scheduler = APScheduler()
 # def SCSSRoutes(additionalURL):
 #     return send_file("scss/"+additionalURL)
 
-# @app.route("/js/<path:additionalURL>")
-# def JSRoutes(additionalURL):
-#     return send_file("js/"+additionalURL)
 
-@app.route("/<path:additionalURL>")
-def NormalRoutes(additionalURL):
-    return send_file(additionalURL)
+@app.route("/favicon.ico")
+def FaviconICORoutes():
+    return send_file("favicon.ico")
+
+
+@app.route("/imgs/<path:additionalURL>")
+def ImgsRoutes(additionalURL):
+    return send_file("imgs/" + additionalURL)
+
+
+@app.route("/assets/<path:additionalURL>")
+def AssetsRoutes(additionalURL):
+    return send_file('assets/' + additionalURL)
 
 
 @app.route("/authentication/<path:additionalURL>", methods=['GET', 'POST'])
@@ -151,8 +157,10 @@ if __name__ == "__main__":
     # set scheduler
     scheduler.init_app(app)
     scheduler.start()
+    # initialize database
+    initialize_database()
     # Users package include ajax handler for user function
-    # Users(app)
+    Users(app)
     # TeamManager(app)
     # GroupManager(app)
     # DataManager(app)

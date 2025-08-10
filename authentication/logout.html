@@ -46,7 +46,7 @@
 
         // ---------------------- 登出 ----------------------
         function logout() {
-            fetch("/Ajax/Users/logout", { method: "GET" });
+            $.get("/Ajax/Users/logout", function (data, status) { })
         }
     </script>
 </body>

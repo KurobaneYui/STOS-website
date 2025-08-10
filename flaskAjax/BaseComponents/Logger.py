@@ -44,16 +44,17 @@ class Logger:
         logMode: ['Error', 'Warning', 'Log']
         logDir: string to a directory
         """
-        self.logDir: None | str = None
-        self.logMode: None | str = None
-        self.funcName = funcName
-        self.time_postfix = datetime.datetime.now().strftime(r"%Y%m%d-%H%M")
-
         if logMode is None or logDir is None:
-            self.logDir, self.logMode = "./log", "Warning"
+            logDir, logMode = "./log", "Warning"
             with open("./config/STSA_APP.conf", 'r') as f:
                 config = json.load(f)
-                self.logDir, self.logMode = config["LogDir"], config["LogMode"]
+                logDir, logMode = config["logDir"], config["logMode"]
+        assert logMode is not None and logDir is not None
+
+        self.logDir: str = logDir
+        self.logMode: str = logMode
+        self.funcName: str = funcName
+        self.time_postfix: str = datetime.datetime.now().strftime(r"%Y%m%d-%H%M")
 
         os.makedirs(self.logDir, exist_ok=True)
 
@@ -69,7 +70,7 @@ class Logger:
             f.write("\n[Error]\n")
             f.write(f"[{exc_type}] {datetime.datetime.now()}\n")
             if isinstance(exc_val, CustomError):
-                f.write(f"[{exc_val.name}:{exc_val.line}] {exc_val}\n")
+                f.write(f"[{exc_val.filename}:{exc_val.line}] {exc_val}\n")
             else:
                 f.write(f"{pprint.pformat(tuple(extract_tb(exc_tb)[-1]))}\n")
             f.write("[ClientInfo]\n")

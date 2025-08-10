@@ -1,183 +1,98 @@
-import sys
+import os
 import json
-from enum import Enum
-import pymysql
-from pymysql.cursors import DictCursor
-from flaskAjax.BaseComponents.CustomError import DatabaseConnectionError, DatabaseBufferError, DatabaseRuntimeError
+import sqlite3
+
+from sqlalchemy import (create_engine, event)
+from sqlalchemy.orm import sessionmaker
+
+from .DatabaseDefinition import Base as SQL_Base
+from .DatabaseDefinition import User as SQL_User  # noqa
+from .DatabaseDefinition import UserProfile as SQL_UserProfile  # noqa
+from .DatabaseDefinition import UserCredential as SQL_UserCredential  # noqa
+from .DatabaseDefinition import PaymentInfo as SQL_PaymentInfo  # noqa
+from .DatabaseDefinition import CollectedInfo as SQL_CollectedInfo  # noqa
+from .DatabaseDefinition import Blacklist as SQL_Blacklist  # noqa
+from .DatabaseDefinition import Group as SQL_Group  # noqa
+from .DatabaseDefinition import GroupMember as SQL_GroupMember  # noqa
+from .DatabaseDefinition import DataGroupPermission as SQL_DataGroupPermission  # noqa
+from .DatabaseDefinition import Campus as SQL_Campus  # noqa
+from .DatabaseDefinition import College as SQL_College  # noqa
+from .DatabaseDefinition import Classroom as SQL_Classroom  # noqa
+from .DatabaseDefinition import StudySchedule as SQL_StudySchedule  # noqa
+from .DatabaseDefinition import CheckInTask as SQL_CheckInTask  # noqa
+from .DatabaseDefinition import CheckInData as SQL_CheckInData  # noqa
+from .DatabaseDefinition import InspectionTask as SQL_InspectionTask  # noqa
+from .DatabaseDefinition import InspectionData as SQL_InspectionData  # noqa
+
+# --- 1. 数据库设置 ---
+# 定义数据库文件路径和连接URL
+with open("config/STSA_APP.conf", "r") as f:
+    config = json.load(f)
+
+DB_FILE = config["DBpath"]
+DATABASE_URL = f"sqlite:///{DB_FILE}"
+
+# 创建数据库引擎
+# echo=False 关闭SQL语句的日志输出，如需调试可设为True
+engine = create_engine(DATABASE_URL, echo=False)
 
 
-class DatabaseConnectionStatus(Enum):
-    """DatabaseConnector inner status enumerate
+# --- 2. 为 SQLite 启用外键约束 (核心解释) ---
+# 这段代码是关键。它为 SQLAlchemy 的 engine 设置了一个事件监听器。
+#
+# @event.listens_for(engine, "connect"):
+#   - 它的作用是：每当 SQLAlchemy 的 engine 与数据库建立一个新的物理连接时，
+#     就自动执行下面定义的函数 set_sqlite_pragma。
+#
+# def set_sqlite_pragma(...):
+#   - 这个函数接收底层的数据库连接对象 (dbapi_connection)，
+#     然后执行原生的 SQL 指令 "PRAGMA foreign_keys=ON;"。
+#
+# 为什么要这样做？
+#   - SQLite 的外键约束默认是关闭的，并且该设置是“按连接”生效的。
+#   - SQLAlchemy 为了效率，会维护一个“连接池”，可能会在不同时间创建多个连接。
+#   - 使用事件监听器是唯一能保证“池中所有连接”都正确启用了外键约束的可靠方法。
+#
+# 这段代码是保证您数据完整性的基石，对于 SQLite 来说是必需的。
+@event.listens_for(engine, "connect")
+def set_sqlite_pragma(dbapi_connection, connection_record):
+    if isinstance(dbapi_connection, sqlite3.Connection):
+        cursor = dbapi_connection.cursor()
+        cursor.execute("PRAGMA foreign_keys=ON;")
+        cursor.execute("PRAGMA encoding='UTF-8';")
+        cursor.close()
+
+
+# --- 4. 创建 Session 工厂 (推荐) ---
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+
+# --- 5. 数据库初始化函数 ---
+def initialize_database():
     """
-    NoConnection = 0  # There is no connection to the server
-    ConnectionEstablished = 1  # There is only connection to the server but no cursor
-    CursorEstablished = 2  # There is a cursor established to server
-    QueryCached = 3  # There is a query executed and caching some results
-
-
-class DatabaseConnector:
-    """STSA database connector
-
-    Connector to establish connection to STSA database.
-    Provide transaction supported.
-
-    Attributes:
-        (variable) Session: a connection session when connection established.
-        (variable) Cursor: a cursor when start a connection cursor.
-        (variable) Status: instance status indicator.
-
-        (method) startCursor: start a cursor when connection is established.
-        (method) closeCursor: close a cursor when the cursor exists.
-        (method) execute: execute a sql query.
-        (method) fetchall: fetch all of query results.
-        (method) rollback: rollback sql query in last transaction if not be committed.
-        (method) commit: commit last transaction.
+    初始化数据库。
+    如果数据库文件目录不存在，则创建它。
+    使用`Base.metadata.create_all()`来创建所有定义的表（如果它们尚不存在）。
     """
+    import hashlib
+    db_dir = os.path.dirname(DB_FILE)
+    if db_dir:
+        os.makedirs(db_dir, exist_ok=True)
 
-    def __init__(self, configFile: str = "./config/STSA_APP.conf") -> None:
-        """Inits DatabaseConnector with configFile.
+    # create_all会安全地检查表是否存在，不存在则创建
+    SQL_Base.metadata.create_all(engine)
 
-        Args:
-            (str, optional) configFile: path of config file which provide logMode and logDir configure in json format. Defaults to '/config/DataBase_STSA.conf'.
-        """
-        try:
-            # read config file and try to connect the database
-            with open(configFile, 'r') as f:
-                config = json.load(f)
-            Host: str = config['DBhost']
-            Port: int = int(config['DBport'])
-            User: str = config['DBuser']
-            Password: str = config['DBpassword']
-            Database: str = config['DBdatabase']
-            self.Session = pymysql.connect(
-                host=Host,
-                port=Port,
-                user=User,
-                password=Password,
-                database=Database,
-                charset="utf8")
-            self.Cursor = None
-            self.Status = DatabaseConnectionStatus.ConnectionEstablished
-        except Exception as e:
-            # if any error occurred
-            self.Session = None
-            self.Cursor = None
-            self.Status = DatabaseConnectionStatus.NoConnection
-            raise DatabaseConnectionError(
-                f"Error in set connection environment. Error info is: {e}", filename=__file__, line=sys._getframe().f_lineno)
-
-    def __del__(self) -> None:
-        # deprecate cached results if exists
-        if self.Status is DatabaseConnectionStatus.QueryCached:
-            self.Cursor.fetchall()
-            self.Status = DatabaseConnectionStatus.CursorEstablished
-
-        if self.Status is DatabaseConnectionStatus.CursorEstablished:
-            self.Cursor.close()
-            self.Status = DatabaseConnectionStatus.ConnectionEstablished
-
-        if self.Status is DatabaseConnectionStatus.ConnectionEstablished:
-            self.Session.close()
-            self.Status = DatabaseConnectionStatus.NoConnection
-
-    def startCursor(self) -> None:
-        """Start a database connection cursor.
-
-        When there is no cursor exists and connection is already established, create a new cursor.
-        """
-        if self.Status is DatabaseConnectionStatus.NoConnection:
-            raise DatabaseConnectionError(
-                "Connection not established.", filename=__file__, line=sys._getframe().f_lineno)
-
-        if self.Status in [DatabaseConnectionStatus.CursorEstablished, DatabaseConnectionStatus.QueryCached]:
-            raise DatabaseConnectionError(
-                "Cursor has been established.", filename=__file__, line=sys._getframe().f_lineno)
-
-        try:
-            self.Cursor = self.Session.cursor(cursor=DictCursor)
-            self.Status = DatabaseConnectionStatus.CursorEstablished
-        except:
-            raise DatabaseConnectionError(
-                "Cannot start cursor on this session.", filename=__file__, line=sys._getframe().f_lineno)
-
-    def closeCursor(self) -> None:
-        """Close a database connection cursor.
-
-        When there is a cursor, close it. This action will clean the cache of query result
-        """
-        if self.Status is DatabaseConnectionStatus.QueryCached:
-            self.Cursor.fetchall()
-            self.Status = DatabaseConnectionStatus.CursorEstablished
-
-        if self.Status is DatabaseConnectionStatus.CursorEstablished:
-            self.Cursor.close()
-            self.Cursor = None
-            self.Status = DatabaseConnectionStatus.ConnectionEstablished
-
-    def execute(self, sql: str, data: tuple | list | dict | None = None, autoCommit: bool = True) -> int:
-        """Execute a query with multiply data.
-
-        When a cursor exists, execute sql query in that cursor and cache the results.
-
-        Args:
-            (str) sql: sql sentence.
-            (Optional[tuple | list | dict], optional) data: multiply data pass through into sql sentence. Defaults to None.
-            (bool, optional) autoCommit: indicate whether to commit after execute query. Defaults to True.
-
-        Raises:
-            DatabaseConnectionError: raise this error when any unexpected situation occurred on connection.
-            DatabaseBufferError: raise this error when try to cache a query result while cache isn't read.
-            DatabaseRuntimeError: raise this error when execute query unsuccessfully.
-
-        Returns:
-            int: _description_
-        """
-        if self.Status not in [DatabaseConnectionStatus.CursorEstablished, DatabaseConnectionStatus.QueryCached]:
-            raise DatabaseConnectionError(
-                "Please start a cursor first", filename=__file__, line=sys._getframe().f_lineno)
-
-        if self.Status is DatabaseConnectionStatus.QueryCached:
-            raise DatabaseBufferError("Already cached query results. Please fetch them all and try again.",
-                                      filename=__file__, line=sys._getframe().f_lineno)
-
-        try:
-            if data is None:
-                affectedRow = self.Cursor.execute(sql)
-            elif isinstance(data, (tuple, list)) and len(data) > 0 and isinstance(data[0], (tuple, list, dict)):
-                affectedRow = self.Cursor.executemany(sql, data)
-            else:
-                affectedRow = self.Cursor.execute(sql, data)
-        except Exception as e:
-            # except pymysql.err.IntegrityError
-            raise DatabaseRuntimeError(
-                f"Cannot execute query: {e}", filename=__file__, line=sys._getframe().f_lineno)
-
-        if sql.startswith(('SELECT ', 'select ', 'Select ')):
-            self.Status = DatabaseConnectionStatus.QueryCached
-        else:
-            self.Status = DatabaseConnectionStatus.CursorEstablished
-            if autoCommit == True:
-                self.commit()
-
-        return affectedRow if affectedRow is not None else 0
-
-    def fetchall(self) -> tuple[dict]:
-        """Fetch all cached result.
-
-        Returns:
-            tuple[dict]: sql query results in dict type
-        """
-        if self.Status is not DatabaseConnectionStatus.QueryCached:
-            return tuple()
-        self.Status = DatabaseConnectionStatus.CursorEstablished
-        return self.Cursor.fetchall()
-
-    def rollback(self) -> None:
-        """Rollback last transaction."""
-        if self.Status is not DatabaseConnectionStatus.NoConnection:
-            self.Session.rollback()
-
-    def commit(self) -> None:
-        """Commit last transaction."""
-        if self.Status not in [DatabaseConnectionStatus.NoConnection, DatabaseConnectionStatus.QueryCached]:
-            self.Session.commit()
+    new_user = SQL_User(student_id="202411012149", name="Squirrel", gender="男")
+    new_user.profile = SQL_UserProfile(
+        campus_id=1, college_id=1, phone="18100500681", qq="1531037856"
+    )
+    new_user.credential = SQL_UserCredential(
+        password_hash=hashlib.sha512("test1234".encode()).digest()
+    )
+    membership = SQL_GroupMember(
+        student_id="202411012149", group_id=1, role="manager", display_title="正队长"
+    )
+    with SessionLocal() as session:
+        session.add(new_user)
+        session.add(membership)
+        session.commit()

@@ -1,9 +1,10 @@
 import sys
 import flask
-# from flaskAjax.BaseComponents.Logger import Logger
+from flaskAjax.BaseComponents.Logger import Logger
+from flaskAjax.BaseComponents.DatabaseConnector import SessionLocal
 from flaskAjax.BaseComponents.CustomSession import CustomSession
 from flaskAjax.BaseComponents.CustomError import PermissionDenyError
-from flaskAjax.BaseComponents.DatabaseConnector import DatabaseConnector
+from flaskAjax.BaseComponents.DatabaseDefinition import GroupMember as SQL_GroupMember
 
 
 def checkIfLogin() -> bool:
@@ -32,7 +33,9 @@ class Authorization:
     """Auth decorator will decorate function and check authority before run a function.
 
     Args:
-        auth (tuple[dict]): A tuple of dict with auth required. The dict must like {'department_id':2, 'actor'='10'}
+        auth (tuple[dict]):
+            A tuple of dict with auth required.
+            The dict must like {'department_id':2, 'actor':'manager'}
 
     Returns:
         Callable: return a decorator
@@ -44,13 +47,20 @@ class Authorization:
         Check interface rights
 
         Args:
-            rightsNeeded (tuple[dict]): Be empty means every one who login can access. Each dict indicate the rights.
-            needLogin (bool, optional): True means need login and False means don't need login. Defaults to True.
+            rightsNeeded (tuple[dict]):
+                Be empty means every one who login can access.
+                Each dict indicate the rights.
+            needLogin (bool, optional):
+                True means need login and False means don't need login.
+                Defaults to True.
 
         Raises:
             PermissionDenyError
         """
-        with Logger(funcName="Authorization.check()") as logger:
+        with (
+            Logger(funcName="Authorization.check()") as logger,
+            SessionLocal() as session,
+        ):
             logger.funcArgs = {"rightsNeeded": rightsNeeded, "needLogin": needLogin}
 
             # check whether user has login or not
@@ -63,31 +73,19 @@ class Authorization:
 
             if needLogin and len(rightsNeeded) > 0:
                 # Check function_auth
-                connect = DatabaseConnector()
-                connect.startCursor()
                 for auth_required in rightsNeeded:
                     if auth_required['department_id'] is None:
-                        DBAffectedRow = connect.execute(
-                            sql=
-                            'SELECT actor FROM Authority where student_id = %s AND actor=%s;',
-                            data=(
-                                CustomSession.getSession()["userID"],
-                                auth_required['actor']
-                            )
-                        )
-                        connect.fetchall()
+                        DataFetched = session.query(SQL_GroupMember).filter_by(
+                            student_id=CustomSession.getSession()["userID"],
+                            role=auth_required['actor']
+                        ).all()
                     else:
-                        DBAffectedRow = connect.execute(
-                            sql=
-                            'SELECT actor FROM Authority where student_id = %s AND department_id=%s AND actor=%s;',
-                            data=(
-                                CustomSession.getSession()["userID"],
-                                auth_required['department_id'], auth_required['actor']
-                            )
-                        )
-                        connect.fetchall()
-
-                    if DBAffectedRow > 0:
+                        DataFetched = session.query(SQL_GroupMember).filter_by(
+                            group_id=auth_required['department_id'],
+                            student_id=CustomSession.getSession()["userID"],
+                            role=auth_required['actor']
+                        ).all()
+                    if len(DataFetched) > 0:
                         break
                 else:
                     raise PermissionDenyError(

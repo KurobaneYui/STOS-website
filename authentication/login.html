@@ -1,36 +1,39 @@
 <!DOCTYPE html>
-
 <html lang="zh, en" class="light-style customizer-hide" dir="ltr" data-theme="theme-default" data-assets-path="/assets/"
-    data-template="vertical-menu-template-free">
+data-template="vertical-menu-template-free">
 
 <head>
     <meta charset="utf-8" />
     <meta name="viewport"
-        content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
+    content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
     <title>学风督导队-登录</title>
-
+    
     <meta name="description" content="电子科技大学学风督导队" />
     <meta name="author" content="罗寅松，学风督导队数据组">
-
+    
     <!-- Favicon -->
     <link rel="icon" href="/favicon.ico">
-
+    
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.loli.net" />
     <link rel="preconnect" href="https://gstatic.loli.net" crossorigin />
     <link rel="stylesheet"
-        href="https://fonts.loli.net/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" />
+    href="https://fonts.loli.net/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" />
     <!-- Styles -->
     <link rel="stylesheet"
-        href="https://cdn.bootcdn.net/ajax/libs/perfect-scrollbar/1.5.6/css/perfect-scrollbar.min.css" />
+    href="https://cdn.bootcdn.net/ajax/libs/perfect-scrollbar/1.5.6/css/perfect-scrollbar.min.css" />
+    <!-- Page JS -->
+    <script defer src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+    <script defer src="https://cdn.bootcdn.net/ajax/libs/perfect-scrollbar/1.5.6/perfect-scrollbar.min.js"></script>
+    <script defer src="https://cdn.bootcdn.net/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
 </head>
 
 <body>
-    <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.bootcdn.net/ajax/libs/perfect-scrollbar/1.5.6/perfect-scrollbar.min.js"></script>
-    <script src="https://cdn.bootcdn.net/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+    <!-- Vue 应用将挂载在这里 -->
     <div id="app"></div>
+    
+    <!-- Vue 应用的入口脚本 -->
     <script type="module">
         // Core CSS
         import "/src/assets/vendor/css/core.css";
@@ -42,122 +45,6 @@
         import Login from '/src/Login.vue';
 
         createApp(Login).mount('#app');
-
-        // ---------------------- 登录功能 ----------------------
-        function login() {
-            const student = document.querySelector("input[placeholder='学号或工号']").value;
-            const password = document.querySelector("input[placeholder='密码']").value;
-            const login_info = {
-                StudentID: student,
-                Password: password
-            };
-            fetch("/Ajax/Users/login", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(login_info)
-            })
-                .then(r => r.json())
-                .then(data => {
-                    let returnCode = data['code'];
-                    if (returnCode === 400) {
-                        swal({ title: "参数错误，请联系管理员", icon: "warning", });
-                    } else if (returnCode === 401) {
-                        swal({
-                            title: "登录错误",
-                            text: "用户名或密码错误，请确认输入，留意大小写与输入前后的空格",
-                            icon: "error",
-                        });
-                    } else if (returnCode === 404) {
-                        swal({ title: "功能不存在，请联系管理员", icon: "warning", });
-                    } else if (returnCode === 417) {
-                        swal({ title: "功能错误，请联系管理员", icon: "warning", });
-                    } else if (returnCode === 498) {
-                        swal({ title: "数据库异常，请联系管理员", icon: "warning", });
-                    } else if (returnCode === 499) {
-                        swal({ title: "功能维护中，暂不允许登录", icon: "warning", });
-                    } else if (returnCode === 200 || returnCode === 301) {
-                        if (returnCode === 301) window.console.log('登录函数移至新位置');
-                        // 关闭模态框
-                        document.getElementById("select-login-work").classList.remove('show');
-                        fill_work_list_container(data['data']);
-                    }
-                }).catch(_ => {
-                    alert('请检查浏览器网络连接，建议刷新后重试');
-                });
-        }
-        // ---------------------- 工作岗位选择渲染 ----------------------
-        function fill_work_list_container(data) {
-            const container = document.getElementById("work-list-container");
-            container.innerHTML = "";
-            data.forEach(one_work => {
-                const department_id = one_work['department_id'];
-                const workName = one_work['name'];
-                let workJob = '';
-                let pillContent = '';
-                if (department_id === 1) {
-                    workJob = one_work['job'] === 1 ? "队长" : "副队长";
-                } else {
-                    workJob = one_work['job'] === 1 ? "组长" : "组员";
-                }
-                if (department_id === 0) {
-                    pillContent = workName;
-                } else {
-                    pillContent = `${workName} - ${workJob}`;
-                }
-                const div = document.createElement('div');
-                div.className = 'col-auto';
-                div.innerHTML = `
-            <button class="btn btn-outline-primary rounded-pill" 
-                onclick="loginAsSpecifiedWork(${department_id},${one_work['job']})">
-                ${pillContent}
-            </button>`;
-                container.appendChild(div);
-            });
-        }
-        // ---------------------- 登录指定岗位 ----------------------
-        function loginAsSpecifiedWork(department_id = 0, job = 0) {
-            fetch("/Ajax/Users/login_as_specified_work", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    department_id: parseInt(department_id),
-                    job: parseInt(job)
-                })
-            })
-                .then(r => r.json())
-                .then(data => {
-                    let returnCode = data['code'];
-                    if (returnCode === 400) {
-                        swal({ title: "参数错误，请联系管理员", icon: "error", });
-                    } else if (returnCode === 401) {
-                        swal({
-                            title: "登录错误",
-                            text: "请确保已经登录后重试。",
-                            icon: "error",
-                        });
-                    } else if (returnCode === 404) {
-                        swal({ title: "功能不存在，请联系管理员", icon: "warning", });
-                    } else if (returnCode === 417) {
-                        swal({ title: "功能错误，请联系管理员", icon: "warning", });
-                    } else if (returnCode === 498) {
-                        swal({ title: "数据库异常，请联系管理员", icon: "warning", });
-                    } else if (returnCode === 499) {
-                        swal({ title: "功能维护中，暂不允许登录", icon: "warning", });
-                    } else if (returnCode === 200 || returnCode === 301) {
-                        if (returnCode === 301) window.console.log('登录函数移至新位置');
-                        window.location = data["data"];
-                    }
-                })
-                .catch(_ => {
-                    alert('请检查浏览器网络连接，建议刷新后重试');
-                });
-        }
-
-        // ---------------------- 表单事件拦截 ----------------------
-        document.getElementById("loginform").addEventListener("submit", function (e) {
-            e.preventDefault();
-            login();
-        });
     </script>
 </body>
 

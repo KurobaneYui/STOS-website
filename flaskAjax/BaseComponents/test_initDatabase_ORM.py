@@ -462,7 +462,7 @@ def seed_initial_data():
             print(f"An error occurred during data seeding: {e}")
 
 
-if __name__ == '__main__':
+if __name__ == '__main__':  # noqa: C901
     # 步骤1: 初始化数据库和表结构
     initialize_database()
 

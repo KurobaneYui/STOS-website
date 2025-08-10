@@ -38,9 +38,10 @@ class CustomSession:
 
     @staticmethod
     def checkSession() -> bool:
-        if "userID" not in session or "userName" not in session or "logTime" not in session \
-            or "department_id" not in session or "department_name" not in session \
-                or "job" not in session or "isLogin" not in session:
+        if "userID" not in session or "userName" not in session or \
+                "logTime" not in session or "department_id" not in session or \
+                "department_name" not in session or "job" not in session or \
+                "isLogin" not in session:
             return False
 
         if hash(
