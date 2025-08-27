@@ -1,7 +1,8 @@
 import datetime
 
 from sqlalchemy import (
-    ForeignKey, String, Integer, Text, TIMESTAMP, CheckConstraint, UniqueConstraint, func
+    ForeignKey, String, Integer, Text, LargeBinary, TIMESTAMP, CheckConstraint,
+    UniqueConstraint, func
 )
 from sqlalchemy.orm import (DeclarativeBase, Mapped, mapped_column, relationship)
 from typing import List, Optional
@@ -72,11 +73,12 @@ class UserProfile(Base):
         ForeignKey("users.student_id", ondelete="CASCADE"), primary_key=True
     )
     campus_id: Mapped[
-        Optional[str],
+        Optional[int],
     ] = mapped_column(ForeignKey("campuses.id", ondelete="SET NULL"),)
     college_id: Mapped[
         Optional[int],
     ] = mapped_column(ForeignKey("colleges.id", ondelete="SET NULL"),)
+    hometown: Mapped[Optional[str]] = mapped_column(String(100))
     phone: Mapped[Optional[str]] = mapped_column(String(20))
     qq: Mapped[Optional[str]] = mapped_column(String(20))
     updated_at: Mapped[datetime.datetime] = mapped_column(
@@ -95,7 +97,7 @@ class UserCredential(Base):
     student_id: Mapped[str] = mapped_column(
         ForeignKey("users.student_id", ondelete="CASCADE"), primary_key=True
     )
-    password_hash: Mapped[str] = mapped_column(Text, nullable=False)
+    password_hash: Mapped[bytes] = mapped_column(LargeBinary, nullable=False)
     updated_at: Mapped[datetime.datetime] = mapped_column(
         server_default=func.now(),
         onupdate=func.now(),
@@ -217,7 +219,7 @@ class DataGroupPermission(Base):
 # 教学单位与任务数据表
 class Campus(Base):
     __tablename__ = "campuses"
-    id: Mapped[str] = mapped_column(String(50), primary_key=True)
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String(100), nullable=False, unique=True)
 
     user_profiles: Mapped[List["UserProfile"]] = relationship(back_populates="campus")
@@ -241,11 +243,12 @@ class College(Base):
 class Classroom(Base):
     __tablename__ = "classrooms"
     id: Mapped[str] = mapped_column(String(50), primary_key=True)
-    campus_id: Mapped[str] = mapped_column(
+    campus_id: Mapped[int] = mapped_column(
         ForeignKey("campuses.id", ondelete="CASCADE"), nullable=False
     )
-    building: Mapped[str] = mapped_column(String(100), nullable=False)
-    room_number: Mapped[str] = mapped_column(String(50), nullable=False)
+    building: Mapped[str] = mapped_column(String(20), nullable=False)
+    area: Mapped[str] = mapped_column(String(10), nullable=False)
+    room_number: Mapped[str] = mapped_column(String(10), nullable=False)
     capacity: Mapped[Optional[int]]
 
     campus: Mapped["Campus"] = relationship(back_populates="classrooms")
@@ -258,7 +261,7 @@ class Classroom(Base):
 
     __table_args__ = (
         UniqueConstraint(
-            'campus_id', 'building', 'room_number', name='uq_classroom_location'
+            'campus_id', 'building', 'area', 'room_number', name='uq_classroom_location'
         ),
     )
 

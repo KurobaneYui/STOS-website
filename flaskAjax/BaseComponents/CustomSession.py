@@ -9,7 +9,7 @@ class CustomSession:
         name: str,
         logTime: str,
         department_id: int = 0,
-        job: int = 0,
+        job: str = "member",
         department_name="预备队员"
     ) -> None:
         session["userID"] = studentID

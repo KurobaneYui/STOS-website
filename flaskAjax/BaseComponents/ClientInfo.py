@@ -26,7 +26,7 @@ class ClientInfo():
 
         # get info from flask.request
         ip = request.remote_addr
-        language = request.accept_languages
+        language = str(request.accept_languages)
         agent = request.user_agent
         # detect address of IP
         try:

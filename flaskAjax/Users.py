@@ -31,7 +31,7 @@ def Users(app: flask.Flask) -> None:  # noqa: C901
             # ========================
             # 检查接口输入参数并记录日志
             UsersCheck.loginParamsCheck(request)
-            logger.funcArgs = request.form
+            logger.funcArgs = request.json
             # =========================================
             # 执行接口流程，并获取用户名信息以完成会话建立
             UsersDatabase.login(request, session)
@@ -76,7 +76,7 @@ def Users(app: flask.Flask) -> None:  # noqa: C901
             # ========================
             # 检查接口输入参数并记录日志
             UsersCheck.loginAsSpecifiedWorkParamsCheck(request)
-            logger.funcArgs = request.form
+            logger.funcArgs = request.json
             # =========================================
             # 执行接口流程，并获取用户名信息以完成会话建立
             results = UsersDatabase.loginAsSpecifiedWork(request, session)
@@ -100,7 +100,7 @@ def Users(app: flask.Flask) -> None:  # noqa: C901
             # ========================
             # 检查接口输入参数并记录日志
             UsersCheck.resetPasswordParamsCheck(request)
-            logger.funcArgs = request.form
+            logger.funcArgs = request.json
             # ===========
             # 执行接口流程
             UsersDatabase.resetPassword(request, session)

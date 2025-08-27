@@ -1,4 +1,17 @@
 <script setup>
+import axios from "axios";
+
+// ---------------------- 登出 ----------------------
+function logout() {
+    axios.get('/Ajax/Users/logout')
+        .then(function (response) {
+            // 这里 response.data 就相当于 jQuery 的 data
+        })
+        .catch(function (error) {
+            // 这里你可以处理错误
+        });
+}
+
 </script>
 
 <template>
@@ -9,8 +22,7 @@
                 <!-- Register -->
                 <div class="row">
                     <div class="col-12">
-                        <img class="mx-auto d-block mb-5" width="200" height="200"
-                            src="/imgs/STSA_big.png" />
+                        <img class="mx-auto d-block mb-5" width="200" height="200" src="/imgs/STSA_big.png" />
                     </div>
                     <div class="col-12 text-center">
                         <h3 class="mb-4">已登出</h3>
@@ -24,5 +36,4 @@
     </div>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>

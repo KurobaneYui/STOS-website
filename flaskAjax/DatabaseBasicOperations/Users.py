@@ -4,6 +4,7 @@ import numpy
 import hashlib
 import datetime
 from typing import Any
+from sqlalchemy import select
 from sqlalchemy.orm import Session
 from sqlalchemy.dialects.sqlite import insert as aqlalchemy_insert
 from contextlib import nullcontext
@@ -12,9 +13,13 @@ from flask import Request
 from flaskAjax.BaseComponents.ClientInfo import ClientInfo
 from flaskAjax.BaseComponents.CustomSession import CustomSession
 from flaskAjax.BaseComponents.DatabaseDefinition import (
-    CollectedInfo, UserCredential, Group, GroupMember
+    CollectedInfo as SQL_CollectedInfo,
+    UserCredential as SQL_UserCredential,
+    Group as SQL_Group,
+    GroupMember as SQL_GroupMember,
+    User as SQL_User,
 )
-from flaskAjax.BaseComponents.DatabaseConnector import SessionLocal
+from flaskAjax.BaseComponents.DatabaseConnector import SQL_College, SQL_UserProfile, SessionLocal
 from flaskAjax.BaseComponents.CustomError import (
     PermissionDenyError, IllegalValueError, DatabaseRuntimeError
 )
@@ -53,7 +58,7 @@ def LoginDeviceRecorder(
         clientInfo["job"] = infoForm["job"]
         # ===================================
         # 插入数据库，使用IGNORE参数忽略主键重复
-        stmt = aqlalchemy_insert(CollectedInfo).values({
+        stmt = aqlalchemy_insert(SQL_CollectedInfo).values({
             "student_id": clientInfo['studentID'],
             "user_agent": clientInfo['agent'],
             "ip_address": clientInfo['IP'],
@@ -61,7 +66,7 @@ def LoginDeviceRecorder(
             "language_info": clientInfo['language'],
             "login_result": clientInfo['login_result'],
         })
-        stmt = stmt.on_conflict_do_nothing(index_elements=['student_id', 'job'])
+        stmt = stmt.on_conflict_do_nothing(index_elements=['id'])
         try:
             session.execute(stmt)
             session.commit()
@@ -80,10 +85,11 @@ class UsersDatabase:
         with session_context as session:
             # ==========================
             # 根据提供的密码和学号进行查询
-            infoForm: dict[str, Any] = dict(flaskRequest.form)
+            assert flaskRequest.json is not None
+            infoForm: dict[str, Any] = dict(flaskRequest.json)
             infoForm["department_id"] = 0
             infoForm["job"] = 0
-            results = session.query(UserCredential).filter_by(
+            results = session.query(SQL_UserCredential).filter_by(
                 student_id=infoForm["StudentID"],
                 password_hash=hashlib.sha512(infoForm["Password"].encode()).digest()
             ).all()
@@ -119,137 +125,149 @@ class UsersDatabase:
         with session_context as session:
             # ========================
             # 查询工作表单获取可登录岗位
-            results = session.query(GroupMember).join(
-                Group, GroupMember.group_id == Group.id
+            results = session.query(SQL_GroupMember).join(
+                SQL_Group, SQL_GroupMember.group_id == SQL_Group.id
             ).filter(
-                GroupMember.student_id == CustomSession.getSession()['userID'],
-                GroupMember.group_id != 0
-            ).order_by(GroupMember.group_id.asc(), GroupMember.role.desc()).all()
+                SQL_GroupMember.student_id == CustomSession.getSession()['userID'],
+                SQL_GroupMember.group_id != 0
+            ).order_by(SQL_GroupMember.group_id.asc(), SQL_GroupMember.role.desc()).all()
             # =================
             # 整理查询数据并返回
             if len(results) == 0:
-                results = ({'department_id': 0, "job": 0, "name": "预备队员"},)
+                results = ({
+                    'department_id': 0,
+                    "job": None,
+                    "name": "预备队员",
+                    "display_title": None
+                },)
+            else:
+                results = [{
+                    "department_id": work.group_id,
+                    "job": work.role,
+                    "name": work.group.name,
+                    "display_title": work.display_title
+                } for work in results]
         return results
 
-    # @staticmethod
-    # def loginAsSpecifiedWork(
-    #     flaskRequest: Request, db_session: Session | None = None
-    # ) -> str:
-    #     # =====================================
-    #     # 如果提供已经建立的数据库连接，则直接使用
-    #     if db_session is None:
-    #         database = DatabaseConnector()
-    #         database.startCursor()
-    #     else:
-    #         database = db_session
-    #     # ===============================================
-    #     # 查询工作表单验证可登录岗位
-    #     # 如果登录部门是0岗位也是0，说明是预备队员，直接放过
-    #     infoForm = dict(flaskRequest.form)
-    #     infoForm["department_id"] = int(infoForm["department_id"])
-    #     infoForm["job"] = int(infoForm["job"])
-    #     infoForm["StudentID"] = CustomSession.getSession()['userID']
-    #     infoForm["StudentName"] = CustomSession.getSession()['userName']
-    #     DBAffectedRows = database.execute(
-    #         "SELECT * FROM `Work` \
-    #         WHERE department_id = %(department_id)s AND job = %(job)s AND student_id = %(StudentID)s;",
-    #         infoForm
-    #     )
-    #     database.fetchall()
-    #     if (
-    #         infoForm["department_id"] != 0 or infoForm["job"] != 0
-    #     ) and DBAffectedRows != 1:
-    #         raise IllegalValueError(
-    #             "The work you want to login is not permitted.",
-    #             filename=__file__,
-    #             line=sys._getframe().f_lineno
-    #         )
-    #     # ===================
-    #     # 添加新的LogInfo记录
-    #     LoginDeviceRecorder(infoForm, True, database)
-    #     # ==============================
-    #     # 查询部门名称，并更新Session信息
-    #     DBAffectedRows = database.execute(
-    #         "SELECT name FROM `Department` WHERE department_id = %(department_id)s AND department_id != 0;",
-    #         infoForm
-    #     )
-    #     if DBAffectedRows <= 0:
-    #         database.fetchall()
-    #         name = '预备队员'
-    #     else:
-    #         name = database.fetchall()[0]['name']
-    #     CustomSession.setSession(
-    #         studentID=infoForm["StudentID"],
-    #         name=infoForm["StudentName"],
-    #         logTime=datetime.datetime.now().isoformat(),
-    #         department_id=infoForm["department_id"],
-    #         job=infoForm["job"],
-    #         department_name=name
-    #     )
-    #     flask.g.isLogin = True
+    @staticmethod
+    def loginAsSpecifiedWork(
+        flaskRequest: Request, db_session: Session | None = None
+    ) -> str:
+        # =====================================
+        # 如果提供已经建立的数据库连接，则直接使用
+        session_context = SessionLocal(
+        ) if db_session is None else nullcontext(db_session)
+        with session_context as session:
+            # ===============================================
+            # 查询工作表单验证可登录岗位
+            # 如果登录部门是0岗位也是0，说明是预备队员，直接放过
+            assert flaskRequest.json is not None
+            infoForm = flaskRequest.json
+            infoForm["department_id"] = int(infoForm["department_id"])
+            infoForm["StudentID"] = CustomSession.getSession()['userID']
+            infoForm["StudentName"] = CustomSession.getSession()['userName']
+            results = session.query(SQL_GroupMember).filter_by(
+                group_id=infoForm["department_id"],
+                role=infoForm["job"],
+                student_id=infoForm["StudentID"]
+            ).all()
+            if (infoForm["department_id"] != 0 or
+                infoForm["job"] is not None) and len(results) != 1:
+                raise IllegalValueError(
+                    "The work you want to login is not permitted.",
+                    filename=__file__,
+                    line=sys._getframe().f_lineno
+                )
+            # ===================
+            # 添加新的LogInfo记录
+            LoginDeviceRecorder(infoForm, True, session)
+            # ==============================
+            # 查询部门名称，并更新Session信息
+            results = session.query(SQL_Group).filter(
+                SQL_Group.id == infoForm["department_id"] and SQL_Group.id != 0
+            ).all()
+            if len(results) <= 0:
+                name = '预备队员'
+            else:
+                name = results[0].name
+            CustomSession.setSession(
+                studentID=infoForm["StudentID"],
+                name=infoForm["StudentName"],
+                logTime=datetime.datetime.now().isoformat(),
+                department_id=infoForm["department_id"],
+                job=infoForm["job"],
+                department_name=name
+            )
+            flask.g.isLogin = True
 
-    #     return "/Users/UserCenter/index.html"
+        return "/user_center/index.html"
 
     @staticmethod
     def getName(studentId: str, db_session: Session | None = None) -> str:
         # =====================================
         # 如果提供已经建立的数据库连接，则直接使用
-        if db_session is None:
-            database = DatabaseConnector()
-            database.startCursor()
-        else:
-            database = db_session
-        # ===================
-        # 利用学号查询对应姓名
-        DBAffectRows = database.execute(
-            "SELECT `name` FROM `MemberBasic` WHERE student_id = %s;", (studentId,)
-        )
-        DBResult = database.fetchall()
-        # ===============
-        # 结果不唯一则报错
-        if DBAffectRows != 1:
-            raise IllegalValueError(
-                "StudentID not found.", filename=__file__, line=sys._getframe().f_lineno
-            )
+        session_context = SessionLocal(
+        ) if db_session is None else nullcontext(db_session)
+        with session_context as session:
+            # ===================
+            # 利用学号查询对应姓名
+            results = session.query(SQL_User).filter_by(student_id=studentId).all()
+            # ===============
+            # 结果不唯一则报错
+            if len(results) != 1:
+                raise IllegalValueError(
+                    "StudentID not found.",
+                    filename=__file__,
+                    line=sys._getframe().f_lineno
+                )
 
-        return DBResult[0]["name"]
+        return results[0].name
 
-    # @staticmethod
-    # def resetPassword(flaskRequest: Request, db_session: Session | None = None) -> None:
-    #     # =====================================
-    #     # 如果提供已经建立的数据库连接，则直接使用
-    #     if db_session is None:
-    #         database = DatabaseConnector()
-    #         database.startCursor()
-    #     else:
-    #         database = db_session
-    #     # =====================
-    #     # 利用提供的信息匹配用户
-    #     DBAffectRows = database.execute(
-    #         "SELECT `MemberBasic`.student_id FROM `MemberBasic` \
-    #         LEFT JOIN `MemberExtend` ON `MemberExtend`.student_id = `MemberBasic`.student_id \
-    #         LEFT JOIN `School` ON `School`.school_id = `MemberExtend`.school_id \
-    #         WHERE MemberBasic.student_id = %(StudentID)s and MemberBasic.name = %(Name)s \
-    #             and School.name = %(School)s and hometown = %(Hometown)s;",
-    #         flaskRequest.form
-    #     )
-    #     database.fetchall()
-    #     # ===================
-    #     # 匹配结果不唯一则报错
-    #     if DBAffectRows != 1:
-    #         raise PermissionDenyError(
-    #             "Information is wrong.",
-    #             filename=__file__,
-    #             line=sys._getframe().f_lineno
-    #         )
-    #     # =====================
-    #     # 匹配到则重置密码为学号
-    #     DBAffectRows = database.execute(
-    #         "UPDATE `Password` SET passhash = %s WHERE student_id = %s;", (
-    #             hashlib.sha512(flaskRequest.form["StudentID"].encode()
-    #                           ).digest(), flaskRequest.form["StudentID"]
-    #         )
-    #     )
+    @staticmethod
+    def resetPassword(flaskRequest: Request, db_session: Session | None = None) -> None:
+        # =====================================
+        # 如果提供已经建立的数据库连接，则直接使用
+        session_context = SessionLocal(
+        ) if db_session is None else nullcontext(db_session)
+        with session_context as session:
+            # =====================
+            # 利用提供的信息匹配用户
+            # DBAffectRows = database.execute(
+            #     "SELECT `MemberBasic`.student_id FROM `MemberBasic` \
+            #     LEFT JOIN `MemberExtend` ON `MemberExtend`.student_id = `MemberBasic`.student_id \
+            #     LEFT JOIN `School` ON `School`.school_id = `MemberExtend`.school_id \
+            #     WHERE MemberBasic.student_id = %(StudentID)s and MemberBasic.name = %(Name)s \
+            #         and School.name = %(School)s and hometown = %(Hometown)s;",
+            #     flaskRequest.form
+            # )
+            assert flaskRequest.json is not None
+            student_id = flaskRequest.json["StudentID"]
+            name = flaskRequest.json["Name"]
+            school = flaskRequest.json["School"]
+            hometown = flaskRequest.json["Hometown"]
+            stmt = select(SQL_User.student_id,
+                         ).join(SQL_User.profile,).join(SQL_UserProfile.college,).where(
+                             SQL_User.student_id == student_id,
+                             SQL_User.name == name,
+                             SQL_UserProfile.hometown == hometown,
+                             SQL_College.name == school,
+                         )
+            results = session.scalars(stmt).all()
+            # ===================
+            # 匹配结果不唯一则报错
+            if len(results) != 1:
+                raise PermissionDenyError(
+                    "Information is wrong.",
+                    filename=__file__,
+                    line=sys._getframe().f_lineno
+                )
+            # =====================
+            # 匹配到则重置密码为学号
+            credential = session.query(SQL_UserCredential).filter_by(
+                student_id=flaskRequest.json["StudentID"]
+            ).one()
+            credential.password_hash = hashlib.sha512(student_id.encode()).digest()
+            session.commit()
 
     # @staticmethod
     # def deletePersonalInfo(db_session: Session | None = None) -> None:
@@ -370,16 +388,17 @@ class UsersDatabase:
     #         )
     #     database.commit()
 
-    # @staticmethod
-    # def topbarInfo() -> str:
-    #     # ============================
-    #     # 查询Session保存的登录岗位信息
-    #     return {
-    #         "name": CustomSession.getSession()["userName"],
-    #         "department_id": CustomSession.getSession()["department_id"],
-    #         "department_name": CustomSession.getSession()["department_name"],
-    #         "job": CustomSession.getSession()["job"]
-    #     }
+    @staticmethod
+    def topbarInfo() -> dict:
+        # ============================
+        # 查询Session保存的登录岗位信息
+        info = CustomSession.getSession()
+        return {
+            "name": info["userName"],
+            "department_id": info["department_id"],
+            "department_name": info["department_name"],
+            "job": info["job"]
+        }
 
     # @staticmethod
     # def getContact(db_session: Session | None = None) -> list[dict] | tuple[dict]:

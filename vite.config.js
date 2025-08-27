@@ -16,6 +16,11 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url))
     },
   },
+  server: {
+    proxy: {
+      '/Ajax': 'http://localhost:8008'
+    }
+  },
   build: {
     rollupOptions: {
       input: {
@@ -25,8 +30,9 @@ export default defineConfig({
         main: resolve(__dirname, 'index.html'),
         login: resolve(__dirname, 'authentication/login.html'),
         logout: resolve(__dirname, 'authentication/logout.html'),
-        forgot_password: resolve(__dirname, 'authentication/forgot_password.html'),
         register: resolve(__dirname, 'authentication/register.html'),
+        forgot_password: resolve(__dirname, 'authentication/forgot_password.html'),
+        user_center_index: resolve(__dirname, 'user_center/index.html'),
       },
     },
   },

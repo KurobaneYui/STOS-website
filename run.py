@@ -59,13 +59,13 @@ def AssetsRoutes(additionalURL):
 @app.route("/authentication/<path:additionalURL>", methods=['GET', 'POST'])
 def AuthenticationRoutes(additionalURL):
     if additionalURL == "login.html" and checkIfLogin():
-        return redirect("/Users/UserCenter/index.html")
+        return redirect("/user_center/index.html")
     return send_file("authentication/" + additionalURL)
 
 
-@app.route("/Users/UserCenter/<path:additionalURL>", methods=['GET', 'POST'])
+@app.route("/user_center/<path:additionalURL>", methods=['GET', 'POST'])
 def UsersRoutes(additionalURL):
-    return send_file("Users/UserCenter/" + additionalURL)
+    return send_file("user_center/" + additionalURL)
 
 
 @app.route("/Users/TeacherCenter/<path:additionalURL>", methods=['GET', 'POST'])

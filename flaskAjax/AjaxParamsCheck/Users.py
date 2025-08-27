@@ -7,6 +7,7 @@ from flask import Request
 from flaskAjax.BaseComponents.DatabaseDefinition import College
 from flaskAjax.BaseComponents.CustomSession import CustomSession
 from flaskAjax.BaseComponents.CustomError import IllegalValueError
+
 # from flaskAjax.BaseComponents.DatabaseConnector import SessionLocal
 
 
@@ -222,8 +223,8 @@ class UsersCheck:
 
     @staticmethod
     def loginParamsCheck(flaskRequest: Request) -> None:
-        if 'StudentID' not in flaskRequest.form.keys(
-        ) or 'Password' not in flaskRequest.form.keys():
+        if flaskRequest.json is None or 'StudentID' not in flaskRequest.json.keys(
+        ) or 'Password' not in flaskRequest.json.keys():
             raise IllegalValueError(
                 "Need StudentID and Password.",
                 filename=__file__,
@@ -232,8 +233,8 @@ class UsersCheck:
 
     @staticmethod
     def loginAsSpecifiedWorkParamsCheck(flaskRequest: Request) -> None:
-        if 'department_id' not in flaskRequest.form.keys(
-        ) or 'job' not in flaskRequest.form.keys():
+        if flaskRequest.json is None or 'department_id' not in flaskRequest.json.keys(
+        ) or 'job' not in flaskRequest.json.keys():
             raise IllegalValueError(
                 "Need department_id and job.",
                 filename=__file__,
@@ -242,8 +243,10 @@ class UsersCheck:
 
     @staticmethod
     def resetPasswordParamsCheck(flaskRequest: Request) -> None:
-        if 'Name' not in flaskRequest.form.keys() or 'StudentID' not in flaskRequest.form.keys() \
-                or 'School' not in flaskRequest.form.keys() or 'Hometown' not in flaskRequest.form.keys():
+        if flaskRequest.json is None or 'Name' not in flaskRequest.json.keys(
+        ) or 'StudentID' not in flaskRequest.json.keys(
+        ) or 'School' not in flaskRequest.json.keys(
+        ) or 'Hometown' not in flaskRequest.json.keys():
             raise IllegalValueError(
                 "Need full information in form.",
                 filename=__file__,
@@ -252,8 +255,8 @@ class UsersCheck:
 
     @staticmethod
     def deletePersonalInfoParamsCheck(flaskRequest: Request) -> None:
-        if 'confirmDelete' not in flaskRequest.form.keys(
-        ) or flaskRequest.form['confirmDelete'] != 'confirm':
+        if flaskRequest.json is None or 'confirmDelete' not in flaskRequest.json.keys(
+        ) or flaskRequest.json['confirmDelete'] != 'confirm':
             raise IllegalValueError(
                 "请填写正确确认文字，如有问题请联系管理员！",
                 filename=__file__,
@@ -261,9 +264,7 @@ class UsersCheck:
             )
 
     @staticmethod
-    def registerParamsCheck(
-        infoDict: dict, db_session: Session | None = None
-    ) -> None:
+    def registerParamsCheck(infoDict: dict, db_session: Session | None = None) -> None:
         # =====================================
         # 如果提供已经建立的数据库连接，则直接使用
         if db_session is None:
