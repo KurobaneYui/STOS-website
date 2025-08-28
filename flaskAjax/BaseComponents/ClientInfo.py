@@ -1,4 +1,5 @@
 import json
+
 import requests
 from flask import request
 
@@ -6,7 +7,7 @@ from flask import request
 class ClientInfo():
 
     @staticmethod
-    def getInfo() -> dict:
+    def get_info() -> dict:
         """Detect client infos about IP, address, client agent and accept language
 
         This function use flask.request to get IP and info of client agent.

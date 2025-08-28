@@ -74,7 +74,7 @@ class Logger:
             else:
                 f.write(f"{pprint.pformat(tuple(extract_tb(exc_tb)[-1]))}\n")
             f.write("[ClientInfo]\n")
-            f.write(f"{pprint.pformat(ClientInfo.getInfo())}\n")
+            f.write(f"{pprint.pformat(ClientInfo.get_info())}\n")
 
         return False
 
