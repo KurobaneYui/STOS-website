@@ -1,0 +1,540 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink" contentStyleType="text/css" data-diagram-type="CLASS" height="1187px" preserveAspectRatio="none" style="width:2729px;height:1187px;background:#FFFFFF;" version="1.1" viewBox="0 0 2729 1187" width="2729px" zoomAndPan="magnify">
+    <title>数据库关系图 (ER Diagram)</title>
+    <defs/>
+    <g>
+        <g class="title" data-source-line="3">
+            <text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="193.7164" x="1260.9257" y="22.9951">数据库关系图 (ER Diagram)</text>
+        </g>        <!--class User-->
+        <g class="entity" data-entity="User" data-source-line="11" data-uid="ent0002" id="entity_User">
+            <rect fill="#ADD8E6" height="137.75" rx="3.5" ry="3.5" style="stroke:#181818;stroke-width:0.5;" width="227.4551" x="1518.09" y="214.0369"/>
+            <ellipse cx="1579.3322" cy="234.1697" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1;"/>
+            <path d="M1583.4416,240.1697 L1575.7228,240.1697 L1575.7228,227.7791 L1583.4416,227.7791 L1583.4416,229.9353 L1578.1759,229.9353 L1578.1759,232.6072 L1582.9416,232.6072 L1582.9416,234.7634 L1578.1759,234.7634 L1578.1759,238.0134 L1583.4416,238.0134 L1583.4416,240.1697 Z " fill="#000000"/>
+            <text fill="#000000" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacing" textLength="100.4707" x="1597.8322" y="230.1755">«PK: student_id»</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="37.8301" x="1629.1525" y="246.0007">users</text>
+            <line style="stroke:#181818;stroke-width:0.5;" x1="1519.09" x2="1744.5451" y1="254.3025" y2="254.3025"/>
+            <ellipse cx="1529.09" cy="267.9509" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="121.7686" x="1538.09" y="271.2976">student_id (PK)</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="79.6865" x="1659.8586" y="271.2976">: String(20)</text>
+            <line style="stroke:#181818;stroke-width:1;" x1="1519.09" x2="1744.5451" y1="278.5994" y2="278.5994"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="119.3896" x="1524.09" y="295.5945">name: String(50)</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="129.3154" x="1524.09" y="311.8914">gender: String(10)</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="165.0127" x="1524.09" y="328.1882">created_at: TIMESTAMP</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="169.5928" x="1524.09" y="344.4851">updated_at: TIMESTAMP</text>
+        </g>        <!--class UserProfile-->
+        <g class="entity" data-entity="UserProfile" data-source-line="20" data-uid="ent0003" id="entity_UserProfile">
+            <rect fill="#ADD8E6" height="154.0469" rx="3.5" ry="3.5" style="stroke:#181818;stroke-width:0.5;" width="258.0596" x="401.78" y="457.2269"/>
+            <ellipse cx="481.8801" cy="477.3597" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1;"/>
+            <path d="M485.9895,483.3597 L478.2707,483.3597 L478.2707,470.9691 L485.9895,470.9691 L485.9895,473.1253 L480.7238,473.1253 L480.7238,475.7972 L485.4895,475.7972 L485.4895,477.9534 L480.7238,477.9534 L480.7238,481.2034 L485.9895,481.2034 L485.9895,483.3597 Z " fill="#000000"/>
+            <text fill="#000000" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacing" textLength="29.4551" x="532.3322" y="473.3655">«FK»</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="89.3594" x="502.3801" y="489.1907">user_profiles</text>
+            <line style="stroke:#181818;stroke-width:0.5;" x1="402.78" x2="658.8396" y1="497.4925" y2="497.4925"/>
+            <ellipse cx="412.78" cy="511.1409" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="152.373" x="421.78" y="514.4876">student_id (PK, FK)</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="79.6865" x="574.153" y="514.4876">: String(20)</text>
+            <line style="stroke:#181818;stroke-width:1;" x1="402.78" x2="658.8396" y1="521.7894" y2="521.7894"/>
+            <polygon fill="#FFFF44" points="412.78,530.4378,416.78,534.4378,412.78,538.4378,408.78,534.4378" style="stroke:#B38D22;stroke-width:1;"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="137.0381" x="421.78" y="538.7845">campus_id (FK): int</text>
+            <polygon fill="#FFFF44" points="412.78,546.7347,416.78,550.7347,412.78,554.7347,408.78,550.7347" style="stroke:#B38D22;stroke-width:1;"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="129.958" x="421.78" y="555.0814">college_id (FK): int</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="123.498" x="421.78" y="571.3782">phone: String(20)</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="97.46" x="421.78" y="587.6751">qq: String(20)</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="169.5928" x="421.78" y="603.972">updated_at: TIMESTAMP</text>
+        </g>        <!--class UserCredential-->
+        <g class="entity" data-entity="UserCredential" data-source-line="30" data-uid="ent0004" id="entity_UserCredential">
+            <rect fill="#ADD8E6" height="105.1563" rx="3.5" ry="3.5" style="stroke:#181818;stroke-width:0.5;" width="258.0596" x="944.78" y="481.6769"/>
+            <ellipse cx="1012.0012" cy="501.8097" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1;"/>
+            <path d="M1016.1106,507.8097 L1008.3918,507.8097 L1008.3918,495.4191 L1016.1106,495.4191 L1016.1106,497.5753 L1010.8449,497.5753 L1010.8449,500.2472 L1015.6106,500.2472 L1015.6106,502.4034 L1010.8449,502.4034 L1010.8449,505.6534 L1016.1106,505.6534 L1016.1106,507.8097 Z " fill="#000000"/>
+            <text fill="#000000" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacing" textLength="29.4551" x="1075.3322" y="497.8155">«FK»</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="115.1172" x="1032.5012" y="513.6407">user_credentials</text>
+            <line style="stroke:#181818;stroke-width:0.5;" x1="945.78" x2="1201.8396" y1="521.9425" y2="521.9425"/>
+            <ellipse cx="955.78" cy="535.5909" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="152.373" x="964.78" y="538.9376">student_id (PK, FK)</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="79.6865" x="1117.153" y="538.9376">: String(20)</text>
+            <line style="stroke:#181818;stroke-width:1;" x1="945.78" x2="1201.8396" y1="546.2394" y2="546.2394"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="147.4375" x="950.78" y="563.2345">password_hash: Text</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="169.5928" x="950.78" y="579.5314">updated_at: TIMESTAMP</text>
+        </g>        <!--class PaymentInfo-->
+        <g class="entity" data-entity="PaymentInfo" data-source-line="37" data-uid="ent0005" id="entity_PaymentInfo">
+            <rect fill="#ADD8E6" height="137.75" rx="3.5" ry="3.5" style="stroke:#181818;stroke-width:0.5;" width="258.0596" x="1367.78" y="465.3769"/>
+            <ellipse cx="1444.7492" cy="485.5097" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1;"/>
+            <path d="M1448.8586,491.5097 L1441.1399,491.5097 L1441.1399,479.1191 L1448.8586,479.1191 L1448.8586,481.2753 L1443.593,481.2753 L1443.593,483.9472 L1448.3586,483.9472 L1448.3586,486.1034 L1443.593,486.1034 L1443.593,489.3534 L1448.8586,489.3534 L1448.8586,491.5097 Z " fill="#000000"/>
+            <text fill="#000000" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacing" textLength="29.4551" x="1498.3322" y="481.5155">«FK»</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="95.6211" x="1465.2492" y="497.3407">payment_info</text>
+            <line style="stroke:#181818;stroke-width:0.5;" x1="1368.78" x2="1624.8396" y1="505.6425" y2="505.6425"/>
+            <ellipse cx="1378.78" cy="519.2909" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="152.373" x="1387.78" y="522.6376">student_id (PK, FK)</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="79.6865" x="1540.153" y="522.6376">: String(20)</text>
+            <line style="stroke:#181818;stroke-width:1;" x1="1368.78" x2="1624.8396" y1="529.9394" y2="529.9394"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="197.0049" x="1373.78" y="546.9345">recipient_name: String(100)</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="172.2451" x="1373.78" y="563.2314">card_number: String(50)</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="156.1738" x="1373.78" y="579.5282">is_registered_poor: int</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="169.5928" x="1373.78" y="595.8251">updated_at: TIMESTAMP</text>
+        </g>        <!--class CollectedInfo-->
+        <g class="entity" data-entity="CollectedInfo" data-source-line="46" data-uid="ent0006" id="entity_CollectedInfo">
+            <rect fill="#ADD8E6" height="186.6406" rx="3.5" ry="3.5" style="stroke:#181818;stroke-width:0.5;" width="213.0313" x="1661.3" y="440.9369"/>
+            <ellipse cx="1715.2663" cy="461.0697" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1;"/>
+            <path d="M1719.3757,467.0697 L1711.6569,467.0697 L1711.6569,454.6791 L1719.3757,454.6791 L1719.3757,456.8353 L1714.1101,456.8353 L1714.1101,459.5072 L1718.8757,459.5072 L1718.8757,461.6634 L1714.1101,461.6634 L1714.1101,464.9134 L1719.3757,464.9134 L1719.3757,467.0697 Z " fill="#000000"/>
+            <text fill="#000000" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacing" textLength="29.4551" x="1769.3381" y="457.0755">«FK»</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="96.5986" x="1735.7663" y="472.9007">collected_info</text>
+            <line style="stroke:#181818;stroke-width:0.5;" x1="1662.3" x2="1873.3313" y1="481.2025" y2="481.2025"/>
+            <ellipse cx="1672.3" cy="494.8509" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="53.6006" x="1681.3" y="498.1976">id (PK)</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="27.4189" x="1734.9006" y="498.1976">: int</text>
+            <line style="stroke:#181818;stroke-width:1;" x1="1662.3" x2="1873.3313" y1="505.4994" y2="505.4994"/>
+            <polygon fill="#FFFF44" points="1672.3,514.1478,1676.3,518.1478,1672.3,522.1478,1668.3,518.1478" style="stroke:#B38D22;stroke-width:1;"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="185.5889" x="1681.3" y="522.4945">student_id (FK): String(20)</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="154.7725" x="1681.3" y="538.7914">ip_address: String(45)</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="128.6729" x="1681.3" y="555.0882">address_info: Text</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="187.0313" x="1681.3" y="571.3851">language_info: String(200)</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="118.084" x="1681.3" y="587.682">user_agent: Text</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="160.7061" x="1681.3" y="603.9789">login_result: String(10)</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="165.0127" x="1681.3" y="620.2757">created_at: TIMESTAMP</text>
+        </g>        <!--class Blacklist-->
+        <g class="entity" data-entity="Blacklist" data-source-line="58" data-uid="ent0007" id="entity_Blacklist">
+            <rect fill="#ADD8E6" height="105.1563" rx="3.5" ry="3.5" style="stroke:#181818;stroke-width:0.5;" width="258.0596" x="1909.78" y="481.6769"/>
+            <ellipse cx="2005.6985" cy="501.8097" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1;"/>
+            <path d="M2009.8078,507.8097 L2002.0891,507.8097 L2002.0891,495.4191 L2009.8078,495.4191 L2009.8078,497.5753 L2004.5422,497.5753 L2004.5422,500.2472 L2009.3078,500.2472 L2009.3078,502.4034 L2004.5422,502.4034 L2004.5422,505.6534 L2009.8078,505.6534 L2009.8078,507.8097 Z " fill="#000000"/>
+            <text fill="#000000" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacing" textLength="29.4551" x="2040.3322" y="497.8155">«FK»</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="57.7227" x="2026.1985" y="513.6407">blacklist</text>
+            <line style="stroke:#181818;stroke-width:0.5;" x1="1910.78" x2="2166.8396" y1="521.9425" y2="521.9425"/>
+            <ellipse cx="1920.78" cy="535.5909" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="152.373" x="1929.78" y="538.9376">student_id (PK, FK)</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="79.6865" x="2082.153" y="538.9376">: String(20)</text>
+            <line style="stroke:#181818;stroke-width:1;" x1="1910.78" x2="2166.8396" y1="546.2394" y2="546.2394"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="87.7871" x="1915.78" y="563.2345">reason: Text</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="165.0127" x="1915.78" y="579.5314">created_at: TIMESTAMP</text>
+        </g>        <!--class Group-->
+        <g class="entity" data-entity="Group" data-source-line="69" data-uid="ent0008" id="entity_Group">
+            <rect fill="#D8BFD8" height="113.1875" rx="3.5" ry="3.5" style="stroke:#181818;stroke-width:0.5;" width="203.6797" x="2481.97" y="226.3169"/>
+            <ellipse cx="2555.429" cy="242.3169" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1;"/>
+            <path d="M2559.5384,248.3169 L2551.8196,248.3169 L2551.8196,235.9262 L2559.5384,235.9262 L2559.5384,238.0825 L2554.2727,238.0825 L2554.2727,240.7544 L2559.0384,240.7544 L2559.0384,242.9106 L2554.2727,242.9106 L2554.2727,246.1606 L2559.5384,246.1606 L2559.5384,248.3169 Z " fill="#000000"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="48.2617" x="2575.929" y="247.1636">groups</text>
+            <line style="stroke:#181818;stroke-width:0.5;" x1="2482.97" x2="2684.6497" y1="258.3169" y2="258.3169"/>
+            <ellipse cx="2492.97" cy="271.9653" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="53.6006" x="2501.97" y="275.312">id (PK)</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="27.4189" x="2555.5706" y="275.312">: int</text>
+            <line style="stroke:#181818;stroke-width:1;" x1="2482.97" x2="2684.6497" y1="282.6138" y2="282.6138"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="191.6797" x="2487.97" y="299.6089">name: String(100) (unique)</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="165.0127" x="2487.97" y="315.9057">created_at: TIMESTAMP</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="169.5928" x="2487.97" y="332.2026">updated_at: TIMESTAMP</text>
+        </g>        <!--class GroupMember-->
+        <g class="entity" data-entity="GroupMember" data-source-line="77" data-uid="ent0009" id="entity_GroupMember">
+            <rect fill="#D8BFD8" height="178.3438" rx="3.5" ry="3.5" style="stroke:#181818;stroke-width:0.5;" width="277.5078" x="2445.06" y="445.0869"/>
+            <ellipse cx="2522.3608" cy="465.2197" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1;"/>
+            <path d="M2526.4702,471.2197 L2518.7514,471.2197 L2518.7514,458.8291 L2526.4702,458.8291 L2526.4702,460.9853 L2521.2045,460.9853 L2521.2045,463.6572 L2525.9702,463.6572 L2525.9702,465.8134 L2521.2045,465.8134 L2521.2045,469.0634 L2526.4702,469.0634 L2526.4702,471.2197 Z " fill="#000000"/>
+            <text fill="#000000" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacing" textLength="29.4551" x="2585.3364" y="461.2255">«FK»</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="114.4063" x="2542.8608" y="477.0507">group_members</text>
+            <line style="stroke:#181818;stroke-width:0.5;" x1="2446.06" x2="2721.5678" y1="485.3525" y2="485.3525"/>
+            <ellipse cx="2456.06" cy="499.0009" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="53.6006" x="2465.06" y="502.3476">id (PK)</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="27.4189" x="2518.6606" y="502.3476">: int</text>
+            <line style="stroke:#181818;stroke-width:1;" x1="2446.06" x2="2721.5678" y1="509.6494" y2="509.6494"/>
+            <polygon fill="#FFFF44" points="2456.06,518.2978,2460.06,522.2978,2456.06,526.2978,2452.06,522.2978" style="stroke:#B38D22;stroke-width:1;"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="120.7705" x="2465.06" y="526.6445">group_id (FK): int</text>
+            <polygon fill="#FFFF44" points="2456.06,534.5947,2460.06,538.5947,2456.06,542.5947,2452.06,538.5947" style="stroke:#B38D22;stroke-width:1;"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="185.5889" x="2465.06" y="542.9414">student_id (FK): String(20)</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="106.5107" x="2465.06" y="559.2382">role: String(20)</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="172.6758" x="2465.06" y="575.5351">display_title: String(100)</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="165.0127" x="2465.06" y="591.832">created_at: TIMESTAMP</text>
+            <line style="stroke:#181818;stroke-width:1;" x1="2446.06" x2="2721.5678" y1="599.1338" y2="599.1338"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="265.5078" x="2451.06" y="616.1289">&lt;unique&gt; (group_id, student_id, role)</text>
+        </g>        <!--class DataGroupPermission-->
+        <g class="entity" data-entity="DataGroupPermission" data-source-line="89" data-uid="ent0010" id="entity_DataGroupPermission">
+            <rect fill="#D8BFD8" height="162.0469" rx="3.5" ry="3.5" style="stroke:#181818;stroke-width:0.5;" width="257.7383" x="2169.94" y="716.8769"/>
+            <ellipse cx="2209.7994" cy="737.0097" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1;"/>
+            <path d="M2213.9088,743.0097 L2206.19,743.0097 L2206.19,730.6191 L2213.9088,730.6191 L2213.9088,732.7753 L2208.6432,732.7753 L2208.6432,735.4472 L2213.4088,735.4472 L2213.4088,737.6034 L2208.6432,737.6034 L2208.6432,740.8534 L2213.9088,740.8534 L2213.9088,743.0097 Z " fill="#000000"/>
+            <text fill="#000000" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacing" textLength="29.4551" x="2299.8438" y="733.0155">«FK»</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="170.4951" x="2229.3237" y="748.8407">data_group_permissions</text>
+            <line style="stroke:#181818;stroke-width:0.5;" x1="2170.94" x2="2426.6783" y1="757.1425" y2="757.1425"/>
+            <ellipse cx="2180.94" cy="770.7909" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="53.6006" x="2189.94" y="774.1376">id (PK)</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="27.4189" x="2243.5406" y="774.1376">: int</text>
+            <line style="stroke:#181818;stroke-width:1;" x1="2170.94" x2="2426.6783" y1="781.4394" y2="781.4394"/>
+            <polygon fill="#FFFF44" points="2180.94,790.0878,2184.94,794.0878,2180.94,798.0878,2176.94,794.0878" style="stroke:#B38D22;stroke-width:1;"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="185.5889" x="2189.94" y="798.4345">student_id (FK): String(20)</text>
+            <polygon fill="#FFFF44" points="2180.94,806.3847,2184.94,810.3847,2180.94,814.3847,2176.94,810.3847" style="stroke:#B38D22;stroke-width:1;"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="191.5498" x="2189.94" y="814.7314">granted_by (FK): String(20)</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="165.293" x="2189.94" y="831.0282">permission: String(100)</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="165.0127" x="2189.94" y="847.3251">created_at: TIMESTAMP</text>
+            <line style="stroke:#181818;stroke-width:1;" x1="2170.94" x2="2426.6783" y1="854.6269" y2="854.6269"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="245.7383" x="2175.94" y="871.622">&lt;unique&gt; (student_id, permission)</text>
+        </g>        <!--class Campus-->
+        <g class="entity" data-entity="Campus" data-source-line="104" data-uid="ent0011" id="entity_Campus">
+            <rect fill="#90EE90" height="80.5938" rx="3.5" ry="3.5" style="stroke:#181818;stroke-width:0.5;" width="203.6797" x="201.97" y="44.2969"/>
+            <ellipse cx="264.1223" cy="60.2969" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1;"/>
+            <path d="M268.2317,66.2969 L260.513,66.2969 L260.513,53.9063 L268.2317,53.9063 L268.2317,56.0625 L262.9661,56.0625 L262.9661,58.7344 L267.7317,58.7344 L267.7317,60.8906 L262.9661,60.8906 L262.9661,64.1406 L268.2317,64.1406 L268.2317,66.2969 Z " fill="#000000"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="70.875" x="284.6223" y="65.1436">campuses</text>
+            <line style="stroke:#181818;stroke-width:0.5;" x1="202.97" x2="404.6497" y1="76.2969" y2="76.2969"/>
+            <ellipse cx="212.97" cy="89.9453" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="53.6006" x="221.97" y="93.292">id (PK)</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="27.4189" x="275.5706" y="93.292">: int</text>
+            <line style="stroke:#181818;stroke-width:1;" x1="202.97" x2="404.6497" y1="100.5938" y2="100.5938"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="191.6797" x="207.97" y="117.5889">name: String(100) (unique)</text>
+        </g>        <!--class College-->
+        <g class="entity" data-entity="College" data-source-line="110" data-uid="ent0012" id="entity_College">
+            <rect fill="#90EE90" height="80.5938" rx="3.5" ry="3.5" style="stroke:#181818;stroke-width:0.5;" width="203.6797" x="507.97" y="242.6169"/>
+            <ellipse cx="576.8352" cy="258.6169" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1;"/>
+            <path d="M580.9446,264.6169 L573.2259,264.6169 L573.2259,252.2262 L580.9446,252.2262 L580.9446,254.3825 L575.679,254.3825 L575.679,257.0544 L580.4446,257.0544 L580.4446,259.2106 L575.679,259.2106 L575.679,262.4606 L580.9446,262.4606 L580.9446,264.6169 Z " fill="#000000"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="57.4492" x="597.3352" y="263.4636">colleges</text>
+            <line style="stroke:#181818;stroke-width:0.5;" x1="508.97" x2="710.6497" y1="274.6169" y2="274.6169"/>
+            <ellipse cx="518.97" cy="288.2653" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="53.6006" x="527.97" y="291.612">id (PK)</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="27.4189" x="581.5706" y="291.612">: int</text>
+            <line style="stroke:#181818;stroke-width:1;" x1="508.97" x2="710.6497" y1="298.9137" y2="298.9137"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="191.6797" x="513.97" y="315.9089">name: String(100) (unique)</text>
+        </g>        <!--class Classroom-->
+        <g class="entity" data-entity="Classroom" data-source-line="116" data-uid="ent0013" id="entity_Classroom">
+            <rect fill="#90EE90" height="162.0469" rx="3.5" ry="3.5" style="stroke:#181818;stroke-width:0.5;" width="345.6279" x="9" y="201.8869"/>
+            <ellipse cx="138.2778" cy="222.0197" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1;"/>
+            <path d="M142.3872,228.0197 L134.6685,228.0197 L134.6685,215.6291 L142.3872,215.6291 L142.3872,217.7853 L137.1216,217.7853 L137.1216,220.4572 L141.8872,220.4572 L141.8872,222.6134 L137.1216,222.6134 L137.1216,225.8634 L142.3872,225.8634 L142.3872,228.0197 Z " fill="#000000"/>
+            <text fill="#000000" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacing" textLength="29.4551" x="183.3364" y="218.0255">«FK»</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="78.5723" x="158.7778" y="233.8507">classrooms</text>
+            <line style="stroke:#181818;stroke-width:0.5;" x1="10" x2="353.6279" y1="242.1525" y2="242.1525"/>
+            <ellipse cx="20" cy="255.8009" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="53.6006" x="29" y="259.1476">id (PK)</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="79.6865" x="82.6006" y="259.1476">: String(50)</text>
+            <line style="stroke:#181818;stroke-width:1;" x1="10" x2="353.6279" y1="266.4494" y2="266.4494"/>
+            <polygon fill="#FFFF44" points="20,275.0978,24,279.0978,20,283.0978,16,279.0978" style="stroke:#B38D22;stroke-width:1;"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="137.0381" x="29" y="283.4445">campus_id (FK): int</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="144.6689" x="29" y="299.7414">building: String(100)</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="177.8506" x="29" y="316.0382">room_number: String(50)</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="86.5225" x="29" y="332.3351">capacity: int</text>
+            <line style="stroke:#181818;stroke-width:1;" x1="10" x2="353.6279" y1="339.6369" y2="339.6369"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="333.6279" x="15" y="356.632">&lt;unique&gt; (campus_id, building, room_number)</text>
+        </g>        <!--class StudySchedule-->
+        <g class="entity" data-entity="StudySchedule" data-source-line="131" data-uid="ent0014" id="entity_StudySchedule">
+            <rect fill="#FAFAD2" height="170.3438" rx="3.5" ry="3.5" style="stroke:#181818;stroke-width:0.5;" width="229.3486" x="137.14" y="449.0869"/>
+            <ellipse cx="189.6332" cy="469.2197" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1;"/>
+            <path d="M193.7425,475.2197 L186.0238,475.2197 L186.0238,462.8291 L193.7425,462.8291 L193.7425,464.9853 L188.4769,464.9853 L188.4769,467.6572 L193.2425,467.6572 L193.2425,469.8134 L188.4769,469.8134 L188.4769,473.0634 L193.7425,473.0634 L193.7425,475.2197 Z " fill="#000000"/>
+            <text fill="#000000" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacing" textLength="29.4551" x="253.3368" y="465.2255">«FK»</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="115.8623" x="210.1332" y="481.0507">study_schedules</text>
+            <line style="stroke:#181818;stroke-width:0.5;" x1="138.14" x2="365.4886" y1="489.3525" y2="489.3525"/>
+            <ellipse cx="148.14" cy="503.0009" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="53.6006" x="157.14" y="506.3476">id (PK)</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="27.4189" x="210.7406" y="506.3476">: int</text>
+            <line style="stroke:#181818;stroke-width:1;" x1="138.14" x2="365.4886" y1="513.6494" y2="513.6494"/>
+            <polygon fill="#FFFF44" points="148.14,522.2978,152.14,526.2978,148.14,530.2978,144.14,526.2978" style="stroke:#B38D22;stroke-width:1;"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="203.3486" x="157.14" y="530.6445">classroom_id (FK): String(50)</text>
+            <polygon fill="#FFFF44" points="148.14,538.5947,152.14,542.5947,148.14,546.5947,144.14,542.5947" style="stroke:#B38D22;stroke-width:1;"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="129.958" x="157.14" y="546.9414">college_id (FK): int</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="72.3037" x="157.14" y="563.2382">date: date</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="173.9541" x="157.14" y="579.5351">expected_headcount: int</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="165.0127" x="157.14" y="595.832">created_at: TIMESTAMP</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="169.5928" x="157.14" y="612.1289">updated_at: TIMESTAMP</text>
+        </g>        <!--class CheckInTask-->
+        <g class="entity" data-entity="CheckInTask" data-source-line="142" data-uid="ent0015" id="entity_CheckInTask">
+            <rect fill="#FAFAD2" height="121.4531" rx="3.5" ry="3.5" style="stroke:#181818;stroke-width:0.5;" width="211.5889" x="1023.02" y="737.1669"/>
+            <ellipse cx="1072.3071" cy="757.2997" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1;"/>
+            <path d="M1076.4165,763.2997 L1068.6977,763.2997 L1068.6977,750.9091 L1076.4165,750.9091 L1076.4165,753.0653 L1071.1509,753.0653 L1071.1509,755.7372 L1075.9165,755.7372 L1075.9165,757.8934 L1071.1509,757.8934 L1071.1509,761.1434 L1076.4165,761.1434 L1076.4165,763.2997 Z " fill="#000000"/>
+            <text fill="#000000" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacing" textLength="29.4551" x="1130.3369" y="753.3055">«FK»</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="104.5146" x="1092.8071" y="769.1307">check_in_tasks</text>
+            <line style="stroke:#181818;stroke-width:0.5;" x1="1024.02" x2="1233.6089" y1="777.4325" y2="777.4325"/>
+            <ellipse cx="1034.02" cy="791.0809" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="53.6006" x="1043.02" y="794.4276">id (PK)</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="27.4189" x="1096.6206" y="794.4276">: int</text>
+            <line style="stroke:#181818;stroke-width:1;" x1="1024.02" x2="1233.6089" y1="801.7294" y2="801.7294"/>
+            <polygon fill="#FFFF44" points="1034.02,810.3778,1038.02,814.3778,1034.02,818.3778,1030.02,814.3778" style="stroke:#B38D22;stroke-width:1;"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="142.543" x="1043.02" y="818.7245">schedule_id (FK): int</text>
+            <polygon fill="#FFFF44" points="1034.02,826.6747,1038.02,830.6747,1034.02,834.6747,1030.02,830.6747" style="stroke:#B38D22;stroke-width:1;"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="185.5889" x="1043.02" y="835.0214">student_id (FK): String(20)</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="165.0127" x="1043.02" y="851.3182">created_at: TIMESTAMP</text>
+        </g>        <!--class CheckInData-->
+        <g class="entity" data-entity="CheckInData" data-source-line="150" data-uid="ent0016" id="entity_CheckInData">
+            <rect fill="#FAFAD2" height="186.6406" rx="3.5" ry="3.5" style="stroke:#181818;stroke-width:0.5;" width="218.7051" x="1019.46" y="968.2169"/>
+            <ellipse cx="1074.92" cy="988.3497" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1;"/>
+            <path d="M1079.0293,994.3497 L1071.3106,994.3497 L1071.3106,981.9591 L1079.0293,981.9591 L1079.0293,984.1153 L1073.7637,984.1153 L1073.7637,986.7872 L1078.5293,986.7872 L1078.5293,988.9434 L1073.7637,988.9434 L1073.7637,992.1934 L1079.0293,992.1934 L1079.0293,994.3497 Z " fill="#000000"/>
+            <text fill="#000000" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacing" textLength="29.4551" x="1130.335" y="984.3555">«FK»</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="99.2852" x="1095.42" y="1000.1807">check_in_data</text>
+            <line style="stroke:#181818;stroke-width:0.5;" x1="1020.46" x2="1237.1651" y1="1008.4825" y2="1008.4825"/>
+            <ellipse cx="1030.46" cy="1022.1309" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="53.6006" x="1039.46" y="1025.4776">id (PK)</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="27.4189" x="1093.0606" y="1025.4776">: int</text>
+            <line style="stroke:#181818;stroke-width:1;" x1="1020.46" x2="1237.1651" y1="1032.7794" y2="1032.7794"/>
+            <polygon fill="#FFFF44" points="1030.46,1041.4278,1034.46,1045.4278,1030.46,1049.4278,1026.46,1045.4278" style="stroke:#B38D22;stroke-width:1;"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="192.7051" x="1039.46" y="1049.7745">task_id (PK, FK, unique): int</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="80.5479" x="1039.46" y="1066.0714">data1: Text</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="80.5479" x="1039.46" y="1082.3682">data2: Text</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="97.8496" x="1039.46" y="1098.6651">remarks: Text</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="122.7051" x="1039.46" y="1114.962">status: String(20)</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="165.0127" x="1039.46" y="1131.2589">created_at: TIMESTAMP</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="169.5928" x="1039.46" y="1147.5557">updated_at: TIMESTAMP</text>
+        </g>        <!--class InspectionTask-->
+        <g class="entity" data-entity="InspectionTask" data-source-line="162" data-uid="ent0017" id="entity_InspectionTask">
+            <rect fill="#FAFAD2" height="186.6406" rx="3.5" ry="3.5" style="stroke:#181818;stroke-width:0.5;" width="229.3486" x="615.14" y="704.5769"/>
+            <ellipse cx="667.6468" cy="724.7097" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1;"/>
+            <path d="M671.7562,730.7097 L664.0375,730.7097 L664.0375,718.3191 L671.7562,718.3191 L671.7562,720.4753 L666.4906,720.4753 L666.4906,723.1472 L671.2562,723.1472 L671.2562,725.3034 L666.4906,725.3034 L666.4906,728.5534 L671.7562,728.5534 L671.7562,730.7097 Z " fill="#000000"/>
+            <text fill="#000000" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacing" textLength="29.4551" x="731.3368" y="720.7155">«FK»</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="115.835" x="688.1468" y="736.5407">inspection_tasks</text>
+            <line style="stroke:#181818;stroke-width:0.5;" x1="616.14" x2="843.4886" y1="744.8425" y2="744.8425"/>
+            <ellipse cx="626.14" cy="758.4909" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="53.6006" x="635.14" y="761.8376">id (PK)</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="27.4189" x="688.7406" y="761.8376">: int</text>
+            <line style="stroke:#181818;stroke-width:1;" x1="616.14" x2="843.4886" y1="769.1394" y2="769.1394"/>
+            <polygon fill="#FFFF44" points="626.14,777.7878,630.14,781.7878,626.14,785.7878,622.14,781.7878" style="stroke:#B38D22;stroke-width:1;"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="185.5889" x="635.14" y="786.1345">student_id (FK): String(20)</text>
+            <polygon fill="#FFFF44" points="626.14,794.0847,630.14,798.0847,626.14,802.0847,622.14,798.0847" style="stroke:#B38D22;stroke-width:1;"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="203.3486" x="635.14" y="802.4314">classroom_id (FK): String(50)</text>
+            <polygon fill="#FFFF44" points="626.14,810.3816,630.14,814.3816,626.14,818.3816,622.14,814.3816" style="stroke:#B38D22;stroke-width:1;"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="129.958" x="635.14" y="818.7282">college_id (FK): int</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="72.3037" x="635.14" y="835.0251">date: date</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="143.5547" x="635.14" y="851.322">time_slot: String(20)</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="173.9541" x="635.14" y="867.6189">expected_headcount: int</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="165.0127" x="635.14" y="883.9157">created_at: TIMESTAMP</text>
+        </g>        <!--class InspectionData-->
+        <g class="entity" data-entity="InspectionData" data-source-line="174" data-uid="ent0018" id="entity_InspectionData">
+            <rect fill="#FAFAD2" height="186.6406" rx="3.5" ry="3.5" style="stroke:#181818;stroke-width:0.5;" width="218.7051" x="620.46" y="968.2169"/>
+            <ellipse cx="670.2598" cy="988.3497" fill="#ADD1B2" rx="11" ry="11" style="stroke:#181818;stroke-width:1;"/>
+            <path d="M674.3692,994.3497 L666.6504,994.3497 L666.6504,981.9591 L674.3692,981.9591 L674.3692,984.1153 L669.1036,984.1153 L669.1036,986.7872 L673.8692,986.7872 L673.8692,988.9434 L669.1036,988.9434 L669.1036,992.1934 L674.3692,992.1934 L674.3692,994.3497 Z " fill="#000000"/>
+            <text fill="#000000" font-family="sans-serif" font-size="12" font-style="italic" lengthAdjust="spacing" textLength="29.4551" x="731.335" y="984.3555">«FK»</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="110.6055" x="690.7598" y="1000.1807">inspection_data</text>
+            <line style="stroke:#181818;stroke-width:0.5;" x1="621.46" x2="838.1651" y1="1008.4825" y2="1008.4825"/>
+            <ellipse cx="631.46" cy="1022.1309" fill="#84BE84" rx="3" ry="3" style="stroke:#038048;stroke-width:1;"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" font-weight="bold" lengthAdjust="spacing" textLength="53.6006" x="640.46" y="1025.4776">id (PK)</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="27.4189" x="694.0606" y="1025.4776">: int</text>
+            <line style="stroke:#181818;stroke-width:1;" x1="621.46" x2="838.1651" y1="1032.7794" y2="1032.7794"/>
+            <polygon fill="#FFFF44" points="631.46,1041.4278,635.46,1045.4278,631.46,1049.4278,627.46,1045.4278" style="stroke:#B38D22;stroke-width:1;"/>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="192.7051" x="640.46" y="1049.7745">task_id (PK, FK, unique): int</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="80.5479" x="640.46" y="1066.0714">data1: Text</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="80.5479" x="640.46" y="1082.3682">data2: Text</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="97.8496" x="640.46" y="1098.6651">remarks: Text</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="122.7051" x="640.46" y="1114.962">status: String(20)</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="165.0127" x="640.46" y="1131.2589">created_at: TIMESTAMP</text>
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="169.5928" x="640.46" y="1147.5557">updated_at: TIMESTAMP</text>
+        </g>        <!--link User to UserProfile-->
+        <g class="link" data-entity-1="User" data-entity-2="UserProfile" data-source-line="189" data-uid="lnk19" id="link_User_UserProfile">
+            <path codeLine="189" d="M1509.6826,284.9718 C1341.8726,289.2718 1028.59,308.9069 770.81,393.9369 C725.75,408.7969 686.6672,428.7032 647.2272,452.6632" fill="none" id="User-UserProfile" style="stroke:#454645;stroke-width:1;"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="1513.5788" x2="1513.7838" y1="280.8707" y2="288.868"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="1510.5798" x2="1510.7848" y1="280.9475" y2="288.9449"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="1509.6826" x2="1517.68" y1="284.9718" y2="284.7669"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="645.8854" x2="641.7318" y1="458.1587" y2="451.3215"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="648.4494" x2="644.2957" y1="456.601" y2="449.7638"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="647.2272" x2="640.39" y1="452.6632" y2="456.8169"/>
+            <text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="51.3018" x="771.81" y="407.0038">has one</text>
+        </g>        <!--link User to UserCredential-->
+        <g class="link" data-entity-1="User" data-entity-2="UserCredential" data-source-line="190" data-uid="lnk20" id="link_User_UserCredential">
+            <path codeLine="190" d="M1509.9263,294.4447 C1416.9163,306.4947 1293.06,332.6869 1193.81,393.9369 C1158.36,415.8169 1132.53,445.0842 1111.16,474.9042" fill="none" id="User-UserCredential" style="stroke:#454645;stroke-width:1;"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="1513.3792" x2="1514.4071" y1="289.964" y2="297.8977"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="1510.4041" x2="1511.4319" y1="290.3494" y2="298.2831"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="1509.9263" x2="1517.86" y1="294.4447" y2="293.4169"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="1112.0813" x2="1105.5787" y1="480.4856" y2="475.8256"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="1113.8288" x2="1107.3262" y1="478.0471" y2="473.3871"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="1111.16" x2="1106.5" y1="474.9042" y2="481.4069"/>
+            <text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="51.3018" x="1194.81" y="407.0038">has one</text>
+        </g>        <!--link User to PaymentInfo-->
+        <g class="link" data-entity-1="User" data-entity-2="PaymentInfo" data-source-line="191" data-uid="lnk21" id="link_User_PaymentInfo">
+            <path codeLine="191" d="M1591.1122,359.0825 C1572.0722,394.2625 1556.5087,423.0017 1537.4687,458.1717" fill="none" id="User-PaymentInfo" style="stroke:#454645;stroke-width:1;"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="1589.4983" x2="1596.5339" y1="353.6608" y2="357.4686"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="1588.0703" x2="1595.106" y1="356.2992" y2="360.107"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="1591.1122" x2="1594.92" y1="359.0825" y2="352.0469"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="1539.0819" x2="1532.0467" y1="463.5936" y2="459.7849"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="1540.5102" x2="1533.475" y1="460.9554" y2="457.1467"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="1537.4687" x2="1533.66" y1="458.1717" y2="465.2069"/>
+            <text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="51.3018" x="1569.81" y="407.0038">has one</text>
+        </g>        <!--link User to CollectedInfo-->
+        <g class="link" data-entity-1="User" data-entity-2="CollectedInfo" data-source-line="192" data-uid="lnk22" id="link_User_CollectedInfo">
+            <path codeLine="192" d="M1677.5969,367.8503 C1692.5369,395.2503 1692.7599,395.6552 1708.8199,425.0952" fill="none" id="User-CollectedInfo" style="stroke:#454645;stroke-width:1;"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="1672.8097" x2="1663.7122" y1="359.0706" y2="354.9192"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="1672.8097" x2="1674.2478" y1="359.0706" y2="349.1746"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="1672.8097" x2="1668.98" y1="359.0706" y2="352.0469"/>
+            <ellipse cx="1675.682" cy="364.3384" fill="none" rx="4" ry="4" style="stroke:#454645;stroke-width:1;"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="1713.6088" x2="1722.7072" y1="433.8739" y2="438.0235"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="1713.6088" x2="1712.1728" y1="433.8739" y2="443.7702"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="1713.6088" x2="1717.44" y1="433.8739" y2="440.8969"/>
+            <ellipse cx="1710.7355" cy="428.6067" fill="none" rx="4" ry="4" style="stroke:#454645;stroke-width:1;"/>
+            <text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="63.6733" x="1700.81" y="407.0038">has many</text>
+        </g>        <!--link User to Blacklist-->
+        <g class="link" data-entity-1="User" data-entity-2="Blacklist" data-source-line="193" data-uid="lnk23" id="link_User_Blacklist">
+            <path codeLine="193" d="M1752.8332,356.4041 C1798.3132,383.7941 1844.22,411.6169 1891.81,440.9369 C1912.86,453.8969 1922.7956,460.052 1943.8556,473.272" fill="none" id="User-Blacklist" style="stroke:#454645;stroke-width:1;"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="1747.3429" x2="1751.4702" y1="357.7671" y2="350.9139"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="1749.9129" x2="1754.0401" y1="359.3148" y2="352.4617"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="1752.8332" x2="1745.98" y1="356.4041" y2="352.2769"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="1947.2435" x2="1956.56" y1="475.3986" y2="481.2469"/>
+            <ellipse cx="1947.2435" cy="475.3986" fill="none" rx="4" ry="4" style="stroke:#454645;stroke-width:1;"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="1955.2988" x2="1951.0455" y1="475.7324" y2="482.5081"/>
+            <text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="59.7188" x="1842.81" y="407.0038">can be in</text>
+        </g>        <!--link User to GroupMember-->
+        <g class="link" data-entity-1="User" data-entity-2="GroupMember" data-source-line="196" data-uid="lnk24" id="link_User_GroupMember">
+            <path codeLine="196" d="M1763.9035,284.7392 C1915.3635,288.7992 2170.74,308.2769 2385.81,393.9369 C2417.44,406.5369 2434.0773,414.8657 2462.2773,434.3757" fill="none" id="User-GroupMember" style="stroke:#454645;stroke-width:1;"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="1753.9071" x2="1745.7492" y1="284.4712" y2="290.2547"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="1753.9071" x2="1746.0708" y1="284.4712" y2="278.259"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="1753.9071" x2="1745.91" y1="284.4712" y2="284.2569"/>
+            <ellipse cx="1759.905" cy="284.632" fill="none" rx="4" ry="4" style="stroke:#454645;stroke-width:1;"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="2470.501" x2="2480.4937" y1="440.0653" y2="439.6827"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="2470.501" x2="2473.6663" y1="440.0653" y2="449.5511"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="2470.501" x2="2477.08" y1="440.0653" y2="444.6169"/>
+            <ellipse cx="2465.5668" cy="436.6515" fill="none" rx="4" ry="4" style="stroke:#454645;stroke-width:1;"/>
+            <text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="68.2627" x="2421.81" y="407.0038">belongs to</text>
+        </g>        <!--link Group to GroupMember-->
+        <g class="link" data-entity-1="Group" data-entity-2="GroupMember" data-source-line="197" data-uid="lnk25" id="link_Group_GroupMember">
+            <path codeLine="197" d="M2583.81,357.8669 C2583.81,388.7369 2583.81,391.7869 2583.81,426.6969" fill="none" id="Group-GroupMember" style="stroke:#454645;stroke-width:1;"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="2583.81" x2="2577.81" y1="347.8669" y2="339.8669"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="2583.81" x2="2589.81" y1="347.8669" y2="339.8669"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="2583.81" x2="2583.81" y1="347.8669" y2="339.8669"/>
+            <ellipse cx="2583.81" cy="353.8669" fill="none" rx="4" ry="4" style="stroke:#454645;stroke-width:1;"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="2583.81" x2="2589.81" y1="436.6969" y2="444.6969"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="2583.81" x2="2577.81" y1="436.6969" y2="444.6969"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="2583.81" x2="2583.81" y1="436.6969" y2="444.6969"/>
+            <ellipse cx="2583.81" cy="430.6969" fill="none" rx="4" ry="4" style="stroke:#454645;stroke-width:1;"/>
+            <text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="22.9785" x="2584.81" y="407.0038">has</text>
+        </g>        <!--reverse link User to DataGroupPermission-->
+        <g class="link" data-entity-1="User" data-entity-2="DataGroupPermission" data-source-line="198" data-uid="lnk26" id="link_User_DataGroupPermission">
+            <path codeLine="198" d="M1763.9913,286.9165 C1888.2413,295.0765 2067.01,325.7869 2185.81,440.9369 C2225.45,479.3469 2262.34,624.1069 2282.61,716.7669" fill="none" id="User-backto-DataGroupPermission" style="stroke:#454645;stroke-width:1;stroke-dasharray:7,7;"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="1754.0128" x2="1745.6368" y1="286.2611" y2="291.724"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="1754.0128" x2="1746.4232" y1="286.2611" y2="279.7498"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="1754.0128" x2="1746.03" y1="286.2611" y2="285.7369"/>
+            <ellipse cx="1759.9999" cy="286.6543" fill="none" rx="4" ry="4" style="stroke:#454645;stroke-width:1;"/>
+            <text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="50.8955" x="2260.81" y="538.8238">grantee</text>
+        </g>        <!--reverse link User to DataGroupPermission-->
+        <g class="link" data-entity-1="User" data-entity-2="DataGroupPermission" data-source-line="199" data-uid="lnk27" id="link_User_DataGroupPermission">
+            <path codeLine="199" d="M1763.9271,294.0948 C1941.4371,310.1148 2252.35,349.9769 2319.81,440.9369 C2378.55,520.1169 2356.08,638.5269 2330.71,716.7269" fill="none" id="User-backto-DataGroupPermission-1" style="stroke:#454645;stroke-width:1;stroke-dasharray:7,7;"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="1753.9676" x2="1745.4607" y1="293.1959" y2="298.4526"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="1753.9676" x2="1746.5393" y1="293.1959" y2="286.5012"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="1753.9676" x2="1746" y1="293.1959" y2="292.4769"/>
+            <ellipse cx="1759.9433" cy="293.7352" fill="none" rx="4" ry="4" style="stroke:#454645;stroke-width:1;"/>
+            <text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="48.2422" x="2357.81" y="538.8238">granter</text>
+        </g>        <!--link Campus to Classroom-->
+        <g class="link" data-entity-1="Campus" data-entity-2="Classroom" data-source-line="202" data-uid="lnk28" id="link_Campus_Classroom">
+            <path codeLine="202" d="M269.6276,140.6043 C255.9776,162.5643 257.5208,160.0885 241.1708,186.3985" fill="none" id="Campus-Classroom" style="stroke:#454645;stroke-width:1;"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="274.9067" x2="274.0342" y1="132.1113" y2="122.1494"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="274.9067" x2="284.2258" y1="132.1113" y2="128.4843"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="274.9067" x2="279.13" y1="132.1113" y2="125.3169"/>
+            <ellipse cx="271.7392" cy="137.2071" fill="none" rx="4" ry="4" style="stroke:#454645;stroke-width:1;"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="235.8926" x2="236.7661" y1="194.892" y2="204.8538"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="235.8926" x2="226.5739" y1="194.892" y2="198.5199"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="235.8926" x2="231.67" y1="194.892" y2="201.6869"/>
+            <ellipse cx="239.0595" cy="189.7959" fill="none" rx="4" ry="4" style="stroke:#454645;stroke-width:1;"/>
+            <text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="55.0278" x="258.81" y="167.9538">contains</text>
+        </g>        <!--link Campus to UserProfile-->
+        <g class="link" data-entity-1="Campus" data-entity-2="UserProfile" data-source-line="203" data-uid="lnk29" id="link_Campus_UserProfile">
+            <path codeLine="203" d="M337.9131,140.7143 C351.3431,162.8943 358.55,175.8369 371.81,201.8869 C407.5,271.9569 408.89,292.9969 442.81,363.9369 C457.54,394.7169 466.2947,412.1988 481.4947,441.1588" fill="none" id="Campus-UserProfile" style="stroke:#454645;stroke-width:1;"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="332.7336" x2="323.4575" y1="132.1602" y2="128.4246"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="332.7336" x2="333.7225" y1="132.1602" y2="122.2092"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="332.7336" x2="328.59" y1="132.1602" y2="125.3169"/>
+            <ellipse cx="335.8413" cy="137.2926" fill="none" rx="4" ry="4" style="stroke:#454645;stroke-width:1;"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="486.1421" x2="495.1727" y1="450.0133" y2="454.3084"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="486.1421" x2="484.5473" y1="450.0133" y2="459.8853"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="486.1421" x2="489.86" y1="450.0133" y2="457.0969"/>
+            <ellipse cx="483.3537" cy="444.7006" fill="none" rx="4" ry="4" style="stroke:#454645;stroke-width:1;"/>
+            <text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="46.5474" x="443.81" y="287.4738">locates</text>
+        </g>        <!--link College to UserProfile-->
+        <g class="link" data-entity-1="College" data-entity-2="UserProfile" data-source-line="204" data-uid="lnk30" id="link_College_UserProfile">
+            <path codeLine="204" d="M565.7983,338.0101 C551.1283,357.8501 546.08,368.5369 537.81,393.9369 C531.36,413.7369 529.3425,417.9785 528.3225,438.7585" fill="none" id="College-UserProfile" style="stroke:#454645;stroke-width:1;"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="571.7437" x2="571.6756" y1="329.9694" y2="319.9696"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="571.7437" x2="581.3244" y1="329.9694" y2="327.1041"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="571.7437" x2="576.5" y1="329.9694" y2="323.5369"/>
+            <ellipse cx="568.1765" cy="334.7938" fill="none" rx="4" ry="4" style="stroke:#454645;stroke-width:1;"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="527.8322" x2="533.4328" y1="448.7465" y2="457.031"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="527.8322" x2="521.4472" y1="448.7465" y2="456.4427"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="527.8322" x2="527.44" y1="448.7465" y2="456.7369"/>
+            <ellipse cx="528.1264" cy="442.7537" fill="none" rx="4" ry="4" style="stroke:#454645;stroke-width:1;"/>
+            <text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="68.2627" x="538.81" y="407.0038">belongs to</text>
+        </g>        <!--link College to StudySchedule-->
+        <g class="link" data-entity-1="College" data-entity-2="StudySchedule" data-source-line="208" data-uid="lnk31" id="link_College_StudySchedule">
+            <path codeLine="208" d="M537.8718,333.809 C492.1618,365.529 441.23,400.9069 383.81,440.9369 C378.31,444.7769 387.4235,438.395 381.7435,442.365" fill="none" id="College-StudySchedule" style="stroke:#454645;stroke-width:1;"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="546.0875" x2="549.2393" y1="328.1078" y2="318.6175"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="546.0875" x2="556.0807" y1="328.1078" y2="328.4763"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="546.0875" x2="552.66" y1="328.1078" y2="323.5469"/>
+            <ellipse cx="541.1581" cy="331.5285" fill="none" rx="4" ry="4" style="stroke:#454645;stroke-width:1;"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="373.5471" x2="370.4273" y1="448.0938" y2="457.5947"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="373.5471" x2="363.5527" y1="448.0938" y2="447.759"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="373.5471" x2="366.99" y1="448.0938" y2="452.6769"/>
+            <ellipse cx="378.4649" cy="444.6565" fill="none" rx="4" ry="4" style="stroke:#454645;stroke-width:1;"/>
+            <text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="65.0317" x="447.81" y="407.0038">schedules</text>
+        </g>        <!--link Classroom to StudySchedule-->
+        <g class="link" data-entity-1="Classroom" data-entity-2="StudySchedule" data-source-line="209" data-uid="lnk32" id="link_Classroom_StudySchedule">
+            <path codeLine="209" d="M209.2128,381.5076 C216.8028,408.5576 215.5754,404.1567 223.2554,431.5167" fill="none" id="Classroom-StudySchedule" style="stroke:#454645;stroke-width:1;"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="206.5113" x2="198.5731" y1="371.8794" y2="365.7978"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="206.5113" x2="210.1269" y1="371.8794" y2="362.5559"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="206.5113" x2="204.35" y1="371.8794" y2="364.1769"/>
+            <ellipse cx="208.1322" cy="377.6563" fill="none" rx="4" ry="4" style="stroke:#454645;stroke-width:1;"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="225.9579" x2="233.8967" y1="441.1446" y2="447.2253"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="225.9579" x2="222.3433" y1="441.1446" y2="450.4684"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="225.9579" x2="228.12" y1="441.1446" y2="448.8469"/>
+            <ellipse cx="224.3364" cy="435.3678" fill="none" rx="4" ry="4" style="stroke:#454645;stroke-width:1;"/>
+            <text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="34.8359" x="217.81" y="407.0038">hosts</text>
+        </g>        <!--link College to InspectionTask-->
+        <g class="link" data-entity-1="College" data-entity-2="InspectionTask" data-source-line="210" data-uid="lnk33" id="link_College_InspectionTask">
+            <path codeLine="210" d="M669.8738,336.1884 C689.2138,355.2984 696.8,367.2169 707.81,393.9369 C749.08,494.0069 750.0217,602.1171 743.1117,686.3471" fill="none" id="College-InspectionTask" style="stroke:#454645;stroke-width:1;stroke-dasharray:7,7;"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="662.7606" x2="652.8528" y1="329.1598" y2="327.8048"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="662.7606" x2="661.2872" y1="329.1598" y2="319.2689"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="662.7606" x2="657.07" y1="329.1598" y2="323.5369"/>
+            <ellipse cx="667.0285" cy="333.377" fill="none" rx="4" ry="4" style="stroke:#454645;stroke-width:1;"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="742.2941" x2="747.6199" y1="696.3137" y2="704.7775"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="742.2941" x2="735.6601" y1="696.3137" y2="703.7963"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="742.2941" x2="741.64" y1="696.3137" y2="704.2869"/>
+            <ellipse cx="742.7847" cy="690.3337" fill="none" rx="4" ry="4" style="stroke:#454645;stroke-width:1;"/>
+            <text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="48.3882" x="746.81" y="538.8238">assigns</text>
+        </g>        <!--link Classroom to InspectionTask-->
+        <g class="link" data-entity-1="Classroom" data-entity-2="InspectionTask" data-source-line="211" data-uid="lnk34" id="link_Classroom_InspectionTask">
+            <path codeLine="211" d="M92.3428,378.4168 C74.5928,401.4168 69.22,413.5069 59.81,440.9369 C32.91,519.4069 8.85,562.1269 59.81,627.5769 C127.4,714.3669 424.0711,761.5281 597.0911,782.5281" fill="none" id="Classroom-InspectionTask" style="stroke:#454645;stroke-width:1;stroke-dasharray:7,7;"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="98.4523" x2="98.59" y1="370.5002" y2="360.5011"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="98.4523" x2="108.09" y1="370.5002" y2="367.8326"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="98.4523" x2="103.34" y1="370.5002" y2="364.1669"/>
+            <ellipse cx="94.7866" cy="375.2502" fill="none" rx="4" ry="4" style="stroke:#454645;stroke-width:1;"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="607.0183" x2="615.6829" y1="783.733" y2="778.7406"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="607.0183" x2="614.2371" y1="783.733" y2="790.6532"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="607.0183" x2="614.96" y1="783.733" y2="784.6969"/>
+            <ellipse cx="601.062" cy="783.01" fill="none" rx="4" ry="4" style="stroke:#454645;stroke-width:1;"/>
+            <text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="58.5889" x="60.81" y="538.8238">occurs in</text>
+        </g>        <!--link User to CheckInTask-->
+        <g class="link" data-entity-1="User" data-entity-2="CheckInTask" data-source-line="214" data-uid="lnk35" id="link_User_CheckInTask">
+            <path codeLine="214" d="M1500.6868,317.1414 C1426.8068,340.4914 1350.53,375.3969 1289.81,440.9369 C1229.71,505.8069 1257.35,547.0369 1220.81,627.5769 C1203.95,664.7469 1191.1455,689.2772 1173.0655,721.1772" fill="none" id="User-CheckInTask" style="stroke:#454645;stroke-width:1;"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="1510.2219" x2="1516.0418" y1="314.1278" y2="305.9958"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="1510.2219" x2="1519.6582" y1="314.1278" y2="317.4379"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="1510.2219" x2="1517.85" y1="314.1278" y2="311.7169"/>
+            <ellipse cx="1504.5009" cy="315.9359" fill="none" rx="4" ry="4" style="stroke:#454645;stroke-width:1;"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="1168.1347" x2="1169.4099" y1="729.877" y2="739.7954"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="1168.1347" x2="1158.9701" y1="729.877" y2="733.8784"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="1168.1347" x2="1164.19" y1="729.877" y2="736.8369"/>
+            <ellipse cx="1171.0931" cy="724.6571" fill="none" rx="4" ry="4" style="stroke:#454645;stroke-width:1;"/>
+            <text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="58.9063" x="1290.81" y="538.8238">performs</text>
+        </g>        <!--link User to InspectionTask-->
+        <g class="link" data-entity-1="User" data-entity-2="InspectionTask" data-source-line="215" data-uid="lnk36" id="link_User_InspectionTask">
+            <path codeLine="215" d="M1499.7218,295.221 C1310.7318,313.301 962.11,356.6969 866.81,440.9369 C801.22,498.9169 835.37,545.9169 803.81,627.5769 C794.1,652.7069 789.9866,663.0881 779.1866,687.8481" fill="none" id="User-InspectionTask" style="stroke:#454645;stroke-width:1;"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="1509.6764" x2="1517.0686" y1="294.2687" y2="287.5341"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="1509.6764" x2="1518.2114" y1="294.2687" y2="299.4796"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="1509.6764" x2="1517.64" y1="294.2687" y2="293.5069"/>
+            <ellipse cx="1503.7036" cy="294.8401" fill="none" rx="4" ry="4" style="stroke:#454645;stroke-width:1;"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="775.1885" x2="777.4896" y1="697.0141" y2="706.7457"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="775.1885" x2="766.4904" y1="697.0141" y2="701.948"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="775.1885" x2="771.99" y1="697.0141" y2="704.3469"/>
+            <ellipse cx="777.5873" cy="691.5145" fill="none" rx="4" ry="4" style="stroke:#454645;stroke-width:1;"/>
+            <text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="58.9063" x="867.81" y="538.8238">performs</text>
+        </g>        <!--link StudySchedule to CheckInTask-->
+        <g class="link" data-entity-1="StudySchedule" data-entity-2="CheckInTask" data-source-line="218" data-uid="lnk37" id="link_StudySchedule_CheckInTask">
+            <path codeLine="218" d="M382.8824,627.8611 C388.5424,630.6711 378.11,625.2669 383.81,627.5769 C583.24,708.3969 653.13,652.1069 861.81,704.5769 C915.68,718.1169 957.2307,731.5764 1005.6807,749.2564" fill="none" id="StudySchedule-CheckInTask" style="stroke:#454645;stroke-width:1;"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="373.9255" x2="364.0919" y1="623.4143" y2="625.231"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="373.9255" x2="369.4281" y1="623.4143" y2="614.4827"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="373.9255" x2="366.76" y1="623.4143" y2="619.8569"/>
+            <ellipse cx="379.2997" cy="626.0824" fill="none" rx="4" ry="4" style="stroke:#454645;stroke-width:1;"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="1015.0747" x2="1024.6468" y1="752.6845" y2="749.7904"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="1015.0747" x2="1020.5332" y1="752.6845" y2="761.0633"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="1015.0747" x2="1022.59" y1="752.6845" y2="755.4269"/>
+            <ellipse cx="1009.4383" cy="750.6277" fill="none" rx="4" ry="4" style="stroke:#454645;stroke-width:1;"/>
+            <text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="65.6665" x="579.81" y="670.6438">generates</text>
+        </g>        <!--link CheckInTask to CheckInData-->
+        <g class="link" data-entity-1="CheckInTask" data-entity-2="CheckInData" data-source-line="219" data-uid="lnk38" id="link_CheckInTask_CheckInData">
+            <path codeLine="219" d="M1128.81,866.9169 C1128.81,899.2069 1128.81,923.7269 1128.81,959.9569" fill="none" id="CheckInTask-CheckInData" style="stroke:#454645;stroke-width:1;"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="1124.81" x2="1132.81" y1="862.9169" y2="862.9169"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="1124.81" x2="1132.81" y1="865.9169" y2="865.9169"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="1128.81" x2="1128.81" y1="866.9169" y2="858.9169"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="1132.81" x2="1124.81" y1="963.9569" y2="963.9569"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="1132.81" x2="1124.81" y1="960.9569" y2="960.9569"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="1128.81" x2="1128.81" y1="959.9569" y2="967.9569"/>
+            <text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="22.9785" x="1129.81" y="934.2838">has</text>
+        </g>        <!--link InspectionTask to InspectionData-->
+        <g class="link" data-entity-1="InspectionTask" data-entity-2="InspectionData" data-source-line="220" data-uid="lnk39" id="link_InspectionTask_InspectionData">
+            <path codeLine="220" d="M729.81,899.5069 C729.81,924.3569 729.81,935.2069 729.81,960.0469" fill="none" id="InspectionTask-InspectionData" style="stroke:#454645;stroke-width:1;"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="725.81" x2="733.81" y1="895.5069" y2="895.5069"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="725.81" x2="733.81" y1="898.5069" y2="898.5069"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="729.81" x2="729.81" y1="899.5069" y2="891.5069"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="733.81" x2="725.81" y1="964.0469" y2="964.0469"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="733.81" x2="725.81" y1="961.0469" y2="961.0469"/>
+            <line style="stroke:#454645;stroke-width:1;" x1="729.81" x2="729.81" y1="960.0469" y2="968.0469"/>
+            <text fill="#000000" font-family="sans-serif" font-size="13" lengthAdjust="spacing" textLength="22.9785" x="730.81" y="934.2838">has</text>
+        </g>
+        <g class="caption" data-source-line="4">
+            <text fill="#000000" font-family="sans-serif" font-size="14" lengthAdjust="spacing" textLength="223.1791" x="1246.1943" y="1174.8526">基于提供的 SQLAlchemy 模型生成</text>
+        </g>        <!--SRC=[tLXBZnD74BxxLrIyKh0tQmGeN2o21Cj3gmLbixivH54qQiyquzREJ0_TCm67vGHHo6C11P02A3noYBXa5Oa310VoPpms_8jKzupdjNPiuprb3uYkBdTzzTMZg-S0D1eDUBlx9jfzq7lPVVVRBz7FF_MVl8Z-lgLsAXy4RUfI-9gr1F62Ii02XqArV-_F_ivkzEfEzEtpmVDkzF0Dr4wlmob6R47SUhLY4ZzWt8DgzFXLxzND_gtRlJSF1m-kmyPdvquu9fxPWVwpfz6Z7mTt7_TltAvMAWSqacZtKU_r7GNch- -X5jjv-_HPNOD1dKzc-TFwaFuDxZxhttZHV_8o-kSQr3wNLC0o5xIUQK3ocrbiK0z9wK0rnFDa5OW4VVAnOskhJP11QA62mQpZns7X7BFRmKadf72b0l0HB2vc-r1RMwqlBZPX8n3Cisj73jLH1vq6y8XBK_bHBRUfPr6H2WzheIae2QXbaA09coldJszidZY_XlBGjqR8hrOAq0rVy0lCePaBQx40FJcpEWtw9JWppeC5C8dhXr9hejPG9zxYZaDjckqnJ3G0lyqzMZhiuiMIO3hNa1Y5an4dysuvbUs7WpwHyX8Nbj4cierGwELW6dG-wRZwVEy2ryZMOi4AhlS3bg0cyvbIBUJGuKDnlX04x8LkAvT9SNenQGXgCnbGPCdmEHV3g4nqIKVJL2gfKyj3qGItSaKG6qjo9-zkBdaIHvbl4CiILCfqu-EZQYEHQXnfI1pYsI5HsQQbwKbnDgbamKqloFIvpJmaGuPEC5MvvQXeESJSSf15pSB9uMf_0aiazrAKOw7CqJ47tUk3xdUzbpVxlrvxT_ysr3uLDl7ODqGtzWzXZGgNIOcB-hojqnOyzEFIFAl-2mkRRIJAcPGQUv8QQg77BePqhcweqHWkLNMH0tLU2zBWJOTm0UBJIhrjKauBxfHRdyMaxv2EeM_WFPKynbUDuLZCoN6e3R4ivSmlQMFrF0783p5YNJyDSip4ATpIR6JHdvcH_tPTCOQJ1ZhJwepQpn2z9mbvrxF3wdDM2q3_tlteZz-ZdNkzrpk3xft-e-jGEs4IYxhCL4X3CmYJOMEEKedlqUIMNjQBf96S5PHweyWlTFP9TLFkvFRGLBoOP6kwuimRSV3c59oxYPdXijWaP_1jtAYHwBH2vbYuB2UFiZdwBiHHbfY8jU1SbawfjQNqxANyQVCd5a2lsur-UAfQiPw7eRP9v1QsO5MDzVsONLLDT0o9SxaL3aV03INRI4IbS707IsYTMrzGn-6N9bPy6kGnGHax0wfEtTJ_ue9UzkF1eas9PV9GtTAnsdktUlJEtC9Hm0YGq2G3bMZ5qmpFvVIGpLbx_yIn8WMj-dGUiqg7-J0h6dB3nn8a5PkB1pcSJXrgTIHT2UeIiINJjGn84Cgfd9iYKioJAlhOgNEnMac5-n2k2RVI_kHmm5ngI8S7fVDdpUtHpAG9aH7pVyo9v4j1_EaX-LAmJXqzcCesysNwjI1zuqDXlwBbszkDnlPsuQdRX2e-u00VdjKzEha7upYr_EjjZyvLtcZmAwN7KABb4g-JEuflvruBJNNfUz2YoBV-J39s3X_bP68rFy7YWItgSC-M4F1g9PwuH-iXjWpzmOCmSlvhgf5PZMnq1bsXNTax7vLyI2QS8NVfTA18uLv0CFch9QLIF1rkOXOfhMI26QsMPmI1vIxO4g83M5m8lo5JnAA8k6YcU8kYeUoIhMJkZ5DkSnaKeH_yqY8I5RvI-gN-Xp_00vdjbS-Uy2Dkcg6Gm_HIn3G2tb1rN_AjaCUvUnBFm4dw0XUkB2RxNbkPNiAoCgMQHibKaOhHDl6XJaKItDnEKepvIt6OoYKyYMQfMoRA_m80]--></g>
+</svg>

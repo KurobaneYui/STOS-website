@@ -8,7 +8,7 @@
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
-    <title>学风督导队-首页</title>
+    <title>学风督导队-注册</title>
 
     <meta name="description" content="电子科技大学学风督导队" />
     <meta name="author" content="罗寅松，学风督导队数据组">
@@ -24,26 +24,28 @@
     <!-- Styles -->
     <link rel="stylesheet"
         href="https://cdn.bootcdn.net/ajax/libs/perfect-scrollbar/1.5.6/css/perfect-scrollbar.min.css" />
+    <!-- Page JS -->
+    <script defer src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+    <script defer src="https://cdn.bootcdn.net/ajax/libs/perfect-scrollbar/1.5.6/perfect-scrollbar.min.js"></script>
+    <script defer src="https://cdn.bootcdn.net/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
 </head>
 
 <body>
-    <script src="https://cdn.bootcdn.net/ajax/libs/twitter-bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.bootcdn.net/ajax/libs/perfect-scrollbar/1.5.6/perfect-scrollbar.min.js"></script>
-    <script src="https://cdn.bootcdn.net/ajax/libs/sweetalert/2.1.2/sweetalert.min.js"></script>
+    <!-- Vue 应用将挂载在这里 -->
     <div id="app"></div>
+
+    <!-- Vue 应用的入口脚本 -->
     <script type="module">
         // Core CSS
         import "/src/assets/vendor/css/core.css";
         import "/src/assets/vendor/css/theme-default.css";
         // Page CSS
         import "/src/assets/vendor/css/pages/page-auth.css";
-        // Page JS
-        // import "../UserCenter/get_campus_school.js";
 
         import { createApp } from 'vue';
-        import App from '/src/App.vue';
+        import Register from '/src/Register.vue';
 
-        createApp(App).mount('#app');
+        createApp(Register).mount('#app');
     </script>
 </body>
 
