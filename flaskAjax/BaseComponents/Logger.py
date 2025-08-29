@@ -30,15 +30,17 @@ class Logger:
     """
 
     __slots__ = (
-        "logDir", "logMode", "time_postfix", "funcName", "funcArgs", "warning",
-        "funcReturns"
+        "logDir",
+        "logMode",
+        "time_postfix",
+        "funcName",
+        "funcArgs",
+        "warning",
+        "funcReturns",
     )
 
     def __init__(
-        self,
-        funcName: str,
-        logMode: None | str = None,
-        logDir: None | str = None
+        self, funcName: str, logMode: None | str = None, logDir: None | str = None
     ) -> None:
         """
         logMode: ['Error', 'Warning', 'Log']
@@ -46,7 +48,7 @@ class Logger:
         """
         if logMode is None or logDir is None:
             logDir, logMode = "./log", "Warning"
-            with open("./config/STSA_APP.conf", 'r') as f:
+            with open("./config/STSA_APP.conf", "r") as f:
                 config = json.load(f)
                 logDir, logMode = config["logDir"], config["logMode"]
         assert logMode is not None and logDir is not None
@@ -66,7 +68,7 @@ class Logger:
             return True
 
         # log error info when catch Exception
-        with open(os.path.join(self.logDir, self.time_postfix + '.log'), "a") as f:
+        with open(os.path.join(self.logDir, self.time_postfix + ".log"), "a") as f:
             f.write("\n[Error]\n")
             f.write(f"[{exc_type}] {datetime.datetime.now()}\n")
             if isinstance(exc_val, CustomError):
@@ -87,7 +89,7 @@ class Logger:
             # before function execute, log running info if logMode is 'Log'
             if self.logMode == "Log":
                 with open(
-                    os.path.join(self.logDir, self.time_postfix + '.log'), "a"
+                    os.path.join(self.logDir, self.time_postfix + ".log"), "a"
                 ) as f:
                     f.write("\n[Log]\n")
                     f.write(f"{datetime.datetime.now()}\n")
@@ -97,16 +99,16 @@ class Logger:
             # log warning info if logMode isn't 'Error'
             if self.logMode != "Error":
                 with open(
-                    os.path.join(self.logDir, self.time_postfix + '.log'), "a"
+                    os.path.join(self.logDir, self.time_postfix + ".log"), "a"
                 ) as f:
                     f.write("\n[Warning]\n")
                     f.write(f"{datetime.datetime.now()}\n")
                     f.write(f"{pprint.pformat(value)}\n")
         elif name == "funcReturns":
             # log return values of function if logMode is 'Log'
-            if self.logMode == 'Log':
+            if self.logMode == "Log":
                 with open(
-                    os.path.join(self.logDir, self.time_postfix + '.log'), "a"
+                    os.path.join(self.logDir, self.time_postfix + ".log"), "a"
                 ) as f:
                     f.write("\n[Log]\n")
                     f.write(f"{datetime.datetime.now()}\n")

@@ -17,8 +17,7 @@ from flaskAjax.DatabaseBasicOperations.Users import UsersDatabase
 
 
 def Users(app: flask.Flask) -> None:  # noqa: C901
-
-    @app.route("/Ajax/Users/login", methods=['POST'])
+    @app.route("/Ajax/Users/login", methods=["POST"])
     def login():
         with (
             CustomResponse() as customResponse,
@@ -43,7 +42,7 @@ def Users(app: flask.Flask) -> None:  # noqa: C901
             logger.funcReturns = returns
         return customResponse.getResponse()
 
-    @app.route("/Ajax/Users/get_login_works", methods=['GET'])
+    @app.route("/Ajax/Users/get_login_works", methods=["GET"])
     def getLoginWorks():
         with (
             CustomResponse() as customResponse,
@@ -63,7 +62,7 @@ def Users(app: flask.Flask) -> None:  # noqa: C901
             logger.funcReturns = returns
         return customResponse.getResponse()
 
-    @app.route("/Ajax/Users/login_as_specified_work", methods=['POST'])
+    @app.route("/Ajax/Users/login_as_specified_work", methods=["POST"])
     def loginAsSpecifiedWork():
         with (
             CustomResponse() as customResponse,
@@ -87,7 +86,7 @@ def Users(app: flask.Flask) -> None:  # noqa: C901
             logger.funcReturns = returns
         return customResponse.getResponse()
 
-    @app.route("/Ajax/Users/resetPassword", methods=['POST'])
+    @app.route("/Ajax/Users/resetPassword", methods=["POST"])
     def resetPassword():
         with (
             CustomResponse() as customResponse,
@@ -108,13 +107,13 @@ def Users(app: flask.Flask) -> None:  # noqa: C901
             # 准备函数返回值和响应与日志
             returns: dict[str, Any] = {
                 "message": "",
-                "data": "/authentication/login.html"
+                "data": "/authentication/login.html",
             }
             customResponse.setMessageAndData(**returns)
             logger.funcReturns = returns
         return customResponse.getResponse()
 
-    @app.route("/Ajax/Users/delete_personal_info", methods=['POST'])
+    @app.route("/Ajax/Users/delete_personal_info", methods=["POST"])
     def deletePersonalInfo():
         with (
             CustomResponse() as customResponse,
@@ -140,7 +139,7 @@ def Users(app: flask.Flask) -> None:  # noqa: C901
             logger.funcReturns = returns
         return customResponse.getResponse()
 
-    @app.route("/Ajax/Users/register", methods=['POST'])
+    @app.route("/Ajax/Users/register", methods=["POST"])
     def register():
         with (
             CustomResponse() as customResponse,
@@ -152,9 +151,10 @@ def Users(app: flask.Flask) -> None:  # noqa: C901
             Authorization.check(rightsNeeded=tuple(), needLogin=False)
             # ========================
             # 检查接口输入参数并记录日志
-            infoDict = dict(request.form)
+            assert request.json is not None
+            infoDict = dict(request.json)
             UsersCheck.registerParamsCheck(infoDict, session)
-            logger.funcArgs = request.form
+            logger.funcArgs = request.json
             # ===========
             # 执行接口流程
             UsersDatabase.register(infoDict, session)
@@ -164,13 +164,13 @@ def Users(app: flask.Flask) -> None:  # noqa: C901
             # 准备函数返回值和响应与日志
             returns: dict[str, Any] = {
                 "message": "",
-                "data": "/Users/Authentication/login.html"
+                "data": "/authentication/login.html",
             }
             customResponse.setMessageAndData(**returns)
             logger.funcReturns = returns
         return customResponse.getResponse()
 
-    @app.route("/Ajax/Users/logout", methods=['GET', 'POST'])
+    @app.route("/Ajax/Users/logout", methods=["GET", "POST"])
     def logout():
         with (
             CustomResponse() as customResponse,
@@ -190,7 +190,7 @@ def Users(app: flask.Flask) -> None:  # noqa: C901
             logger.funcReturns = returns
         return customResponse.getResponse()
 
-    @app.route("/Ajax/Users/topbarInfo", methods=['GET'])
+    @app.route("/Ajax/Users/topbarInfo", methods=["GET"])
     def topbarInfo():
         with (
             CustomResponse() as customResponse,

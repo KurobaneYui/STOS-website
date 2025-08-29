@@ -40,11 +40,12 @@ function updateFormalMember(info) {
     if (info.department_id === 0) {
         formalMember.value = info.department_name
     } else if (info.department_id === 1) {
-        formalMember.value = `${info.department_name} - ${info.job === 1 ? '队长' : '副队长'}`
+        formalMember.value = `${info.department_name} - ${info.job === "manager" ? '队长' : '副队长'}`
     } else {
-        formalMember.value = `${info.department_name} - ${info.job === 1 ? '组长' : '组员'}`
+        formalMember.value = `${info.department_name} - ${info.job === "manager" ? '组长' : '组员'}`
     }
 }
+
 function updateBadges(info) {
     badges.value = [
         { text: '查早：完成', type: 'success' },
@@ -52,7 +53,7 @@ function updateBadges(info) {
         // ...
     ]
 }
-onMounted(getTopbarInfo)
+onMounted(getTopbarInfo);
 </script>
 
 

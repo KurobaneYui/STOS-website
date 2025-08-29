@@ -2,7 +2,6 @@ from flask import session
 
 
 class CustomSession:
-
     @staticmethod
     def setSession(
         studentID: str,
@@ -10,7 +9,7 @@ class CustomSession:
         logTime: str,
         department_id: int = 0,
         job: str = "member",
-        department_name="预备队员"
+        department_name="预备队员",
     ) -> None:
         session["userID"] = studentID
         session["userName"] = name
@@ -33,31 +32,42 @@ class CustomSession:
             "department_id": session.get("department_id", None),
             "job": session.get("job", None),
             "department_name": session.get("department_name", None),
-            "userName": session.get("userName", None)
+            "userName": session.get("userName", None),
         }
 
     @staticmethod
     def checkSession() -> bool:
-        if "userID" not in session or "userName" not in session or \
-                "logTime" not in session or "department_id" not in session or \
-                "department_name" not in session or "job" not in session or \
-                "isLogin" not in session:
+        if (
+            "userID" not in session
+            or "userName" not in session
+            or "logTime" not in session
+            or "department_id" not in session
+            or "department_name" not in session
+            or "job" not in session
+            or "isLogin" not in session
+        ):
             return False
 
-        if hash(
-            session["userID"] + session["logTime"] + str(session["department_id"]) +
-            session["department_name"] + str(session["job"])
-        ) != session["isLogin"]:
+        if (
+            hash(
+                session["userID"]
+                + session["logTime"]
+                + str(session["department_id"])
+                + session["department_name"]
+                + str(session["job"])
+            )
+            != session["isLogin"]
+        ):
             return False
 
         return True
 
     @staticmethod
     def clearSession() -> None:
-        session.pop('userID', None)
-        session.pop('userName', None)
-        session.pop('isLogin', None)
-        session.pop('logTime', None)
-        session.pop('department_id', None)
-        session.pop('department_name', None)
-        session.pop('job', None)
+        session.pop("userID", None)
+        session.pop("userName", None)
+        session.pop("isLogin", None)
+        session.pop("logTime", None)
+        session.pop("department_id", None)
+        session.pop("department_name", None)
+        session.pop("job", None)

@@ -9,8 +9,8 @@
         <hr class="my-4">
         <p>本网站目前仍在测试阶段，部分功能入口点击下方按钮</p>
         <a class="btn btn-primary btn-md mb-3" href="/authentication/login.html" role="button">登录页</a>
-        <a class="btn btn-primary btn-md mb-3" href="/UserCenter/index.html" role="button">个人中心首页</a>
-        <a class="btn btn-primary btn-md mb-3" href="/TeacherCenter/index.html" role="button">数据展示页</a>
+        <a class="btn btn-primary btn-md mb-3" href="/user_center/index.html" role="button">个人中心首页</a>
+        <a class="btn btn-primary btn-md mb-3" href="/teacher_center/index.html" role="button">数据展示页</a>
         <a class="btn btn-primary btn-md mb-3" href="/dashboard" role="button">服务器状态页</a>
     </div>
 </template>

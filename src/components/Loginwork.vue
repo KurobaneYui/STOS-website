@@ -24,7 +24,7 @@ async function loginAsSpecifiedWork(department_id, job) {
     try {
         const { data } = await axios.post("/Ajax/Users/login_as_specified_work", {
             department_id: parseInt(department_id),
-            job: parseInt(job)
+            job: job
         })
         if (data.code === 200 || data.code === 301) {
             window.location.href = data.data
@@ -35,10 +35,11 @@ async function loginAsSpecifiedWork(department_id, job) {
         alert('请检查浏览器网络连接，建议刷新后重试')
     }
 }
+
 function getJobName(department_id, job, name) {
-    if (department_id === 1) return name + ' - ' + (job === 1 ? "队长" : "副队长")
+    if (department_id === 1) return name + ' - ' + (job === "manager" ? "队长" : "副队长")
     if (department_id === 0) return name
-    return name + ' - ' + (job === 1 ? "组长" : "组员")
+    return name + ' - ' + (job === "manager" ? "组长" : "组员")
 }
 </script>
 

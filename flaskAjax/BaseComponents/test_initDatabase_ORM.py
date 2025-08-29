@@ -3,11 +3,23 @@ import datetime
 import sqlite3
 
 from sqlalchemy import (
-    create_engine, event, ForeignKey, String, Integer, Text, TIMESTAMP, CheckConstraint,
-    UniqueConstraint, func
+    create_engine,
+    event,
+    ForeignKey,
+    String,
+    Integer,
+    Text,
+    TIMESTAMP,
+    CheckConstraint,
+    UniqueConstraint,
+    func,
 )
 from sqlalchemy.orm import (
-    DeclarativeBase, Mapped, mapped_column, relationship, sessionmaker
+    DeclarativeBase,
+    Mapped,
+    mapped_column,
+    relationship,
+    sessionmaker,
 )
 from sqlalchemy.exc import IntegrityError
 from typing import List, Optional
@@ -82,31 +94,31 @@ class User(Base):
     payment_info: Mapped["PaymentInfo"] = relationship(
         back_populates="user", cascade="all, delete-orphan"
     )
-    collected_info: Mapped[
-        List["CollectedInfo"]
-    ] = relationship(back_populates="user", cascade="all, delete-orphan")
+    collected_info: Mapped[List["CollectedInfo"]] = relationship(
+        back_populates="user", cascade="all, delete-orphan"
+    )
     blacklist_entry: Mapped["Blacklist"] = relationship(
         back_populates="user", cascade="all, delete-orphan"
     )
-    group_memberships: Mapped[
-        List["GroupMember"]
-    ] = relationship(back_populates="user", cascade="all, delete-orphan")
+    group_memberships: Mapped[List["GroupMember"]] = relationship(
+        back_populates="user", cascade="all, delete-orphan"
+    )
     data_permissions_granted: Mapped[List["DataGroupPermission"]] = relationship(
         back_populates="grantee",
         foreign_keys="[DataGroupPermission.student_id]",
-        cascade="all, delete-orphan"
+        cascade="all, delete-orphan",
     )
     data_permissions_given: Mapped[List["DataGroupPermission"]] = relationship(
         back_populates="granter",
         foreign_keys="[DataGroupPermission.granted_by]",
-        cascade="all, delete-orphan"
+        cascade="all, delete-orphan",
     )
-    check_in_tasks: Mapped[
-        List["CheckInTask"]
-    ] = relationship(back_populates="user", cascade="all, delete-orphan")
-    inspection_tasks: Mapped[
-        List["InspectionTask"]
-    ] = relationship(back_populates="user", cascade="all, delete-orphan")
+    check_in_tasks: Mapped[List["CheckInTask"]] = relationship(
+        back_populates="user", cascade="all, delete-orphan"
+    )
+    inspection_tasks: Mapped[List["InspectionTask"]] = relationship(
+        back_populates="user", cascade="all, delete-orphan"
+    )
 
 
 class UserProfile(Base):
@@ -114,14 +126,17 @@ class UserProfile(Base):
     student_id: Mapped[str] = mapped_column(
         ForeignKey("users.student_id", ondelete="CASCADE"), primary_key=True
     )
-    campus_id: Mapped[Optional[str]
-                      ] = mapped_column(ForeignKey("campuses.id", ondelete="SET NULL"))
-    college_id: Mapped[Optional[int]
-                       ] = mapped_column(ForeignKey("colleges.id", ondelete="SET NULL"))
+    campus_id: Mapped[Optional[str]] = mapped_column(
+        ForeignKey("campuses.id", ondelete="SET NULL")
+    )
+    college_id: Mapped[Optional[int]] = mapped_column(
+        ForeignKey("colleges.id", ondelete="SET NULL")
+    )
     phone: Mapped[Optional[str]] = mapped_column(String(20))
     qq: Mapped[Optional[str]] = mapped_column(String(20))
-    updated_at: Mapped[datetime.datetime
-                       ] = mapped_column(server_default=func.now(), onupdate=func.now())
+    updated_at: Mapped[datetime.datetime] = mapped_column(
+        server_default=func.now(), onupdate=func.now()
+    )
 
     # Relationships
     user: Mapped["User"] = relationship(back_populates="profile")
@@ -135,8 +150,9 @@ class UserCredential(Base):
         ForeignKey("users.student_id", ondelete="CASCADE"), primary_key=True
     )
     password_hash: Mapped[str] = mapped_column(Text, nullable=False)
-    updated_at: Mapped[datetime.datetime
-                       ] = mapped_column(server_default=func.now(), onupdate=func.now())
+    updated_at: Mapped[datetime.datetime] = mapped_column(
+        server_default=func.now(), onupdate=func.now()
+    )
 
     user: Mapped["User"] = relationship(back_populates="credential")
 
@@ -149,8 +165,9 @@ class PaymentInfo(Base):
     recipient_name: Mapped[str] = mapped_column(String(100), nullable=False)
     card_number: Mapped[str] = mapped_column(String(50), nullable=False)
     is_registered_poor: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
-    updated_at: Mapped[datetime.datetime
-                       ] = mapped_column(server_default=func.now(), onupdate=func.now())
+    updated_at: Mapped[datetime.datetime] = mapped_column(
+        server_default=func.now(), onupdate=func.now()
+    )
 
     user: Mapped["User"] = relationship(back_populates="payment_info")
 
@@ -162,11 +179,14 @@ class CollectedInfo(Base):
         ForeignKey("users.student_id", ondelete="CASCADE"), nullable=False
     )
     ip_address: Mapped[Optional[str]] = mapped_column(String(45))  # 支持IPv6
-    address_info: Mapped[Optional[str]] = mapped_column(Text)  # JSON格式存储地理位置信息
+    address_info: Mapped[Optional[str]] = mapped_column(
+        Text
+    )  # JSON格式存储地理位置信息
     language_info: Mapped[Optional[str]] = mapped_column(String(200))  # 语言偏好
     user_agent: Mapped[Optional[str]] = mapped_column(Text)  # 用户代理字符串
-    login_result: Mapped[Optional[str]
-                         ] = mapped_column(String(10))  # 登录结果信息: "success", "failure"
+    login_result: Mapped[Optional[str]] = mapped_column(
+        String(10)
+    )  # 登录结果信息: "success", "failure"
     created_at: Mapped[datetime.datetime] = mapped_column(server_default=func.now())
 
     # Relationship
@@ -190,12 +210,13 @@ class Group(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(100), nullable=False, unique=True)
     created_at: Mapped[datetime.datetime] = mapped_column(server_default=func.now())
-    updated_at: Mapped[datetime.datetime
-                       ] = mapped_column(server_default=func.now(), onupdate=func.now())
+    updated_at: Mapped[datetime.datetime] = mapped_column(
+        server_default=func.now(), onupdate=func.now()
+    )
 
-    members: Mapped[
-        List["GroupMember"]
-    ] = relationship(back_populates="group", cascade="all, delete-orphan")
+    members: Mapped[List["GroupMember"]] = relationship(
+        back_populates="group", cascade="all, delete-orphan"
+    )
 
 
 class GroupMember(Base):
@@ -217,8 +238,8 @@ class GroupMember(Base):
     user: Mapped["User"] = relationship(back_populates="group_memberships")
 
     __table_args__ = (
-        UniqueConstraint('group_id', 'student_id', 'role', name='uq_group_member_role'),
-        CheckConstraint("role IN ('manager', 'member')", name='check_role_type'),
+        UniqueConstraint("group_id", "student_id", "role", name="uq_group_member_role"),
+        CheckConstraint("role IN ('manager', 'member')", name="check_role_type"),
     )
 
 
@@ -242,7 +263,7 @@ class DataGroupPermission(Base):
     )
 
     __table_args__ = (
-        UniqueConstraint('student_id', 'permission', name='uq_user_permission'),
+        UniqueConstraint("student_id", "permission", name="uq_user_permission"),
     )
 
 
@@ -262,10 +283,12 @@ class College(Base):
     name: Mapped[str] = mapped_column(String(100), nullable=False, unique=True)
 
     user_profiles: Mapped[List["UserProfile"]] = relationship(back_populates="college")
-    study_schedules: Mapped[List["StudySchedule"]
-                            ] = relationship(back_populates="college")
-    inspection_tasks: Mapped[List["InspectionTask"]
-                             ] = relationship(back_populates="college")
+    study_schedules: Mapped[List["StudySchedule"]] = relationship(
+        back_populates="college"
+    )
+    inspection_tasks: Mapped[List["InspectionTask"]] = relationship(
+        back_populates="college"
+    )
 
 
 class Classroom(Base):
@@ -279,14 +302,16 @@ class Classroom(Base):
     capacity: Mapped[Optional[int]]
 
     campus: Mapped["Campus"] = relationship(back_populates="classrooms")
-    study_schedules: Mapped[List["StudySchedule"]
-                            ] = relationship(back_populates="classroom")
-    inspection_tasks: Mapped[List["InspectionTask"]
-                             ] = relationship(back_populates="classroom")
+    study_schedules: Mapped[List["StudySchedule"]] = relationship(
+        back_populates="classroom"
+    )
+    inspection_tasks: Mapped[List["InspectionTask"]] = relationship(
+        back_populates="classroom"
+    )
 
     __table_args__ = (
         UniqueConstraint(
-            'campus_id', 'building', 'room_number', name='uq_classroom_location'
+            "campus_id", "building", "room_number", name="uq_classroom_location"
         ),
     )
 
@@ -303,8 +328,9 @@ class StudySchedule(Base):
     )
     expected_headcount: Mapped[Optional[int]]
     created_at: Mapped[datetime.datetime] = mapped_column(server_default=func.now())
-    updated_at: Mapped[datetime.datetime
-                       ] = mapped_column(server_default=func.now(), onupdate=func.now())
+    updated_at: Mapped[datetime.datetime] = mapped_column(
+        server_default=func.now(), onupdate=func.now()
+    )
 
     classroom: Mapped["Classroom"] = relationship(back_populates="study_schedules")
     college: Mapped["College"] = relationship(back_populates="study_schedules")
@@ -341,28 +367,29 @@ class CheckInData(Base):
     data2: Mapped[Optional[str]] = mapped_column(Text)
     remarks: Mapped[Optional[str]] = mapped_column(Text)
     status: Mapped[str] = mapped_column(
-        String(20), nullable=False, default='pending'
+        String(20), nullable=False, default="pending"
     )  # "pending", "confirmed"
     created_at: Mapped[datetime.datetime] = mapped_column(server_default=func.now())
-    updated_at: Mapped[datetime.datetime
-                       ] = mapped_column(server_default=func.now(), onupdate=func.now())
+    updated_at: Mapped[datetime.datetime] = mapped_column(
+        server_default=func.now(), onupdate=func.now()
+    )
 
     task: Mapped["CheckInTask"] = relationship(back_populates="data")
 
 
 class InspectionTask(Base):
-    __tablename__ = 'inspection_tasks'
+    __tablename__ = "inspection_tasks"
     id: Mapped[int] = mapped_column(primary_key=True)
     student_id: Mapped[str] = mapped_column(
-        ForeignKey('users.student_id', ondelete="CASCADE"), nullable=False
+        ForeignKey("users.student_id", ondelete="CASCADE"), nullable=False
     )
     date: Mapped[datetime.date] = mapped_column(nullable=False)
     time_slot: Mapped[str] = mapped_column(String(20), nullable=False)  # "1-2", "3-4"
     classroom_id: Mapped[str] = mapped_column(
-        ForeignKey('classrooms.id', ondelete="RESTRICT"), nullable=False
+        ForeignKey("classrooms.id", ondelete="RESTRICT"), nullable=False
     )
     college_id: Mapped[int] = mapped_column(
-        ForeignKey('colleges.id', ondelete="RESTRICT"), nullable=False
+        ForeignKey("colleges.id", ondelete="RESTRICT"), nullable=False
     )
     expected_headcount: Mapped[Optional[int]]
     created_at: Mapped[datetime.datetime] = mapped_column(server_default=func.now())
@@ -381,17 +408,18 @@ class InspectionData(Base):
     task_id: Mapped[int] = mapped_column(
         ForeignKey("inspection_tasks.id", ondelete="CASCADE"),
         nullable=False,
-        unique=True
+        unique=True,
     )
     data1: Mapped[Optional[str]] = mapped_column(Text)
     data2: Mapped[Optional[str]] = mapped_column(Text)
     remarks: Mapped[Optional[str]] = mapped_column(Text)
     status: Mapped[str] = mapped_column(
-        String(20), nullable=False, default='pending'
+        String(20), nullable=False, default="pending"
     )  # "pending", "confirmed"
     created_at: Mapped[datetime.datetime] = mapped_column(server_default=func.now())
-    updated_at: Mapped[datetime.datetime
-                       ] = mapped_column(server_default=func.now(), onupdate=func.now())
+    updated_at: Mapped[datetime.datetime] = mapped_column(
+        server_default=func.now(), onupdate=func.now()
+    )
 
     task: Mapped["InspectionTask"] = relationship(back_populates="data")
 
@@ -427,14 +455,14 @@ def seed_initial_data():
         try:
             print("\nSeeding initial data...")
             initial_data = [
-                Campus(id='HQ', name='总部校区'),
-                Campus(id='BRANCH', name='分支校区'),
-                College(name='计算机学院'),
-                College(name='外国语学院'),
-                College(name='理学院'),
-                Group(name='队长组'),
-                Group(name='数据组'),
-                Group(name='查早组'),
+                Campus(id="HQ", name="总部校区"),
+                Campus(id="BRANCH", name="分支校区"),
+                College(name="计算机学院"),
+                College(name="外国语学院"),
+                College(name="理学院"),
+                Group(name="队长组"),
+                Group(name="数据组"),
+                Group(name="查早组"),
             ]
 
             # 为了避免重复插入，我们可以先查询
@@ -462,7 +490,7 @@ def seed_initial_data():
             print(f"An error occurred during data seeding: {e}")
 
 
-if __name__ == '__main__':  # noqa: C901
+if __name__ == "__main__":  # noqa: C901
     # 步骤1: 初始化数据库和表结构
     initialize_database()
 
@@ -497,7 +525,7 @@ if __name__ == '__main__':  # noqa: C901
                     user=new_user,
                     group=captain_group,
                     role="manager",
-                    display_title="正队长"
+                    display_title="正队长",
                 )
 
                 session.add(new_user)
@@ -524,26 +552,34 @@ if __name__ == '__main__':  # noqa: C901
         female_users = session.query(User).filter_by(gender="女").all()
 
         # 使用filter进行更复杂的查询
-        recent_users = session.query(User).filter(
-            User.created_at >= datetime.datetime(2024, 1, 1)
-        ).all()
+        recent_users = (
+            session.query(User)
+            .filter(User.created_at >= datetime.datetime(2024, 1, 1))
+            .all()
+        )
 
         # --- 使用示例：分组查询 ---
         from sqlalchemy import func
+
         # 按性别分组统计用户数量
-        gender_stats = session.query(
-            User.gender,
-            func.count(User.student_id).label('count')
-        ).group_by(User.gender).all()
+        gender_stats = (
+            session.query(User.gender, func.count(User.student_id).label("count"))
+            .group_by(User.gender)
+            .all()
+        )
 
         for gender, count in gender_stats:
             print(f"{gender}: {count} users")
 
         # 按学院分组统计用户数量
-        college_stats = session.query(
-            College.name,
-            func.count(UserProfile.student_id).label('user_count')
-        ).join(UserProfile).group_by(College.id, College.name).all()
+        college_stats = (
+            session.query(
+                College.name, func.count(UserProfile.student_id).label("user_count")
+            )
+            .join(UserProfile)
+            .group_by(College.id, College.name)
+            .all()
+        )
 
         # --- 使用示例：统计数量 ---
         # 统计总用户数
@@ -555,15 +591,22 @@ if __name__ == '__main__':  # noqa: C901
         print(f"Female users: {female_count}")
 
         # 统计某个组的成员数量
-        captain_group_count = session.query(GroupMember).join(Group).filter(
-            Group.name == "队长组"
-        ).count()
+        captain_group_count = (
+            session.query(GroupMember)
+            .join(Group)
+            .filter(Group.name == "队长组")
+            .count()
+        )
 
         # --- 使用示例：复杂关联查询
         # 查询所有队长组成员的详细信息
-        captain_members = session.query(User, GroupMember, Group).join(
-            GroupMember, User.student_id == GroupMember.student_id
-        ).join(Group, GroupMember.group_id == Group.id).filter(Group.name == "队长组").all()
+        captain_members = (
+            session.query(User, GroupMember, Group)
+            .join(GroupMember, User.student_id == GroupMember.student_id)
+            .join(Group, GroupMember.group_id == Group.id)
+            .filter(Group.name == "队长组")
+            .all()
+        )
 
         for user, membership, group in captain_members:
             print(
@@ -588,17 +631,19 @@ if __name__ == '__main__':  # noqa: C901
 
         # --- 使用示例：批量更新和删除操作（批量修改多条记录） ---
         # 批量更新所有女性用户的某个字段（假设有字段需要更新）
-        updated_count = session.query(User).filter_by(gender="女").update({
-            User.updated_at:
-            func.now()
-        })
+        updated_count = (
+            session.query(User)
+            .filter_by(gender="女")
+            .update({User.updated_at: func.now()})
+        )
 
         session.commit()
         print(f"Updated {updated_count} female users")
 
         # 批量更新用户profile信息
-        session.query(UserProfile).filter(UserProfile.phone.like("138%")
-                                          ).update({UserProfile.updated_at: func.now()})
+        session.query(UserProfile).filter(UserProfile.phone.like("138%")).update(
+            {UserProfile.updated_at: func.now()}
+        )
         session.commit()
 
         # --- 使用示例：条件删除操作
@@ -610,9 +655,11 @@ if __name__ == '__main__':  # noqa: C901
             print("User deleted")
 
         # 批量删除符合条件的记录
-        deleted_count = session.query(CollectedInfo).filter(
-            CollectedInfo.created_at < datetime.datetime(2024, 1, 1)
-        ).delete()
+        deleted_count = (
+            session.query(CollectedInfo)
+            .filter(CollectedInfo.created_at < datetime.datetime(2024, 1, 1))
+            .delete()
+        )
 
         session.commit()
         print(f"Deleted {deleted_count} old collected info records")
@@ -659,7 +706,7 @@ if __name__ == '__main__':  # noqa: C901
                 student_id=user.student_id,
                 ip_address="192.168.1.100",
                 user_agent="Mozilla/5.0...",
-                login_result="success"
+                login_result="success",
             )
             session.add(new_info)
             session.commit()

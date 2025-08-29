@@ -39,6 +39,7 @@ coverage
 _notes/
 _compareTemp/
 __pycache__/
+database/
 .idea/
 .vscode/
 /log/*

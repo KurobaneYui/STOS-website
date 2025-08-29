@@ -2,7 +2,7 @@ import os
 import json
 import sqlite3
 
-from sqlalchemy import (create_engine, event)
+from sqlalchemy import create_engine, event
 from sqlalchemy.orm import sessionmaker
 
 from .DatabaseDefinition import Base as SQL_Base
@@ -10,6 +10,7 @@ from .DatabaseDefinition import User as SQL_User  # noqa
 from .DatabaseDefinition import UserProfile as SQL_UserProfile  # noqa
 from .DatabaseDefinition import UserCredential as SQL_UserCredential  # noqa
 from .DatabaseDefinition import PaymentInfo as SQL_PaymentInfo  # noqa
+from .DatabaseDefinition import EmptyTime as SQL_EmptyTime  # noqa
 from .DatabaseDefinition import CollectedInfo as SQL_CollectedInfo  # noqa
 from .DatabaseDefinition import Blacklist as SQL_Blacklist  # noqa
 from .DatabaseDefinition import Group as SQL_Group  # noqa
@@ -75,6 +76,7 @@ def initialize_database():
     使用`Base.metadata.create_all()`来创建所有定义的表（如果它们尚不存在）。
     """
     import hashlib
+
     db_dir = os.path.dirname(DB_FILE)
     if db_dir:
         os.makedirs(db_dir, exist_ok=True)
@@ -214,7 +216,9 @@ def initialize_database():
                 session.add(SQL_Group(name=name))
             session.flush()  # 确保上面新增的数据已写入
             campus_name_to_id = {c.name: c.id for c in session.query(SQL_Campus).all()}
-            college_name_to_id = {c.name: c.id for c in session.query(SQL_College).all()}
+            college_name_to_id = {
+                c.name: c.id for c in session.query(SQL_College).all()
+            }
             group_name_to_id = {c.name: c.id for c in session.query(SQL_Group).all()}
             for idx, campus_name_, building, area, room, capacity in classroom_info:
                 session.add(
@@ -224,7 +228,7 @@ def initialize_database():
                         building=building,
                         area=area,
                         room_number=room,
-                        capacity=capacity
+                        capacity=capacity,
                     )
                 )
 
@@ -234,21 +238,28 @@ def initialize_database():
                 college_id=college_name_to_id["信息与通信工程学院"],
                 hometown="安徽省合肥市",
                 phone="18100500555",
-                qq="1531030000"
+                qq="1531030000",
             )
-            new_user.credential = SQL_UserCredential(
+            new_user.profile.credential = SQL_UserCredential(
                 password_hash=hashlib.sha512("test1234".encode()).digest()
             )
-            new_user.payment_info = SQL_PaymentInfo(
-                recipient_name='Squirrel',
+            new_user.profile.payment_info = SQL_PaymentInfo(
+                recipient_name="Squirrel",
                 card_number=6217003810050000000,
                 is_registered_poor=1,
+            )
+            new_user.profile.empty_time = SQL_EmptyTime(
+                slot_1_2=0,
+                slot_3_4=0,
+                slot_5_6=0,
+                slot_7_8=0,
+                slot_9_11=0,
             )
             membership = SQL_GroupMember(
                 student_id="202411223344",
                 group_id=group_name_to_id["队长组"],
                 role="manager",
-                display_title="正队长"
+                display_title="正队长",
             )
             session.add(new_user)
             session.add(membership)

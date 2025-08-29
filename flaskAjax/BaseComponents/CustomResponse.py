@@ -1,8 +1,13 @@
 import json
 from flask import Response, make_response
 from flaskAjax.BaseComponents.CustomError import (
-    DatabaseBufferError, DatabaseConnectionError, DatabaseRuntimeError,
-    IllegalValueError, PermissionDenyError, MaintenanceError, ResourcesNotFoundError
+    DatabaseBufferError,
+    DatabaseConnectionError,
+    DatabaseRuntimeError,
+    IllegalValueError,
+    PermissionDenyError,
+    MaintenanceError,
+    ResourcesNotFoundError,
 )
 
 
@@ -27,7 +32,7 @@ class CustomResponse:
 
         if isinstance(
             exc_val,
-            (DatabaseConnectionError, DatabaseBufferError, DatabaseRuntimeError)
+            (DatabaseConnectionError, DatabaseBufferError, DatabaseRuntimeError),
         ):
             self.code = 498
             return True

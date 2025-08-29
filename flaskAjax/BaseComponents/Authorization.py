@@ -68,30 +68,38 @@ class Authorization:
                 raise PermissionDenyError(
                     "Please login first.",
                     filename=__file__,
-                    line=sys._getframe().f_lineno
+                    line=sys._getframe().f_lineno,
                 )
 
             if needLogin and len(rightsNeeded) > 0:
                 # Check function_auth
                 for auth_required in rightsNeeded:
-                    if auth_required['department_id'] is None:
-                        DataFetched = session.query(SQL_GroupMember).filter_by(
-                            student_id=CustomSession.getSession()["userID"],
-                            role=auth_required['actor']
-                        ).all()
+                    if auth_required["department_id"] is None:
+                        DataFetched = (
+                            session.query(SQL_GroupMember)
+                            .filter_by(
+                                student_id=CustomSession.getSession()["userID"],
+                                role=auth_required["actor"],
+                            )
+                            .all()
+                        )
                     else:
-                        DataFetched = session.query(SQL_GroupMember).filter_by(
-                            group_id=auth_required['department_id'],
-                            student_id=CustomSession.getSession()["userID"],
-                            role=auth_required['actor']
-                        ).all()
+                        DataFetched = (
+                            session.query(SQL_GroupMember)
+                            .filter_by(
+                                group_id=auth_required["department_id"],
+                                student_id=CustomSession.getSession()["userID"],
+                                role=auth_required["actor"],
+                            )
+                            .all()
+                        )
                     if len(DataFetched) > 0:
                         break
                 else:
                     raise PermissionDenyError(
                         "Authority check error. Have no rights to execute function.",
                         filename=__file__,
-                        line=sys._getframe().f_lineno
+                        line=sys._getframe().f_lineno,
                     )
 
             logger.funcReturns = "Authority check pass."

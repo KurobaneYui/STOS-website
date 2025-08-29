@@ -18,10 +18,18 @@ from flaskAjax.BaseComponents.DatabaseDefinition import (
     Group as SQL_Group,
     GroupMember as SQL_GroupMember,
     User as SQL_User,
+    PaymentInfo as SQL_PaymentInfo,
+    EmptyTime as SQL_EmptyTime,
 )
-from flaskAjax.BaseComponents.DatabaseConnector import SQL_College, SQL_UserProfile, SessionLocal
+from flaskAjax.BaseComponents.DatabaseConnector import (
+    SQL_College,
+    SQL_UserProfile,
+    SessionLocal,
+)
 from flaskAjax.BaseComponents.CustomError import (
-    PermissionDenyError, IllegalValueError, DatabaseRuntimeError
+    PermissionDenyError,
+    IllegalValueError,
+    DatabaseRuntimeError,
 )
 
 
@@ -49,7 +57,7 @@ def LoginDeviceRecorder(
     with session_context as session:
         # ========================================
         # 获取客户端信息，并补充提供登录记录的额外信息
-        clientInfo = ClientInfo.getInfo()
+        clientInfo = ClientInfo.get_info()
         clientInfo["studentID"] = infoForm["StudentID"]
         clientInfo["time"] = datetime.datetime.now().isoformat()
         clientInfo["login_result"] = loginResult
@@ -58,15 +66,17 @@ def LoginDeviceRecorder(
         clientInfo["job"] = infoForm["job"]
         # ===================================
         # 插入数据库，使用IGNORE参数忽略主键重复
-        stmt = aqlalchemy_insert(SQL_CollectedInfo).values({
-            "student_id": clientInfo['studentID'],
-            "user_agent": clientInfo['agent'],
-            "ip_address": clientInfo['IP'],
-            "address_info": clientInfo['address'],
-            "language_info": clientInfo['language'],
-            "login_result": clientInfo['login_result'],
-        })
-        stmt = stmt.on_conflict_do_nothing(index_elements=['id'])
+        stmt = aqlalchemy_insert(SQL_CollectedInfo).values(
+            {
+                "student_id": clientInfo["studentID"],
+                "user_agent": clientInfo["agent"],
+                "ip_address": clientInfo["IP"],
+                "address_info": clientInfo["address"],
+                "language_info": clientInfo["language"],
+                "login_result": clientInfo["login_result"],
+            }
+        )
+        stmt = stmt.on_conflict_do_nothing(index_elements=["id"])
         try:
             session.execute(stmt)
             session.commit()
@@ -75,13 +85,13 @@ def LoginDeviceRecorder(
 
 
 class UsersDatabase:
-
     @staticmethod
     def login(flaskRequest: Request, db_session: Session | None = None) -> None:
         # =====================================
         # 如果提供已经建立的数据库连接，则直接使用
-        session_context = SessionLocal(
-        ) if db_session is None else nullcontext(db_session)
+        session_context = (
+            SessionLocal() if db_session is None else nullcontext(db_session)
+        )
         with session_context as session:
             # ==========================
             # 根据提供的密码和学号进行查询
@@ -89,10 +99,16 @@ class UsersDatabase:
             infoForm: dict[str, Any] = dict(flaskRequest.json)
             infoForm["department_id"] = 0
             infoForm["job"] = 0
-            results = session.query(SQL_UserCredential).filter_by(
-                student_id=infoForm["StudentID"],
-                password_hash=hashlib.sha512(infoForm["Password"].encode()).digest()
-            ).all()
+            results = (
+                session.query(SQL_UserCredential)
+                .filter_by(
+                    student_id=infoForm["StudentID"],
+                    password_hash=hashlib.sha512(
+                        infoForm["Password"].encode()
+                    ).digest(),
+                )
+                .all()
+            )
             # =================================
             # 必须为单一记录才判定为用户名密码正确
             # 即使登录失败，也记录用户登录失败信息
@@ -101,7 +117,7 @@ class UsersDatabase:
                 raise PermissionDenyError(
                     "Username or password error.",
                     filename=__file__,
-                    line=sys._getframe().f_lineno
+                    line=sys._getframe().f_lineno,
                 )
             # ===============
             # 记录用户登录信息
@@ -113,40 +129,50 @@ class UsersDatabase:
             CustomSession.setSession(
                 studentID=infoForm["StudentID"],
                 name=studentName,
-                logTime=datetime.datetime.now().isoformat()
+                logTime=datetime.datetime.now().isoformat(),
             )
 
     @staticmethod
     def getLoginWorks(db_session: Session | None = None) -> list[dict] | tuple[dict]:
         # =====================================
         # 如果提供已经建立的数据库连接，则直接使用
-        session_context = SessionLocal(
-        ) if db_session is None else nullcontext(db_session)
+        session_context = (
+            SessionLocal() if db_session is None else nullcontext(db_session)
+        )
         with session_context as session:
             # ========================
             # 查询工作表单获取可登录岗位
-            results = session.query(SQL_GroupMember).join(
-                SQL_Group, SQL_GroupMember.group_id == SQL_Group.id
-            ).filter(
-                SQL_GroupMember.student_id == CustomSession.getSession()['userID'],
-                SQL_GroupMember.group_id != 0
-            ).order_by(SQL_GroupMember.group_id.asc(), SQL_GroupMember.role.desc()).all()
+            results = (
+                session.query(SQL_GroupMember)
+                .join(SQL_Group, SQL_GroupMember.group_id == SQL_Group.id)
+                .filter(
+                    SQL_GroupMember.student_id == CustomSession.getSession()["userID"],
+                    SQL_GroupMember.group_id != 0,
+                )
+                .order_by(SQL_GroupMember.group_id.asc(), SQL_GroupMember.role.desc())
+                .all()
+            )
             # =================
             # 整理查询数据并返回
             if len(results) == 0:
-                results = ({
-                    'department_id': 0,
-                    "job": None,
-                    "name": "预备队员",
-                    "display_title": None
-                },)
+                results = (
+                    {
+                        "department_id": 0,
+                        "job": None,
+                        "name": "预备队员",
+                        "display_title": None,
+                    },
+                )
             else:
-                results = [{
-                    "department_id": work.group_id,
-                    "job": work.role,
-                    "name": work.group.name,
-                    "display_title": work.display_title
-                } for work in results]
+                results = [
+                    {
+                        "department_id": work.group_id,
+                        "job": work.role,
+                        "name": work.group.name,
+                        "display_title": work.display_title,
+                    }
+                    for work in results
+                ]
         return results
 
     @staticmethod
@@ -155,8 +181,9 @@ class UsersDatabase:
     ) -> str:
         # =====================================
         # 如果提供已经建立的数据库连接，则直接使用
-        session_context = SessionLocal(
-        ) if db_session is None else nullcontext(db_session)
+        session_context = (
+            SessionLocal() if db_session is None else nullcontext(db_session)
+        )
         with session_context as session:
             # ===============================================
             # 查询工作表单验证可登录岗位
@@ -164,30 +191,37 @@ class UsersDatabase:
             assert flaskRequest.json is not None
             infoForm = flaskRequest.json
             infoForm["department_id"] = int(infoForm["department_id"])
-            infoForm["StudentID"] = CustomSession.getSession()['userID']
-            infoForm["StudentName"] = CustomSession.getSession()['userName']
-            results = session.query(SQL_GroupMember).filter_by(
-                group_id=infoForm["department_id"],
-                role=infoForm["job"],
-                student_id=infoForm["StudentID"]
-            ).all()
-            if (infoForm["department_id"] != 0 or
-                infoForm["job"] is not None) and len(results) != 1:
+            infoForm["StudentID"] = CustomSession.getSession()["userID"]
+            infoForm["StudentName"] = CustomSession.getSession()["userName"]
+            results = (
+                session.query(SQL_GroupMember)
+                .filter_by(
+                    group_id=infoForm["department_id"],
+                    role=infoForm["job"],
+                    student_id=infoForm["StudentID"],
+                )
+                .all()
+            )
+            if (infoForm["department_id"] != 0 or infoForm["job"] is not None) and len(
+                results
+            ) != 1:
                 raise IllegalValueError(
                     "The work you want to login is not permitted.",
                     filename=__file__,
-                    line=sys._getframe().f_lineno
+                    line=sys._getframe().f_lineno,
                 )
             # ===================
             # 添加新的LogInfo记录
             LoginDeviceRecorder(infoForm, True, session)
             # ==============================
             # 查询部门名称，并更新Session信息
-            results = session.query(SQL_Group).filter(
-                SQL_Group.id == infoForm["department_id"] and SQL_Group.id != 0
-            ).all()
+            results = (
+                session.query(SQL_Group)
+                .filter(SQL_Group.id == infoForm["department_id"] and SQL_Group.id != 0)
+                .all()
+            )
             if len(results) <= 0:
-                name = '预备队员'
+                name = "预备队员"
             else:
                 name = results[0].name
             CustomSession.setSession(
@@ -196,7 +230,7 @@ class UsersDatabase:
                 logTime=datetime.datetime.now().isoformat(),
                 department_id=infoForm["department_id"],
                 job=infoForm["job"],
-                department_name=name
+                department_name=name,
             )
             flask.g.isLogin = True
 
@@ -206,8 +240,9 @@ class UsersDatabase:
     def getName(studentId: str, db_session: Session | None = None) -> str:
         # =====================================
         # 如果提供已经建立的数据库连接，则直接使用
-        session_context = SessionLocal(
-        ) if db_session is None else nullcontext(db_session)
+        session_context = (
+            SessionLocal() if db_session is None else nullcontext(db_session)
+        )
         with session_context as session:
             # ===================
             # 利用学号查询对应姓名
@@ -218,7 +253,7 @@ class UsersDatabase:
                 raise IllegalValueError(
                     "StudentID not found.",
                     filename=__file__,
-                    line=sys._getframe().f_lineno
+                    line=sys._getframe().f_lineno,
                 )
 
         return results[0].name
@@ -227,8 +262,9 @@ class UsersDatabase:
     def resetPassword(flaskRequest: Request, db_session: Session | None = None) -> None:
         # =====================================
         # 如果提供已经建立的数据库连接，则直接使用
-        session_context = SessionLocal(
-        ) if db_session is None else nullcontext(db_session)
+        session_context = (
+            SessionLocal() if db_session is None else nullcontext(db_session)
+        )
         with session_context as session:
             # =====================
             # 利用提供的信息匹配用户
@@ -245,13 +281,23 @@ class UsersDatabase:
             name = flaskRequest.json["Name"]
             school = flaskRequest.json["School"]
             hometown = flaskRequest.json["Hometown"]
-            stmt = select(SQL_User.student_id,
-                         ).join(SQL_User.profile,).join(SQL_UserProfile.college,).where(
-                             SQL_User.student_id == student_id,
-                             SQL_User.name == name,
-                             SQL_UserProfile.hometown == hometown,
-                             SQL_College.name == school,
-                         )
+            stmt = (
+                select(
+                    SQL_User.student_id,
+                )
+                .join(
+                    SQL_User.profile,
+                )
+                .join(
+                    SQL_UserProfile.college,
+                )
+                .where(
+                    SQL_User.student_id == student_id,
+                    SQL_User.name == name,
+                    SQL_UserProfile.hometown == hometown,
+                    SQL_College.name == school,
+                )
+            )
             results = session.scalars(stmt).all()
             # ===================
             # 匹配结果不唯一则报错
@@ -259,134 +305,125 @@ class UsersDatabase:
                 raise PermissionDenyError(
                     "Information is wrong.",
                     filename=__file__,
-                    line=sys._getframe().f_lineno
+                    line=sys._getframe().f_lineno,
                 )
             # =====================
             # 匹配到则重置密码为学号
-            credential = session.query(SQL_UserCredential).filter_by(
-                student_id=flaskRequest.json["StudentID"]
-            ).one()
+            credential = (
+                session.query(SQL_UserCredential)
+                .filter_by(student_id=flaskRequest.json["StudentID"])
+                .one()
+            )
             credential.password_hash = hashlib.sha512(student_id.encode()).digest()
             session.commit()
 
-    # @staticmethod
-    # def deletePersonalInfo(db_session: Session | None = None) -> None:
-    #     # =====================================
-    #     # 如果提供已经建立的数据库连接，则直接使用
-    #     if db_session is None:
-    #         database = DatabaseConnector()
-    #         database.startCursor()
-    #     else:
-    #         database = db_session
-    #     # ==========================
-    #     # 清除当前登录会话的用户的信息
-    #     DBAffectRows = database.execute(
-    #         "DELETE FROM `MemberExtend` WHERE student_id=%(userID)s;",
-    #         CustomSession.getSession()
-    #     )
+    @staticmethod
+    def deletePersonalInfo(db_session: Session | None = None) -> None:
+        # =====================================
+        # 如果提供已经建立的数据库连接，则直接使用
+        session_context = (
+            SessionLocal() if db_session is None else nullcontext(db_session)
+        )
+        with session_context as session:
+            # ==========================
+            # 清除当前登录会话的用户的信息
+            user_obj = session.get(SQL_User, CustomSession.getSession().get("userID"))
+            if user_obj is None:
+                raise IllegalValueError(
+                    "Student ID not exists.",
+                    filename=__file__,
+                    line=sys._getframe().f_lineno,
+                )
+            # 删除，此操作会级联删除相关所有外键 ondelete 配置为 CASCADE 的行
+            session.delete(user_obj)
+            session.commit()
 
-    #     if DBAffectRows != 1:
-    #         raise IllegalValueError(
-    #             "Student ID not exists.",
-    #             filename=__file__,
-    #             line=sys._getframe().f_lineno
-    #         )
+    @staticmethod
+    def register(infoDict: dict, db_session: Session | None = None) -> None:
+        # =====================================
+        # 如果提供已经建立的数据库连接，则直接使用
+        session_context = (
+            SessionLocal() if db_session is None else nullcontext(db_session)
+        )
+        with session_context as session:
+            # === 检查 StudentID 是否已存在 ===
+            if (
+                len(
+                    session.query(SQL_UserProfile)
+                    .filter(SQL_UserProfile.student_id == infoDict["studentID"])
+                    .all()
+                )
+                != 0
+            ):
+                raise PermissionDenyError(
+                    "Student ID exists.",
+                    filename=__file__,
+                    line=sys._getframe().f_lineno,
+                )
+            # === 尝试插入 User 表核心信息 ===
+            if (
+                len(
+                    session.query(SQL_User)
+                    .filter(SQL_User.student_id == infoDict["studentID"])
+                    .all()
+                )
+                == 0
+            ):
+                user = SQL_User(
+                    student_id=infoDict["studentID"],
+                    name=infoDict["name"],
+                    gender=infoDict["gender"],
+                )
+                session.add(user)
+            try:
+                # === 插入 UserProfile 表扩展信息 ===
+                profile = SQL_UserProfile(
+                    student_id=infoDict["studentID"],
+                    campus_id=infoDict.get("campusID"),
+                    college_id=infoDict.get("schoolID"),
+                    hometown=infoDict.get("hometown"),
+                    phone=infoDict.get("phone"),
+                    qq=infoDict.get("qq"),
+                )
+                session.add(profile)
 
-    # @staticmethod
-    # def register(infoDict: dict, db_session: Session | None = None) -> None:
-    #     # =====================================
-    #     # 如果提供已经建立的数据库连接，则直接使用
-    #     if db_session is None:
-    #         database = DatabaseConnector()
-    #         database.startCursor()
-    #     else:
-    #         database = db_session
-    #     # =================
-    #     # 检查学号是否已存在
-    #     DBAffectRows = database.execute(
-    #         "SELECT student_id FROM `MemberExtend` WHERE student_id = %(studentID)s;",
-    #         infoDict
-    #     )
-    #     database.fetchall()
-    #     if DBAffectRows == 1:
-    #         raise PermissionDenyError(
-    #             "Student ID exists.", filename=__file__, line=sys._getframe().f_lineno
-    #         )
-    #     # =================
-    #     # 尝试插入或更新信息
-    #     DBAffectRows = database.execute(
-    #         "INSERT INTO `MemberBasic` (student_id,name,gender,reason) \
-    #             VALUES (%(studentID)s,%(name)s,%(gender)s,'') \
-    #         ON DUPLICATE KEY \
-    #             UPDATE name=%(name)s, gender=%(gender)s;",
-    #         infoDict,
-    #         autoCommit=False
-    #     )
-    #     if DBAffectRows not in [0, 1, 2]:
-    #         database.rollback()
-    #         raise DatabaseRuntimeError(
-    #             "Insert or Update member basic info error.",
-    #             filename=__file__,
-    #             line=sys._getframe().f_lineno
-    #         )
-    #     DBAffectRows = database.execute(
-    #         "INSERT INTO `MemberExtend` (student_id,ethnicity,hometown,phone,qq,school_id, \
-    #                                     dormitory_yuan,dormitory_dong,dormitory_hao,remark) \
-    #         VALUES (%(studentID)s,%(ethnicity)s,%(hometown)s,%(phone)s,%(qq)s,%(schoolID)s, \
-    #                 %(dormitory_yuan)s,%(dormitory_dong)s,%(dormitory_hao)s,'');",
-    #         infoDict,
-    #         autoCommit=False
-    #     )
-    #     if DBAffectRows != 1:
-    #         database.rollback()
-    #         raise DatabaseRuntimeError(
-    #             "Insert member extend info error.",
-    #             filename=__file__,
-    #             line=sys._getframe().f_lineno
-    #         )
-    #     DBAffectRows = database.execute(
-    #         "INSERT INTO `WageInfo` (student_id,application_student_id,application_name, \
-    #                                 application_bankcard,subsidy_dossier,remark) \
-    #         VALUES (%(studentID)s,%(studentID)s,%(name)s,%(bank)s,%(subsidyDossier)s,'');",
-    #         infoDict,
-    #         autoCommit=False
-    #     )
-    #     if DBAffectRows != 1:
-    #         database.rollback()
-    #         raise DatabaseRuntimeError(
-    #             "Insert wage info error.",
-    #             filename=__file__,
-    #             line=sys._getframe().f_lineno
-    #         )
-    #     DBAffectRows = database.execute(
-    #         "INSERT INTO `Password` (student_id,passhash) \
-    #         VALUES (%s,%s);", (
-    #             infoDict["studentID"], hashlib.sha512(infoDict["password"].encode()
-    #                                                  ).digest()
-    #         ),
-    #         autoCommit=False
-    #     )
-    #     if DBAffectRows != 1:
-    #         database.rollback()
-    #         raise DatabaseRuntimeError(
-    #             "Insert password info error.",
-    #             filename=__file__,
-    #             line=sys._getframe().f_lineno
-    #         )
-    #     DBAffectRows = database.execute(
-    #         "INSERT INTO `EmptyTime` (student_id,remark) \
-    #         VALUES (%(studentID)s,'');",
-    #         infoDict,
-    #         autoCommit=False
-    #     )
-    #     if DBAffectRows != 1:
-    #         database.rollback()
-    #         raise DatabaseRuntimeError(
-    #             "Insert empty time info error.",
-    #             filename=__file__,
-    #             line=sys._getframe().f_lineno
-    #         )
-    #     database.commit()
+                # === 插入 PaymentInfo 表信息 ===
+                payment = SQL_PaymentInfo(
+                    student_id=infoDict["studentID"],
+                    recipient_name=infoDict["name"],  # 如无 application_name 则用 name
+                    card_number=infoDict["bank"],
+                    is_registered_poor=0,  # 该值看你的应用有需要可填
+                )
+                session.add(payment)
+
+                # === 插入密码表 ===
+                password_hash = hashlib.sha512(infoDict["password"].encode()).digest()
+                credential = SQL_UserCredential(
+                    student_id=infoDict["studentID"], password_hash=password_hash
+                )
+                session.add(credential)
+
+                # === 插入EmptyTime/空闲信息 ===
+                empty_time = SQL_EmptyTime(
+                    student_id=infoDict["studentID"],
+                    slot_1_2=0,
+                    slot_3_4=0,
+                    slot_5_6=0,
+                    slot_7_8=0,
+                    slot_9_11=0,
+                )
+                session.add(empty_time)
+
+                # === 7. 提交事务 ===
+                session.commit()
+                # 返回结果、或根据实际需求返回各表对象
+            except Exception as e:
+                session.rollback()
+                raise DatabaseRuntimeError(
+                    "Insert or Update member info error: " + str(e),
+                    filename=__file__,
+                    line=sys._getframe().f_lineno,
+                )
 
     @staticmethod
     def topbarInfo() -> dict:
@@ -397,7 +434,7 @@ class UsersDatabase:
             "name": info["userName"],
             "department_id": info["department_id"],
             "department_name": info["department_name"],
-            "job": info["job"]
+            "job": info["job"],
         }
 
     # @staticmethod

@@ -4,8 +4,7 @@ import requests
 from flask import request
 
 
-class ClientInfo():
-
+class ClientInfo:
     @staticmethod
     def get_info() -> dict:
         """Detect client infos about IP, address, client agent and accept language
@@ -34,15 +33,16 @@ class ClientInfo():
             address = json.loads(
                 requests.get(
                     f"https://whois.pconline.com.cn/ipJson.jsp?json=true&ip={ip}",
-                    timeout=1
+                    timeout=1,
                 ).text
             )
             address["url"] = "https://whois.pconline.com.cn"
         except (requests.exceptions.ReadTimeout, requests.exceptions.ProxyError):
             try:
                 address = json.loads(
-                    requests.get(f"http://ip-api.com/json/{ip}?lang=zh-CN",
-                                 timeout=1).text
+                    requests.get(
+                        f"http://ip-api.com/json/{ip}?lang=zh-CN", timeout=1
+                    ).text
                 )
                 address["url"] = "http://ip-api.com"
             except (requests.exceptions.ReadTimeout, requests.exceptions.ProxyError):
