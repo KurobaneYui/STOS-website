@@ -327,7 +327,9 @@ class UsersDatabase:
         with session_context as session:
             # ==========================
             # 清除当前登录会话的用户的信息
-            user_obj = session.get(SQL_User, CustomSession.getSession().get("userID"))
+            user_obj = session.get(
+                SQL_UserProfile, CustomSession.getSession().get("userID")
+            )
             if user_obj is None:
                 raise IllegalValueError(
                     "Student ID not exists.",
