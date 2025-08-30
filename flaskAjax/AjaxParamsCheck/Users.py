@@ -90,16 +90,16 @@ def RegisterCheck(formDict: dict, db_session: Session) -> dict[str, Any]:
         returnMessage += "信息提交出错，请联系管理员修改网站。error: dormitory_yuan。"
 
     if formDict["dormitory_yuan"] != "校外":
-        pattern = re.compile(r"^[0-9]+$")
-        if pattern.match(formDict["dormitory_dong"]) is None:
+        pattern = re.compile(r"^([1-9][0-9]?)$")
+        if pattern.match(str(formDict["dormitory_dong"])) is None:
             returnMessage += "宿舍楼栋输入有误。"
-        elif not 0 < int(formDict["dormitory_dong"]) < 100:
+        elif not 0 < formDict["dormitory_dong"] < 100:
             returnMessage += "宿舍楼栋输入有误。"
 
-        pattern = re.compile(r"^[0-9]+$")
-        if pattern.match(formDict["dormitory_hao"]) is None:
+        pattern = re.compile(r"^([1-9][0-9]{2})$")
+        if pattern.match(str(formDict["dormitory_hao"])) is None:
             returnMessage += "宿舍楼栋输入有误。"
-        elif not 100 < int(formDict["dormitory_hao"]) < 1000:
+        elif not 100 < formDict["dormitory_hao"] < 1000:
             returnMessage += "宿舍楼栋输入有误。"
 
     else:
@@ -108,8 +108,6 @@ def RegisterCheck(formDict: dict, db_session: Session) -> dict[str, Any]:
     pattern = re.compile(r"^([1-9]{1})(\d{15,18})$")
     if pattern.match(formDict["bank"]) is None:
         returnMessage += "银行卡号有误。"
-
-    formDict["subsidyDossier"] = True if formDict["subsidyDossier"] == "true" else False
 
     returnBool = False if len(returnMessage) > 0 else True
     return {"result": returnBool, "message": returnMessage}
@@ -132,7 +130,6 @@ def ChangeInfoCheck(formDict: dict, db_session: Session) -> dict[str, Any]:
         and "gender" not in formDict.keys()
         and "ethnicity" not in formDict.keys()
         and "hometown" not in formDict.keys()
-        and "infoRemark" not in formDict.keys()
         and "phone" not in formDict.keys()
         and "qq" not in formDict.keys()
         and "campus" not in formDict.keys()
@@ -144,7 +141,6 @@ def ChangeInfoCheck(formDict: dict, db_session: Session) -> dict[str, Any]:
         and "application_name" not in formDict.keys()
         and "application_student_id" not in formDict.keys()
         and "subsidyDossier" not in formDict.keys()
-        and "wageRemark" not in formDict.keys()
     ):
         return {
             "warning": "",
@@ -191,29 +187,29 @@ def ChangeInfoCheck(formDict: dict, db_session: Session) -> dict[str, Any]:
     if pattern.match(formDict["qq"]) is None:
         returnMessage += "QQ号有误。"
 
-    DBAffectRows = db_session.execute(
-        "SELECT school_id from School WHERE name=%(school)s and campus=%(campus)s;",
-        formDict,
-    )
-    if DBAffectRows != 1:
-        returnMessage += "学院、校区匹配错误，请联系管理员处理。"
+    results1 = db_session.query(SQL_College).filter_by(name=formDict["school"]).all()
+    results2 = db_session.query(SQL_Campus).filter_by(name=formDict["campus"]).all()
+
+    if len(results1) != 1 or len(results2) != 1:
+        returnMessage += "学院或校区未成功检索，请联系管理员处理。"
     else:
-        formDict["schoolID"] = db_session.fetchall()[0]["school_id"]
+        formDict["schoolID"] = results1[0].id
+        formDict["campusID"] = results2[0].id
 
     if formDict["dormitory_yuan"] not in ["学知苑", "硕丰苑", "校内", "校外"]:
         returnMessage += "信息提交出错，请联系管理员修改网站。error: dormitory_yuan。"
 
     if formDict["dormitory_yuan"] != "校外":
-        pattern = re.compile(r"^[0-9]+$")
-        if pattern.match(formDict["dormitory_dong"]) is None:
+        pattern = re.compile(r"^([1-9][0-9]?)$")
+        if pattern.match(str(formDict["dormitory_dong"])) is None:
             returnMessage += "宿舍楼栋输入有误。"
-        elif not 0 < int(formDict["dormitory_dong"]) < 100:
+        elif not 0 < formDict["dormitory_dong"] < 100:
             returnMessage += "宿舍楼栋输入有误。"
 
-        pattern = re.compile(r"^[0-9]+$")
-        if pattern.match(formDict["dormitory_hao"]) is None:
+        pattern = re.compile(r"^([1-9][0-9]{2})$")
+        if pattern.match(str(formDict["dormitory_hao"])) is None:
             returnMessage += "宿舍楼栋输入有误。"
-        elif not 100 < int(formDict["dormitory_hao"]) < 1000:
+        elif not 100 < formDict["dormitory_hao"] < 1000:
             returnMessage += "宿舍楼栋输入有误。"
 
     else:
@@ -222,8 +218,6 @@ def ChangeInfoCheck(formDict: dict, db_session: Session) -> dict[str, Any]:
     pattern = re.compile(r"^([1-9]{1})(\d{15,18})$")
     if pattern.match(formDict["application_bankcard"]) is None:
         returnMessage += "银行卡号有误。"
-
-    formDict["subsidyDossier"] = True if formDict["subsidyDossier"] == "true" else False
 
     returnBool = False if len(returnMessage) > 0 else True
     return {"result": returnBool, "message": returnMessage}
@@ -307,19 +301,18 @@ class UsersCheck:
     ) -> None:
         # =====================================
         # 如果提供已经建立的数据库连接，则直接使用
-        if db_session is None:
-            database = db_session()
-            database.startCursor()
-        else:
-            database = db_session
-        # ====================
-        tmp = ChangeInfoCheck(infoDict, database)
-        checkResult, checkMessage = tmp["result"], tmp["message"]
+        session_context = (
+            SessionLocal() if db_session is None else nullcontext(db_session)
+        )
+        with session_context as session:
+            # ====================
+            tmp = ChangeInfoCheck(infoDict, session)
+            checkResult, checkMessage = tmp["result"], tmp["message"]
 
-        if not checkResult:
-            raise IllegalValueError(
-                checkMessage, filename=__file__, line=sys._getframe().f_lineno
-            )
+            if not checkResult:
+                raise IllegalValueError(
+                    checkMessage, filename=__file__, line=sys._getframe().f_lineno
+                )
 
     @staticmethod
     def submitSelfstudyRecordParamsCheck(infoForm: dict) -> None:

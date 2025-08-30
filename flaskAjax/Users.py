@@ -235,46 +235,45 @@ def Users(app: flask.Flask) -> None:  # noqa: C901
     #             logger.funcReturns = returns
     #     return customResponse.getResponse()
 
-    # @app.route("/Ajax/Users/get_personal_info", methods=['GET'])
-    # def getPersonalInfo():
-    #     with CustomResponse() as customResponse:
-    #         with Logger(funcName="Users.getPersonalInfo()") as logger:
-    #             # ===============
-    #             # 检查接口调用权限
-    #             Authorization.check(rightsNeeded=tuple(), needLogin=True)
-    #             # ===========
-    #             # 执行接口流程
-    #             results = UsersDatabase.getPersonalInfo()
-    #             # ========================
-    #             # 准备函数返回值和响应与日志
-    #             returns = {"message": "", "data": results}
-    #             customResponse.setMessageAndData(**returns)
-    #             logger.funcReturns = returns
-    #     return customResponse.getResponse()
+    @app.route("/Ajax/Users/get_personal_info", methods=["GET"])
+    def getPersonalInfo():
+        with CustomResponse() as customResponse:
+            with Logger(funcName="Users.getPersonalInfo()") as logger:
+                # ===============
+                # 检查接口调用权限
+                Authorization.check(rightsNeeded=tuple(), needLogin=True)
+                # ===========
+                # 执行接口流程
+                results = UsersDatabase.getPersonalInfo()
+                # ========================
+                # 准备函数返回值和响应与日志
+                returns = {"message": "", "data": results}
+                customResponse.setMessageAndData(**returns)
+                logger.funcReturns = returns
+        return customResponse.getResponse()
 
-    # @app.route("/Ajax/Users/change_personal_info", methods=['POST'])
-    # def changePersonalInfo():
-    #     with CustomResponse() as customResponse:
-    #         with Logger(funcName="Users.changePersonalInfo()") as logger:
-    #             # ===============
-    #             # 检查接口调用权限
-    #             Authorization.check(rightsNeeded=tuple(), needLogin=True)
-    #             # ========================
-    #             # 检查接口输入参数并记录日志
-    #             database = DatabaseConnector()
-    #             database.startCursor()
-    #             infoDict = dict(request.form)
-    #             UsersCheck.changePersonalInfoParamsCheck(infoDict, database)
-    #             logger.funcArgs = request.form
-    #             # ===========
-    #             # 执行接口流程
-    #             results = UsersDatabase.changePersonalInfo(infoDict)
-    #             # ========================
-    #             # 准备函数返回值和响应与日志
-    #             returns = {"message": results, "data": ""}
-    #             customResponse.setMessageAndData(**returns)
-    #             logger.funcReturns = returns
-    #     return customResponse.getResponse()
+    @app.route("/Ajax/Users/change_personal_info", methods=['POST'])
+    def changePersonalInfo():
+        with CustomResponse() as customResponse:
+            with Logger(funcName="Users.changePersonalInfo()") as logger:
+                # ===============
+                # 检查接口调用权限
+                Authorization.check(rightsNeeded=tuple(), needLogin=True)
+                # ========================
+                # 检查接口输入参数并记录日志
+                assert request.json is not None
+                infoDict = dict(request.json)
+                UsersCheck.changePersonalInfoParamsCheck(infoDict)
+                logger.funcArgs = request.json
+                # ===========
+                # 执行接口流程
+                results = UsersDatabase.changePersonalInfo(infoDict)
+                # ========================
+                # 准备函数返回值和响应与日志
+                returns: dict = {"message": results, "data": ""}
+                customResponse.setMessageAndData(**returns)
+                logger.funcReturns = returns
+        return customResponse.getResponse()
 
     # @app.route("/Ajax/Users/get_empty_time_info", methods=['GET'])
     # def getEmptyTimeInfo():

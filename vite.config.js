@@ -33,6 +33,7 @@ export default defineConfig({
         register: resolve(__dirname, 'authentication/register.html'),
         forgot_password: resolve(__dirname, 'authentication/forgot_password.html'),
         user_center_index: resolve(__dirname, 'user_center/index.html'),
+        user_center_contact: resolve(__dirname, 'user_center/contact.html'),
         user_center_personal_info: resolve(__dirname, 'user_center/personal_info.html'),
       },
     },

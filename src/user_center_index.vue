@@ -4,6 +4,7 @@ import Topbar from './components/Topbar.vue'
 import LoginWork from './components/Loginwork.vue'
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
+import swal from 'sweetalert'
 
 const currentPath = window.location.pathname
 

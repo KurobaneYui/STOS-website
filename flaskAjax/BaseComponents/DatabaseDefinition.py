@@ -55,9 +55,13 @@ class UserProfile(Base):
     college_id: Mapped[Optional[int]] = mapped_column(
         ForeignKey("colleges.id", ondelete="SET NULL"),
     )
-    hometown: Mapped[Optional[str]] = mapped_column(String(100))
-    phone: Mapped[Optional[str]] = mapped_column(String(20))
-    qq: Mapped[Optional[str]] = mapped_column(String(20))
+    dormitory_yuan: Mapped[Optional[str]] = mapped_column(String(20), nullable=False)
+    dormitory_dong: Mapped[Optional[int]] = mapped_column(Integer, nullable=False)
+    dormitory_hao: Mapped[Optional[int]] = mapped_column(Integer, nullable=False)
+    hometown: Mapped[Optional[str]] = mapped_column(String(100), nullable=False)
+    ethnicity: Mapped[Optional[str]] = mapped_column(String(50), nullable=False)
+    phone: Mapped[Optional[str]] = mapped_column(String(20), nullable=False)
+    qq: Mapped[Optional[str]] = mapped_column(String(20), nullable=False)
     updated_at: Mapped[datetime.datetime] = mapped_column(
         server_default=func.now(),
         onupdate=func.now(),
@@ -123,6 +127,7 @@ class PaymentInfo(Base):
     student_id: Mapped[str] = mapped_column(
         ForeignKey("user_profiles.student_id", ondelete="CASCADE"), primary_key=True
     )
+    recipient_id: Mapped[str] = mapped_column(String(20), nullable=False)
     recipient_name: Mapped[str] = mapped_column(String(100), nullable=False)
     card_number: Mapped[str] = mapped_column(String(50), nullable=False)
     is_registered_poor: Mapped[int] = mapped_column(Integer, nullable=False, default=0)

@@ -237,6 +237,10 @@ def initialize_database():
                 campus_id=campus_name_to_id["清水河"],
                 college_id=college_name_to_id["信息与通信工程学院"],
                 hometown="安徽省合肥市",
+                dormitory_yuan="学知苑",
+                ethnicity="汉族",
+                dormitory_dong=1,
+                dormitory_hao=103,
                 phone="18100500555",
                 qq="1531030000",
             )
@@ -245,6 +249,7 @@ def initialize_database():
             )
             new_user.profile.payment_info = SQL_PaymentInfo(
                 recipient_name="Squirrel",
+                recipient_id="202411223344",
                 card_number=6217003810050000000,
                 is_registered_poor=1,
             )

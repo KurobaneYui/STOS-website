@@ -1,6 +1,59 @@
 <script setup>
+import Sidebar from './components/Sidebar.vue'
+import Topbar from './components/Topbar.vue'
+import LoginWork from './components/Loginwork.vue'
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
+import swal from 'sweetalert'
+
+const currentPath = window.location.pathname
+
+const userInfo = ref({
+    name: '',
+    departmentId: 0,
+    departmentName: '',
+    job: 'member'
+})
+const formalMember = ref('')
+const badges = ref([])
+
+async function getTopbarInfo() {
+    try {
+        const { data } = await axios.get('/Ajax/Users/topbarInfo')
+        const code = data.code
+        if ([400, 401, 404, 417, 498, 499].includes(code)) {
+            if (data.msg) swal({ title: data.msg, icon: "warning" })
+            else swal({ title: '出错了，如刷新无效请尝试重新登录', icon: 'error' })
+            return
+        }
+        if (code === 200 || code === 301) {
+            const info = data.data
+            userInfo.value = info
+            updateFormalMember(info)
+            updateBadges(info)
+        }
+    } catch (e) {
+        swal({ title: '请检查网络连接，或稍后再试', icon: "error" })
+    }
+}
+
+function updateFormalMember(info) {
+    if (info.department_id === 0) {
+        formalMember.value = info.department_name
+    } else if (info.department_id === 1) {
+        formalMember.value = `${info.department_name} - ${info.job === "manager" ? '队长' : '副队长'}`
+    } else {
+        formalMember.value = `${info.department_name} - ${info.job === "manager" ? '组长' : '组员'}`
+    }
+}
+
+function updateBadges(info) {
+    badges.value = [
+        { text: '查早：完成', type: 'success' },
+        { text: '查课：未确认', type: 'warning' },
+        // ...
+    ]
+}
 
 const campusOptions = ref([
     { value: '', text: '请选择校区' }
@@ -174,7 +227,43 @@ function onPasswordChangeSwitch(val) {
     if (!val) form.value.password = ''
 }
 
+const deleteConfirmText = ref('')
+
+async function confirmDelete() {
+    if (deleteConfirmText.value !== '我已知晓且确认注销账户') {
+        return swal({
+            title: "请确认",
+            text: "如需注销账户，请填写确认文字！",
+            icon: "error",
+        });
+    }
+
+    try {
+        const { data } = await axios.post('/Ajax/Users/delete_personal_info', { 'confirmDelete': 'confirm' })
+        if (data.code === 200 || data.code === 301) {
+            if (data.code === 301) {
+                console.log('注销个人信息函数移至新位置');
+            }
+            swal({
+                title: "注销成功",
+                icon: "success",
+            }).then(() => {
+                window.location.href = "/index.html"
+            });
+        } else {
+            swal({
+                title: data.message || "操作失败",
+                text: "请重试",
+                icon: "error",
+            });
+        }
+    } catch (err) {
+        swal({ title: "网络错误", text: "请检查浏览器网络连接，建议刷新后重试", icon: "error" })
+    }
+}
+
 onMounted(async () => {
+    getTopbarInfo();
     genRandomImgs();
     await get_campus();
     await get_school();
@@ -187,20 +276,24 @@ onMounted(async () => {
     <div class="layout-wrapper layout-content-navbar">
         <div class="layout-container">
             <!-- Menu -->
-            <aside id="layout-menu" class="layout-menu menu-vertical menu bg-menu-theme"></aside>
+            <aside class="layout-menu menu-vertical menu bg-menu-theme">
+                <Sidebar :current-path="currentPath" :user-info="userInfo" />
+            </aside>
             <!-- / Menu -->
 
             <!-- Layout container -->
             <div class="layout-page">
-                <!-- Navbar -->
-                <nav class="layout-navbar container-fluid navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme rounded-pill"
-                    id="layout-navbar"></nav>
-                <div id="select-login-work-container"></div>
-                <!-- / Navbar -->
+                <nav
+                    class="layout-navbar container-fluid navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme rounded-pill">
+                    <Topbar :user-info="userInfo" :formal-member="formalMember" :badges="badges" />
+                </nav>
+                <div>
+                    <LoginWork />
+                </div>
 
-                <!-- Content wrapper -->
                 <div class="content-wrapper">
                     <!-- Content -->
+
 
                     <div class="container-fluid flex-grow-1 container-p-y">
                         <!-- Breadcrumb -->
@@ -463,14 +556,15 @@ onMounted(async () => {
                                                     <p class="fw-bold text-primary">
                                                         注意：为了保证已提交的工作数据可以朔源，我们会保留个人学号和姓名的记录，但其余信息不保留。</p>
                                                     <p class="fw-bold text-danger">确认注销请输入：我已知晓且确认注销账户</p>
-                                                    <input type="text" class="form-control" id="deleteConfirm" required>
+                                                    <input type="text" class="form-control" id="deleteConfirm"
+                                                        v-model="deleteConfirmText" required>
                                                 </div>
                                                 <div class="modal-footer">
                                                     <button type="button" class="btn btn-danger"
-                                                        onclick="confirmDelete()">确定删除</button>
+                                                        @click="confirmDelete">确定删除</button>
                                                     <button type="button" class="btn btn-secondary"
                                                         data-bs-dismiss="modal"
-                                                        @click="document.querySelector('#deleteConfirm').value = ''">取消</button>
+                                                        @click="deleteConfirmText = ''">取消</button>
                                                 </div>
                                             </div>
                                         </div>

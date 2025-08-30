@@ -1,3 +1,4 @@
+from lib2to3.pgen2.pgen import DFAState
 import sys
 import json
 import numpy
@@ -383,6 +384,10 @@ class UsersDatabase:
                     student_id=infoDict["studentID"],
                     campus_id=infoDict.get("campusID"),
                     college_id=infoDict.get("schoolID"),
+                    ethnicity=infoDict.get("ethnicity"),
+                    dormitory_yuan=infoDict.get("dormitory_yuan"),
+                    dormitory_dong=infoDict.get("dormitory_dong"),
+                    dormitory_hao=infoDict.get("dormitory_hao"),
                     hometown=infoDict.get("hometown"),
                     phone=infoDict.get("phone"),
                     qq=infoDict.get("qq"),
@@ -392,9 +397,10 @@ class UsersDatabase:
                 # === 插入 PaymentInfo 表信息 ===
                 payment = SQL_PaymentInfo(
                     student_id=infoDict["studentID"],
-                    recipient_name=infoDict["name"],  # 如无 application_name 则用 name
+                    recipient_id=infoDict["studentID"],
+                    recipient_name=infoDict["name"],
                     card_number=infoDict["bank"],
-                    is_registered_poor=0,  # 该值看你的应用有需要可填
+                    is_registered_poor=infoDict["subsidyDossier"],
                 )
                 session.add(payment)
 
@@ -453,122 +459,104 @@ class UsersDatabase:
     #     database.execute(sql="SELECT * FROM `Contact`;")
     #     return database.fetchall()
 
-    # @staticmethod
-    # def getPersonalInfo(db_session: Session | None = None) -> tuple[dict] | list[dict]:
-    #     # =====================================
-    #     # 如果提供已经建立的数据库连接，则直接使用
-    #     if db_session is None:
-    #         database = DatabaseConnector()
-    #         database.startCursor()
-    #     else:
-    #         database = db_session
-    #     # ============
-    #     # 获取个人信息
-    #     database.execute(
-    #         sql=
-    #         "SELECT `MemberExtend`.student_id as student_id, `MemberBasic`.name as name, \
-    #                 gender, ethnicity, hometown, phone, qq, `MemberExtend`.remark as infoRemark, \
-    #                 campus, `School`.`name` as school, dormitory_yuan, dormitory_dong, dormitory_hao, \
-    #                 application_student_id, application_name, application_bankcard, subsidy_dossier, \
-    #                 `WageInfo`.remark as wageRemark \
-    #             FROM `MemberExtend` \
-    #             LEFT JOIN `MemberBasic` ON `MemberExtend`.`student_id` = `MemberBasic`.`student_id` \
-    #             LEFT JOIN `School` ON `MemberExtend`.`school_id` = `School`.`school_id` \
-    #             LEFT JOIN `WageInfo` ON `MemberExtend`.`student_id` = `WageInfo`.`student_id` \
-    #             WHERE `MemberExtend`.`student_id` = %(userID)s;",
-    #         data=CustomSession.getSession()
-    #     )
-    #     return database.fetchall()
+    @staticmethod
+    def getPersonalInfo(db_session: Session | None = None) -> tuple[dict] | list[dict]:
+        # =====================================
+        # 如果提供已经建立的数据库连接，则直接使用
+        session_context = (
+            SessionLocal() if db_session is None else nullcontext(db_session)
+        )
+        with session_context as session:
+            # ============
+            # 获取个人信息
+            results = (
+                session.query(SQL_User)
+                .filter_by(student_id=CustomSession.getSession()["userID"])
+                .one()
+            )
+            return [
+                {
+                    "student_id": results.student_id,
+                    "name": results.name,
+                    "gender": results.gender,
+                    "ethnicity": results.profile.ethnicity,
+                    "hometown": results.profile.hometown,
+                    "phone": results.profile.phone,
+                    "qq": results.profile.qq,
+                    "campus": results.profile.campus.name,
+                    "school": results.profile.college.name,
+                    "dormitory_yuan": results.profile.dormitory_yuan,
+                    "dormitory_dong": results.profile.dormitory_dong,
+                    "dormitory_hao": results.profile.dormitory_hao,
+                    "application_student_id": results.profile.payment_info.recipient_id,
+                    "application_name": results.profile.payment_info.recipient_name,
+                    "application_bankcard": results.profile.payment_info.card_number,
+                    "subsidy_dossier": results.profile.payment_info.is_registered_poor,
+                }
+            ]
 
-    # # TODO: Not Finished Yet !!!
-    # @staticmethod
-    # def changePersonalInfo(infoDict: dict, db_session: Session | None = None) -> str:
-    #     # =====================================
-    #     # 如果提供已经建立的数据库连接，则直接使用
-    #     if db_session is None:
-    #         database = DatabaseConnector()
-    #         database.startCursor()
-    #     else:
-    #         database = db_session
-    #     # ======================
-    #     # 检查个人信息数据是否存在
-    #     DBAffectRows = database.execute(
-    #         "SELECT student_id FROM `MemberExtend` WHERE student_id = %(studentID)s;",
-    #         infoDict
-    #     )
-    #     database.fetchall()
-    #     if DBAffectRows != 1:
-    #         raise IllegalValueError(
-    #             "Student ID not exists.",
-    #             filename=__file__,
-    #             line=sys._getframe().f_lineno
-    #         )
-    #     # ============
-    #     # 更新个人信息
-    #     DBAffectRows = database.execute(
-    #         "UPDATE `MemberBasic` SET name=%(name)s, gender=%(gender)s WHERE student_id=%(studentID)s;",
-    #         infoDict,
-    #         autoCommit=False
-    #     )
-    #     if DBAffectRows not in [0, 1]:
-    #         database.rollback()
-    #         raise DatabaseRuntimeError(
-    #             "Update member basic info error.",
-    #             filename=__file__,
-    #             line=sys._getframe().f_lineno
-    #         )
-    #     DBAffectRows = database.execute(
-    #         "UPDATE `MemberExtend` SET \
-    #             ethnicity=%(ethnicity)s, hometown=%(hometown)s, phone=%(phone)s, \
-    #             qq=%(qq)s, school_id=%(schoolID)s, dormitory_yuan=%(dormitory_yuan)s, \
-    #             dormitory_dong=%(dormitory_dong)s, dormitory_hao=%(dormitory_hao)s, \
-    #             remark=%(infoRemark)s \
-    #         WHERE student_id=%(studentID)s;",
-    #         infoDict,
-    #         autoCommit=False
-    #     )
-    #     if DBAffectRows not in [0, 1]:
-    #         database.rollback()
-    #         raise DatabaseRuntimeError(
-    #             "Update member extend info error.",
-    #             filename=__file__,
-    #             line=sys._getframe().f_lineno
-    #         )
-    #     DBAffectRows = database.execute(
-    #         "UPDATE `WageInfo` SET \
-    #             application_student_id=%(application_student_id)s, application_name=%(application_name)s, \
-    #             application_bankcard=%(application_bankcard)s,subsidy_dossier=%(subsidyDossier)s, \
-    #             remark=%(wageRemark)s \
-    #         WHERE student_id=%(studentID)s;",
-    #         infoDict,
-    #         autoCommit=False
-    #     )
-    #     if DBAffectRows not in [0, 1]:
-    #         database.rollback()
-    #         raise DatabaseRuntimeError(
-    #             "Update wage info error.",
-    #             filename=__file__,
-    #             line=sys._getframe().f_lineno
-    #         )
-    #     if "password" in infoDict.keys():
-    #         DBAffectRows = database.execute(
-    #             "UPDATE `Password` SET passhash=%s \
-    #             WHERE student_id=%s", (
-    #                 hashlib.sha512(infoDict["password"].encode()
-    #                               ).digest(), infoDict["studentID"]
-    #             ),
-    #             autoCommit=False
-    #         )
-    #         if DBAffectRows not in [0, 1]:
-    #             database.rollback()
-    #             raise DatabaseRuntimeError(
-    #                 "Update password info error.",
-    #                 filename=__file__,
-    #                 line=sys._getframe().f_lineno
-    #             )
-    #     database.commit()
+    @staticmethod
+    def changePersonalInfo(infoDict: dict, db_session: Session | None = None) -> str:
+        # =====================================
+        # 如果提供已经建立的数据库连接，则直接使用
+        session_context = (
+            SessionLocal() if db_session is None else nullcontext(db_session)
+        )
+        with session_context as session:
+            # === 检查 StudentID 是否已存在 ===
+            if (
+                len(
+                    session.query(SQL_UserProfile)
+                    .filter(SQL_UserProfile.student_id == infoDict["studentID"])
+                    .all()
+                )
+                != 1
+            ):
+                raise IllegalValueError(
+                    "Student ID not exists.",
+                    filename=__file__,
+                    line=sys._getframe().f_lineno,
+                )
+            # ============
+            # 更新个人信息
+            user = (
+                session.query(SQL_User)
+                .filter(SQL_User.student_id == infoDict["studentID"])
+                .one()
+            )
 
-    #     return "刷新页面以更新数据，如仍有数据未更新，请退出重新登录。如有问题请联系管理员。"
+            user.name = infoDict["name"]
+            user.student_id = infoDict["studentID"]
+            user.gender = infoDict["gender"]
+
+            user.profile.ethnicity = infoDict["ethnicity"]
+            user.profile.hometown = infoDict["hometown"]
+            user.profile.phone = infoDict["phone"]
+            user.profile.qq = infoDict["qq"]
+            user.profile.campus_id = infoDict["campusID"]
+            user.profile.college_id = infoDict["schoolID"]
+            user.profile.dormitory_yuan = infoDict["dormitory_yuan"]
+            user.profile.dormitory_dong = infoDict["dormitory_dong"]
+            user.profile.dormitory_hao = infoDict["dormitory_hao"]
+
+            user.profile.payment_info.recipient_id = infoDict["application_student_id"]
+            user.profile.payment_info.recipient_name = infoDict["application_name"]
+            user.profile.payment_info.card_number = infoDict["application_bankcard"]
+            user.profile.payment_info.is_registered_poor = infoDict["subsidyDossier"]
+
+            user.profile.payment_info.recipient_id = infoDict["application_student_id"]
+            user.profile.payment_info.recipient_name = infoDict["application_name"]
+            user.profile.payment_info.card_number = infoDict["application_bankcard"]
+            user.profile.payment_info.is_registered_poor = infoDict["subsidyDossier"]
+
+            if "password" in infoDict.keys():
+                user.profile.credential.password_hash = hashlib.sha512(
+                    infoDict["password"].encode()
+                ).digest()
+
+            session.commit()
+
+        return "刷新页面以更新数据，如仍有数据未更新，请退出重新登录。如有问题请联系管理员。"
 
     # @staticmethod
     # def getEmptyTimeInfo(db_session: Session | None = None) -> dict[str, Any]:
