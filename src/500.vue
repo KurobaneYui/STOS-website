@@ -1,4 +1,8 @@
 <script setup>
+<<<<<<< HEAD
+=======
+import * as bootstrap from 'bootstrap'
+>>>>>>> v4-dev
 </script>
 
 <template>

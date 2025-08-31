@@ -1,9 +1,19 @@
 <script setup>
+<<<<<<< HEAD
 import { ref, reactive, onMounted } from 'vue'
 import axios from 'axios'
 
 // ------ 表单数据 ------
 const form = reactive({
+=======
+import { ref, onMounted } from 'vue'
+import axios from 'axios'
+import swal from 'sweetalert'
+import * as bootstrap from 'bootstrap'
+
+// ------ 表单数据 ------
+const form = ref({
+>>>>>>> v4-dev
     name: '',
     studentID: '',
     gender: 'male',
@@ -89,7 +99,11 @@ onMounted(() => {
 // ---- 注册函数 ----
 async function register() {
     claimError.value = false
+<<<<<<< HEAD
     if (!form.claimBox) {
+=======
+    if (!form.value.claimBox) {
+>>>>>>> v4-dev
         claimError.value = true
         if (window.sweetAlert) sweetAlert("请阅读个人信息说明");
         else if (window.swal) swal({ title: "请阅读个人信息说明", icon: "info" });
@@ -97,6 +111,7 @@ async function register() {
     }
 
     const register_info = {
+<<<<<<< HEAD
         name: form.name,
         studentID: form.studentID,
         gender: form.gender === 'male' ? '男' : '女',
@@ -112,6 +127,23 @@ async function register() {
         bank: form.bank,
         subsidyDossier: form.subsidyDossier,
         password: form.password
+=======
+        name: form.value.name,
+        studentID: form.value.studentID,
+        gender: form.value.gender === 'male' ? '男' : '女',
+        ethnicity: form.value.ethnicity,
+        hometown: form.value.hometown,
+        phone: form.value.phone,
+        qq: form.value.qq,
+        campus: form.value.campus,
+        school: form.value.school,
+        dormitory_yuan: form.value.dormitory_yuan,
+        dormitory_dong: form.value.dormitory_dong,
+        dormitory_hao: form.value.dormitory_hao,
+        bank: form.value.bank,
+        subsidyDossier: form.value.subsidyDossier,
+        password: form.value.password
+>>>>>>> v4-dev
     }
 
     try {
@@ -232,14 +264,22 @@ function onSubmit(e) {
                             <label for="campus" class="form-label">校区</label>
                             <select id="campus" class="form-select" required v-model="form.campus">
                                 <option v-for="item in campusOptions" :key="item.value" :value="item.value">{{ item.text
+<<<<<<< HEAD
                                 }}</option>
+=======
+                                    }}</option>
+>>>>>>> v4-dev
                             </select>
                         </div>
                         <div class="mb-3">
                             <label for="school" class="form-label">学院</label>
                             <select id="school" class="form-select" required v-model="form.school">
                                 <option v-for="item in schoolOptions" :key="item.value" :value="item.value">{{ item.text
+<<<<<<< HEAD
                                 }}</option>
+=======
+                                    }}</option>
+>>>>>>> v4-dev
                             </select>
                         </div>
                         <div class="mb-3">

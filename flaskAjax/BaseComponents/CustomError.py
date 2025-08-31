@@ -4,6 +4,10 @@ class CustomError(Exception):
         self.filename = filename
         self.line = line
 
+    def __str__(self):
+        # 只输出传入的信息
+        return self.args[0] if self.args else super().__str__()
+
 
 class DatabaseConnectionError(CustomError, ConnectionError):
     """Custom database connection error."""

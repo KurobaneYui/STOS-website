@@ -2,7 +2,7 @@ import os
 import json
 import sqlite3
 
-from sqlalchemy import create_engine, event
+from sqlalchemy import create_engine, event, text
 from sqlalchemy.orm import sessionmaker
 
 from .DatabaseDefinition import Base as SQL_Base
@@ -24,6 +24,7 @@ from .DatabaseDefinition import CheckInTask as SQL_CheckInTask  # noqa
 from .DatabaseDefinition import CheckInData as SQL_CheckInData  # noqa
 from .DatabaseDefinition import InspectionTask as SQL_InspectionTask  # noqa
 from .DatabaseDefinition import InspectionData as SQL_InspectionData  # noqa
+from .DatabaseDefinition import ContactView as SQL_ContactView, create_view_sql  # noqa
 
 # --- 1. 数据库设置 ---
 # 定义数据库文件路径和连接URL
@@ -81,12 +82,24 @@ def initialize_database():
     if db_dir:
         os.makedirs(db_dir, exist_ok=True)
 
+    def _create_tables_and_view():
+        # 只创建非视图的表
+        for table in SQL_Base.metadata.sorted_tables:
+            if table.info.get("is_view"):
+                continue
+            table.create(bind=engine, checkfirst=True)
+        # 显式执行视图 SQL（若已存在则忽略错误），避免调用 DDL.execute 导致 lint 警告
+        try:
+            with engine.begin() as conn:
+                conn.execute(text(create_view_sql))
+        except Exception:
+            pass
+
     # 如果文件存在视作已有数据，不做处理
     if os.path.exists(DB_FILE):
-        # create_all会安全地检查表是否存在，不存在则创建
-        SQL_Base.metadata.create_all(engine)
+        _create_tables_and_view()
     else:
-        SQL_Base.metadata.create_all(engine)
+        _create_tables_and_view()
         with SessionLocal() as session:
             campus_name = ["清水河", "沙河"]
             college_name = [
@@ -237,6 +250,10 @@ def initialize_database():
                 campus_id=campus_name_to_id["清水河"],
                 college_id=college_name_to_id["信息与通信工程学院"],
                 hometown="安徽省合肥市",
+                dormitory_yuan="学知苑",
+                ethnicity="汉族",
+                dormitory_dong=1,
+                dormitory_hao=103,
                 phone="18100500555",
                 qq="1531030000",
             )
@@ -245,6 +262,7 @@ def initialize_database():
             )
             new_user.profile.payment_info = SQL_PaymentInfo(
                 recipient_name="Squirrel",
+                recipient_id="202411223344",
                 card_number=6217003810050000000,
                 is_registered_poor=1,
             )

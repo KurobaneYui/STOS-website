@@ -1,18 +1,17 @@
 <!DOCTYPE html>
 
-<html lang="zh, en" class="light-style customizer-hide" dir="ltr" data-theme="theme-default" data-assets-path="/assets/"
-    data-template="vertical-menu-template-free">
+<html lang="zh, en" class="light-style layout-menu-fixed" dir="ltr" data-theme="theme-default"
+    data-assets-path="/assets/" data-template="vertical-menu-template-free">
 
 <head>
     <meta charset="utf-8" />
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
-    <title>学风督导队-登出</title>
+    <title>个人信息</title>
 
     <meta name="description" content="电子科技大学学风督导队" />
     <meta name="author" content="罗寅松，学风督导队数据组">
-    <meta http-equiv="refresh" content="3;url=/authentication/login.html">
 
     <!-- Favicon -->
     <link rel="icon" href="/favicon.ico">
@@ -21,10 +20,10 @@
     <link rel="preconnect" href="https://fonts.loli.net" />
     <link rel="preconnect" href="https://gstatic.loli.net" crossorigin />
     <link rel="stylesheet"
-    href="https://fonts.loli.net/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" />
+        href="https://fonts.loli.net/css2?family=Public+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" />
     <!-- Styles -->
     <link rel="stylesheet"
-    href="https://cdn.bootcdn.net/ajax/libs/perfect-scrollbar/1.5.6/css/perfect-scrollbar.min.css" />
+        href="https://cdn.bootcdn.net/ajax/libs/perfect-scrollbar/1.5.6/css/perfect-scrollbar.min.css" />
     <!-- Page JS -->
     <script defer src="https://cdn.bootcdn.net/ajax/libs/perfect-scrollbar/1.5.6/perfect-scrollbar.min.js"></script>
 </head>
@@ -32,20 +31,22 @@
 <body>
     <!-- Vue 应用将挂载在这里 -->
     <div id="app"></div>
-    
+
     <!-- Vue 应用的入口脚本 -->
     <script type="module">
         // Core CSS
         import "/src/assets/vendor/css/core.css";
         import "/src/assets/vendor/css/theme-default.css";
         // Page CSS
-        import "/src/assets/vendor/css/pages/page-auth.css";
+        // import "/src/assets/css/demo.css";
 
         import { createApp } from 'vue';
-        import Logout from '/src/Logout.vue';
+        import UserCenterPersonalInfo from '/src/user_center_personal_info.vue';
 
-        createApp(Logout).mount('#app');
+        createApp(UserCenterPersonalInfo).mount('#app');
     </script>
+    <script defer src="/js/helpers.js"></script>
+    <script defer src="/js/main.js"></script>
 </body>
 
 </html>

@@ -25,7 +25,9 @@ class DataManagerDatabase:
     ) -> tuple[dict] | list[dict]:
         # =====================================
         # 如果提供已经建立的数据库连接，则直接使用
-        session_context = SessionLocal() if db_session is None else nullcontext(db_session)
+        session_context = (
+            SessionLocal() if db_session is None else nullcontext(db_session)
+        )
         with session_context as session:
             # ============
             # 查询校区列表
@@ -34,12 +36,12 @@ class DataManagerDatabase:
             return results
 
     @staticmethod
-    def getSchoolForForm(
-        db_session: Session | None = None
-    ) -> tuple[dict] | list[dict]:
+    def getSchoolForForm(db_session: Session | None = None) -> tuple[dict] | list[dict]:
         # =====================================
         # 如果提供已经建立的数据库连接，则直接使用
-        session_context = SessionLocal() if db_session is None else nullcontext(db_session)
+        session_context = (
+            SessionLocal() if db_session is None else nullcontext(db_session)
+        )
         with session_context as session:
             # ========================
             # 查询某校区下的学院名称列表
