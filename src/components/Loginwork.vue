@@ -12,7 +12,7 @@ async function getWorkList() {
         if (data.code === 200 || data.code === 301) {
             workList.value = data.data
         } else {
-            alert(data.msg || '获取岗位失败')
+            swal({ title: "错误", text: data.msg || '获取岗位失败', icon: "error" })
         }
     } finally {
         loading.value = false

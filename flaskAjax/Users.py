@@ -209,31 +209,31 @@ def Users(app: flask.Flask) -> None:  # noqa: C901
             logger.funcReturns = returns
         return customResponse.getResponse()
 
-    # @app.route("/Ajax/Users/get_contact", methods=['GET'])
-    # def getContact():
-    #     with CustomResponse() as customResponse:
-    #         with Logger(funcName="Users.getContact()") as logger:
-    #             # ===============
-    #             # 检查接口调用权限
-    #             Authorization.check(
-    #                 rightsNeeded=({
-    #                     "department_id": 0,
-    #                     "actor": 0
-    #                 }, {
-    #                     "department_id": 0,
-    #                     "actor": 1
-    #                 }),
-    #                 needLogin=True
-    #             )
-    #             # ===========
-    #             # 执行接口流程
-    #             results = UsersDatabase.getContact()
-    #             # ========================
-    #             # 准备函数返回值和响应与日志
-    #             returns = {"message": "", "data": results}
-    #             customResponse.setMessageAndData(**returns)
-    #             logger.funcReturns = returns
-    #     return customResponse.getResponse()
+    @app.route("/Ajax/Users/get_contact", methods=['GET'])
+    def getContact():
+        with CustomResponse() as customResponse:
+            with Logger(funcName="Users.getContact()") as logger:
+                # ===============
+                # 检查接口调用权限
+                Authorization.check(
+                    rightsNeeded=({
+                        "department_id": None,
+                        "actor": "member"
+                    }, {
+                        "department_id": None,
+                        "actor": "manager"
+                    }),
+                    needLogin=True
+                )
+                # ===========
+                # 执行接口流程
+                results = UsersDatabase.getContact()
+                # ========================
+                # 准备函数返回值和响应与日志
+                returns = {"message": "", "data": results}
+                customResponse.setMessageAndData(**returns)
+                logger.funcReturns = returns
+        return customResponse.getResponse()
 
     @app.route("/Ajax/Users/get_personal_info", methods=["GET"])
     def getPersonalInfo():

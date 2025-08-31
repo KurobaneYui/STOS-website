@@ -1,10 +1,12 @@
 <script setup>
-import Sidebar from './components/Sidebar.vue'
-import Topbar from './components/Topbar.vue'
-import LoginWork from './components/Loginwork.vue'
 import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import swal from 'sweetalert'
+import * as bootstrap from 'bootstrap'
+import Sidebar from './components/Sidebar.vue'
+import Topbar from './components/Topbar.vue'
+import LoginWork from './components/Loginwork.vue'
+import "/src/assets/demo.css"
 
 const currentPath = window.location.pathname
 
@@ -16,6 +18,7 @@ const userInfo = ref({
 })
 const formalMember = ref('')
 const badges = ref([])
+const contacts = ref([])
 
 async function getTopbarInfo() {
     try {
@@ -31,6 +34,35 @@ async function getTopbarInfo() {
             userInfo.value = info
             updateFormalMember(info)
             updateBadges(info)
+        }
+    } catch (e) {
+        swal({ title: '请检查网络连接，或稍后再试', icon: "error" })
+    }
+}
+
+async function getContacts() {
+    try {
+        const { data } = await axios.get('/Ajax/Users/get_contact')
+        const code = data.code
+        if ([400, 401, 404, 417, 498, 499].includes(code)) {
+            let title = '出错了'
+            let text = '如刷新无效请尝试重新登录'
+            if (code === 400) title = "提供的数据错误，请联系管理员"
+            else if (code === 401) {
+                title = "权限错误"
+                text = "预备队员无通讯录查看权限。"
+            }
+            else if (code === 404) title = "功能不存在，请联系管理员"
+            else if (code === 417) title = "功能错误，请联系管理员"
+            else if (code === 498) title = "数据库异常，请联系管理员"
+            else if (code === 499) title = "功能维护中，暂不允许获取通讯录"
+
+            swal({ title: title, text: text, icon: "error" })
+            return
+        }
+        if (code === 200 || code === 301) {
+            if (code === 301) { window.console.log('获取通讯录函数移至新位置'); }
+            contacts.value = data.data
         }
     } catch (e) {
         swal({ title: '请检查网络连接，或稍后再试', icon: "error" })
@@ -55,88 +87,16 @@ function updateBadges(info) {
     ]
 }
 
-
-$(function () {
-    $.get(
-        "/Ajax/Users/get_contact",
-        function (data, status) {
-            if (status === "success") {
-                let returnCode = data['code'];
-                if (returnCode === 400) {
-                    swal({
-                        title: "提供的数据错误，请联系管理员",
-                        icon: "error",
-                    });
-                }
-                else if (returnCode === 401) {
-                    swal({
-                        title: "权限错误",
-                        text: "预备队员无通讯录查看权限。",
-                        icon: "error",
-                    });
-                }
-                else if (returnCode === 404) {
-                    swal({
-                        title: "功能不存在，请联系管理员",
-                        icon: "warning",
-                    });
-                }
-                else if (returnCode === 417) {
-                    swal({
-                        title: "功能错误，请联系管理员",
-                        icon: "warning",
-                    });
-                }
-                else if (returnCode === 498) {
-                    swal({
-                        title: "数据库异常，请联系管理员",
-                        icon: "warning",
-                    });
-                }
-                else if (returnCode === 499) {
-                    swal({
-                        title: "功能维护中，暂不允许获取通讯录",
-                        icon: "warning",
-                    });
-                }
-                else if (returnCode === 200 || returnCode === 301) {
-                    //状态码301，提醒转移函数
-                    if (returnCode === 301) { window.console.log('获取通讯录函数移至新位置'); }
-                    //状态码200，处理data
-                    fill_contact(data['data']);
-                }
-            }
-            else
-                alert("请检查网络状况。");
-        })
-})
-
-function fill_contact(data) {
-    let table_body = $("#contact-table-body");
-
-    for (let one_contact of data) {
-        table_body.append(`
-        <tr>
-            <td>${one_contact['id']}</td>
-            <td>${one_contact['department']}</td>
-            <td>${one_contact['name']}</td>
-            <td>${render_gender(one_contact['gender'])}</td>
-            <td>${one_contact['phone']}</td>
-            <td>${one_contact['qq']}</td>
-            <td>${one_contact["job"] == 1 ? (one_contact["department_id"] == 1 ? "队长" : "组长") : (one_contact["department_id"] == 1 ? "副队长" : "组员")}</td>
-            
-        </tr>
-        `)
-    }
+function getGenderBadge(gender) {
+    if (gender === '男') return 'bg-label-info'
+    if (gender === '女') return 'bg-label-danger'
+    return 'bg-label-dark'
 }
 
-function render_gender(gender) {
-    if (gender === '男') return "<span class='badge bg-label-info'>男</span>";
-    else if (gender === "女") return "<span class='badge bg-label-danger'>女</span>";
-    else return "<span class='badge bg-label-dark'>-</span>";
-}
-
-onMounted(getTopbarInfo);
+onMounted(() => {
+    getTopbarInfo()
+    getContacts()
+});
 </script>
 
 
@@ -186,7 +146,23 @@ onMounted(getTopbarInfo);
                                             <th>岗位</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="contact-table-body">
+                                    <tbody>
+                                        <tr v-for="contact in contacts" :key="contact.id">
+                                            <td>{{ contact.id }}</td>
+                                            <td>{{ contact.department }}</td>
+                                            <td>{{ contact.name }}</td>
+                                            <td>
+                                                <span class="badge" :class="getGenderBadge(contact.gender)">
+                                                    {{ contact.gender || '-' }}
+                                                </span>
+                                            </td>
+                                            <td>{{ contact.phone }}</td>
+                                            <td>{{ contact.qq }}</td>
+                                            <td>
+                                                {{ contact.job == "manager" ? (contact.department_id == 1 ? "队长" : "组长") :
+                                                (contact.department_id == 1 ? "副队长" : "组员") }}
+                                            </td>
+                                        </tr>
                                     </tbody>
                                     <tfoot class="table-border-bottom-0">
                                         <tr>
@@ -212,9 +188,7 @@ onMounted(getTopbarInfo);
                             class="container-fluid d-flex flex-wrap justify-content-between py-2 flex-md-row flex-column">
                             <div class="mb-2 mb-md-0">
                                 &copy;
-                                <script>
-                                    document.write(new Date().getFullYear());
-                                </script>
+                                <span>{{ new Date().getFullYear() }}</span>
                                 <a href="javascript:void(0);"
                                     class="footer-link fw-bolder">学工部学风督导队：罗寅松、赵创日、涂芷荇、张舒涵、谢骁巍</a>
                             </div>

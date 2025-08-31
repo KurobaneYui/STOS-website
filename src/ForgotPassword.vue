@@ -1,6 +1,8 @@
 <script setup>
 import { ref } from "vue";
-import axios from "axios";
+import axios from 'axios'
+import swal from 'sweetalert'
+import * as bootstrap from 'bootstrap'
 
 // 表单数据
 const name = ref("");

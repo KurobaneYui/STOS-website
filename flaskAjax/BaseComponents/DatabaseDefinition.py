@@ -3,6 +3,8 @@ from typing import List, Optional
 
 from sqlalchemy import (
     CheckConstraint,
+    DDL,
+    event,
     ForeignKey,
     Integer,
     LargeBinary,
@@ -13,10 +15,12 @@ from sqlalchemy import (
     func,
 )
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
+from sqlalchemy.schema import MetaData
 
 
 # --- 3. ORM基础类定义 ---
 class Base(DeclarativeBase):
+    metadata = MetaData()
     type_annotation_map = {
         datetime.datetime: TIMESTAMP(timezone=True),
     }
@@ -388,3 +392,48 @@ class InspectionData(Base):
         onupdate=func.now(),
     )
     task: Mapped["InspectionTask"] = relationship(back_populates="data")
+
+
+# --- 5. 视图定义 ---
+class ContactView(Base):
+    __tablename__ = "contact_view"
+    # This view is not managed by Alembic/SQLAlchemy's table creation.
+    # It is created via the DDL event listener below.
+    __table_args__ = {"info": dict(is_view=True)}
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    name: Mapped[str] = mapped_column(String)
+    gender: Mapped[str] = mapped_column(String)
+    qq: Mapped[Optional[str]] = mapped_column(String)
+    phone: Mapped[Optional[str]] = mapped_column(String)
+    department: Mapped[str] = mapped_column(String)
+    department_id: Mapped[int] = mapped_column(Integer)
+    job: Mapped[str] = mapped_column(String)
+
+
+# DDL for creating the view
+create_view_sql = """
+CREATE VIEW IF NOT EXISTS contact_view AS
+SELECT
+    ROW_NUMBER() OVER (ORDER BY gm.group_id, gm.role DESC) AS id,
+    u.name,
+    u.gender,
+    up.qq,
+    up.phone,
+    g.name AS department,
+    g.id AS department_id,
+    gm.role AS job
+FROM group_members AS gm
+JOIN user_profiles AS up ON gm.student_id = up.student_id
+JOIN users AS u ON up.student_id = u.student_id
+JOIN groups AS g ON gm.group_id = g.id
+"""
+create_view_ddl = DDL(create_view_sql)
+
+# DDL for dropping the view
+drop_view_ddl = DDL("DROP VIEW IF EXISTS contact_view")
+
+
+# Event listeners to create and drop the view
+event.listen(Base.metadata, "after_create", create_view_ddl)
+event.listen(Base.metadata, "before_drop", drop_view_ddl)

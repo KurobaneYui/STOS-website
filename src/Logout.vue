@@ -1,5 +1,7 @@
 <script setup>
-import axios from "axios";
+import axios from 'axios'
+import swal from 'sweetalert'
+import * as bootstrap from 'bootstrap'
 
 // ---------------------- 登出 ----------------------
 function logout() {

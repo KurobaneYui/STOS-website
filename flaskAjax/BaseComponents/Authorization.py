@@ -42,7 +42,7 @@ class Authorization:
     """
 
     @staticmethod
-    def check(rightsNeeded: tuple[dict], needLogin: bool = True) -> None:
+    def check(rightsNeeded: tuple[dict, ...], needLogin: bool = True) -> None:
         """
         Check interface rights
 

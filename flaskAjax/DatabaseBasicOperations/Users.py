@@ -1,4 +1,3 @@
-from lib2to3.pgen2.pgen import DFAState
 import sys
 import json
 import numpy
@@ -21,6 +20,7 @@ from flaskAjax.BaseComponents.DatabaseDefinition import (
     User as SQL_User,
     PaymentInfo as SQL_PaymentInfo,
     EmptyTime as SQL_EmptyTime,
+    ContactView as SQL_ContactView,
 )
 from flaskAjax.BaseComponents.DatabaseConnector import (
     SQL_College,
@@ -445,19 +445,31 @@ class UsersDatabase:
             "job": info["job"],
         }
 
-    # @staticmethod
-    # def getContact(db_session: Session | None = None) -> list[dict] | tuple[dict]:
-    #     # =====================================
-    #     # 如果提供已经建立的数据库连接，则直接使用
-    #     if db_session is None:
-    #         database = DatabaseConnector()
-    #         database.startCursor()
-    #     else:
-    #         database = db_session
-    #     # =============
-    #     # 获取通讯录视图
-    #     database.execute(sql="SELECT * FROM `Contact`;")
-    #     return database.fetchall()
+    @staticmethod
+    def getContact(db_session: Session | None = None) -> list[dict] | tuple[dict]:
+        # =====================================
+        # 如果提供已经建立的数据库连接，则直接使用
+        session_context = (
+            SessionLocal() if db_session is None else nullcontext(db_session)
+        )
+        with session_context as session:
+            # =============
+            # 获取通讯录视图
+            results = session.query(SQL_ContactView).all()
+            results = [
+                {
+                    "id": i.id,
+                    "department": i.department,
+                    "name": i.name,
+                    "gender": i.gender,
+                    "phone": i.phone,
+                    "qq": i.qq,
+                    "job": i.job,
+                    "department_id": i.department_id,
+                }
+                for i in results
+            ]
+            return results
 
     @staticmethod
     def getPersonalInfo(db_session: Session | None = None) -> tuple[dict] | list[dict]:
