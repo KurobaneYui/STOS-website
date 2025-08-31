@@ -1,4 +1,5 @@
 <script setup>
+import * as bootstrap from 'bootstrap'
 </script>
 
 <template>

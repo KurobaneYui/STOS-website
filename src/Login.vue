@@ -94,7 +94,7 @@ const loginAsSpecifiedWork = async (department_id = 0, job = null) => {
 function showWorkModal() {
     if (!bsModalInstance && selectWorkModal.value) {
         // Bootstrap5 modal初始化
-        bsModalInstance = new window.bootstrap.Modal(selectWorkModal.value, {
+        bsModalInstance = new bootstrap.Modal(selectWorkModal.value, {
             backdrop: "static",
             keyboard: false,
         });
