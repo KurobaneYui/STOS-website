@@ -1,6 +1,8 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import "/src/assets/vendor/fonts/boxicons.css"
+import PerfectScrollbar from 'perfect-scrollbar';
+import "perfect-scrollbar/css/perfect-scrollbar.css";
 
 const props = defineProps({
     currentPath: String,
@@ -53,7 +55,16 @@ const groupSubMenuPaths = [
 ];
 const isGroupOpen = ref(false);
 
+const menuInner = ref(null)
+let ps = null
+
+const updatePerfectScrollbar = async () => {
+    await nextTick()
+    if (ps) ps.update()
+}
+
 onMounted(() => {
+    // 保留并执行原有的子菜单初始展开逻辑
     if (workInfoSubMenuPaths.includes(props.currentPath)) {
         isWorkInfoOpen.value = true;
     }
@@ -72,7 +83,25 @@ onMounted(() => {
     if (groupSubMenuPaths.includes(props.currentPath)) {
         isGroupOpen.value = true;
     }
-});
+
+    // 初始化 PerfectScrollbar
+    if (menuInner.value) {
+        ps = new PerfectScrollbar(menuInner.value, { suppressScrollX: true })
+    }
+    // 当窗口大小或子菜单展开状态变化时刷新滚动条
+    window.addEventListener('resize', updatePerfectScrollbar)
+})
+
+// 监听子菜单 open 状态，展开/收起后更新滚动条
+watch([isWorkInfoOpen, isDataEntryOpen, isDataConfirmOpen, isAdminDataOpen, isOtherDataOpen, isGroupOpen], updatePerfectScrollbar)
+
+onUnmounted(() => {
+    if (ps) {
+        ps.destroy()
+        ps = null
+    }
+    window.removeEventListener('resize', updatePerfectScrollbar)
+})
 </script>
 
 <template>
@@ -90,7 +119,7 @@ onMounted(() => {
 
     <div class="menu-inner-shadow"></div>
 
-    <ul class="menu-inner py-1">
+    <ul ref="menuInner" class="menu-inner py-1">
         <!-- Dashboard -->
         <li class="menu-item" :class="{ 'active': currentPath === '/user_center/index.html' }">
             <a href="/user_center/index.html" class="menu-link">
