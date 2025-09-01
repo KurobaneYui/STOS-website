@@ -7,6 +7,7 @@ from sqlalchemy import (
     event,
     ForeignKey,
     Integer,
+    Float,
     LargeBinary,
     String,
     Text,
@@ -147,11 +148,13 @@ class EmptyTime(Base):
     student_id: Mapped[str] = mapped_column(
         ForeignKey("user_profiles.student_id", ondelete="CASCADE"), primary_key=True
     )
-    slot_1_2: Mapped[int] = mapped_column(Integer, nullable=False, default=False)
-    slot_3_4: Mapped[int] = mapped_column(Integer, nullable=False, default=False)
-    slot_5_6: Mapped[int] = mapped_column(Integer, nullable=False, default=False)
-    slot_7_8: Mapped[int] = mapped_column(Integer, nullable=False, default=False)
-    slot_9_11: Mapped[int] = mapped_column(Integer, nullable=False, default=False)
+    mon: Mapped[str] = mapped_column(String(15), nullable=False, default=False)
+    tue: Mapped[str] = mapped_column(String(15), nullable=False, default=False)
+    wed: Mapped[str] = mapped_column(String(15), nullable=False, default=False)
+    thu: Mapped[str] = mapped_column(String(15), nullable=False, default=False)
+    fri: Mapped[str] = mapped_column(String(15), nullable=False, default=False)
+    sat: Mapped[str] = mapped_column(String(15), nullable=False, default=False)
+    sun: Mapped[str] = mapped_column(String(15), nullable=False, default=False)
     created_at: Mapped[datetime.datetime] = mapped_column(server_default=func.now())
     updated_at: Mapped[datetime.datetime] = mapped_column(
         server_default=func.now(),
@@ -211,7 +214,9 @@ class GroupMember(Base):
         ForeignKey("user_profiles.student_id", ondelete="CASCADE"), nullable=False
     )
     role: Mapped[str] = mapped_column(String(20), nullable=False)
+    wage: Mapped[float] = mapped_column(Float, nullable=False)
     display_title: Mapped[Optional[str]] = mapped_column(String(100))
+    remark: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     created_at: Mapped[datetime.datetime] = mapped_column(server_default=func.now())
 
     group: Mapped["Group"] = relationship(back_populates="members")

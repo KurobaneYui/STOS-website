@@ -12,8 +12,8 @@ const currentPath = window.location.pathname
 
 const userInfo = ref({
     name: '',
-    departmentId: 0,
-    departmentName: '',
+    department_id: 0,
+    department_name: '',
     job: 'member'
 })
 const formalMember = ref('')
@@ -81,8 +81,8 @@ function updateFormalMember(info) {
 
 function updateBadges(info) {
     badges.value = [
-        { text: '查早：完成', type: 'success' },
-        { text: '查课：未确认', type: 'warning' },
+        { text: '查早：XXX', type: 'success' },
+        { text: '查课：XXX', type: 'warning' },
         // ...
     ]
 }

@@ -35,6 +35,7 @@ export default defineConfig({
         user_center_index: resolve(__dirname, 'user_center/index.html'),
         user_center_contact: resolve(__dirname, 'user_center/contact.html'),
         user_center_personal_info: resolve(__dirname, 'user_center/personal_info.html'),
+        user_center_work_basic_info: resolve(__dirname, 'user_center/work_basic_info.html'),
       },
     },
   },

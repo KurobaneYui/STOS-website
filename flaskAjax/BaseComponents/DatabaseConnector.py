@@ -267,18 +267,30 @@ def initialize_database():
                 is_registered_poor=1,
             )
             new_user.profile.empty_time = SQL_EmptyTime(
-                slot_1_2=0,
-                slot_3_4=0,
-                slot_5_6=0,
-                slot_7_8=0,
-                slot_9_11=0,
+                mon="00000",
+                tue="00100",
+                wed="00020",
+                thu="00003",
+                fri="30000",
+                sat="02000",
+                sun="00100",
             )
-            membership = SQL_GroupMember(
+            membership1 = SQL_GroupMember(
                 student_id="202411223344",
                 group_id=group_name_to_id["队长组"],
                 role="manager",
+                wage=350.0,
                 display_title="正队长",
             )
+            membership2 = SQL_GroupMember(
+                student_id="202411223344",
+                group_id=group_name_to_id["数据组"],
+                role="member",
+                wage=0.0,
+                display_title="组员",
+                remark="兼职无工资",
+            )
             session.add(new_user)
-            session.add(membership)
+            session.add(membership1)
+            session.add(membership2)
             session.commit()
