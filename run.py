@@ -8,6 +8,7 @@ from flask_apscheduler import APScheduler
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 from flaskAjax.Users import Users
+
 # from flaskAjax.GroupManager import GroupManager
 from flaskAjax.TeamManager import TeamManager
 from flaskAjax.DataManager import DataManager
