@@ -1,50 +1,106 @@
 <script setup>
-<<<<<<< HEAD
-import { computed } from 'vue'
-=======
-import { ref, onMounted } from 'vue'
->>>>>>> v4-dev
+import { ref, onMounted, onUnmounted, watch, nextTick } from 'vue'
 import "/src/assets/vendor/fonts/boxicons.css"
+import PerfectScrollbar from 'perfect-scrollbar';
+import "perfect-scrollbar/css/perfect-scrollbar.css";
 
 const props = defineProps({
     currentPath: String,
     userInfo: {
-        type: Object,
-        required: true
+        department_id: Number,
+        department_name: String,
+        job: String,
+        name: String,
     }
 })
-<<<<<<< HEAD
-const menuList = computed(() => [
-    {
-        title: '首页',
-        icon: 'bx bx-home-circle',
-        link: '/user_center/index.html',
-        show: true
-    },
-    {
-        title: '通讯录',
-        icon: 'bx bx-phone',
-        link: '/user_center/contact.html',
-        show: props.userInfo.departmentId !== 0
-    },
-    {
-        title: '清退记录',
-        icon: 'bx bx-upside-down',
-        link: '/user_center/blacklist.html',
-        show: props.userInfo.departmentId === 1
-    },
-].filter(item => item.show))
-=======
 
-const workInfoSubMenuPaths = ['/user_center/work_basic_info.html', '/user_center/score_details.html', '/user_center/financial_report.html'];
+const workInfoSubMenuPaths = [
+    '/user_center/work_basic_info.html',
+    '/user_center/financial_report.html',
+];
 const isWorkInfoOpen = ref(false);
 
+const dataEntrySubMenuPaths = [
+    '/user_center/selfstudy_record.html',
+    '/user_center/courses_record.html',
+];
+const isDataEntryOpen = ref(false);
+
+const dataConfirmSubMenuPaths = [
+    '/user_center/selfstudy_record_recheck.html',
+    '/user_center/courses_record_recheck.html',
+];
+const isDataConfirmOpen = ref(false);
+
+const adminDataSubMenuPaths = [
+    '/user_center/data_export.html',
+    '/user_center/classroom_editor.html',
+    '/user_center/selfstudy_classroom_editor.html',
+    '/user_center/selfstudy_scheduler.html',
+];
+const isAdminDataOpen = ref(false);
+
+const otherDataSubMenuPaths = [
+    '/user_center/department_edit.html',
+    '/user_center/school_edit.html',
+    '/user_center/finance_EXCEL_export.html',
+];
+const isOtherDataOpen = ref(false);
+
+// 新增：组内管理 子路径与 open 控制
+const groupSubMenuPaths = [
+    '/user_center/empty_time_editor.html',
+    '/user_center/member_management.html',
+];
+const isGroupOpen = ref(false);
+
+const menuInner = ref(null)
+let ps = null
+
+const updatePerfectScrollbar = async () => {
+    await nextTick()
+    if (ps) ps.update()
+}
+
 onMounted(() => {
+    // 保留并执行原有的子菜单初始展开逻辑
     if (workInfoSubMenuPaths.includes(props.currentPath)) {
         isWorkInfoOpen.value = true;
     }
-});
->>>>>>> v4-dev
+    if (dataEntrySubMenuPaths.includes(props.currentPath)) {
+        isDataEntryOpen.value = true;
+    }
+    if (dataConfirmSubMenuPaths.includes(props.currentPath)) {
+        isDataConfirmOpen.value = true;
+    }
+    if (adminDataSubMenuPaths.includes(props.currentPath)) {
+        isAdminDataOpen.value = true;
+    }
+    if (otherDataSubMenuPaths.includes(props.currentPath)) {
+        isOtherDataOpen.value = true;
+    }
+    if (groupSubMenuPaths.includes(props.currentPath)) {
+        isGroupOpen.value = true;
+    }
+
+    // 初始化 PerfectScrollbar
+    if (menuInner.value) {
+        ps = new PerfectScrollbar(menuInner.value, { suppressScrollX: true })
+    }
+    // 当窗口大小或子菜单展开状态变化时刷新滚动条
+    window.addEventListener('resize', updatePerfectScrollbar)
+})
+
+// 监听子菜单 open 状态，展开/收起后更新滚动条
+watch([isWorkInfoOpen, isDataEntryOpen, isDataConfirmOpen, isAdminDataOpen, isOtherDataOpen, isGroupOpen], updatePerfectScrollbar)
+
+onUnmounted(() => {
+    if (ps) {
+        ps.destroy()
+        ps = null
+    }
+    window.removeEventListener('resize', updatePerfectScrollbar)
+})
 </script>
 
 <template>
@@ -59,15 +115,10 @@ onMounted(() => {
             <i class="bx bx-chevron-left bx-sm align-middle"></i>
         </a>
     </div>
-<<<<<<< HEAD
-    <div class="menu-inner-shadow"></div>
-    <ul class="menu-inner py-1">
-        <li class="menu-item" v-for="item in menuList" :key="item.title"
-=======
 
     <div class="menu-inner-shadow"></div>
 
-    <ul class="menu-inner py-1">
+    <ul ref="menuInner" class="menu-inner py-1">
         <!-- Dashboard -->
         <li class="menu-item" :class="{ 'active': currentPath === '/user_center/index.html' }">
             <a href="/user_center/index.html" class="menu-link">
@@ -76,7 +127,7 @@ onMounted(() => {
             </a>
         </li>
 
-        <li v-if="userInfo.departmentId !== 0" class="menu-item"
+        <li v-if="userInfo.department_id !== 0" class="menu-item"
             :class="{ 'active': currentPath === '/user_center/contact.html' }">
             <a href="/user_center/contact.html" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-phone"></i>
@@ -84,7 +135,7 @@ onMounted(() => {
             </a>
         </li>
 
-        <li v-if="userInfo.departmentId === 1" class="menu-item"
+        <li v-if="userInfo.department_id === 1" class="menu-item"
             :class="{ 'active': currentPath === '/user_center/blacklist.html' }">
             <a href="/user_center/blacklist.html" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-upside-down"></i>
@@ -93,10 +144,10 @@ onMounted(() => {
         </li>
 
         <!-- 工作信息 -->
-        <li v-if="userInfo.departmentId !== 0" class="menu-header small text-uppercase">
+        <li v-if="userInfo.department_id !== 0" class="menu-header small text-uppercase">
             <span class="menu-header-text">工作信息</span>
         </li>
-        <li v-if="userInfo.departmentId !== 0" class="menu-item"
+        <li v-if="userInfo.department_id !== 0" class="menu-item"
             :class="{ 'active': workInfoSubMenuPaths.includes(currentPath), 'open': isWorkInfoOpen }">
             <a href="javascript:void(0);" class="menu-link menu-toggle" @click="isWorkInfoOpen = !isWorkInfoOpen">
                 <i class="menu-icon tf-icons bx bx-briefcase"></i>
@@ -108,11 +159,6 @@ onMounted(() => {
                         <div data-i18n="基本信息">基本信息</div>
                     </a>
                 </li>
-                <li class="menu-item" :class="{ 'active': currentPath === '/user_center/score_details.html' }">
-                    <a href="/user_center/score_details.html" class="menu-link">
-                        <div data-i18n="扣分详情">扣分详情</div>
-                    </a>
-                </li>
                 <li class="menu-item" :class="{ 'active': currentPath === '/user_center/financial_report.html' }">
                     <a href="#" class="menu-link text-decoration-line-through">
                         <div data-i18n="财务表">财务表</div>
@@ -121,7 +167,7 @@ onMounted(() => {
             </ul>
         </li>
 
-        <li v-if="userInfo.job === 'member' && (userInfo.departmentName.includes('现场组') || userInfo.departmentName.includes('查课组') || userInfo.departmentName.includes('沙河组'))"
+        <li v-if="userInfo.job === 'member' && (userInfo.department_name.includes('现场组') || userInfo.department_name.includes('查课组') || userInfo.department_name.includes('沙河组'))"
             class="menu-item" :class="{ 'active': currentPath === '/user_center/task_recent.html' }">
             <a href="/user_center/task_recent.html" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-collection"></i>
@@ -130,20 +176,163 @@ onMounted(() => {
         </li>
 
         <!-- 任务数据 -->
-    </ul>
-    <!-- <ul class="menu-inner py-1">
-        <li class="menu-item" v-for="item in dashboard_menu_list" :key="item.title"
->>>>>>> v4-dev
-            :class="{ 'active': currentPath === item.link }">
-            <a :href="item.link" class="menu-link">
-                <i class="menu-icon tf-icons" :class="item.icon"></i>
-                <div>{{ item.title }}</div>
+        <li v-if="userInfo.department_id == 1 || userInfo.department_name.includes('现场组') || userInfo.department_name.includes('查课组') || userInfo.department_name.includes('沙河组') || userInfo.department_name.includes('数据组')"
+            class="menu-header small text-uppercase">
+            <span class="menu-header-text">任务数据</span>
+        </li>
+
+        <li v-if="(userInfo.department_name.includes('现场组') || userInfo.department_name.includes('查课组') || userInfo.department_name.includes('沙河组')) && userInfo.job == 'member'"
+            class="menu-item"
+            :class="{ 'active': dataEntrySubMenuPaths.includes(currentPath), 'open': isDataEntryOpen }">
+            <a href="javascript:void(0);" class="menu-link menu-toggle" @click="isDataEntryOpen = !isDataEntryOpen">
+                <i class="menu-icon tf-icons bx bx-notepad"></i>
+                <div data-i18n="数据填写">数据填写</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item" :class="{ 'active': currentPath === '/user_center/selfstudy_record.html' }">
+                    <a href="/user_center/selfstudy_record.html" class="menu-link">
+                        <div data-i18n="查早">查早</div>
+                    </a>
+                </li>
+                <li class="menu-item" :class="{ 'active': currentPath === '/user_center/courses_record.html' }">
+                    <a href="/user_center/courses_record.html" class="menu-link">
+                        <div data-i18n="查课">查课</div>
+                    </a>
+                </li>
+            </ul>
+        </li>
+        <li v-if="userInfo.department_id == 1 || (userInfo.job == 'manager' && (userInfo.department_name.includes('现场组') || userInfo.department_name.includes('查课组') || userInfo.department_name.includes('沙河组')))"
+            class="menu-item"
+            :class="{ 'active': dataConfirmSubMenuPaths.includes(currentPath), 'open': isDataConfirmOpen }"
+            auth_require="x1">
+            <a href="javascript:void(0);" class="menu-link menu-toggle" @click="isDataConfirmOpen = !isDataConfirmOpen">
+                <i class="menu-icon tf-icons bx bx-task"></i>
+                <div data-i18n="数据确认">数据确认</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item"
+                    :class="{ 'active': currentPath === '/user_center/selfstudy_record_recheck.html' }">
+                    <a href="/user_center/selfstudy_record_recheck.html" class="menu-link">
+                        <div data-i18n="查早">查早</div>
+                    </a>
+                </li>
+                <li class="menu-item" :class="{ 'active': currentPath === '/user_center/courses_record_recheck.html' }">
+                    <a href="/user_center/courses_record_recheck.html" class="menu-link">
+                        <div data-i18n="查课">查课</div>
+                    </a>
+                </li>
+            </ul>
+        </li>
+        <li v-if="userInfo.department_name.includes('数据组')" class="menu-item"
+            :class="{ 'active': adminDataSubMenuPaths.includes(currentPath), 'open': isAdminDataOpen }"
+            auth_require="01">
+            <a href="javascript:void(0);" class="menu-link menu-toggle" @click="isAdminDataOpen = !isAdminDataOpen">
+                <i class="menu-icon tf-icons bx bx-data"></i>
+                <div data-i18n="后台数据管理">后台数据管理</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item text-decoration-line-through" :class="{ 'active': currentPath === '/???' }">
+                    <a href="#" class="menu-link">
+                        <div data-i18n="变更锁定时间">变更锁定时间</div>
+                    </a>
+                </li>
+                <li class="menu-item text-decoration-line-through" :class="{ 'active': currentPath === '/???' }">
+                    <a href="#" class="menu-link">
+                        <div data-i18n="数据编辑">数据编辑</div>
+                    </a>
+                </li>
+                <li class="menu-item" :class="{ 'active': currentPath === '/user_center/data_export.html' }">
+                    <a href="/user_center/data_export.html" class="menu-link">
+                        <div data-i18n="数据导出">数据导出</div>
+                    </a>
+                </li>
+                <li class="menu-item" :class="{ 'active': currentPath === '/user_center/classroom_editor.html' }">
+                    <a href="/user_center/classroom_editor.html" class="menu-link">
+                        <div data-i18n="全校教室信息">全校教室信息</div>
+                    </a>
+                </li>
+                <li class="menu-item"
+                    :class="{ 'active': currentPath === '/user_center/selfstudy_classroom_editor.html' }">
+                    <a href="/user_center/selfstudy_classroom_editor.html" class="menu-link">
+                        <div data-i18n="早自习教室信息">早自习教室信息</div>
+                    </a>
+                </li>
+                <li class="menu-item" :class="{ 'active': currentPath === '/user_center/selfstudy_scheduler.html' }">
+                    <a href="/user_center/selfstudy_scheduler.html" class="menu-link">
+                        <div data-i18n="早自习排班">早自习排班</div>
+                    </a>
+                </li>
+                <li class="menu-item" :class="{ 'active': currentPath === '/???' }">
+                    <a href="#" class="menu-link">
+                        <div data-i18n="全校教学列表">全校教学列表</div>
+                    </a>
+                </li>
+                <li class="menu-item" :class="{ 'active': currentPath === '/???' }">
+                    <a href="#" class="menu-link">
+                        <div data-i18n="查课排班">查课排班</div>
+                    </a>
+                </li>
+            </ul>
+        </li>
+
+        <!-- 管理 -->
+        <li v-if="userInfo.department_id == 1 || userInfo.job == 'manager'" class="menu-header small text-uppercase">
+            <span class="menu-header-text">管理</span>
+        </li>
+        <li v-if="userInfo.department_id == 1 || userInfo.job == 'manager'" class="menu-item" auth_require="x1">
+            <a href="#" class="menu-link text-decoration-line-through">
+                <i class="menu-icon tf-icons bx bx-message-square-dots"></i>
+                <div data-i18n="通知编辑">通知编辑</div>
             </a>
         </li>
-<<<<<<< HEAD
-        <!-- 可继续模板化所有 group/menu/submenu，推荐用对象/数组数据结构手动展开，无需写死 -->
+        <li v-if="userInfo.department_id == 1 || userInfo.job == 'manager'" class="menu-item"
+            :class="{ 'active': groupSubMenuPaths.includes(currentPath), 'open': isGroupOpen }" auth_require="x1">
+            <a href="javascript:void(0);" class="menu-link menu-toggle" @click="isGroupOpen = !isGroupOpen">
+                <i class="menu-icon tf-icons bx bx-group"></i>
+                <div data-i18n="组内管理">组内管理</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item" :class="{ 'active': currentPath === '/user_center/empty_time_editor.html' }">
+                    <a href="/user_center/empty_time_editor.html" class="menu-link">
+                        <div data-i18n="空课表变更">空课表变更</div>
+                    </a>
+                </li>
+                <li class="menu-item" :class="{ 'active': currentPath === '/user_center/member_management.html' }">
+                    <a href="/user_center/member_management.html" class="menu-link">
+                        <div data-i18n="人员增删">人员增删</div>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="#" class="menu-link text-decoration-line-through">
+                        <div data-i18n="财务变动">财务变动</div>
+                    </a>
+                </li>
+            </ul>
+        </li>
+        <li v-if="userInfo.department_id == 1" class="menu-item"
+            :class="{ 'active': otherDataSubMenuPaths.includes(currentPath), 'open': isOtherDataOpen }"
+            auth_require="01">
+            <a href="javascript:void(0);" class="menu-link menu-toggle" @click="isOtherDataOpen = !isOtherDataOpen">
+                <i class="menu-icon tf-icons bx bx-bar-chart-alt-2"></i>
+                <div data-i18n="其他数据">其他数据</div>
+            </a>
+            <ul class="menu-sub">
+                <li class="menu-item" :class="{ 'active': currentPath === '/user_center/department_edit.html' }">
+                    <a href="/user_center/department_edit.html" class="menu-link">
+                        <div data-i18n="部门管理">部门管理</div>
+                    </a>
+                </li>
+                <li class="menu-item" :class="{ 'active': currentPath === '/user_center/school_edit.html' }">
+                    <a href="/user_center/school_edit.html" class="menu-link">
+                        <div data-i18n="学院管理">学院管理</div>
+                    </a>
+                </li>
+                <li class="menu-item" :class="{ 'active': currentPath === '/user_center/finance_EXCEL_export.html' }">
+                    <a href="/user_center/finance_EXCEL_export.html" class="menu-link">
+                        <div data-i18n="财务报表导出">财务报表导出</div>
+                    </a>
+                </li>
+            </ul>
+        </li>
     </ul>
-=======
-    </ul> -->
->>>>>>> v4-dev
 </template>

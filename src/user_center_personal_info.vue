@@ -12,8 +12,8 @@ const currentPath = window.location.pathname
 
 const userInfo = ref({
     name: '',
-    departmentId: 0,
-    departmentName: '',
+    department_id: 0,
+    department_name: '',
     job: 'member'
 })
 const formalMember = ref('')
@@ -51,8 +51,8 @@ function updateFormalMember(info) {
 
 function updateBadges(info) {
     badges.value = [
-        { text: '查早：完成', type: 'success' },
-        { text: '查课：未确认', type: 'warning' },
+        { text: '查早：XXX', type: 'success' },
+        { text: '查课：XXX', type: 'warning' },
         // ...
     ]
 }
@@ -105,7 +105,7 @@ function genRandomImgs() {
 
 async function get_campus() {
     try {
-        const { data } = await axios.get('/Ajax/DataManager/get_campus_for_form')
+        const { data } = await axios.get('/Ajax/DataManager/get_campus')
         const code = data.code
         if ([400, 401, 404, 417, 498, 499].includes(code)) {
             swal({
@@ -131,7 +131,7 @@ async function get_campus() {
 
 async function get_school() {
     try {
-        const { data } = await axios.post('/Ajax/DataManager/get_school_for_form')
+        const { data } = await axios.get('/Ajax/DataManager/get_school')
         const code = data.code
         if ([400, 401, 404, 417, 498, 499].includes(code)) {
             swal({

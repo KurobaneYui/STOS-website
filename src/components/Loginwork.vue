@@ -31,7 +31,7 @@ async function loginAsSpecifiedWork(department_id, job) {
             job: job
         })
         if (data.code === 200 || data.code === 301) {
-            window.location.href = data.data
+            window.location.reload()
         } else {
             alert(data.msg || "登录失败")
         }

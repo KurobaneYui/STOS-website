@@ -275,48 +275,48 @@ def Users(app: flask.Flask) -> None:  # noqa: C901
                 logger.funcReturns = returns
         return customResponse.getResponse()
 
-    # @app.route("/Ajax/Users/get_empty_time_info", methods=['GET'])
-    # def getEmptyTimeInfo():
-    #     with CustomResponse() as customResponse:
-    #         with Logger(funcName="Users.getEmptyTimeInfo()") as logger:
-    #             # ===============
-    #             # 检查接口调用权限
-    #             Authorization.check(rightsNeeded=tuple(), needLogin=True)
-    #             # ===========
-    #             # 执行接口流程
-    #             results = UsersDatabase.getEmptyTimeInfo()
-    #             # ========================
-    #             # 准备函数返回值和响应与日志
-    #             returns = {"message": "", "data": results}
-    #             customResponse.setMessageAndData(**returns)
-    #             logger.funcReturns = returns
-    #     return customResponse.getResponse()
+    @app.route("/Ajax/Users/get_empty_time_info", methods=['GET'])
+    def getEmptyTimeInfo():
+        with CustomResponse() as customResponse:
+            with Logger(funcName="Users.getEmptyTimeInfo()") as logger:
+                # ===============
+                # 检查接口调用权限
+                Authorization.check(rightsNeeded=tuple(), needLogin=True)
+                # ===========
+                # 执行接口流程
+                results = UsersDatabase.getEmptyTimeInfo()
+                # ========================
+                # 准备函数返回值和响应与日志
+                returns = {"message": "", "data": results}
+                customResponse.setMessageAndData(**returns)
+                logger.funcReturns = returns
+        return customResponse.getResponse()
 
-    # @app.route("/Ajax/Users/get_work_basic_info", methods=['GET'])
-    # def getWorkBasicInfo():
-    #     with CustomResponse() as customResponse:
-    #         with Logger(funcName="Users.getWorkBasicInfo()") as logger:
-    #             # ===============
-    #             # 检查接口调用权限
-    #             Authorization.check(
-    #                 rightsNeeded=({
-    #                     "department_id": 0,
-    #                     "actor": 0
-    #                 }, {
-    #                     "department_id": 0,
-    #                     "actor": 1
-    #                 }),
-    #                 needLogin=True
-    #             )
-    #             # ===========
-    #             # 执行接口流程
-    #             results = UsersDatabase.getWorkBasicInfo()
-    #             # ========================
-    #             # 准备函数返回值和响应与日志
-    #             returns = {"message": "", "data": results}
-    #             customResponse.setMessageAndData(**returns)
-    #             logger.funcReturns = returns
-    #     return customResponse.getResponse()
+    @app.route("/Ajax/Users/get_work_basic_info", methods=['GET'])
+    def getWorkBasicInfo():
+        with CustomResponse() as customResponse:
+            with Logger(funcName="Users.getWorkBasicInfo()") as logger:
+                # ===============
+                # 检查接口调用权限
+                Authorization.check(
+                    rightsNeeded=({
+                        "department_id": None,
+                        "actor": "manager"
+                    }, {
+                        "department_id": None,
+                        "actor": "member"
+                    }),
+                    needLogin=True
+                )
+                # ===========
+                # 执行接口流程
+                results = UsersDatabase.getWorkBasicInfo()
+                # ========================
+                # 准备函数返回值和响应与日志
+                returns = {"message": "", "data": results}
+                customResponse.setMessageAndData(**returns)
+                logger.funcReturns = returns
+        return customResponse.getResponse()
 
     # @app.route("/Ajax/Users/get_score_details", methods=['GET'])
     # def getScoreDetails():

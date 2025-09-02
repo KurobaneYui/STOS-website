@@ -18,7 +18,7 @@ const userInfo = ref({
 })
 const formalMember = ref('')
 const badges = ref([])
-const contacts = ref([])
+const blacklist = ref([])
 
 async function getTopbarInfo() {
     try {
@@ -40,9 +40,35 @@ async function getTopbarInfo() {
     }
 }
 
-async function getContacts() {
+function updateFormalMember(info) {
+    if (info.department_id === 0) {
+        formalMember.value = info.department_name
+    } else if (info.department_id === 1) {
+        formalMember.value = `${info.department_name} - ${info.job === "manager" ? '队长' : '副队长'}`
+    } else {
+        formalMember.value = `${info.department_name} - ${info.job === "manager" ? '组长' : '组员'}`
+    }
+}
+
+function getGenderBadge(gender) {
+    if (gender === '男') return 'bg-label-info'
+    if (gender === '女') return 'bg-label-danger'
+    return 'bg-label-dark'
+}
+
+function updateBadges(info) {
+    badges.value = [
+        { text: '查早：XXX', type: 'success' },
+        { text: '查课：XXX', type: 'warning' },
+        // ...
+    ]
+}
+
+
+
+async function getBlacklist() {
     try {
-        const { data } = await axios.get('/Ajax/Users/get_contact')
+        const { data } = await axios.get('/Ajax/TeamManager/get_blacklist')
         const code = data.code
         if ([400, 401, 404, 417, 498, 499].includes(code)) {
             let title = '出错了'
@@ -62,40 +88,16 @@ async function getContacts() {
         }
         if (code === 200 || code === 301) {
             if (code === 301) { window.console.log('获取通讯录函数移至新位置'); }
-            contacts.value = data.data
+            blacklist.value = data.data
         }
     } catch (e) {
         swal({ title: '请检查网络连接，或稍后再试', icon: "error" })
     }
 }
 
-function updateFormalMember(info) {
-    if (info.department_id === 0) {
-        formalMember.value = info.department_name
-    } else if (info.department_id === 1) {
-        formalMember.value = `${info.department_name} - ${info.job === "manager" ? '队长' : '副队长'}`
-    } else {
-        formalMember.value = `${info.department_name} - ${info.job === "manager" ? '组长' : '组员'}`
-    }
-}
-
-function updateBadges(info) {
-    badges.value = [
-        { text: '查早：XXX', type: 'success' },
-        { text: '查课：XXX', type: 'warning' },
-        // ...
-    ]
-}
-
-function getGenderBadge(gender) {
-    if (gender === '男') return 'bg-label-info'
-    if (gender === '女') return 'bg-label-danger'
-    return 'bg-label-dark'
-}
-
 onMounted(() => {
     getTopbarInfo()
-    getContacts()
+    getBlacklist()
 });
 </script>
 
@@ -119,61 +121,56 @@ onMounted(() => {
                     <LoginWork />
                 </div>
 
+                <!-- Content wrapper -->
                 <div class="content-wrapper">
                     <!-- Content -->
+
                     <div class="container-fluid flex-grow-1 container-p-y">
                         <!-- Breadcrumb -->
                         <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);"
                             aria-label="breadcrumb">
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="./index.html">个人中心</a></li>
-                                <li class="breadcrumb-item active" aria-current="page">通讯录</li>
+                                <li class="breadcrumb-item active" aria-current="page">清退记录</li>
                             </ol>
                         </nav>
                         <!-- main content -->
+                        <div class="col-12 alert alert-primary" role="alert">
+                            * 按队伍规范，原则上被清退（不包含请假、自行退出、因事离队等）人员两年内不再招入队伍。此处记录相关事由以供参考。
+                        </div>
                         <div class="card">
-                            <h5 class="card-header">通讯录</h5>
+                            <h5 class="card-header">清退记录</h5>
                             <div class="table-responsive text-nowrap">
                                 <table class="table table-hover table-striped">
                                     <thead>
                                         <tr>
                                             <th>#</th>
-                                            <th>所属组</th>
                                             <th>姓名</th>
                                             <th>性别</th>
-                                            <th>电话</th>
-                                            <th>QQ</th>
-                                            <th>岗位</th>
+                                            <th>学号</th>
+                                            <th>事由</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr v-for="contact in contacts" :key="contact.id">
-                                            <td>{{ contact.id }}</td>
-                                            <td>{{ contact.department }}</td>
-                                            <td>{{ contact.name }}</td>
+                                        <tr v-for="blockedOne in blacklist" :key="blockedOne.rowNum">
+                                            <td>{{ blockedOne.rowNum }}</td>
+                                            <td>{{ blockedOne.name }}</td>
                                             <td>
-                                                <span class="badge" :class="getGenderBadge(contact.gender)">
-                                                    {{ contact.gender || '-' }}
+                                                <span class="badge" :class="getGenderBadge(blockedOne.gender)">
+                                                    {{ blockedOne.gender || '-' }}
                                                 </span>
                                             </td>
-                                            <td>{{ contact.phone }}</td>
-                                            <td>{{ contact.qq }}</td>
-                                            <td>
-                                                {{ contact.job == "manager" ? (contact.department_id == 1 ? "队长" : "组长")
-                                                    :
-                                                    (contact.department_id == 1 ? "副队长" : "组员") }}
-                                            </td>
+                                            <td>{{ blockedOne.student_id }}</td>
+                                            <td>{{ blockedOne.reason }}</td>
                                         </tr>
                                     </tbody>
                                     <tfoot class="table-border-bottom-0">
                                         <tr>
                                             <th>#</th>
-                                            <th>所属组</th>
                                             <th>姓名</th>
                                             <th>性别</th>
-                                            <th>电话</th>
-                                            <th>QQ</th>
-                                            <th>岗位</th>
+                                            <th>学号</th>
+                                            <th>事由</th>
                                         </tr>
                                     </tfoot>
                                 </table>

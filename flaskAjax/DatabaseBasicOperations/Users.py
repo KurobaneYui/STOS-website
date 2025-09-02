@@ -414,11 +414,13 @@ class UsersDatabase:
                 # === 插入EmptyTime/空闲信息 ===
                 empty_time = SQL_EmptyTime(
                     student_id=infoDict["studentID"],
-                    slot_1_2=0,
-                    slot_3_4=0,
-                    slot_5_6=0,
-                    slot_7_8=0,
-                    slot_9_11=0,
+                    mon="1000",
+                    tue="0200",
+                    wed="00300",
+                    thu="00010",
+                    fri="00002",
+                    sat="30000",
+                    sun="00000",
                 )
                 session.add(empty_time)
 
@@ -570,77 +572,102 @@ class UsersDatabase:
 
         return "刷新页面以更新数据，如仍有数据未更新，请退出重新登录。如有问题请联系管理员。"
 
-    # @staticmethod
-    # def getEmptyTimeInfo(db_session: Session | None = None) -> dict[str, Any]:
-    #     # =====================================
-    #     # 如果提供已经建立的数据库连接，则直接使用
-    #     if databaseConnector is None:
-    #         database = DatabaseConnector()
-    #         database.startCursor()
-    #     else:
-    #         database = databaseConnector
-    #     # =============
-    #     # 获取空课时间表
-    #     DBAffectedRows = database.execute(
-    #         sql=
-    #         "SELECT student_id,mon,tue,wed,thu,fri,sat,sun,remark FROM EmptyTime WHERE student_id=%(userID)s;",
-    #         data=CustomSession.getSession()
-    #     )
-    #     if DBAffectedRows != 1:
-    #         raise IllegalValueError(
-    #             "Empty time table not found for the student.",
-    #             filename=__file__,
-    #             line=sys._getframe().f_lineno
-    #         )
-    #     results = database.fetchall()[0]
-    #     # ===================
-    #     # 按单双周等需求预处理
-    #     week_name = ("mon", "tue", "wed", "thu", "fri", "sat", "sun")
-    #     time_period = ("1-2", "3-4", "5-6", "7-8", "9-11")
-    #     empty_table = {
-    #         "odd":
-    #             numpy.zeros((len(time_period), len(week_name)), dtype='int8').tolist(),
-    #         "even":
-    #             numpy.zeros((len(time_period), len(week_name)), dtype='int8').tolist(),
-    #         "remark":
-    #             results["remark"]
-    #     }
-    #     for i, name in enumerate(week_name):
-    #         for j in range(len(results[name])):
-    #             empty_table["even"][j][i] = 0 if results[name][j] in ['0', '1'] else 1
-    #             empty_table["odd"][j][i] = 0 if results[name][j] in ['0', '2'] else 1
+    @staticmethod
+    def getEmptyTimeInfo(db_session: Session | None = None) -> dict[str, Any]:
+        # =====================================
+        # 如果提供已经建立的数据库连接，则直接使用
+        session_context = (
+            SessionLocal() if db_session is None else nullcontext(db_session)
+        )
+        with session_context as session:
+            # =============
+            # 获取空课时间表
+            results = (
+                session.query(SQL_EmptyTime)
+                .filter_by(student_id=CustomSession.getSession()["userID"])
+                .all()
+            )
+            if len(results) != 1:
+                raise IllegalValueError(
+                    "Empty time table not found for the student.",
+                    filename=__file__,
+                    line=sys._getframe().f_lineno,
+                )
+            results = results[0]
+            results = {
+                "mon": results.mon,
+                "tue": results.tue,
+                "wed": results.wed,
+                "thu": results.thu,
+                "fri": results.fri,
+                "sat": results.sat,
+                "sun": results.sun,
+            }
+            # ===================
+            # 按单双周等需求预处理
+            week_name = ("mon", "tue", "wed", "thu", "fri", "sat", "sun")
+            time_period = ("1-2", "3-4", "5-6", "7-8", "9-11")
+            empty_table = {
+                "odd": numpy.zeros(
+                    (len(time_period), len(week_name)), dtype="int8"
+                ).tolist(),
+                "even": numpy.zeros(
+                    (len(time_period), len(week_name)), dtype="int8"
+                ).tolist(),
+            }
 
-    #     return empty_table
+            for i, name in enumerate(week_name):
+                for j in range(len(results[name])):
+                    empty_table["even"][j][i] = (
+                        0 if results[name][j] in ["0", "1"] else 1
+                    )
+                    empty_table["odd"][j][i] = (
+                        0 if results[name][j] in ["0", "2"] else 1
+                    )
 
-    # @staticmethod
-    # def getWorkBasicInfo(db_session: Session | None = None) -> tuple[dict] | list[dict]:
-    #     # =====================================
-    #     # 如果提供已经建立的数据库连接，则直接使用
-    #     if databaseConnector is None:
-    #         database = DatabaseConnector()
-    #         database.startCursor()
-    #     else:
-    #         database = databaseConnector
-    #     # ===============
-    #     # 获取岗位基本信息
-    #     database.execute(
-    #         sql=
-    #         "SELECT name,Department.department_id as department_id,job,wage,Work.remark as remark FROM Work \
-    #             LEFT JOIN Department ON Work.department_id=Department.department_id \
-    #             WHERE student_id=%(userID)s;",
-    #         data=CustomSession.getSession()
-    #     )
-    #     # ==========================
-    #     # 根据当前登录岗位补充岗位信息
-    #     works = database.fetchall()
-    #     loginDepartmentID = CustomSession().getSession()['department_id']
-    #     loginJob = CustomSession().getSession()['job']
-    #     for work in works:
-    #         if work['department_id'] == loginDepartmentID and work['job'] == loginJob:
-    #             work["loginWork"] = True
-    #         else:
-    #             work["loginWork"] = False
-    #     return works
+            return empty_table
+
+    @staticmethod
+    def getWorkBasicInfo(db_session: Session | None = None) -> tuple[dict] | list[dict]:
+        # =====================================
+        # 如果提供已经建立的数据库连接，则直接使用
+        session_context = (
+            SessionLocal() if db_session is None else nullcontext(db_session)
+        )
+        with session_context as session:
+            # ===============
+            # 获取岗位基本信息
+            results = (
+                session.query(SQL_GroupMember)
+                .join(SQL_Group, SQL_Group.id == SQL_GroupMember.group_id)
+                .filter(
+                    SQL_GroupMember.student_id == CustomSession.getSession()["userID"]
+                )
+                .all()
+            )
+            results = [
+                {
+                    "name": i.group.name,
+                    "department_id": i.group.id,
+                    "job": i.role,
+                    "wage": i.wage,
+                    "remark": i.remark,
+                }
+                for i in results
+            ]
+            # ==========================
+            # 根据当前登录岗位补充岗位信息
+            loginDepartmentID = CustomSession().getSession()["department_id"]
+            loginJob = CustomSession().getSession()["job"]
+            for work in results:
+                if (
+                    work["department_id"] == loginDepartmentID
+                    and work["job"] == loginJob
+                ):
+                    work["loginWork"] = True
+                else:
+                    work["loginWork"] = False
+            return results
 
     # @staticmethod
     # def getScoreDetails(db_session: Session | None = None) -> dict:

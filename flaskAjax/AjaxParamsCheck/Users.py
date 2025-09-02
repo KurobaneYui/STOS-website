@@ -397,7 +397,7 @@ class UsersCheck:
         try:
             infoForm["selfstudy_id"] = int(infoForm["selfstudy_id"])
             assert infoForm["selfstudy_id"] > 0
-        except:
+        except Exception:
             raise IllegalValueError(
                 "selfstudy_id is wrong or not positive integer.",
                 filename=__file__,
@@ -417,7 +417,7 @@ class UsersCheck:
             assert infoForm["record"]["secondPresent"] >= 0
             assert infoForm["record"]["leaveEarly"] >= 0
             assert infoForm["record"]["askForLeave"] >= 0
-        except:
+        except Exception:
             raise IllegalValueError(
                 "Record is wrong or not nonnegative integer.",
                 filename=__file__,
@@ -449,7 +449,7 @@ class UsersCheck:
         try:
             infoForm["course_id"] = int(infoForm["course_id"])
             assert infoForm["course_id"] > 0
-        except:
+        except Exception:
             raise IllegalValueError(
                 "course_id is wrong or not positive integer.",
                 filename=__file__,

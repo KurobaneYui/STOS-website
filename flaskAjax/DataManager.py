@@ -14,37 +14,16 @@ from flaskAjax.DatabaseBasicOperations.DataManager import DataManagerDatabase
 
 
 def DataManager(app: flask.Flask) -> None:
-    @app.route("/Ajax/DataManager/get_campus_for_form", methods=["GET"])
-    def getCampusForForm():
+    @app.route("/Ajax/DataManager/get_campus", methods=["GET"])
+    def getCampus():
         with CustomResponse() as customResponse:
-            with Logger(funcName="DataManager.getCampusForForm()") as logger:
+            with Logger(funcName="DataManager.getCampus()") as logger:
                 # ===============
                 # 检查接口调用权限
                 Authorization.check(rightsNeeded=tuple(), needLogin=False)
                 # =========================================
                 # 执行接口流程，并获取用户名信息以完成会话建立
-                results = DataManagerDatabase.getCampusForForm()
-                # ========================
-                # 准备函数返回值和响应与日志
-                returns = {"message": "", "data": results}
-                customResponse.setMessageAndData(**returns)
-                logger.funcReturns = returns
-        return customResponse.getResponse()
-
-    @app.route("/Ajax/DataManager/get_school_for_form", methods=["POST"])
-    def getSchoolForForm():
-        with CustomResponse() as customResponse:
-            with Logger(funcName="DataManager.getSchoolForForm()") as logger:
-                # ===============
-                # 检查接口调用权限
-                Authorization.check(rightsNeeded=tuple(), needLogin=False)
-                # # ========================
-                # # 检查接口输入参数并记录日志
-                # Ajax_DataManager.getSchoolForFormParamsCheck(request)
-                # logger.funcArgs = request.form
-                # =========================================
-                # 执行接口流程，并获取用户名信息以完成会话建立
-                results = DataManagerDatabase.getSchoolForForm()
+                results = DataManagerDatabase.getCampus()
                 # ========================
                 # 准备函数返回值和响应与日志
                 returns = {"message": "", "data": results}
@@ -58,13 +37,7 @@ def DataManager(app: flask.Flask) -> None:
             with Logger(funcName="DataManager.getSchool()") as logger:
                 # ===============
                 # 检查接口调用权限
-                Authorization.check(
-                    rightsNeeded=(
-                        {"department_id": 0, "actor": 1},
-                        {"department_id": 3, "actor": 1},
-                    ),
-                    needLogin=True,
-                )
+                Authorization.check(rightsNeeded=tuple(), needLogin=False)
                 # =========================================
                 # 执行接口流程，并获取用户名信息以完成会话建立
                 results = DataManagerDatabase.getSchool()
@@ -75,27 +48,83 @@ def DataManager(app: flask.Flask) -> None:
                 logger.funcReturns = returns
         return customResponse.getResponse()
 
-    @app.route("/Ajax/DataManager/get_classroom", methods=["POST"])
-    def getClassroom():
+    # @app.route("/Ajax/DataManager/get_classroom", methods=["POST"])
+    # def getClassroom():
+    #     with CustomResponse() as customResponse:
+    #         with Logger(funcName="DataManager.getClassroom()") as logger:
+    #             # ===============
+    #             # 检查接口调用权限
+    #             Authorization.check(
+    #                 rightsNeeded=(
+    #                     {"department_id": 0, "actor": 1},
+    #                     {"department_id": 3, "actor": 0},
+    #                     {"department_id": 3, "actor": 1},
+    #                 ),
+    #                 needLogin=True,
+    #             )
+    #             # # ========================
+    #             # # 检查接口输入参数并记录日志
+    #             # Ajax_DataManager.getClassroomParamsCheck(request)
+    #             # logger.funcArgs = request.form
+    #             # =========================================
+    #             # 执行接口流程，并获取用户名信息以完成会话建立
+    #             results = DataManagerDatabase.getClassroom(request)
+    #             # ========================
+    #             # 准备函数返回值和响应与日志
+    #             returns = {"message": "", "data": results}
+    #             customResponse.setMessageAndData(**returns)
+    #             logger.funcReturns = returns
+    #     return customResponse.getResponse()
+
+    @app.route("/Ajax/DataManager/update_school", methods=["POST"])
+    def updateSchool():
         with CustomResponse() as customResponse:
-            with Logger(funcName="DataManager.getClassroom()") as logger:
+            with Logger(funcName="DataManager.updateSchool()") as logger:
                 # ===============
                 # 检查接口调用权限
                 Authorization.check(
                     rightsNeeded=(
-                        {"department_id": 0, "actor": 1},
-                        {"department_id": 3, "actor": 0},
-                        {"department_id": 3, "actor": 1},
+                        {"department_id": 1, "actor": "manager"},
+                        {"department_id": 9, "actor": "manager"},
                     ),
                     needLogin=True,
                 )
-                # # ========================
-                # # 检查接口输入参数并记录日志
-                # Ajax_DataManager.getClassroomParamsCheck(request)
-                # logger.funcArgs = request.form
+                # ========================
+                # 检查接口输入参数并记录日志
+                assert request.json is not None
+                infoForm = dict(request.json)
+                DataManagerCheck.updateSchoolParamsCheck(infoForm)
+                logger.funcArgs = request.json
                 # =========================================
                 # 执行接口流程，并获取用户名信息以完成会话建立
-                results = DataManagerDatabase.getClassroom(request)
+                DataManagerDatabase.updateSchool(infoForm)
+                # ========================
+                # 准备函数返回值和响应与日志
+                returns: dict = {"message": "", "data": ""}
+                customResponse.setMessageAndData(**returns)
+                logger.funcReturns = returns
+        return customResponse.getResponse()
+
+    @app.route("/Ajax/DataManager/delete_school", methods=["POST"])
+    def deleteSchool():
+        with CustomResponse() as customResponse:
+            with Logger(funcName="DataManager.deleteSchool()") as logger:
+                # ===============
+                # 检查接口调用权限
+                Authorization.check(
+                    rightsNeeded=(
+                        {"department_id": 1, "actor": "manager"},
+                        {"department_id": 9, "actor": "manager"},
+                    ),
+                    needLogin=True,
+                )
+                # ========================
+                # 检查接口输入参数并记录日志
+                DataManagerCheck.deleteSchoolParamsCheck(request)
+                logger.funcArgs = request.json
+                # =========================================
+                # 执行接口流程，并获取用户名信息以完成会话建立
+                results = DataManagerDatabase.deleteSchool(request)
                 # ========================
                 # 准备函数返回值和响应与日志
                 returns = {"message": "", "data": results}
@@ -103,88 +132,32 @@ def DataManager(app: flask.Flask) -> None:
                 logger.funcReturns = returns
         return customResponse.getResponse()
 
-    # @app.route("/Ajax/DataManager/update_school", methods=["POST"])
-    # # @Auth(({"department_id": 3, "actor": "10"}, {"department_id": 1, "actor": None}))
-    # def updateSchool():
-    #     with CustomResponse() as customResponse:
-    #         with Logger(funcName="DataManager.updateSchool()") as logger:
-    #             # ===============
-    #             # 检查接口调用权限
-    #             Authorization.check(
-    #                 rightsNeeded=(
-    #                     {"department_id": 0, "actor": 1},
-    #                     {"department_id": 3, "actor": 1},
-    #                 ),
-    #                 needLogin=True,
-    #             )
-    #             # ========================
-    #             # 检查接口输入参数并记录日志
-    #             infoForm = dict(request.form)
-    #             DataManagerCheck.updateSchoolParamsCheck(infoForm)
-    #             logger.funcArgs = request.form
-    #             # =========================================
-    #             # 执行接口流程，并获取用户名信息以完成会话建立
-    #             DataManagerDatabase.updateSchool(infoForm)
-    #             # ========================
-    #             # 准备函数返回值和响应与日志
-    #             returns = {"message": "", "data": ""}
-    #             customResponse.setMessageAndData(**returns)
-    #             logger.funcReturns = returns
-    #     return customResponse.getResponse()
-
-    # @app.route("/Ajax/DataManager/delete_school", methods=["POST"])
-    # def deleteSchool():
-    #     with CustomResponse() as customResponse:
-    #         with Logger(funcName="DataManager.deleteSchool()") as logger:
-    #             # ===============
-    #             # 检查接口调用权限
-    #             Authorization.check(
-    #                 rightsNeeded=(
-    #                     {"department_id": 0, "actor": 1},
-    #                     {"department_id": 3, "actor": 1},
-    #                 ),
-    #                 needLogin=True,
-    #             )
-    #             # ========================
-    #             # 检查接口输入参数并记录日志
-    #             DataManagerCheck.deleteSchoolParamsCheck(request)
-    #             logger.funcArgs = request.form
-    #             # =========================================
-    #             # 执行接口流程，并获取用户名信息以完成会话建立
-    #             results = DataManagerDatabase.deleteSchool(request)
-    #             # ========================
-    #             # 准备函数返回值和响应与日志
-    #             returns = {"message": "", "data": results}
-    #             customResponse.setMessageAndData(**returns)
-    #             logger.funcReturns = returns
-    #     return customResponse.getResponse()
-
-    # @app.route("/Ajax/DataManager/add_school", methods=["POST"])
-    # def addSchool():
-    #     with CustomResponse() as customResponse:
-    #         with Logger(funcName="DataManager.addSchool()") as logger:
-    #             # ===============
-    #             # 检查接口调用权限
-    #             Authorization.check(
-    #                 rightsNeeded=(
-    #                     {"department_id": 0, "actor": 1},
-    #                     {"department_id": 3, "actor": 1},
-    #                 ),
-    #                 needLogin=True,
-    #             )
-    #             # ========================
-    #             # 检查接口输入参数并记录日志
-    #             DataManagerCheck.addSchoolParamsCheck(request)
-    #             logger.funcArgs = request.form
-    #             # =========================================
-    #             # 执行接口流程，并获取用户名信息以完成会话建立
-    #             results = DataManagerDatabase.addSchool(request)
-    #             # ========================
-    #             # 准备函数返回值和响应与日志
-    #             returns = {"message": "", "data": results}
-    #             customResponse.setMessageAndData(**returns)
-    #             logger.funcReturns = returns
-    #     return customResponse.getResponse()
+    @app.route("/Ajax/DataManager/add_school", methods=["POST"])
+    def addSchool():
+        with CustomResponse() as customResponse:
+            with Logger(funcName="DataManager.addSchool()") as logger:
+                # ===============
+                # 检查接口调用权限
+                Authorization.check(
+                    rightsNeeded=(
+                        {"department_id": 1, "actor": "manager"},
+                        {"department_id": 9, "actor": "manager"},
+                    ),
+                    needLogin=True,
+                )
+                # ========================
+                # 检查接口输入参数并记录日志
+                DataManagerCheck.addSchoolParamsCheck(request)
+                logger.funcArgs = request.json
+                # =========================================
+                # 执行接口流程，并获取用户名信息以完成会话建立
+                results = DataManagerDatabase.addSchool(request)
+                # ========================
+                # 准备函数返回值和响应与日志
+                returns = {"message": "", "data": results}
+                customResponse.setMessageAndData(**returns)
+                logger.funcReturns = returns
+        return customResponse.getResponse()
 
     # @app.route("/Ajax/DataManager/get_submitted_selfstudy_date", methods=["GET"])
     # def getSubmittedSelfstudyDate():

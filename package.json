@@ -14,12 +14,11 @@
   "dependencies": {
     "axios": "^1.11.0",
     "bootstrap": "^5.3.8",
-<<<<<<< HEAD
-=======
+    "perfect-scrollbar": "^1.5.6",
     "sass": "^1.91.0",
->>>>>>> v4-dev
     "sweetalert": "^2.1.2",
-    "vue": "^3.5.17"
+    "vue": "^3.5.17",
+    "vue-draggable-plus": "^0.6.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^6.0.0",
