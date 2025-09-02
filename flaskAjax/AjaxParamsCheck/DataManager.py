@@ -1,6 +1,5 @@
 import sys
 import datetime
-from xml.sax import parseString
 from flask import Request
 from flaskAjax.BaseComponents.CustomError import IllegalValueError, MaintenanceError
 

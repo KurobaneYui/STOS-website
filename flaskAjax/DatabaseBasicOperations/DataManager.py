@@ -6,9 +6,9 @@ import datetime
 from sqlalchemy.orm import Session
 from contextlib import nullcontext
 from flask import Request
-from flaskAjax.AjaxParamsCheck.Users import SQL_Campus
 from flaskAjax.BaseComponents.CustomError import IllegalValueError
 from flaskAjax.BaseComponents.DatabaseConnector import (
+    SQL_Campus,
     SQL_College,
     SQL_UserProfile,
     SessionLocal,
@@ -52,38 +52,37 @@ class DataManagerDatabase:
     # 在权限系统设计完成后，修改此处SQL处理
     @staticmethod
     def getSchool(
-        databaseConnector: Session | None = None,
+        db_session: Session | None = None,
     ) -> tuple[dict] | list[dict]:
         # =====================================
         # 如果提供已经建立的数据库连接，则直接使用
-        if databaseConnector is None:
-            database = DatabaseConnector()
-            database.startCursor()
-        else:
-            database = databaseConnector
-        # ====================
-        # 获取学院ID和名称与校区
-        _ = database.execute("SELECT school_id,name,campus FROM `School`;")
-        return database.fetchall()
-
-    @staticmethod
-    def getClassroom(
-        flaskRequest: Request, databaseConnector: Session | None = None
-    ) -> tuple[dict] | list[dict]:
-        # =====================================
-        # 如果提供已经建立的数据库连接，则直接使用
-        if databaseConnector is None:
-            database = DatabaseConnector()
-            database.startCursor()
-        else:
-            database = databaseConnector
-        # ================================================
-        # 获取某校区的教室信息：楼、区域、教室编号和座位容纳量
-        _ = database.execute(
-            "SELECT building,area,room,sit_available FROM `Classroom` WHERE campus=%(campus)s;",
-            flaskRequest.form,
+        session_context = (
+            SessionLocal() if db_session is None else nullcontext(db_session)
         )
-        return database.fetchall()
+        with session_context as session:
+            # ====================
+            # 获取学院ID和名称与校区
+            results = session.query(SQL_College).all()
+            return [{"school_id": i.id, "name": i.name} for i in results]
+
+    # @staticmethod
+    # def getClassroom(
+    #     flaskRequest: Request, databaseConnector: Session | None = None
+    # ) -> tuple[dict] | list[dict]:
+    #     # =====================================
+    #     # 如果提供已经建立的数据库连接，则直接使用
+    #     if databaseConnector is None:
+    #         database = DatabaseConnector()
+    #         database.startCursor()
+    #     else:
+    #         database = databaseConnector
+    #     # ================================================
+    #     # 获取某校区的教室信息：楼、区域、教室编号和座位容纳量
+    #     _ = database.execute(
+    #         "SELECT building,area,room,sit_available FROM `Classroom` WHERE campus=%(campus)s;",
+    #         flaskRequest.form,
+    #     )
+    #     return database.fetchall()
 
     # @staticmethod
     # def updateSchool(

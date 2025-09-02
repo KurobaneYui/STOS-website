@@ -10,7 +10,7 @@ from werkzeug.middleware.proxy_fix import ProxyFix
 from flaskAjax.Users import Users
 
 # from flaskAjax.GroupManager import GroupManager
-# from flaskAjax.TeamManager import TeamManager
+from flaskAjax.TeamManager import TeamManager
 from flaskAjax.DataManager import DataManager
 from flaskAjax.BaseComponents.Authorization import checkIfLogin
 from flaskAjax.BaseComponents.DatabaseConnector import initialize_database
@@ -167,7 +167,7 @@ if __name__ == "__main__":
     initialize_database()
     # Users package include ajax handler for user function
     Users(app)
-    # TeamManager(app)
+    TeamManager(app)
     # GroupManager(app)
     DataManager(app)
 
