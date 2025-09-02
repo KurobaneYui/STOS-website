@@ -20,7 +20,7 @@ from flaskAjax.BaseComponents.DatabaseConnector import (
 
 class DataManagerDatabase:
     @staticmethod
-    def getCampusForForm(
+    def getCampus(
         db_session: Session | None = None,
     ) -> tuple[dict] | list[dict]:
         # =====================================
@@ -35,21 +35,6 @@ class DataManagerDatabase:
             results = [{"campus": i.name} for i in results]
             return results
 
-    @staticmethod
-    def getSchoolForForm(db_session: Session | None = None) -> tuple[dict] | list[dict]:
-        # =====================================
-        # 如果提供已经建立的数据库连接，则直接使用
-        session_context = (
-            SessionLocal() if db_session is None else nullcontext(db_session)
-        )
-        with session_context as session:
-            # ========================
-            # 查询某校区下的学院名称列表
-            results = session.query(SQL_College).all()
-            results = [{"name": i.name} for i in results]
-            return results
-
-    # 在权限系统设计完成后，修改此处SQL处理
     @staticmethod
     def getSchool(
         db_session: Session | None = None,
@@ -84,65 +69,59 @@ class DataManagerDatabase:
     #     )
     #     return database.fetchall()
 
-    # @staticmethod
-    # def updateSchool(
-    #     infoForm: dict, databaseConnector: DatabaseConnector | None = None
-    # ) -> None:
-    #     # =====================================
-    #     # 如果提供已经建立的数据库连接，则直接使用
-    #     if databaseConnector is None:
-    #         database = DatabaseConnector()
-    #         database.startCursor()
-    #     else:
-    #         database = databaseConnector
-    #     # ===============
-    #     # 检查学院是否存在
-    #     DBAffectRows = database.execute(
-    #         "SELECT 'school_id' FROM `School` WHERE school_id=%(school_id)s;", infoForm
-    #     )
-    #     database.fetchall()
-    #     if infoForm["school_id"] != infoForm["old_school_id"] and DBAffectRows != 0:
-    #         raise IllegalValueError(
-    #             "学院 ID 已存在，请检查输入避免重复。",
-    #             filename=__file__,
-    #             line=sys._getframe().f_lineno,
-    #         )
-    #     # ============
-    #     # 更新学院信息
-    #     _ = database.execute(
-    #         "UPDATE `School` SET school_id=%(school_id)s,name=%(name)s,campus=%(campus)s WHERE school_id=%(old_school_id)s;",
-    #         infoForm,
-    #     )
+    @staticmethod
+    def updateSchool(
+        infoForm: dict, db_session: Session | None = None
+    ) -> None:
+        # =====================================
+        # 如果提供已经建立的数据库连接，则直接使用
+        session_context = (
+            SessionLocal() if db_session is None else nullcontext(db_session)
+        )
+        with session_context as session:
+            # ===============
+            # 检查学院是否存在
+            results = session.query(SQL_College).filter_by(id=infoForm["school_id"]).all()
+            if infoForm["school_id"] != infoForm["old_school_id"] and len(results) != 0:
+                raise IllegalValueError(
+                    "学院 ID 已存在，请检查输入避免重复。",
+                    filename=__file__,
+                    line=sys._getframe().f_lineno,
+                )
+            # ============
+            # 更新学院信息
+            results = session.query(SQL_College).filter_by(id=infoForm["old_school_id"]).one()
+            results.id = infoForm["school_id"]
+            results.name = infoForm["name"]
+            session.commit()
 
-    # # TODO: 实现此函数
-    # @staticmethod
-    # def deleteSchool(
-    #     flaskRequest: Request, databaseConnector: DatabaseConnector | None = None
-    # ) -> None:
-    #     # =====================================
-    #     # 如果提供已经建立的数据库连接，则直接使用
-    #     if databaseConnector is None:
-    #         database = DatabaseConnector()
-    #         database.startCursor()
-    #     else:
-    #         database = databaseConnector
-    #     # ================================================
-    #     return
+    # TODO: 实现此函数
+    @staticmethod
+    def deleteSchool(
+        flaskRequest: Request, db_session: Session | None = None
+    ) -> None:
+        # =====================================
+        # 如果提供已经建立的数据库连接，则直接使用
+        session_context = (
+            SessionLocal() if db_session is None else nullcontext(db_session)
+        )
+        with session_context as session:
+            # ================================================
+            return
 
-    # # TODO: 实现此函数
-    # @staticmethod
-    # def addSchool(
-    #     flaskRequest: Request, databaseConnector: DatabaseConnector | None = None
-    # ) -> None:
-    #     # =====================================
-    #     # 如果提供已经建立的数据库连接，则直接使用
-    #     if databaseConnector is None:
-    #         database = DatabaseConnector()
-    #         database.startCursor()
-    #     else:
-    #         database = databaseConnector
-    #     # ================================================
-    #     return
+    # TODO: 实现此函数
+    @staticmethod
+    def addSchool(
+        flaskRequest: Request, db_session: Session | None = None
+    ) -> None:
+        # =====================================
+        # 如果提供已经建立的数据库连接，则直接使用
+        session_context = (
+            SessionLocal() if db_session is None else nullcontext(db_session)
+        )
+        with session_context as session:
+            # ================================================
+            return
 
     # @staticmethod
     # def getSubmittedSelfstudyDate(

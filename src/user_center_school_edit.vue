@@ -155,7 +155,7 @@ async function add_school(school) {
     }
 
     try {
-        const { data } = await axios.post('/Ajax/DataManager/add_school', { school_id, name, campus })
+        const { data } = await axios.post('/Ajax/DataManager/add_school', { school_id, name })
         const returnCode = data.code
         if (returnCode === 400) {
             showToast('error', "提供的数据有误", data.message)
@@ -190,7 +190,7 @@ async function delete_school(school) {
     }
 
     try {
-        const { data } = await axios.post('/Ajax/DataManager/delete_school', { school_id, name, campus, old_school_id })
+        const { data } = await axios.post('/Ajax/DataManager/delete_school', { school_id, name, old_school_id })
         const returnCode = data.code
         if (returnCode === 400) {
             showToast('error', "提供的数据有误", data.message)

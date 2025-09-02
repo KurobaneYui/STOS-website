@@ -21,7 +21,10 @@ def TeamManager(app: flask.Flask) -> None:
                 # ===============
                 # 检查接口调用权限
                 Authorization.check(
-                    rightsNeeded=({"department_id": None, "actor": "manager"},{"department_id": 1, "actor": "member"}),
+                    rightsNeeded=(
+                        {"department_id": None, "actor": "manager"},
+                        {"department_id": 1, "actor": "member"},
+                    ),
                     needLogin=True,
                 )
                 # =========================================
@@ -75,7 +78,7 @@ def TeamManager(app: flask.Flask) -> None:
                 TeamManagerDatabase.updateDepartment(infoForm)
                 # ========================
                 # 准备函数返回值和响应与日志
-                returns = {"message": "", "data": ""}
+                returns: dict = {"message": "", "data": ""}
                 customResponse.setMessageAndData(**returns)
                 logger.funcReturns = returns
         return customResponse.getResponse()

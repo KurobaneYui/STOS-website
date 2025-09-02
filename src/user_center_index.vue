@@ -102,26 +102,20 @@ onMounted(getTopbarInfo);
                         <div class="row g-2">
                             <div class="col-12 col-lg-6 col-xxl-4">
                                 <div class="card">
-                                    <h5 class="card-header">个人分数与组内排名</h5>
-                                </div>
-                            </div>
-                            <div class="col-12 col-lg-6 col-xxl-4">
-                                <div class="card">
-                                    <h5 class="card-header">所在组分数与队内排名</h5>
-                                </div>
-                            </div>
-                            <div class="col-12 col-lg-6 col-xxl-4">
-                                <div class="card">
                                     <h5 class="card-header">今日任务</h5>
+                                    <div class="card-body">
+                                        <div class="row">
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-12">
+                            <div class="col-12 col-lg-6 col-xxl-8">
                                 <div class="card">
                                     <h5 class="card-header">队内通知</h5>
                                     <div class="card-body">
                                         <div class="row">
                                             <!-- 可以用v-for循环v-if等将通知数据结构化到vue管理 -->
-                                            <!-- <div class="col-12 col-md-4">
+                                            <!-- <div class="col-12 col-md-6">
                                                 <div class="card border border-primary">
                                                     <h6 class="card-header">通知1</h6>
                                                     <div class="card-body">
@@ -129,7 +123,7 @@ onMounted(getTopbarInfo);
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-12 col-md-4">
+                                            <div class="col-12 col-md-6">
                                                 <div class="card border border-primary">
                                                     <h6 class="card-header">通知2</h6>
                                                     <div class="card-body">
@@ -137,7 +131,7 @@ onMounted(getTopbarInfo);
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="col-12 col-md-4">
+                                            <div class="col-12 col-md-6">
                                                 <div class="card border border-primary">
                                                     <h6 class="card-header">通知3</h6>
                                                     <div class="card-body">

@@ -294,3 +294,11 @@ def initialize_database():
             session.add(membership1)
             session.add(membership2)
             session.commit()
+
+            new_user = SQL_User(student_id="202411223355", name="BlackSquirrel", gender="女")
+            session.add(new_user)
+            session.commit()
+
+            black_one = SQL_Blacklist(student_id="202411223355", reason="数据造假")
+            session.add(black_one)
+            session.commit()

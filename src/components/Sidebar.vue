@@ -16,7 +16,6 @@ const props = defineProps({
 
 const workInfoSubMenuPaths = [
     '/user_center/work_basic_info.html',
-    '/user_center/score_details.html',
     '/user_center/financial_report.html',
 ];
 const isWorkInfoOpen = ref(false);
@@ -158,11 +157,6 @@ onUnmounted(() => {
                 <li class="menu-item" :class="{ 'active': currentPath === '/user_center/work_basic_info.html' }">
                     <a href="/user_center/work_basic_info.html" class="menu-link">
                         <div data-i18n="基本信息">基本信息</div>
-                    </a>
-                </li>
-                <li class="menu-item" :class="{ 'active': currentPath === '/user_center/score_details.html' }">
-                    <a href="/user_center/score_details.html" class="menu-link text-decoration-line-through">
-                        <div data-i18n="扣分详情">扣分详情</div>
                     </a>
                 </li>
                 <li class="menu-item" :class="{ 'active': currentPath === '/user_center/financial_report.html' }">
@@ -311,11 +305,6 @@ onUnmounted(() => {
                 <li class="menu-item">
                     <a href="#" class="menu-link text-decoration-line-through">
                         <div data-i18n="财务变动">财务变动</div>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="#" class="menu-link text-decoration-line-through">
-                        <div data-i18n="组员分数变动">组员分数变动</div>
                     </a>
                 </li>
             </ul>

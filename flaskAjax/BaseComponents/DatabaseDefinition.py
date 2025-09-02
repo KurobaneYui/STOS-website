@@ -46,6 +46,9 @@ class User(Base):
     profile: Mapped["UserProfile"] = relationship(
         back_populates="user", cascade="all, delete-orphan"
     )
+    blacklist_entry: Mapped["Blacklist"] = relationship(
+        back_populates="user", cascade="all, delete-orphan"
+    )
 
 
 # 用户画像/档案表 (可删除，并级联删除所有关联数据)
@@ -88,9 +91,6 @@ class UserProfile(Base):
         back_populates="profile", cascade="all, delete-orphan", uselist=False
     )
     collected_info: Mapped[List["CollectedInfo"]] = relationship(
-        back_populates="profile", cascade="all, delete-orphan"
-    )
-    blacklist_entry: Mapped["Blacklist"] = relationship(
         back_populates="profile", cascade="all, delete-orphan"
     )
     group_memberships: Mapped[List["GroupMember"]] = relationship(
@@ -183,17 +183,18 @@ class CollectedInfo(Base):
 class Blacklist(Base):
     __tablename__ = "blacklist"
     student_id: Mapped[str] = mapped_column(
-        ForeignKey("user_profiles.student_id", ondelete="CASCADE"), primary_key=True
+        ForeignKey("users.student_id", ondelete="CASCADE"), primary_key=True
     )
     reason: Mapped[str] = mapped_column(Text, nullable=False)
     created_at: Mapped[datetime.datetime] = mapped_column(server_default=func.now())
-    profile: Mapped["UserProfile"] = relationship(back_populates="blacklist_entry")
+    user: Mapped["User"] = relationship(back_populates="blacklist_entry")
 
 
 class Group(Base):
     __tablename__ = "groups"
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(100), nullable=False, unique=True)
+    remark: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     created_at: Mapped[datetime.datetime] = mapped_column(server_default=func.now())
     updated_at: Mapped[datetime.datetime] = mapped_column(
         server_default=func.now(),
