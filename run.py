@@ -8,10 +8,6 @@ from flask_apscheduler import APScheduler
 from werkzeug.middleware.proxy_fix import ProxyFix
 
 from flaskAjax.Users import Users
-<<<<<<< HEAD
-=======
-
->>>>>>> v4-dev
 # from flaskAjax.GroupManager import GroupManager
 from flaskAjax.TeamManager import TeamManager
 from flaskAjax.DataManager import DataManager
@@ -53,14 +49,11 @@ def FaviconICORoutes():
 @app.route("/imgs/<path:additionalURL>")
 def ImgsRoutes(additionalURL):
     return send_file("imgs/" + additionalURL)
-<<<<<<< HEAD
-=======
 
 
 @app.route("/js/<path:additionalURL>")
 def JSRoutes(additionalURL):
     return send_file("js/" + additionalURL)
->>>>>>> v4-dev
 
 
 @app.route("/assets/<path:additionalURL>")

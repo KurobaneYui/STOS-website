@@ -1,12 +1,8 @@
 <script setup>
 import { ref, onMounted } from "vue";
-<<<<<<< HEAD
-import axios from "axios";
-=======
 import axios from 'axios'
 import swal from 'sweetalert'
 import * as bootstrap from 'bootstrap'
->>>>>>> v4-dev
 
 // 用户输入
 const studentId = ref("");
