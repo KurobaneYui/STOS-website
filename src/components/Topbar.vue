@@ -1,12 +1,54 @@
 <script setup>
+import { ref, onMounted } from 'vue'
 import axios from 'axios'
 import "/src/assets/vendor/fonts/boxicons.css"
 
-const props = defineProps({
-    userInfo: Object,
-    formalMember: String,
-    badges: Array
+const userInfo = ref({
+    name: '',
+    department_id: 0,
+    department_name: '',
+    job: 'member'
 })
+const formalMember = ref('')
+const badges = ref([])
+
+async function getTopbarInfo() {
+    try {
+        const { data } = await axios.get('/Ajax/Users/topbarInfo')
+        const code = data.code
+        if ([400, 401, 404, 417, 498, 499].includes(code)) {
+            if (data.msg) swal({ title: data.msg, icon: "warning" })
+            else swal({ title: '出错了，如刷新无效请尝试重新登录', icon: 'error' })
+            return
+        }
+        if (code === 200 || code === 301) {
+            const info = data.data
+            userInfo.value = info
+            updateFormalMember(info)
+            updateBadges(info)
+        }
+    } catch (e) {
+        swal({ title: '请检查网络连接，或稍后再试', icon: "error" })
+    }
+}
+
+function updateFormalMember(info) {
+    if (info.department_id === 0) {
+        formalMember.value = info.department_name
+    } else if (info.department_id === 1) {
+        formalMember.value = `${info.department_name} - ${info.job === "manager" ? '队长' : '副队长'}`
+    } else {
+        formalMember.value = `${info.department_name} - ${info.job === "manager" ? '组长' : '组员'}`
+    }
+}
+
+function updateBadges(info) {
+    badges.value = [
+        { text: '查早：XXX', type: 'success' },
+        { text: '查课：XXX', type: 'warning' },
+        // ...
+    ]
+}
 
 async function logout() {
     const { data } = await axios.get('/Ajax/Users/logout')
@@ -14,6 +56,8 @@ async function logout() {
         window.location.href = '/authentication/logout.html'
     }
 }
+
+onMounted(getTopbarInfo);
 </script>
 
 <template>
@@ -26,7 +70,7 @@ async function logout() {
     <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
         <div class="navbar-nav align-items-center">
             <div class="nav-item d-flex align-items-center row g-1" id="self-status-badges">
-                <div class="col-auto" v-for="badge in props.badges" :key="badge.text">
+                <div class="col-auto" v-for="badge in badges" :key="badge.text">
                     <span class="badge rounded-pill" :class="'bg-label-' + badge.type + ' fs-6'">{{ badge.text }}</span>
                 </div>
             </div>
@@ -49,8 +93,8 @@ async function logout() {
                                     </div>
                                 </div>
                                 <div class="flex-grow-1">
-                                    <span class="fw-semibold d-block">{{ props.userInfo.name }}</span>
-                                    <small class="text-muted">{{ props.formalMember }}</small>
+                                    <span class="fw-semibold d-block">{{ userInfo.name }}</span>
+                                    <small class="text-muted">{{ formalMember }}</small>
                                 </div>
                             </div>
                         </a>

@@ -18,7 +18,6 @@ async function getWorkList() {
         loading.value = false
     }
 }
-onMounted(getWorkList)
 
 async function loginAsSpecifiedWork(department_id, job) {
     try {
@@ -41,6 +40,8 @@ function getJobName(department_id, job, name) {
     if (department_id === 0) return name
     return name + ' - ' + (job === "manager" ? "组长" : "组员")
 }
+
+onMounted(getWorkList)
 </script>
 
 <template>

@@ -145,11 +145,6 @@ async function register() {
         swal({ title: "网络错误", text: "请检查浏览器网络连接，建议刷新后重试", icon: "error" })
     }
 }
-
-function onSubmit(e) {
-    e.preventDefault()
-    register()
-}
 </script>
 
 <template>
@@ -319,7 +314,7 @@ function onSubmit(e) {
 
             <div class="card col-6 offset-3 bg-transparent shadow-none">
                 <div class="card-body">
-                    <form id="register" @submit="onSubmit">
+                    <form id="register" @submit.prevent="register">
                         <div class="mb-3 d-flex justify-content-center">
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="terms-conditions" name="terms"

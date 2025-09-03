@@ -8,55 +8,6 @@ import Topbar from './components/Topbar.vue'
 import LoginWork from './components/Loginwork.vue'
 import "/src/assets/demo.css"
 
-const currentPath = window.location.pathname
-
-const userInfo = ref({
-    name: '',
-    department_id: 0,
-    department_name: '',
-    job: 'member'
-})
-const formalMember = ref('')
-const badges = ref([])
-
-async function getTopbarInfo() {
-    try {
-        const { data } = await axios.get('/Ajax/Users/topbarInfo')
-        const code = data.code
-        if ([400, 401, 404, 417, 498, 499].includes(code)) {
-            if (data.msg) swal({ title: data.msg, icon: "warning" })
-            else swal({ title: '出错了，如刷新无效请尝试重新登录', icon: 'error' })
-            return
-        }
-        if (code === 200 || code === 301) {
-            const info = data.data
-            userInfo.value = info
-            updateFormalMember(info)
-            updateBadges(info)
-        }
-    } catch (e) {
-        swal({ title: '请检查网络连接，或稍后再试', icon: "error" })
-    }
-}
-
-function updateFormalMember(info) {
-    if (info.department_id === 0) {
-        formalMember.value = info.department_name
-    } else if (info.department_id === 1) {
-        formalMember.value = `${info.department_name} - ${info.job === "manager" ? '队长' : '副队长'}`
-    } else {
-        formalMember.value = `${info.department_name} - ${info.job === "manager" ? '组长' : '组员'}`
-    }
-}
-
-function updateBadges(info) {
-    badges.value = [
-        { text: '查早：XXX', type: 'success' },
-        { text: '查课：XXX', type: 'warning' },
-        // ...
-    ]
-}
-
 const departments = ref([])
 
 async function get_department() {
@@ -173,18 +124,16 @@ function showToast(status, title, text) {
 
 // call both on mount
 onMounted(() => {
-    getTopbarInfo()
     get_department()
 })
 </script>
-
 
 <template>
     <div class="layout-wrapper layout-content-navbar">
         <div class="layout-container">
             <!-- Menu -->
             <aside class="layout-menu menu-vertical menu bg-menu-theme">
-                <Sidebar :current-path="currentPath" :user-info="userInfo" />
+                <Sidebar />
             </aside>
             <!-- / Menu -->
 
@@ -192,7 +141,7 @@ onMounted(() => {
             <div class="layout-page">
                 <nav
                     class="layout-navbar container-fluid navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme rounded-pill">
-                    <Topbar :user-info="userInfo" :formal-member="formalMember" :badges="badges" />
+                    <Topbar />
                 </nav>
                 <div>
                     <LoginWork />
