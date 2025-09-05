@@ -60,7 +60,7 @@ const isAdminDataOpen = ref(false);
 const otherDataSubMenuPaths = [
     '/user_center/department_edit.html',
     '/user_center/school_edit.html',
-    '/user_center/finance_EXCEL_export.html',
+    '/user_center/finance_export.html',
 ];
 const isOtherDataOpen = ref(false);
 
@@ -344,8 +344,8 @@ onUnmounted(() => {
                         <div data-i18n="学院管理">学院管理</div>
                     </a>
                 </li>
-                <li class="menu-item" :class="{ 'active': currentPath === '/user_center/finance_EXCEL_export.html' }">
-                    <a href="/user_center/finance_EXCEL_export.html" class="menu-link">
+                <li class="menu-item" :class="{ 'active': currentPath === '/user_center/finance_export.html' }">
+                    <a href="/user_center/finance_export.html" class="menu-link">
                         <div data-i18n="财务报表导出">财务报表导出</div>
                     </a>
                 </li>

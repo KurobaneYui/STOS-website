@@ -24,7 +24,8 @@ from .DatabaseDefinition import CheckInTask as SQL_CheckInTask  # noqa
 from .DatabaseDefinition import CheckInData as SQL_CheckInData  # noqa
 from .DatabaseDefinition import InspectionTask as SQL_InspectionTask  # noqa
 from .DatabaseDefinition import InspectionData as SQL_InspectionData  # noqa
-from .DatabaseDefinition import ContactView as SQL_ContactView, create_view_sql  # noqa
+from .DatabaseDefinition import ContactView as SQL_ContactView, contact_view_sql  # noqa
+from .DatabaseDefinition import WageView as SQL_WageView, wage_view_sql  # noqa
 
 # --- 1. 数据库设置 ---
 # 定义数据库文件路径和连接URL
@@ -91,7 +92,8 @@ def initialize_database():
         # 显式执行视图 SQL（若已存在则忽略错误），避免调用 DDL.execute 导致 lint 警告
         try:
             with engine.begin() as conn:
-                conn.execute(text(create_view_sql))
+                conn.execute(text(contact_view_sql))
+                conn.execute(text(wage_view_sql))
         except Exception:
             pass
 

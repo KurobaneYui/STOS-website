@@ -303,10 +303,10 @@ class StudySchedule(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     date: Mapped[datetime.date] = mapped_column(nullable=False)
     classroom_id: Mapped[str] = mapped_column(
-        ForeignKey("classrooms.id", ondelete="RESTRICT"), nullable=False
+        ForeignKey("classrooms.id", ondelete="CASCADE"), nullable=False
     )
     college_id: Mapped[int] = mapped_column(
-        ForeignKey("colleges.id", ondelete="RESTRICT"), nullable=False
+        ForeignKey("colleges.id", ondelete="CASCADE"), nullable=False
     )
     expected_headcount: Mapped[Optional[int]]
     created_at: Mapped[datetime.datetime] = mapped_column(server_default=func.now())
@@ -365,10 +365,10 @@ class InspectionTask(Base):
     date: Mapped[datetime.date] = mapped_column(nullable=False)
     time_slot: Mapped[str] = mapped_column(String(20), nullable=False)
     classroom_id: Mapped[str] = mapped_column(
-        ForeignKey("classrooms.id", ondelete="RESTRICT"), nullable=False
+        ForeignKey("classrooms.id", ondelete="CASCADE"), nullable=False
     )
     college_id: Mapped[int] = mapped_column(
-        ForeignKey("colleges.id", ondelete="RESTRICT"), nullable=False
+        ForeignKey("colleges.id", ondelete="CASCADE"), nullable=False
     )
     expected_headcount: Mapped[Optional[int]]
     created_at: Mapped[datetime.datetime] = mapped_column(server_default=func.now())
@@ -405,7 +405,7 @@ class ContactView(Base):
     __tablename__ = "contact_view"
     # This view is not managed by Alembic/SQLAlchemy's table creation.
     # It is created via the DDL event listener below.
-    __table_args__ = {"info": dict(is_view=True)}
+    __table_args__ = {"info": {"is_view": True}}
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     name: Mapped[str] = mapped_column(String)
@@ -416,9 +416,27 @@ class ContactView(Base):
     department_id: Mapped[int] = mapped_column(Integer)
     job: Mapped[str] = mapped_column(String)
 
+class WageView(Base):
+    __tablename__ = "wage_view"
+    __table_args__ = {"info": {"is_view": True}}
+
+    row_number: Mapped[int] = mapped_column(Integer, primary_key=True)
+    name: Mapped[str] = mapped_column(String)
+    student_id: Mapped[str] = mapped_column(String)
+    department_name: Mapped[str] = mapped_column(String)
+    department_id: Mapped[int] = mapped_column(Integer)
+    job: Mapped[str] = mapped_column(String)
+    wage: Mapped[float] = mapped_column(Float)
+    work_remark: Mapped[Optional[str]] = mapped_column(Text)
+    application_name: Mapped[Optional[str]] = mapped_column(String)
+    application_student_id: Mapped[Optional[str]] = mapped_column(String)
+    application_bankcard: Mapped[Optional[str]] = mapped_column(String)
+    subsidy_dossier: Mapped[int] = mapped_column(Integer)
+    wageinfo_remark: Mapped[Optional[str]] = mapped_column(Text)
+
 
 # DDL for creating the view
-create_view_sql = """
+contact_view_sql = """
 CREATE VIEW IF NOT EXISTS contact_view AS
 SELECT
     ROW_NUMBER() OVER (ORDER BY gm.group_id, gm.role DESC) AS id,
@@ -434,12 +452,38 @@ JOIN user_profiles AS up ON gm.student_id = up.student_id
 JOIN users AS u ON up.student_id = u.student_id
 JOIN groups AS g ON gm.group_id = g.id
 """
-create_view_ddl = DDL(create_view_sql)
+wage_view_sql = """
+CREATE VIEW IF NOT EXISTS wage_view AS
+SELECT
+    ROW_NUMBER() OVER (ORDER BY gm.role DESC, g.id) AS row_number,
+    u.name,
+    up.student_id,
+    g.name AS department_name,
+    g.id AS department_id,
+    gm.role AS job,
+    gm.wage,
+    g.remark AS work_remark,
+    pi.recipient_name AS application_name,
+    pi.recipient_id AS application_student_id,
+    pi.card_number AS application_bankcard,
+    pi.is_registered_poor AS subsidy_dossier,
+    gm.remark AS wageinfo_remark
+FROM group_members AS gm
+LEFT JOIN groups AS g ON gm.group_id = g.id
+LEFT JOIN user_profiles AS up ON gm.student_id = up.student_id
+LEFT JOIN users AS u ON up.student_id = u.student_id
+LEFT JOIN payment_info AS pi ON up.student_id = pi.student_id
+"""
+create_contact_view_ddl = DDL(contact_view_sql)
+create_wage_view_ddl = DDL(wage_view_sql)
 
 # DDL for dropping the view
-drop_view_ddl = DDL("DROP VIEW IF EXISTS contact_view")
+drop_contact_view_ddl = DDL("DROP VIEW IF EXISTS contact_view")
+drop_wage_view_ddl = DDL("DROP VIEW IF EXISTS wage_view")
 
 
 # Event listeners to create and drop the view
-event.listen(Base.metadata, "after_create", create_view_ddl)
-event.listen(Base.metadata, "before_drop", drop_view_ddl)
+event.listen(Base.metadata, "after_create", create_contact_view_ddl)
+event.listen(Base.metadata, "before_drop", drop_contact_view_ddl)
+event.listen(Base.metadata, "after_create", create_wage_view_ddl)
+event.listen(Base.metadata, "before_drop", drop_wage_view_ddl)

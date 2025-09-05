@@ -7,9 +7,7 @@ import Sidebar from './components/Sidebar.vue'
 import Topbar from './components/Topbar.vue'
 import LoginWork from './components/Loginwork.vue'
 import "/src/assets/demo.css"
-
 </script>
-
 
 <template>
     <div class="layout-wrapper layout-content-navbar">
