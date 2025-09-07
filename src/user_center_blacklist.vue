@@ -8,7 +8,48 @@ import Topbar from './components/Topbar.vue'
 import LoginWork from './components/Loginwork.vue'
 import "/src/assets/demo.css"
 
+const formData = ref({
+    date: '',
+    name: '',
+    gender: 'male',
+    student_id: '',
+    reason: '',
+})
 const blacklist = ref([])
+
+const loading = ref(false)
+
+async function addToBlacklist() {
+    loading.value = true;
+    try {
+        const postData = { ...formData.value };
+        postData.gender = postData.gender === 'male' ? '男' : '女';
+        const { data } = await axios.post('/Ajax/TeamManager/add_blocked', postData);
+        if (data.code === 200) {
+            await getBlacklist();
+            // 注意，这里只清空 name、student_id、reason，date 不变
+            formData.value.name = '';
+            formData.value.student_id = '';
+            formData.value.reason = '';
+        } else {
+            await getBlacklist();
+            swal({
+                title: "添加失败",
+                text: data.msg || "未知错误，请联系管理员",
+                icon: "error"
+            });
+        }
+    } catch (e) {
+        await getBlacklist();
+        swal({
+            title: "网络出错",
+            text: e.message || "请检查网络或稍后重试",
+            icon: "error"
+        });
+    } finally {
+        loading.value = false;
+    }
+}
 
 function getGenderBadge(gender) {
     if (gender === '男') return 'bg-label-info'
@@ -83,74 +124,100 @@ onMounted(() => {
                         </nav>
                         <!-- main content -->
                         <div class="col-12 alert alert-primary" role="alert">
-                            * 按队伍规范，原则上被清退（不包含请假、自行退出、因事离队等）人员两年内不再招入队伍。此处记录相关事由以供参考。
+                            * 按队伍规范，原则上被清退（不包含请假、自行退出、因事离队等）人员两年内不再招入队伍。此处记录相关事由以供参考。<br/>
+                            * 添加人员仅供查阅，此处记录不影响人员在网站中的功能。<br/>
+                            * 添加人员如已注册，则姓名和性别会同步已有信息而非本页提交的信息。<br/>
+                            * 添加学号已存在条目，则更新时间、事由的记录，请添加前校对学号。
                         </div>
-                        <div class="modal fade" id="add-member" tabindex="-1" data-bs-backdrop="static"
-                            data-bs-keyboard="false" aria-labelledby="exampleModalLabel" aria-hidden="true"
-                            onblur="get_all_groups_members()">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <div class="modal-header">
-                                        <h5 class="modal-title" id="group-name"></h5>
-                                        <span id="group-id" hidden></span>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                            aria-label="Close" onclick="get_all_groups_members()"></button>
-                                    </div>
-                                    <div class="modal-body">
-                                        <form>
-                                            <div class="mb-3">
-                                                <label for="multi-id" class="col-form-label">学号：</label>
-                                                <input type="text" class="form-control" id="multi-id"
-                                                    aria-describedby="inputHelp">
-                                                <div id="inputHelp" class="form-text">完整学号，可用英文逗号分隔多个学号</div>
-                                                <button type="button" class="btn btn-primary btn-sm rounded-pill"
-                                                    @onclick.prevent="add_one()">搜索</button>
+                        <div class="row mb-2">
+                            <div class="card">
+                                <h5 class="card-header">添加人员</h5>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-12 col-sm-6 col-lg-3 col-xl-3 mb-3">
+                                            <label class="form-label" for="date">选择年月日</label>
+                                            <input class="form-control" type="date" id="date" v-model="formData.date"
+                                                required />
+                                        </div>
+                                        <div class="col-12 col-sm-6 col-lg-4 col-xl-3 mb-3">
+                                            <label class="form-label" for="name">姓名</label>
+                                            <input class="form-control" type="text" id="name" v-model="formData.name"
+                                                required>
+                                        </div>
+                                        <div class="col-12 col-sm-6 col-lg-4 col-xl-2 mb-3">
+                                            <label class="form-label">性别</label>
+                                            <div class="row">
+                                                <div class="form-check col-2 offset-1">
+                                                    <label for="gender_male" class="form-check-label">男</label>
+                                                    <input type="radio" class="form-check-input" id="gender_male"
+                                                        name="gender" value="male" v-model="formData.gender" />
+                                                </div>
+                                                <div class="form-check col-2">
+                                                    <label for="gender_female" class="form-check-label">女</label>
+                                                    <input type="radio" class="form-check-input" id="gender_female"
+                                                        name="gender" value="female" v-model="formData.gender" />
+                                                </div>
                                             </div>
-                                        </form>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <button type="button" class="btn btn-sm btn-secondary rounded-pill"
-                                            data-bs-dismiss="modal" onclick="get_all_groups_members()">结束</button>
+                                        </div>
+                                        <div class="col-12 col-sm-6 col-lg-4 col-xl-3 mb-3">
+                                            <label class="form-label" for="student_id">学号</label>
+                                            <input class="form-control" type="text" id="student_id"
+                                                v-model="formData.student_id" required>
+                                        </div>
+                                        <div class="col-12 col-sm-6 col-lg-6 col-xl-3 mb-3">
+                                            <label class="form-label" for="reason">事由</label>
+                                            <input class="form-control" type="text" id="reason"
+                                                v-model="formData.reason" required>
+                                        </div>
+                                        <div class="col-12 d-flex justify-content-center">
+                                            <button type="button" class="btn btn-primary rounded-pill"
+                                                :disabled="loading" @click="addToBlacklist">添加</button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="card">
-                            <h5 class="card-header">清退记录</h5>
-                            <div class="table-responsive text-nowrap">
-                                <table class="table table-hover table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th>#</th>
-                                            <th>姓名</th>
-                                            <th>性别</th>
-                                            <th>学号</th>
-                                            <th>事由</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr v-for="blockedOne in blacklist" :key="blockedOne.rowNum">
-                                            <td>{{ blockedOne.rowNum }}</td>
-                                            <td>{{ blockedOne.name }}</td>
-                                            <td>
-                                                <span class="badge" :class="getGenderBadge(blockedOne.gender)">
-                                                    {{ blockedOne.gender || '-' }}
-                                                </span>
-                                            </td>
-                                            <td>{{ blockedOne.student_id }}</td>
-                                            <td>{{ blockedOne.reason }}</td>
-                                        </tr>
-                                    </tbody>
-                                    <tfoot class="table-border-bottom-0">
-                                        <tr>
-                                            <th>#</th>
-                                            <th>姓名</th>
-                                            <th>性别</th>
-                                            <th>学号</th>
-                                            <th>事由</th>
-                                        </tr>
-                                    </tfoot>
-                                </table>
+                        <div class="row">
+                            <div class="card">
+                                <h5 class="card-header">清退记录</h5>
+                                <div class="table-responsive text-nowrap">
+                                    <table class="table table-hover table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>姓名</th>
+                                                <th>性别</th>
+                                                <th>学号</th>
+                                                <th>事由</th>
+                                                <th>时间</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr v-for="blockedOne in blacklist" :key="blockedOne.rowNum">
+                                                <td>{{ blockedOne.rowNum }}</td>
+                                                <td>{{ blockedOne.name }}</td>
+                                                <td>
+                                                    <span class="badge" :class="getGenderBadge(blockedOne.gender)">
+                                                        {{ blockedOne.gender || '-' }}
+                                                    </span>
+                                                </td>
+                                                <td>{{ blockedOne.student_id }}</td>
+                                                <td>{{ blockedOne.reason }}</td>
+                                                <td>{{ blockedOne.start_time }}</td>
+                                            </tr>
+                                        </tbody>
+                                        <tfoot class="table-border-bottom-0">
+                                            <tr>
+                                                <th>#</th>
+                                                <th>姓名</th>
+                                                <th>性别</th>
+                                                <th>学号</th>
+                                                <th>事由</th>
+                                                <th>时间</th>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                         <!--/ Layout Demo -->

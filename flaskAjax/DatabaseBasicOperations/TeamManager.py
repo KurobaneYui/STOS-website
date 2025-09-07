@@ -29,7 +29,7 @@ class TeamManagerDatabase:
             # ==============
             # 查询黑名单数据
             results = (
-                session.query(SQL_User, SQL_Blacklist.reason)
+                session.query(SQL_User, SQL_Blacklist.reason, SQL_Blacklist.start_time)
                 .join(SQL_Blacklist, SQL_User.student_id == SQL_Blacklist.student_id)
                 .all()
             )
@@ -40,10 +40,52 @@ class TeamManagerDatabase:
                     "name": user.name,
                     "gender": user.gender,
                     "reason": reason,
+                    "start_time": start_time.isoformat(),
                 }
-                for idx, (user, reason) in enumerate(results)
+                for idx, (user, reason, start_time) in enumerate(results)
             ]
             return results
+
+    @staticmethod
+    def addBlocked(infoForm: dict, db_session: Session | None = None) -> None:
+        # =====================================
+        # 如果提供已经建立的数据库连接，则直接使用
+        session_context = (
+            SessionLocal() if db_session is None else nullcontext(db_session)
+        )
+        with session_context as session:
+            # ==============
+            # 查询是否有基本信息条目，没有则添加
+            results = (
+                session.query(SQL_User)
+                .filter_by(student_id=infoForm["student_id"])
+                .all()
+            )
+            if len(results) < 1:
+                user = SQL_User(
+                    student_id=infoForm["student_id"],
+                    gender=infoForm["gender"],
+                    name=infoForm["name"],
+                )
+                session.add(user)
+            # ==============
+            # 查询是否有基本信息条目，没有则添加，有则更新
+            results = (
+                session.query(SQL_Blacklist)
+                .filter_by(student_id=infoForm["student_id"])
+                .all()
+            )
+            if len(results) < 1:
+                blocked_one = SQL_Blacklist(
+                    student_id=infoForm["student_id"],
+                    reason=infoForm["reason"],
+                    start_time=infoForm["date"],
+                )
+                session.add(blocked_one)
+            else:
+                results[0].reason = infoForm["reason"]
+                results[0].start_time = infoForm["date"]
+            session.commit()
 
     @staticmethod
     def getDepartment(db_session: Session | None = None) -> tuple[dict] | list[dict]:
@@ -91,7 +133,11 @@ class TeamManagerDatabase:
             # =================================
             # 如果提供了组长学号，确保存在即可继续
             if infoForm["group_leader_id"] != "":
-                results = session.query(SQL_UserProfile).filter_by(student_id=infoForm["group_leader_id"]).all()
+                results = (
+                    session.query(SQL_UserProfile)
+                    .filter_by(student_id=infoForm["group_leader_id"])
+                    .all()
+                )
                 if len(results) != 1:
                     raise IllegalValueError(
                         "学号不存在，请检查输入的学号信息。",
@@ -101,14 +147,20 @@ class TeamManagerDatabase:
             infoForm["new_group_leader"] = infoForm["group_leader_id"]
             # ==============
             # 查询原组长信息
-            results = session.query(SQL_GroupMember).filter_by(group_id=infoForm["department_id"], role="manager").all()
+            results = (
+                session.query(SQL_GroupMember)
+                .filter_by(group_id=infoForm["department_id"], role="manager")
+                .all()
+            )
             if len(results) > 0:
                 infoForm["ori_group_leader"] = results[0].student_id
             else:
                 infoForm["ori_group_leader"] = ""
             # =======================
             # 更新部门备注等信息
-            results = session.query(SQL_Group).filter_by(id=infoForm["department_id"]).one()
+            results = (
+                session.query(SQL_Group).filter_by(id=infoForm["department_id"]).one()
+            )
             results.remark = infoForm["remark"]
             session.commit()
             # if ??? not in [0, 1]:
@@ -122,7 +174,15 @@ class TeamManagerDatabase:
             # =======================================
             # 对卸任组长取消岗位信息、权限信息
             if infoForm["ori_group_leader"] != "":
-                results = session.query(SQL_GroupMember).filter_by(student_id=infoForm["ori_group_leader"], group_id=infoForm["department_id"], role="manager").one()
+                results = (
+                    session.query(SQL_GroupMember)
+                    .filter_by(
+                        student_id=infoForm["ori_group_leader"],
+                        group_id=infoForm["department_id"],
+                        role="manager",
+                    )
+                    .one()
+                )
                 session.delete(results)
                 # if DBAffectRows not in [0, 1]:
                 #     database.rollback()
@@ -139,8 +199,8 @@ class TeamManagerDatabase:
                     student_id=infoForm["new_group_leader"],
                     role="manager",
                     wage=350,
-                    display_title=["组长","队长"][infoForm["department_id"]==1],
-                    remark=""
+                    display_title=["组长", "队长"][infoForm["department_id"] == 1],
+                    remark="",
                 )
                 session.add(workInfo)
                 # if DBAffectRows not in [0, 1]:
@@ -165,11 +225,11 @@ class TeamManagerDatabase:
             # ====================================
             # 调用python程序处理财务信息并导出财务表
             # 整理调用参数
-            path = f"tmpFiles/finance_EXCEL_{str(int(random.random()*10e5))}.xlsx"
+            path = f"tmpFiles/finance_EXCEL_{str(int(random.random() * 10e5))}.xlsx"
             infoForm["path"] = path
             infoForm["database"] = session
             # 开始调用
             FinanceProcess.writedata(**infoForm)
             FinanceProcess.SetStyle(path)
 
-            return "/"+path
+            return "/" + path

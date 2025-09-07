@@ -1,5 +1,6 @@
 import os
 import json
+import datetime
 import sqlite3
 
 from sqlalchemy import create_engine, event, text
@@ -22,7 +23,7 @@ from .DatabaseDefinition import Classroom as SQL_Classroom  # noqa
 from .DatabaseDefinition import StudySchedule as SQL_StudySchedule  # noqa
 from .DatabaseDefinition import CheckInTask as SQL_CheckInTask  # noqa
 from .DatabaseDefinition import CheckInData as SQL_CheckInData  # noqa
-from .DatabaseDefinition import InspectionTask as SQL_InspectionTask  # noqa
+from .DatabaseDefinition import CourseSchedule as SQL_InspectionTask  # noqa
 from .DatabaseDefinition import InspectionData as SQL_InspectionData  # noqa
 from .DatabaseDefinition import ContactView as SQL_ContactView, contact_view_sql  # noqa
 from .DatabaseDefinition import WageView as SQL_WageView, wage_view_sql  # noqa
@@ -301,6 +302,6 @@ def initialize_database():
             session.add(new_user)
             session.commit()
 
-            black_one = SQL_Blacklist(student_id="202411223355", reason="数据造假")
+            black_one = SQL_Blacklist(student_id="202411223355", reason="数据造假", start_time=datetime.date.today())
             session.add(black_one)
             session.commit()

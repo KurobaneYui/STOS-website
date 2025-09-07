@@ -6,6 +6,22 @@ from flaskAjax.BaseComponents.CustomError import IllegalValueError
 
 class TeamManagerCheck:
     @staticmethod
+    def addBlockedParamsCheck(infoForm: dict) -> None:
+        if (
+            "name" not in infoForm.keys()
+            or "student_id" not in infoForm.keys()
+            or "reason" not in infoForm.keys()
+            or "date" not in infoForm.keys()
+            or "gender" not in infoForm.keys()
+        ):
+            raise IllegalValueError(
+                "Not all required data received.",
+                filename=__file__,
+                line=sys._getframe().f_lineno,
+            )
+        infoForm['date'] = datetime.date.fromisoformat(infoForm["date"])
+
+    @staticmethod
     def updateDepartmentParamsCheck(infoForm: dict) -> None:
         if (
             "department_id" not in infoForm.keys()
@@ -42,5 +58,4 @@ class TeamManagerCheck:
                 filename=__file__,
                 line=sys._getframe().f_lineno,
             )
-        infoForm["date"] = datetime.datetime.strptime(
-                infoForm["date"], "%Y-%m")
+        infoForm["date"] = datetime.datetime.strptime(infoForm["date"], "%Y-%m")

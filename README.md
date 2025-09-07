@@ -1,3 +1,5 @@
+# STSA website
+
 - [STSA website](#stsa-website)
   - [使用手册](#使用手册)
     - [环境搭建](#环境搭建)
@@ -8,8 +10,6 @@
   - [开发手册](#开发手册)
     - [Docker镜像](#docker镜像)
     - [Python库依赖](#python库依赖)
-
-# STSA website
 
 本仓库用于督导队线上数据系统。
 
@@ -23,8 +23,8 @@
 
 获取网站所需的两个镜像：`mysql`和`stsa_flask_server`。其中`stsa_flask_server`镜像的获取方式可以从下方二选一：
 
-* 使用`docker build -f STSA_dockerfile.txt -t stsa_flask_server:latest <本项目根目录>`构建docker镜像，生成`stsa_flask_server:latest`镜像用于后续部署
-* 使用已经生成的docker镜像则用命令`docker pull kurobaneyui/stsa_flask_server:latest`
+- 使用`docker build -f STSA_dockerfile.txt -t stsa_flask_server:latest <本项目根目录>`构建docker镜像，生成`stsa_flask_server:latest`镜像用于后续部署
+- 使用已经生成的docker镜像则用命令`docker pull kurobaneyui/stsa_flask_server:latest`
 
 > **不保证**个人仓库镜像的后续维护，在熟悉docker工具后请自行构建镜像。
 
@@ -55,13 +55,13 @@ services:
 
 请至少确保修改：
 
-* `STSA-Database.environment.MYSQL_ROOT_PASSWORD`为新的密码
+- `STSA-Database.environment.MYSQL_ROOT_PASSWORD`为新的密码
 
 可选的修改：
 
-* `STSA-server.ports = 外部端口:内部端口`：网站容器外部端口号和内部端口号。第一项外部端口号为访问网站所需的端口，如配合`nginx`使用，请确保有相应的修改；第二项内部端口是容器内flask提供服务的端口，请确保和下文中flask配置中的端口保持一致。
-* `STSA-Database.ports = 外部端口:3306`：数据库容器的内外端口号。如果需要外部直接访问数据库做维护，自行确定外部端口；如果无需外部维护，可删除此项。
-* `STSA-server.volumes`和`STSA-Database.volumes`：可以配置容器文件是否对直接与主机共享或直接使用已有文件（请阅读与docker volumes配置相关的手册以确保你知道在做什么）。对于`STSA-server`而言，内部目录位于容器`/home/STSA`，对于`STSA-Database`而言，数据库目录位于`/var/lib/mysql`
+- `STSA-server.ports = 外部端口:内部端口`：网站容器外部端口号和内部端口号。第一项外部端口号为访问网站所需的端口，如配合`nginx`使用，请确保有相应的修改；第二项内部端口是容器内flask提供服务的端口，请确保和下文中flask配置中的端口保持一致。
+- `STSA-Database.ports = 外部端口:3306`：数据库容器的内外端口号。如果需要外部直接访问数据库做维护，自行确定外部端口；如果无需外部维护，可删除此项。
+- `STSA-server.volumes`和`STSA-Database.volumes`：可以配置容器文件是否对直接与主机共享或直接使用已有文件（请阅读与docker volumes配置相关的手册以确保你知道在做什么）。对于`STSA-server`而言，内部目录位于容器`/home/STSA`，对于`STSA-Database`而言，数据库目录位于`/var/lib/mysql`
 
 其余配置请在确保知道自己了解的情况下修改
 
@@ -106,18 +106,27 @@ services:
 
 根目录下docker-compose.yml文件为docker compose配置文件，使用前请配置：
 
-* 卷宗目录
-* 暴露端口号
-* MySQL密码
+- 卷宗目录
+- 暴露端口号
+- MySQL密码
 
 ### Python库依赖
 
-* openpyxl: 用于处理Excel文件数据
-  * lxml：用于加速大文件处理的依赖
-  * pillow：用于提供图片支持的依赖
-* pymysql: 用于和数据库通信
-* pandas: 用于处理Excel导入的数据等
-* numpy: 用于查早查课任务安排
-* scipy：用于查早查课任务安排
-* flask: 网页服务框架
-  * flask_apscheduler：在flask服务中提供定时任务的工具
+- openpyxl: 用于处理Excel文件数据
+  - lxml：用于加速大文件处理的依赖
+  - pillow：用于提供图片支持的依赖
+- pymysql: 用于和数据库通信
+- pandas: 用于处理Excel导入的数据等
+- numpy: 用于查早查课任务安排
+- scipy：用于查早查课任务安排
+- flask: 网页服务框架
+  - flask_apscheduler：在flask服务中提供定时任务的工具
+
+对于`pygraphviz`的安装，需要执行，且确保graphviz工具已经安装（例如通过winget）：
+
+```powershell
+python -m pip install --config-settings="--global-option=build_ext" `
+        --config-settings="--global-option=-IC:\Program Files\Graphviz\include" `
+        --config-settings="--global-option=-LC:\Program Files\Graphviz\lib" `
+        pygraphviz
+```

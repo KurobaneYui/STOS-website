@@ -1,12 +1,17 @@
+"""
+STSA岗位管理系统的sqlite3数据库定义，与数据库可视化脚本
+"""
+import enum
 import datetime
 from typing import List, Optional
 
 from sqlalchemy import (
-    CheckConstraint,
     DDL,
+    Date,
     event,
     ForeignKey,
     Integer,
+    Boolean,
     Float,
     LargeBinary,
     String,
@@ -14,9 +19,15 @@ from sqlalchemy import (
     TIMESTAMP,
     UniqueConstraint,
     func,
+    Enum as SQLAlchemyEnum,
 )
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from sqlalchemy.schema import MetaData
+
+
+class UserRole(enum.Enum):
+    manager = "manager"
+    member = "member"
 
 
 # --- 3. ORM基础类定义 ---
@@ -44,10 +55,14 @@ class User(Base):
 
     # 1对1关系: 一个User对应一个UserProfile
     profile: Mapped["UserProfile"] = relationship(
-        back_populates="user", cascade="all, delete-orphan"
+        back_populates="user",
+        cascade="all, delete-orphan",
+        uselist=False,
     )
     blacklist_entry: Mapped["Blacklist"] = relationship(
-        back_populates="user", cascade="all, delete-orphan"
+        back_populates="user",
+        cascade="all, delete-orphan",
+        uselist=False,
     )
 
 
@@ -63,13 +78,13 @@ class UserProfile(Base):
     college_id: Mapped[Optional[int]] = mapped_column(
         ForeignKey("colleges.id", ondelete="SET NULL"),
     )
-    dormitory_yuan: Mapped[Optional[str]] = mapped_column(String(20), nullable=False)
-    dormitory_dong: Mapped[Optional[int]] = mapped_column(Integer, nullable=False)
-    dormitory_hao: Mapped[Optional[int]] = mapped_column(Integer, nullable=False)
-    hometown: Mapped[Optional[str]] = mapped_column(String(100), nullable=False)
-    ethnicity: Mapped[Optional[str]] = mapped_column(String(50), nullable=False)
-    phone: Mapped[Optional[str]] = mapped_column(String(20), nullable=False)
-    qq: Mapped[Optional[str]] = mapped_column(String(20), nullable=False)
+    dormitory_yuan: Mapped[str] = mapped_column(String(20), nullable=False)
+    dormitory_dong: Mapped[int] = mapped_column(Integer, nullable=False)
+    dormitory_hao: Mapped[int] = mapped_column(Integer, nullable=False)
+    hometown: Mapped[str] = mapped_column(String(100), nullable=False)
+    ethnicity: Mapped[str] = mapped_column(String(50), nullable=False)
+    phone: Mapped[str] = mapped_column(String(20), nullable=False)
+    qq: Mapped[str] = mapped_column(String(20), nullable=False)
     updated_at: Mapped[datetime.datetime] = mapped_column(
         server_default=func.now(),
         onupdate=func.now(),
@@ -90,7 +105,7 @@ class UserProfile(Base):
     empty_time: Mapped["EmptyTime"] = relationship(
         back_populates="profile", cascade="all, delete-orphan", uselist=False
     )
-    collected_info: Mapped[List["CollectedInfo"]] = relationship(
+    collected_infos: Mapped[List["CollectedInfo"]] = relationship(
         back_populates="profile", cascade="all, delete-orphan"
     )
     group_memberships: Mapped[List["GroupMember"]] = relationship(
@@ -98,13 +113,13 @@ class UserProfile(Base):
     )
     data_permissions_granted: Mapped[List["DataGroupPermission"]] = relationship(
         back_populates="grantee_profile",
-        foreign_keys="[DataGroupPermission.student_id]",
         cascade="all, delete-orphan",
+        foreign_keys="DataGroupPermission.student_id",
     )
     data_permissions_given: Mapped[List["DataGroupPermission"]] = relationship(
         back_populates="granter_profile",
-        foreign_keys="[DataGroupPermission.granted_by]",
         cascade="all, delete-orphan",
+        foreign_keys="DataGroupPermission.granted_by",
     )
     check_in_tasks: Mapped[List["CheckInTask"]] = relationship(
         back_populates="profile", cascade="all, delete-orphan"
@@ -135,7 +150,9 @@ class PaymentInfo(Base):
     recipient_id: Mapped[str] = mapped_column(String(20), nullable=False)
     recipient_name: Mapped[str] = mapped_column(String(100), nullable=False)
     card_number: Mapped[str] = mapped_column(String(50), nullable=False)
-    is_registered_poor: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    is_registered_poor: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, default=False
+    )
     updated_at: Mapped[datetime.datetime] = mapped_column(
         server_default=func.now(),
         onupdate=func.now(),
@@ -148,13 +165,27 @@ class EmptyTime(Base):
     student_id: Mapped[str] = mapped_column(
         ForeignKey("user_profiles.student_id", ondelete="CASCADE"), primary_key=True
     )
-    mon: Mapped[str] = mapped_column(String(15), nullable=False, default=False)
-    tue: Mapped[str] = mapped_column(String(15), nullable=False, default=False)
-    wed: Mapped[str] = mapped_column(String(15), nullable=False, default=False)
-    thu: Mapped[str] = mapped_column(String(15), nullable=False, default=False)
-    fri: Mapped[str] = mapped_column(String(15), nullable=False, default=False)
-    sat: Mapped[str] = mapped_column(String(15), nullable=False, default=False)
-    sun: Mapped[str] = mapped_column(String(15), nullable=False, default=False)
+    mon: Mapped[str] = mapped_column(
+        String(15), nullable=False, comment="Bitmask for Monday's free time slots"
+    )
+    tue: Mapped[str] = mapped_column(
+        String(15), nullable=False, comment="Bitmask for Tuesday's free time slots"
+    )
+    wed: Mapped[str] = mapped_column(
+        String(15), nullable=False, comment="Bitmask for Wednesday's free time slots"
+    )
+    thu: Mapped[str] = mapped_column(
+        String(15), nullable=False, comment="Bitmask for Thursday's free time slots"
+    )
+    fri: Mapped[str] = mapped_column(
+        String(15), nullable=False, comment="Bitmask for Friday's free time slots"
+    )
+    sat: Mapped[str] = mapped_column(
+        String(15), nullable=False, comment="Bitmask for Saturday's free time slots"
+    )
+    sun: Mapped[str] = mapped_column(
+        String(15), nullable=False, comment="Bitmask for Sunday's free time slots"
+    )
     created_at: Mapped[datetime.datetime] = mapped_column(server_default=func.now())
     updated_at: Mapped[datetime.datetime] = mapped_column(
         server_default=func.now(),
@@ -177,7 +208,7 @@ class CollectedInfo(Base):
     created_at: Mapped[datetime.datetime] = mapped_column(
         server_default=func.now(),
     )
-    profile: Mapped["UserProfile"] = relationship(back_populates="collected_info")
+    profile: Mapped["UserProfile"] = relationship(back_populates="collected_infos")
 
 
 class Blacklist(Base):
@@ -186,6 +217,7 @@ class Blacklist(Base):
         ForeignKey("users.student_id", ondelete="CASCADE"), primary_key=True
     )
     reason: Mapped[str] = mapped_column(Text, nullable=False)
+    start_time: Mapped[datetime.date] = mapped_column(Date, nullable=False)
     created_at: Mapped[datetime.datetime] = mapped_column(server_default=func.now())
     user: Mapped["User"] = relationship(back_populates="blacklist_entry")
 
@@ -214,7 +246,9 @@ class GroupMember(Base):
     student_id: Mapped[str] = mapped_column(
         ForeignKey("user_profiles.student_id", ondelete="CASCADE"), nullable=False
     )
-    role: Mapped[str] = mapped_column(String(20), nullable=False)
+    role: Mapped[UserRole] = mapped_column(
+        SQLAlchemyEnum(UserRole, name="role_type"), nullable=False
+    )
     wage: Mapped[float] = mapped_column(Float, nullable=False)
     display_title: Mapped[Optional[str]] = mapped_column(String(100))
     remark: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
@@ -225,7 +259,6 @@ class GroupMember(Base):
 
     __table_args__ = (
         UniqueConstraint("group_id", "student_id", "role", name="uq_group_member_role"),
-        CheckConstraint("role IN ('manager', 'member')", name="check_role_type"),
     )
 
 
@@ -269,7 +302,7 @@ class College(Base):
     study_schedules: Mapped[List["StudySchedule"]] = relationship(
         back_populates="college"
     )
-    inspection_tasks: Mapped[List["InspectionTask"]] = relationship(
+    course_schedules: Mapped[List["CourseSchedule"]] = relationship(
         back_populates="college"
     )
 
@@ -288,7 +321,7 @@ class Classroom(Base):
     study_schedules: Mapped[List["StudySchedule"]] = relationship(
         back_populates="classroom"
     )
-    inspection_tasks: Mapped[List["InspectionTask"]] = relationship(
+    course_schedules: Mapped[List["CourseSchedule"]] = relationship(
         back_populates="classroom"
     )
     __table_args__ = (
@@ -317,7 +350,7 @@ class StudySchedule(Base):
     classroom: Mapped["Classroom"] = relationship(back_populates="study_schedules")
     college: Mapped["College"] = relationship(back_populates="study_schedules")
     check_in_task: Mapped["CheckInTask"] = relationship(
-        back_populates="schedule", cascade="all, delete-orphan"
+        back_populates="schedule", cascade="all, delete-orphan", uselist=False
     )
 
 
@@ -325,7 +358,9 @@ class CheckInTask(Base):
     __tablename__ = "check_in_tasks"
     id: Mapped[int] = mapped_column(primary_key=True)
     schedule_id: Mapped[int] = mapped_column(
-        ForeignKey("study_schedules.id", ondelete="CASCADE"), nullable=False
+        ForeignKey("study_schedules.id", ondelete="CASCADE"),
+        nullable=False,
+        unique=True,
     )
     student_id: Mapped[str] = mapped_column(
         ForeignKey("user_profiles.student_id", ondelete="CASCADE"), nullable=False
@@ -356,12 +391,9 @@ class CheckInData(Base):
     task: Mapped["CheckInTask"] = relationship(back_populates="data")
 
 
-class InspectionTask(Base):
-    __tablename__ = "inspection_tasks"
+class CourseSchedule(Base):
+    __tablename__ = "course_schedules"
     id: Mapped[int] = mapped_column(primary_key=True)
-    student_id: Mapped[str] = mapped_column(
-        ForeignKey("user_profiles.student_id", ondelete="CASCADE"), nullable=False
-    )
     date: Mapped[datetime.date] = mapped_column(nullable=False)
     time_slot: Mapped[str] = mapped_column(String(20), nullable=False)
     classroom_id: Mapped[str] = mapped_column(
@@ -372,9 +404,27 @@ class InspectionTask(Base):
     )
     expected_headcount: Mapped[Optional[int]]
     created_at: Mapped[datetime.datetime] = mapped_column(server_default=func.now())
+    classroom: Mapped["Classroom"] = relationship(back_populates="course_schedules")
+    college: Mapped["College"] = relationship(back_populates="course_schedules")
+    inspection_tasks: Mapped["InspectionTask"] = relationship(
+        back_populates="schedule", cascade="all, delete-orphan", uselist=False
+    )
+
+
+class InspectionTask(Base):
+    __tablename__ = "inspection_tasks"
+    id: Mapped[int] = mapped_column(primary_key=True)
+    student_id: Mapped[str] = mapped_column(
+        ForeignKey("user_profiles.student_id", ondelete="CASCADE"), nullable=False
+    )
+    schedule_id: Mapped[int] = mapped_column(
+        ForeignKey("course_schedules.id", ondelete="CASCADE"),
+        nullable=False,
+        unique=True,
+    )
+    created_at: Mapped[datetime.datetime] = mapped_column(server_default=func.now())
+    schedule: Mapped["CourseSchedule"] = relationship(back_populates="inspection_tasks")
     profile: Mapped["UserProfile"] = relationship(back_populates="inspection_tasks")
-    classroom: Mapped["Classroom"] = relationship(back_populates="inspection_tasks")
-    college: Mapped["College"] = relationship(back_populates="inspection_tasks")
     data: Mapped["InspectionData"] = relationship(
         back_populates="task", cascade="all, delete-orphan"
     )
@@ -415,6 +465,7 @@ class ContactView(Base):
     department: Mapped[str] = mapped_column(String)
     department_id: Mapped[int] = mapped_column(Integer)
     job: Mapped[str] = mapped_column(String)
+
 
 class WageView(Base):
     __tablename__ = "wage_view"
@@ -487,3 +538,15 @@ event.listen(Base.metadata, "after_create", create_contact_view_ddl)
 event.listen(Base.metadata, "before_drop", drop_contact_view_ddl)
 event.listen(Base.metadata, "after_create", create_wage_view_ddl)
 event.listen(Base.metadata, "before_drop", drop_wage_view_ddl)
+
+
+if __name__ == "__main__":
+    import os
+    import json
+    from eralchemy2 import render_er
+
+    with open("config/STSA_APP.conf", "r") as f:
+        config = json.load(f)
+    DB_FILE = config["DBpath"]
+    os.makedirs(os.path.dirname(DB_FILE), exist_ok=True)
+    render_er(Base.metadata, os.path.dirname(DB_FILE) + "/dbschema.svg")

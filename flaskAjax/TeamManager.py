@@ -38,6 +38,35 @@ def TeamManager(app: flask.Flask) -> None:
                 logger.funcReturns = returns
         return customResponse.getResponse()
 
+    @app.route("/Ajax/TeamManager/add_blocked", methods=["POST"])
+    def addBlocked():
+        with CustomResponse() as customResponse:
+            with Logger(funcName="TeamManager.addBlocked()") as logger:
+                # ===============
+                # 检查接口调用权限
+                Authorization.check(
+                    rightsNeeded=(
+                        {"department_id": 1, "actor": "manager"},
+                        {"department_id": 1, "actor": "member"},
+                    ),
+                    needLogin=True,
+                )
+                # ========================
+                # 检查接口输入参数并记录日志
+                assert request.json is not None
+                infoForm = dict(request.json)
+                TeamManagerCheck.addBlockedParamsCheck(infoForm)
+                logger.funcArgs = request.json
+                # =========================================
+                # 执行接口流程，并获取用户名信息以完成会话建立
+                TeamManagerDatabase.addBlocked(infoForm)
+                # ========================
+                # 准备函数返回值和响应与日志
+                returns: dict = {"message": "", "data": ""}
+                customResponse.setMessageAndData(**returns)
+                logger.funcReturns = returns
+        return customResponse.getResponse()
+
     @app.route("/Ajax/TeamManager/get_department", methods=["GET"])
     def getDepartment():
         with CustomResponse() as customResponse:

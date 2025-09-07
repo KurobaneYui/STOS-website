@@ -168,7 +168,7 @@ class UsersDatabase:
                 results = [
                     {
                         "department_id": work.group_id,
-                        "job": work.role,
+                        "job": work.role.value,
                         "name": work.group.name,
                         "display_title": work.display_title,
                     }
@@ -637,7 +637,7 @@ class UsersDatabase:
                 {
                     "name": i.group.name,
                     "department_id": i.group.id,
-                    "job": i.role,
+                    "job": i.role.value,
                     "wage": i.wage,
                     "remark": i.remark,
                 }
