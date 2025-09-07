@@ -72,7 +72,6 @@ onMounted(() => {
                 <!-- Content wrapper -->
                 <div class="content-wrapper">
                     <!-- Content -->
-
                     <div class="container-fluid flex-grow-1 container-p-y">
                         <!-- Breadcrumb -->
                         <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);"
@@ -85,6 +84,36 @@ onMounted(() => {
                         <!-- main content -->
                         <div class="col-12 alert alert-primary" role="alert">
                             * 按队伍规范，原则上被清退（不包含请假、自行退出、因事离队等）人员两年内不再招入队伍。此处记录相关事由以供参考。
+                        </div>
+                        <div class="modal fade" id="add-member" tabindex="-1" data-bs-backdrop="static"
+                            data-bs-keyboard="false" aria-labelledby="exampleModalLabel" aria-hidden="true"
+                            onblur="get_all_groups_members()">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="group-name"></h5>
+                                        <span id="group-id" hidden></span>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close" onclick="get_all_groups_members()"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form>
+                                            <div class="mb-3">
+                                                <label for="multi-id" class="col-form-label">学号：</label>
+                                                <input type="text" class="form-control" id="multi-id"
+                                                    aria-describedby="inputHelp">
+                                                <div id="inputHelp" class="form-text">完整学号，可用英文逗号分隔多个学号</div>
+                                                <button type="button" class="btn btn-primary btn-sm rounded-pill"
+                                                    @onclick.prevent="add_one()">搜索</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-sm btn-secondary rounded-pill"
+                                            data-bs-dismiss="modal" onclick="get_all_groups_members()">结束</button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div class="card">
                             <h5 class="card-header">清退记录</h5>

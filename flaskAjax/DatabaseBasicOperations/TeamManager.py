@@ -1,6 +1,5 @@
 import sys
 import random
-import datetime
 from flask import Request
 from sqlalchemy.orm import Session
 from contextlib import nullcontext
@@ -15,7 +14,7 @@ from flaskAjax.BaseComponents.DatabaseConnector import (
     SessionLocal,
 )
 from flaskAjax.BaseComponents.CustomError import DatabaseRuntimeError, IllegalValueError
-# import Program.python.FinanceProcess as FinanceProcess
+import flaskAjax.Program.FinanceProcess as FinanceProcess
 
 
 class TeamManagerDatabase:
@@ -155,24 +154,22 @@ class TeamManagerDatabase:
             # 提交事务
             session.commit()
 
-    # @staticmethod
-    # def downloadFinanceEXCEL(infoForm: dict, db_session: Session | None = None) -> str:
-    #     # =====================================
-    #     # 如果提供已经建立的数据库连接，则直接使用
-    #     session_context = (
-    #         SessionLocal() if db_session is None else nullcontext(db_session)
-    #     )
-    #     with session_context as session:
-    #         # ====================================
-    #         # 调用python程序处理财务信息并导出财务表
-    #         # 整理调用参数
-    #         path = f"tmpFiles/finance_EXCEL_{str(int(random.random()*10e5))}.xlsx"
-    #         infoForm["path"] = path
-    #         infoForm["database"] = database
-    #         infoForm["date"] = datetime.datetime.strptime(
-    #             infoForm["date"], "%Y-%m")
-    #         # 开始调用
-    #         FinanceProcess.writedata(**infoForm)
-    #         FinanceProcess.SetStyle(path)
+    @staticmethod
+    def downloadFinanceEXCEL(infoForm: dict, db_session: Session | None = None) -> str:
+        # =====================================
+        # 如果提供已经建立的数据库连接，则直接使用
+        session_context = (
+            SessionLocal() if db_session is None else nullcontext(db_session)
+        )
+        with session_context as session:
+            # ====================================
+            # 调用python程序处理财务信息并导出财务表
+            # 整理调用参数
+            path = f"tmpFiles/finance_EXCEL_{str(int(random.random()*10e5))}.xlsx"
+            infoForm["path"] = path
+            infoForm["database"] = session
+            # 开始调用
+            FinanceProcess.writedata(**infoForm)
+            FinanceProcess.SetStyle(path)
 
-    #         return "/"+path
+            return "/"+path

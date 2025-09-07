@@ -24,7 +24,7 @@ async function get_department() {
             return
         }
         if (code === 200 || code === 301) {
-            // map data into reactive rows, add editing helpers
+            if (code === 301) { console.log('获取部门信息函数移至新位置'); }
             departments.value = data.data.map(d => ({
                 ...d,
                 editing: false,
@@ -33,7 +33,6 @@ async function get_department() {
                     remark: d.remark ?? ''
                 }
             }))
-            if (code === 301) { console.log('获取部门信息函数移至新位置'); }
         }
     } catch (e) {
         swal({ title: '请检查网络连接，或稍后再试', icon: "error" })

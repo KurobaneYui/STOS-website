@@ -9,11 +9,11 @@ import LoginWork from './components/Loginwork.vue'
 import "/src/assets/demo.css"
 
 import GreenPoint from "./components/icons/GreenPoint.vue"
-import YellowPoint from "./components/icons/YellowPoint.vue"
+// import YellowPoint from "./components/icons/YellowPoint.vue"
 import RedPoint from "./components/icons/RedPoint.vue"
 
 const randomImgs = ref([])
-const cardImgCount = ref(2)
+const cardImgCount = 5
 const cardImgMax = 11
 const cardImgMin = 0
 
