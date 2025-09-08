@@ -29,6 +29,9 @@ async function get_department() {
                 ...d,
                 editing: false,
                 _tmp: {
+                    old_department_id: d.department_id,
+                    department_id: d.department_id,
+                    department_name: d.department_name,
                     group_leader: d.student_id ? `${d.student_name}--${d.student_id}` : '',
                     remark: d.remark ?? ''
                 }
@@ -42,6 +45,9 @@ async function get_department() {
 function change_to_editable_row(dept) {
     dept.editing = true
     dept._tmp = {
+        old_department_id: dept.department_id,
+        department_id: dept.department_id,
+        department_name: dept.department_name,
         group_leader: dept.student_id ? `${dept.student_name}--${dept.student_id}` : '',
         remark: dept.remark ?? ''
     }
@@ -49,12 +55,21 @@ function change_to_editable_row(dept) {
 
 async function upload_department(dept) {
     // validate & prepare
-    const department_id = dept.department_id
+    const old_department_id = dept._tmp.old_department_id
+    const department_id = dept._tmp.department_id
+    const department_name = dept._tmp.department_name
     let group_leader_id = (dept._tmp.group_leader || '').toString()
+    let chazao = dept.chazao
+    let chake = dept.chake
+    let datamanager = dept.datamanager
     let remark = dept._tmp.remark || ''
 
     if (department_id === "") {
         swal({ title: "请检查编号", icon: "error" })
+        return
+    }
+    if (department_name === "") {
+        swal({ title: "请检查部门名称", icon: "error" })
         return
     }
     const tmp = group_leader_id.indexOf("-")
@@ -65,7 +80,7 @@ async function upload_department(dept) {
 
     try {
         const { data } = await axios.post('/Ajax/TeamManager/update_department', {
-            department_id, group_leader_id, remark
+            old_department_id, department_id, department_name, group_leader_id, remark, chazao, chake, datamanager
         })
         const returnCode = data.code
         if (returnCode === 400) {
@@ -121,7 +136,6 @@ function showToast(status, title, text) {
     toast.show()
 }
 
-// call both on mount
 onMounted(() => {
     get_department()
 })
@@ -162,19 +176,27 @@ onMounted(() => {
                         </nav>
                         <!-- main content -->
                         <div class="alert alert-danger" role="alert">
-                            由于权限系统设计，本页面暂不支持增删功能，只可修改备注、调整组长。
+                            * 权限系统限制队长组权限赋予id为1的组，请确保<span class="fw-bold">队长组编号为1</span><br />
+                            * 由于权限系统设计暂未完工，本页面暂不支持增删功能，只可修改备注、调整组长、名称和编号。
                         </div>
-
+                        <div class="alert alert-primary" role="alert">
+                            建议配置：查早组、沙河组分配<span class="fw-bold">查早任务</span>；查课组、沙河组分配<span
+                                class="fw-bold">查课任务</span>；数据组分配<span class="fw-bold">数据管理</span>
+                        </div>
                         <div aria-live="polite" aria-atomic="true" class="position-fixed top-1 end-0 p-3 zindex-5"
-                            id="toast-container"></div>
-
+                            id="toast-container">
+                        </div>
                         <div class="card">
                             <h5 class="card-header">部门管理</h5>
                             <div class="card-body">
                                 <p class="card-subtitle text-muted">
-                                    人数上限修改：<span class="text-primary fw-bold">注意：人数上限包括组长</span><br />
+                                    任务配置：配置<span
+                                        class="text-primary fw-bold">查早任务</span>则对应组成员可以分配查早计划，对应组组长可以管理查早数据；配置<span
+                                        class="text-primary fw-bold">查课任务</span>类似<br />
+                                    数据管理配置：配置<span class="text-primary fw-bold">数据管理</span>则对应组具备数据组职能，可以管理相关数据<br />
                                     组长修改：点击“编辑”后输入完整学号即可，请勿输入其他内容<br />
                                     备注修改：只能输入单行内容<br />
+                                    ** 现在也支持编号、名称编辑。**<br />
                                     保存反馈：修改成功与否会通过右侧气泡展示
                                 </p>
                             </div>
@@ -185,25 +207,56 @@ onMounted(() => {
                                             <th>#</th>
                                             <th>名称</th>
                                             <th>组长</th>
+                                            <th>查早任务</th>
+                                            <th>查课任务</th>
+                                            <th>数据管理</th>
                                             <th>备注</th>
                                             <th>操作</th>
                                         </tr>
                                     </thead>
                                     <tbody id="department-table-body">
-                                        <!-- replaced manual DOM fill with Vue rendering -->
                                         <tr v-for="dept in departments" :key="dept.department_id">
-                                            <td>{{ dept.department_id }}</td>
-                                            <td>{{ dept.department_name }}</td>
+                                            <td>
+                                                <span v-if="!dept.editing">{{ dept.department_id }}</span>
+                                                <input v-else type="number" min="1" max="30" class="form-control text-center"
+                                                    style="min-width:80px;" v-model="dept._tmp.department_id" />
+                                            </td>
+                                            <td>
+                                                <span v-if="!dept.editing">{{ dept.department_name }}</span>
+                                                <input v-else type="text" class="form-control text-center"
+                                                    style="min-width:120px;" v-model="dept._tmp.department_name" />
+                                            </td>
                                             <td>
                                                 <span v-if="!dept.editing">{{ dept.student_name }}<span
                                                         v-if="dept.student_id">--{{ dept.student_id }}</span></span>
                                                 <input v-else type="text" class="form-control text-center"
-                                                    style="min-width: 120px;" v-model="dept._tmp.group_leader" />
+                                                    style="min-width:120px;" v-model="dept._tmp.group_leader" />
+                                            </td>
+                                            <td>
+                                                <div class="form-switch">
+                                                    <input type="checkbox" class="form-check-input" id="chazao"
+                                                        name="chazao" :disabled="!dept.editing" required
+                                                        v-model="dept.chazao" />
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="form-switch">
+                                                    <input type="checkbox" class="form-check-input" id="chake"
+                                                        name="chake" :disabled="!dept.editing" required
+                                                        v-model="dept.chake" />
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="form-switch">
+                                                    <input type="checkbox" class="form-check-input" id="datamanager"
+                                                        name="datamanager" :disabled="!dept.editing" required
+                                                        v-model="dept.datamanager" />
+                                                </div>
                                             </td>
                                             <td>
                                                 <span v-if="!dept.editing">{{ dept.remark }}</span>
                                                 <input v-else type="text" class="form-control text-center"
-                                                    style="min-width: 150px;" v-model="dept._tmp.remark" />
+                                                    style="min-width:150px;" v-model="dept._tmp.remark" />
                                             </td>
                                             <td>
                                                 <button v-if="!dept.editing" class="btn btn-warning btn-sm rounded-pill"

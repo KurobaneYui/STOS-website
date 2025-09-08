@@ -112,16 +112,6 @@ class UserProfile(Base):
     group_memberships: Mapped[List["GroupMember"]] = relationship(
         back_populates="profile", cascade="all, delete-orphan"
     )
-    data_permissions_granted: Mapped[List["DataGroupPermission"]] = relationship(
-        back_populates="grantee_profile",
-        cascade="all, delete-orphan",
-        foreign_keys="DataGroupPermission.student_id",
-    )
-    data_permissions_given: Mapped[List["DataGroupPermission"]] = relationship(
-        back_populates="granter_profile",
-        cascade="all, delete-orphan",
-        foreign_keys="DataGroupPermission.granted_by",
-    )
     check_in_tasks: Mapped[List["CheckInTask"]] = relationship(
         back_populates="profile", cascade="all, delete-orphan"
     )
@@ -227,6 +217,15 @@ class Group(Base):
     __tablename__ = "groups"
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(100), nullable=False, unique=True)
+    chazao: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, default=False
+    )
+    chake: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, default=False
+    )
+    datamanager: Mapped[bool] = mapped_column(
+        Boolean, nullable=False, default=False
+    )
     remark: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     created_at: Mapped[datetime.datetime] = mapped_column(server_default=func.now())
     updated_at: Mapped[datetime.datetime] = mapped_column(
@@ -260,30 +259,6 @@ class GroupMember(Base):
 
     __table_args__ = (
         UniqueConstraint("group_id", "student_id", "role", name="uq_group_member_role"),
-    )
-
-
-class DataGroupPermission(Base):
-    __tablename__ = "data_group_permissions"
-    id: Mapped[int] = mapped_column(primary_key=True)
-    student_id: Mapped[str] = mapped_column(
-        ForeignKey("user_profiles.student_id", ondelete="CASCADE"), nullable=False
-    )
-    permission: Mapped[str] = mapped_column(String(100), nullable=False)
-    granted_by: Mapped[str] = mapped_column(
-        ForeignKey("user_profiles.student_id", ondelete="CASCADE"), nullable=False
-    )
-    created_at: Mapped[datetime.datetime] = mapped_column(server_default=func.now())
-
-    grantee_profile: Mapped["UserProfile"] = relationship(
-        back_populates="data_permissions_granted", foreign_keys=[student_id]
-    )
-    granter_profile: Mapped["UserProfile"] = relationship(
-        back_populates="data_permissions_given", foreign_keys=[granted_by]
-    )
-
-    __table_args__ = (
-        UniqueConstraint("student_id", "permission", name="uq_user_permission"),
     )
 
 

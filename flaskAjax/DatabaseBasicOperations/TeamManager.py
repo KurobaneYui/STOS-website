@@ -103,6 +103,9 @@ class TeamManagerDatabase:
                     SQL_Group.name.label("department_name"),
                     gm.student_id.label("student_id"),
                     SQL_User.name.label("student_name"),
+                    SQL_Group.chazao.label("chazao"),
+                    SQL_Group.chake.label("chake"),
+                    SQL_Group.datamanager.label("datamanager"),
                     SQL_Group.remark.label("remark"),
                 )
                 .outerjoin(gm, (SQL_Group.id == gm.group_id) & (gm.role == "manager"))
@@ -116,6 +119,9 @@ class TeamManagerDatabase:
                     "department_name": row.department_name,
                     "remark": row.remark or "",
                     "student_id": row.student_id or "",
+                    "chazao": row.chazao,
+                    "chake": row.chake,
+                    "datamanager": row.datamanager,
                     "student_name": row.student_name or "",
                 }
                 for row in rows
@@ -157,10 +163,29 @@ class TeamManagerDatabase:
             else:
                 infoForm["ori_group_leader"] = ""
             # =======================
-            # 更新部门备注等信息
+            # 确保部门新id不与现有其他部门id重复
+            if infoForm["department_id"] != infoForm["old_department_id"]:
+                results = (
+                    session.query(SQL_Group)
+                    .filter_by(id=infoForm["department_id"])
+                    .all()
+                )
+                if len(results) > 0:
+                    raise IllegalValueError(
+                        "部门ID已存在，请更换其他ID。",
+                        filename=__file__,
+                        line=sys._getframe().f_lineno,
+                    )
+            # =======================
+            # 更新部门信息
             results = (
-                session.query(SQL_Group).filter_by(id=infoForm["department_id"]).one()
+                session.query(SQL_Group).filter_by(id=infoForm["old_department_id"]).one()
             )
+            results.id = infoForm["department_id"]
+            results.name = infoForm["department_name"]
+            results.chazao = infoForm["chazao"]
+            results.chake = infoForm["chake"]
+            results.datamanager = infoForm["datamanager"]
             results.remark = infoForm["remark"]
             session.commit()
             # if ??? not in [0, 1]:

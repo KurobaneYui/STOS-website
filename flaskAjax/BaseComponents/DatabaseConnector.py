@@ -16,7 +16,6 @@ from .DatabaseDefinition import CollectedInfo as SQL_CollectedInfo  # noqa
 from .DatabaseDefinition import Blacklist as SQL_Blacklist  # noqa
 from .DatabaseDefinition import Group as SQL_Group  # noqa
 from .DatabaseDefinition import GroupMember as SQL_GroupMember  # noqa
-from .DatabaseDefinition import DataGroupPermission as SQL_DataGroupPermission  # noqa
 from .DatabaseDefinition import Campus as SQL_Campus  # noqa
 from .DatabaseDefinition import College as SQL_College  # noqa
 from .DatabaseDefinition import Classroom as SQL_Classroom  # noqa
@@ -127,16 +126,16 @@ def initialize_database():
                 "英才实验学院（未来技术学院）",
                 "集成电路科学与工程学院（示范性微电子学院）",
             ]
-            group_name = [
-                "队长组",
-                "现场组一组",
-                "现场组二组",
-                "现场组三组",
-                "查课组一组",
-                "查课组二组",
-                "沙河组",
-                "督导组",
-                "数据组",
+            group_prof = [
+                ("队长组", False, False, False),
+                ("现场组一组", False, True, False),
+                ("现场组二组", False, True, False),
+                ("现场组三组", False, True, False),
+                ("查课组一组", True, False, False),
+                ("查课组二组", True, False, False),
+                ("沙河组", True, True, False),
+                ("督导组", False, False, False),
+                ("数据组", False, False, True),
             ]
             classroom_info = [
                 (1111010, "清水河", "品学楼", "A", "101", 143),
@@ -228,8 +227,12 @@ def initialize_database():
                 session.add(SQL_Campus(name=name))
             for name in college_name:
                 session.add(SQL_College(name=name))
-            for name in group_name:
-                session.add(SQL_Group(name=name))
+            for name, chake, chazao, datamanager in group_prof:
+                session.add(
+                    SQL_Group(
+                        name=name, chake=chake, chazao=chazao, datamanager=datamanager
+                    )
+                )
             session.flush()  # 确保上面新增的数据已写入
             campus_name_to_id = {c.name: c.id for c in session.query(SQL_Campus).all()}
             college_name_to_id = {
