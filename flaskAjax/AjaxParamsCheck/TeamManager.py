@@ -19,7 +19,7 @@ class TeamManagerCheck:
                 filename=__file__,
                 line=sys._getframe().f_lineno,
             )
-        infoForm['date'] = datetime.date.fromisoformat(infoForm["date"])
+        infoForm["date"] = datetime.date.fromisoformat(infoForm["date"])
 
     @staticmethod
     def updateDepartmentParamsCheck(infoForm: dict) -> None:

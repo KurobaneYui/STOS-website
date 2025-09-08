@@ -25,14 +25,40 @@ async function addToBlacklist() {
         const postData = { ...formData.value };
         postData.gender = postData.gender === 'male' ? '男' : '女';
         const { data } = await axios.post('/Ajax/TeamManager/add_blocked', postData);
-        if (data.code === 200) {
+        const returnCode = data.code;
+
+        if (returnCode === 400) {
+            swal({ title: "请求参数错误，请联系管理员", icon: "error" });
+            return;
+        }
+        if (returnCode === 401) {
+            swal({ title: "权限不足", text: "暂无加入黑名单的权限", icon: "error" });
+            return;
+        }
+        if (returnCode === 404) {
+            swal({ title: "功能不存在", text: "请联系管理员", icon: "warning" });
+            return;
+        }
+        if (returnCode === 417) {
+            swal({ title: "功能错误", text: "请联系管理员", icon: "warning" });
+            return;
+        }
+        if (returnCode === 498) {
+            swal({ title: "数据库异常", text: "请联系管理员", icon: "warning" });
+            return;
+        }
+        if (returnCode === 499) {
+            swal({ title: "功能维护中", text: "暂不允许操作黑名单", icon: "warning" });
+            return;
+        }
+        if (returnCode === 200) {
             await getBlacklist();
-            // 注意，这里只清空 name、student_id、reason，date 不变
+            // 只清空以下三个字段
             formData.value.name = '';
             formData.value.student_id = '';
             formData.value.reason = '';
         } else {
-            await getBlacklist();
+            // 其它未覆盖的异常
             swal({
                 title: "添加失败",
                 text: data.msg || "未知错误，请联系管理员",
@@ -40,7 +66,6 @@ async function addToBlacklist() {
             });
         }
     } catch (e) {
-        await getBlacklist();
         swal({
             title: "网络出错",
             text: e.message || "请检查网络或稍后重试",
@@ -124,9 +149,9 @@ onMounted(() => {
                         </nav>
                         <!-- main content -->
                         <div class="col-12 alert alert-primary" role="alert">
-                            * 按队伍规范，原则上被清退（不包含请假、自行退出、因事离队等）人员两年内不再招入队伍。此处记录相关事由以供参考。<br/>
-                            * 添加人员仅供查阅，此处记录不影响人员在网站中的功能。<br/>
-                            * 添加人员如已注册，则姓名和性别会同步已有信息而非本页提交的信息。<br/>
+                            * 按队伍规范，原则上被清退（不包含请假、自行退出、因事离队等）人员两年内不再招入队伍。此处记录相关事由以供参考。<br />
+                            * 添加人员仅供查阅，此处记录不影响人员在网站中的功能。<br />
+                            * 添加人员如已注册，则姓名和性别会同步已有信息而非本页提交的信息。<br />
                             * 添加学号已存在条目，则更新时间、事由的记录，请添加前校对学号。
                         </div>
                         <div class="row mb-2">

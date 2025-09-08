@@ -29,7 +29,7 @@ function getPointType(val, order, isEven) {
 }
 
 function getTableData(data, isEven) {
-    // 4行, 5列
+    // 5行, 7列
     let table = []
     for (let row = 0; row < timePeriod.length; ++row) {
         let rowData = []
@@ -95,6 +95,7 @@ async function handleChangePoint(memberIdx, isEven, rowIndex, colIndex) {
 
     // 立刻更新前端 UI（乐观更新），然后同步到服务端
     try {
+        member[weekName] = arr.join('')
         const resp = await axios.post('/Ajax/GroupManager/set_member_empty_table', {
             student_id,
             weekName,
@@ -212,8 +213,7 @@ function handleTabClick(student_id, type) {
                             <RedPoint style="height:15px;width:15px;" /> 为没空。
                         </div>
                         <div class="row g-2">
-                            <div v-for="(member, i) in members" :key="member.student_id"
-                                class="col-12 col-xxl-6">
+                            <div v-for="(member, i) in members" :key="member.student_id" class="col-12 col-xxl-6">
                                 <div class="card">
                                     <h5 class="card-header" :student_id="member.student_id">{{ member.student_name }}
                                     </h5>
@@ -240,7 +240,9 @@ function handleTabClick(student_id, type) {
                                                         <tr>
                                                             <th>时段</th>
                                                             <th v-for="d in weekDayOrder" :key="d">{{
-                                                                d.replace('mon', '周一').replace('tue', '周二').replace('wed', '周三').replace('thu', '周四').replace('fri','周五').replace('sat','周六').replace('sun','周日')}}
+                                                                d.replace('mon', '周一').replace('tue',
+                                                                    '周二').replace('wed', '周三').replace('thu',
+                                                                '周四').replace('fri','周五').replace('sat','周六').replace('sun','周日')}}
                                                             </th>
                                                         </tr>
                                                     </thead>
@@ -268,7 +270,9 @@ function handleTabClick(student_id, type) {
                                                         <tr>
                                                             <th>时段</th>
                                                             <th v-for="d in weekDayOrder" :key="d">{{
-                                                                d.replace('mon', '周一').replace('tue', '周二').replace('wed', '周三').replace('thu', '周四').replace('fri','周五').replace('sat','周六').replace('sun','周日')}}
+                                                                d.replace('mon', '周一').replace('tue',
+                                                                    '周二').replace('wed', '周三').replace('thu',
+                                                                '周四').replace('fri','周五').replace('sat','周六').replace('sun','周日')}}
                                                             </th>
                                                         </tr>
                                                     </thead>

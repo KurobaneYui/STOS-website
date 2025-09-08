@@ -1,6 +1,7 @@
 """
 STSA岗位管理系统的sqlite3数据库定义，与数据库可视化脚本
 """
+
 import enum
 import datetime
 from typing import List, Optional

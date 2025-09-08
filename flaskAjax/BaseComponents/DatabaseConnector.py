@@ -298,10 +298,16 @@ def initialize_database():
             session.add(membership2)
             session.commit()
 
-            new_user = SQL_User(student_id="202411223355", name="BlackSquirrel", gender="女")
+            new_user = SQL_User(
+                student_id="202411223355", name="BlackSquirrel", gender="女"
+            )
             session.add(new_user)
             session.commit()
 
-            black_one = SQL_Blacklist(student_id="202411223355", reason="数据造假", start_time=datetime.date.today())
+            black_one = SQL_Blacklist(
+                student_id="202411223355",
+                reason="数据造假",
+                start_time=datetime.date.today(),
+            )
             session.add(black_one)
             session.commit()

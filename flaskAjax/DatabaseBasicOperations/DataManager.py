@@ -70,9 +70,7 @@ class DataManagerDatabase:
     #     return database.fetchall()
 
     @staticmethod
-    def updateSchool(
-        infoForm: dict, db_session: Session | None = None
-    ) -> None:
+    def updateSchool(infoForm: dict, db_session: Session | None = None) -> None:
         # =====================================
         # 如果提供已经建立的数据库连接，则直接使用
         session_context = (
@@ -81,7 +79,9 @@ class DataManagerDatabase:
         with session_context as session:
             # ===============
             # 检查学院是否存在
-            results = session.query(SQL_College).filter_by(id=infoForm["school_id"]).all()
+            results = (
+                session.query(SQL_College).filter_by(id=infoForm["school_id"]).all()
+            )
             if infoForm["school_id"] != infoForm["old_school_id"] and len(results) != 0:
                 raise IllegalValueError(
                     "学院 ID 已存在，请检查输入避免重复。",
@@ -90,16 +90,16 @@ class DataManagerDatabase:
                 )
             # ============
             # 更新学院信息
-            results = session.query(SQL_College).filter_by(id=infoForm["old_school_id"]).one()
+            results = (
+                session.query(SQL_College).filter_by(id=infoForm["old_school_id"]).one()
+            )
             results.id = infoForm["school_id"]
             results.name = infoForm["name"]
             session.commit()
 
     # TODO: 实现此函数
     @staticmethod
-    def deleteSchool(
-        flaskRequest: Request, db_session: Session | None = None
-    ) -> None:
+    def deleteSchool(flaskRequest: Request, db_session: Session | None = None) -> None:
         # =====================================
         # 如果提供已经建立的数据库连接，则直接使用
         session_context = (
@@ -111,9 +111,7 @@ class DataManagerDatabase:
 
     # TODO: 实现此函数
     @staticmethod
-    def addSchool(
-        flaskRequest: Request, db_session: Session | None = None
-    ) -> None:
+    def addSchool(flaskRequest: Request, db_session: Session | None = None) -> None:
         # =====================================
         # 如果提供已经建立的数据库连接，则直接使用
         session_context = (
