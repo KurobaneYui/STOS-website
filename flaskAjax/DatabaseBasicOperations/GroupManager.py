@@ -7,6 +7,7 @@ from flaskAjax.BaseComponents.DatabaseConnector import (
     SQL_Blacklist,
     SQL_Campus,
     SQL_College,
+    SQL_EmptyTime,
     SQL_Group,
     SQL_GroupMember,
     SQL_User,
@@ -682,7 +683,7 @@ class GroupManagerDatabase:
     #     )
 
     @staticmethod
-    def getGroupEmptyTable(db_session: Session | None = None) -> dict:
+    def getGroupEmptyTable(db_session: Session | None = None) -> list:
         # =====================================
         # 如果提供已经建立的数据库连接，则直接使用
         session_context = (
@@ -691,17 +692,31 @@ class GroupManagerDatabase:
         with session_context as session:
             # =========================================
             # 获取登录组id，并以此获取组员学号姓名和空课表
-            _ = database.execute(
-                sql="SELECT MemberBasic.name AS student_name, MemberBasic.student_id AS student_id, mon, tue, wed, thu, fri, sat, sun, EmptyTime.remark as emptyTimeRemark \
-                    FROM EmptyTime \
-                    LEFT JOIN MemberBasic ON EmptyTime.student_id = MemberBasic.student_id \
-                    LEFT JOIN Work ON EmptyTime.student_id = Work.student_id \
-                    LEFT JOIN Department ON Work.department_id = Department.department_id \
-                    WHERE Department.department_id = %(department_id)s \
-                        AND Work.job = 0;",
-                data=CustomSession().getSession(),
+            groupId = CustomSession().getSession()["department_id"]
+            results = (
+                session.query(SQL_User)
+                .join(
+                    SQL_GroupMember,
+                    SQL_GroupMember.student_id == SQL_User.student_id,
+                )
+                .filter(SQL_GroupMember.group_id == groupId)
+                .all()
             )
-            return database.fetchall()
+            results = [
+                {
+                    "student_name": i.name,
+                    "student_id": i.student_id,
+                    "mon": i.profile.empty_time.mon,
+                    "tue": i.profile.empty_time.tue,
+                    "wed": i.profile.empty_time.wed,
+                    "thu": i.profile.empty_time.thu,
+                    "fri": i.profile.empty_time.fri,
+                    "sat": i.profile.empty_time.sat,
+                    "sun": i.profile.empty_time.sun,
+                }
+                for i in results
+            ]
+            return results
 
     @staticmethod
     def setMemberEmptyTable(infoForm: dict, db_session: Session | None = None) -> None:
@@ -713,19 +728,13 @@ class GroupManagerDatabase:
         with session_context as session:
             # =========================
             # 确认修改成员是登录组的成员
-            DBAffectedRows = database.execute(
-                sql="SELECT student_id FROM Work \
-                    WHERE department_id = %s \
-                        AND student_id = %s\
-                        AND Work.job = 0;",
-                data=(
-                    CustomSession().getSession()["department_id"],
-                    infoForm["student_id"],
-                ),
-                autoCommit=False,
+            groupId = CustomSession().getSession()["department_id"]
+            results = (
+                session.query(SQL_GroupMember)
+                .filter_by(student_id=infoForm["student_id"], group_id=groupId)
+                .all()
             )
-            database.fetchall()
-            if DBAffectedRows == 0:
+            if len(results) == 0:
                 raise PermissionDenyError(
                     "只能修改登录组组员的空课表.",
                     filename=__file__,
@@ -733,48 +742,35 @@ class GroupManagerDatabase:
                 )
             # ==============
             # 获取某日空课表
-            DBAffectedRows = database.execute(
-                sql="SELECT * FROM EmptyTime WHERE student_id = %(student_id)s;",
-                data=infoForm,
-                autoCommit=False,
+            results = (
+                session.query(SQL_EmptyTime)
+                .filter_by(student_id=infoForm["student_id"])
+                .all()
             )
-            if DBAffectedRows == 0:
+            if len(results) == 0:
                 raise IllegalValueError(
                     "查询不到组员指定的空课表.",
                     filename=__file__,
                     line=sys._getframe().f_lineno,
                 )
-            emptyString = database.fetchall()[0][infoForm["weekName"]]
-            emptyBit = int(emptyString[infoForm["timePeriodOrder"]])
-            oddEmpty = emptyBit in [1, 3]
-            evenEmpty = emptyBit in [2, 3]
             # ==========
             # 修改对应位
-            if infoForm["evenOrNot"]:
-                evenEmpty = infoForm["emptyOrNot"]
+            oldStr = getattr(results[0], infoForm["weekName"])
+            oldVal = int(oldStr[infoForm["timePeriodOrder"]])
+            # evenOrNot==False表示单（操作bit0），True表示双（操作bit1）
+            bit = 1 if infoForm["evenOrNot"] else 0
+            if infoForm["emptyOrNot"]:
+                # 置1
+                newVal = oldVal | (1 << bit)
             else:
-                oddEmpty = infoForm["emptyOrNot"]
-
-            emptyBit = 0
-            if oddEmpty:
-                emptyBit += 1
-            if evenEmpty:
-                emptyBit += 2
-
-            emptyString = (
-                emptyString[: infoForm["timePeriodOrder"]]
-                + str(emptyBit)
-                + emptyString[infoForm["timePeriodOrder"] + 1 :]
+                # 置0
+                newVal = oldVal & ~(1 << bit)
+            newStr = (
+                oldStr[: infoForm["timePeriodOrder"]]
+                + str(newVal)
+                + oldStr[infoForm["timePeriodOrder"] + 1 :]
             )
-            # ============
-            # 再提交空课表
-            DBAffectedRows = database.execute(
-                sql=f"UPDATE EmptyTime \
-                    SET {infoForm['weekName']} = %s \
-                    WHERE student_id = %s;",
-                data=(emptyString, infoForm["student_id"]),
-                autoCommit=False,
-            )
+            setattr(results[0], infoForm["weekName"], newStr)
             # ========
             # 提交修改
-            database.commit()
+            session.commit()

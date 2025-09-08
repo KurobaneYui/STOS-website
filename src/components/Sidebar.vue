@@ -65,7 +65,7 @@ const otherDataSubMenuPaths = [
 const isOtherDataOpen = ref(false);
 
 const groupSubMenuPaths = [
-    '/user_center/empty_time_editor.html',
+    '/user_center/empty_time_edit.html',
     '/user_center/member_management.html',
 ];
 const isGroupOpen = ref(false);
@@ -309,8 +309,8 @@ onUnmounted(() => {
                 <div data-i18n="组内管理">组内管理</div>
             </a>
             <ul class="menu-sub">
-                <li class="menu-item" :class="{ 'active': currentPath === '/user_center/empty_time_editor.html' }">
-                    <a href="/user_center/empty_time_editor.html" class="menu-link">
+                <li class="menu-item" :class="{ 'active': currentPath === '/user_center/empty_time_edit.html' }">
+                    <a href="/user_center/empty_time_edit.html" class="menu-link">
                         <div data-i18n="空课表变更">空课表变更</div>
                     </a>
                 </li>

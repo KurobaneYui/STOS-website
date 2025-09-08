@@ -121,9 +121,6 @@ class GroupManagerCheck:
             )
 
         try:
-            infoForm["timePeriodOrder"] = int(infoForm["timePeriodOrder"])
-            infoForm["evenOrNot"] = infoForm["evenOrNot"] == "true"
-            infoForm["emptyOrNot"] = infoForm["emptyOrNot"] == "true"
             assert 0 <= infoForm["timePeriodOrder"] <= 4
             assert infoForm["weekName"] in [
                 "mon",
