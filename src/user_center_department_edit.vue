@@ -300,7 +300,7 @@ onMounted(() => {
                                         <tr>
                                             <th>ID</th>
                                             <th>名称</th>
-                                            <th>组长</th>
+                                            <th>队长/组长</th>
                                             <th>查早任务</th>
                                             <th>查课任务</th>
                                             <th>数据管理</th>

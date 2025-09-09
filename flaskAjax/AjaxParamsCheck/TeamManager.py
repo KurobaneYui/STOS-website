@@ -38,6 +38,12 @@ class TeamManagerCheck:
                 filename=__file__,
                 line=sys._getframe().f_lineno,
             )
+        if infoForm["old_department_id"] == 1 and infoForm["department_id"] != 1:
+            raise IllegalValueError(
+                "队长组必须配置ID为1",
+                filename=__file__,
+                line=sys._getframe().f_lineno,
+            )
         if (
             not isinstance(infoForm["department_id"], int)
             or infoForm["department_id"] < 1

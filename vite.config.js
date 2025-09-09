@@ -37,6 +37,7 @@ export default defineConfig({
         user_center_blacklist: resolve(__dirname, 'user_center/blacklist.html'),
         user_center_personal_info: resolve(__dirname, 'user_center/personal_info.html'),
         user_center_work_basic_info: resolve(__dirname, 'user_center/work_basic_info.html'),
+        user_center_member_edit: resolve(__dirname, 'user_center/member_edit.html'),
         user_center_empty_time_edit: resolve(__dirname, 'user_center/empty_time_edit.html'),
         user_center_department_edit: resolve(__dirname, 'user_center/department_edit.html'),
         user_center_school_edit: resolve(__dirname, 'user_center/school_edit.html'),
