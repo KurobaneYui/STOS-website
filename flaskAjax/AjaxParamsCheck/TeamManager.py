@@ -52,6 +52,44 @@ class TeamManagerCheck:
             infoForm["remark"] = infoForm["remark"][:100]
 
     @staticmethod
+    def addDepartmentParamsCheck(infoForm: dict) -> None:
+        if (
+            "department_id" not in infoForm.keys()
+            or "department_name" not in infoForm.keys()
+            or "group_leader_id" not in infoForm.keys()
+            or "chazao" not in infoForm.keys()
+            or "chake" not in infoForm.keys()
+            or "datamanager" not in infoForm.keys()
+            or "remark" not in infoForm.keys()
+        ):
+            raise IllegalValueError(
+                "Not all required data received.",
+                filename=__file__,
+                line=sys._getframe().f_lineno,
+            )
+        if (
+            not isinstance(infoForm["department_id"], int)
+            or infoForm["department_id"] < 1
+            or infoForm["department_id"] > 30
+        ):
+            raise IllegalValueError(
+                "Invalid department ID.",
+                filename=__file__,
+                line=sys._getframe().f_lineno,
+            )
+        if len(infoForm["remark"]) > 100:
+            infoForm["remark"] = infoForm["remark"][:100]
+
+    @staticmethod
+    def deleteDepartmentParamsCheck(infoForm: dict) -> None:
+        if "department_id" not in infoForm.keys():
+            raise IllegalValueError(
+                "Not all required data received.",
+                filename=__file__,
+                line=sys._getframe().f_lineno,
+            )
+
+    @staticmethod
     def downloadFinanceEXCELParamsCheck(infoForm: dict) -> None:
         if (
             "date" not in infoForm.keys()

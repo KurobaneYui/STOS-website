@@ -74,10 +74,10 @@ class UserProfile(Base):
         ForeignKey("users.student_id", ondelete="CASCADE"), primary_key=True
     )
     campus_id: Mapped[Optional[int]] = mapped_column(
-        ForeignKey("campuses.id", ondelete="SET NULL"),
+        ForeignKey("campuses.id", ondelete="SET NULL", onupdate="CASCADE"),
     )
     college_id: Mapped[Optional[int]] = mapped_column(
-        ForeignKey("colleges.id", ondelete="SET NULL"),
+        ForeignKey("colleges.id", ondelete="SET NULL", onupdate="CASCADE"),
     )
     dormitory_yuan: Mapped[str] = mapped_column(String(20), nullable=False)
     dormitory_dong: Mapped[int] = mapped_column(Integer, nullable=False)
@@ -96,7 +96,6 @@ class UserProfile(Base):
     campus: Mapped["Campus"] = relationship(back_populates="user_profiles")
     college: Mapped["College"] = relationship(back_populates="user_profiles")
 
-    # Relationships moved from User
     credential: Mapped["UserCredential"] = relationship(
         back_populates="profile", cascade="all, delete-orphan"
     )
@@ -241,7 +240,7 @@ class GroupMember(Base):
     __tablename__ = "group_members"
     id: Mapped[int] = mapped_column(primary_key=True)
     group_id: Mapped[int] = mapped_column(
-        ForeignKey("groups.id", ondelete="CASCADE"), nullable=False
+        ForeignKey("groups.id", ondelete="CASCADE", onupdate="CASCADE"), nullable=False
     )
     student_id: Mapped[str] = mapped_column(
         ForeignKey("user_profiles.student_id", ondelete="CASCADE"), nullable=False
@@ -287,7 +286,7 @@ class Classroom(Base):
     __tablename__ = "classrooms"
     id: Mapped[str] = mapped_column(String(50), primary_key=True)
     campus_id: Mapped[int] = mapped_column(
-        ForeignKey("campuses.id", ondelete="CASCADE"), nullable=False
+        ForeignKey("campuses.id", ondelete="CASCADE", onupdate="CASCADE"), nullable=False
     )
     building: Mapped[str] = mapped_column(String(20), nullable=False)
     area: Mapped[str] = mapped_column(String(10), nullable=False)
@@ -312,10 +311,10 @@ class StudySchedule(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     date: Mapped[datetime.date] = mapped_column(nullable=False)
     classroom_id: Mapped[str] = mapped_column(
-        ForeignKey("classrooms.id", ondelete="CASCADE"), nullable=False
+        ForeignKey("classrooms.id", ondelete="CASCADE", onupdate="CASCADE"), nullable=False
     )
     college_id: Mapped[int] = mapped_column(
-        ForeignKey("colleges.id", ondelete="CASCADE"), nullable=False
+        ForeignKey("colleges.id", ondelete="CASCADE", onupdate="CASCADE"), nullable=False
     )
     expected_headcount: Mapped[Optional[int]]
     created_at: Mapped[datetime.datetime] = mapped_column(server_default=func.now())
@@ -334,7 +333,7 @@ class CheckInTask(Base):
     __tablename__ = "check_in_tasks"
     id: Mapped[int] = mapped_column(primary_key=True)
     schedule_id: Mapped[int] = mapped_column(
-        ForeignKey("study_schedules.id", ondelete="CASCADE"),
+        ForeignKey("study_schedules.id", ondelete="CASCADE", onupdate="CASCADE"),
         nullable=False,
         unique=True,
     )
@@ -353,7 +352,7 @@ class CheckInData(Base):
     __tablename__ = "check_in_data"
     id: Mapped[int] = mapped_column(primary_key=True)
     task_id: Mapped[int] = mapped_column(
-        ForeignKey("check_in_tasks.id", ondelete="CASCADE"), nullable=False, unique=True
+        ForeignKey("check_in_tasks.id", ondelete="CASCADE", onupdate="CASCADE"), nullable=False, unique=True
     )
     data1: Mapped[Optional[str]] = mapped_column(Text)
     data2: Mapped[Optional[str]] = mapped_column(Text)
@@ -373,10 +372,10 @@ class CourseSchedule(Base):
     date: Mapped[datetime.date] = mapped_column(nullable=False)
     time_slot: Mapped[str] = mapped_column(String(20), nullable=False)
     classroom_id: Mapped[str] = mapped_column(
-        ForeignKey("classrooms.id", ondelete="CASCADE"), nullable=False
+        ForeignKey("classrooms.id", ondelete="CASCADE", onupdate="CASCADE"), nullable=False
     )
     college_id: Mapped[int] = mapped_column(
-        ForeignKey("colleges.id", ondelete="CASCADE"), nullable=False
+        ForeignKey("colleges.id", ondelete="CASCADE", onupdate="CASCADE"), nullable=False
     )
     expected_headcount: Mapped[Optional[int]]
     created_at: Mapped[datetime.datetime] = mapped_column(server_default=func.now())
@@ -394,7 +393,7 @@ class InspectionTask(Base):
         ForeignKey("user_profiles.student_id", ondelete="CASCADE"), nullable=False
     )
     schedule_id: Mapped[int] = mapped_column(
-        ForeignKey("course_schedules.id", ondelete="CASCADE"),
+        ForeignKey("course_schedules.id", ondelete="CASCADE", onupdate="CASCADE"),
         nullable=False,
         unique=True,
     )
@@ -410,7 +409,7 @@ class InspectionData(Base):
     __tablename__ = "inspection_data"
     id: Mapped[int] = mapped_column(primary_key=True)
     task_id: Mapped[int] = mapped_column(
-        ForeignKey("inspection_tasks.id", ondelete="CASCADE"),
+        ForeignKey("inspection_tasks.id", ondelete="CASCADE", onupdate="CASCADE"),
         nullable=False,
         unique=True,
     )

@@ -40,6 +40,7 @@ export default defineConfig({
         user_center_empty_time_edit: resolve(__dirname, 'user_center/empty_time_edit.html'),
         user_center_department_edit: resolve(__dirname, 'user_center/department_edit.html'),
         user_center_school_edit: resolve(__dirname, 'user_center/school_edit.html'),
+        user_center_classroom_edit: resolve(__dirname, 'user_center/classroom_edit.html'),
         user_center_finance_export: resolve(__dirname, 'user_center/finance_export.html'),
       },
     },

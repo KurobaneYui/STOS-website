@@ -179,7 +179,9 @@ class TeamManagerDatabase:
             # =======================
             # 更新部门信息
             results = (
-                session.query(SQL_Group).filter_by(id=infoForm["old_department_id"]).one()
+                session.query(SQL_Group)
+                .filter_by(id=infoForm["old_department_id"])
+                .one()
             )
             results.id = infoForm["department_id"]
             results.name = infoForm["department_name"]
@@ -209,6 +211,7 @@ class TeamManagerDatabase:
                     .one()
                 )
                 session.delete(results)
+                session.commit()
                 # if DBAffectRows not in [0, 1]:
                 #     database.rollback()
                 #     raise DatabaseRuntimeError(
@@ -235,6 +238,112 @@ class TeamManagerDatabase:
                 #         filename=__file__,
                 #         line=sys._getframe().f_lineno,
                 #     )
+            # ========
+            # 提交事务
+            session.commit()
+
+    @staticmethod
+    def addDepartment(infoForm: dict, db_session: Session | None = None) -> None:
+        # =====================================
+        # 如果提供已经建立的数据库连接，则直接使用
+        session_context = (
+            SessionLocal() if db_session is None else nullcontext(db_session)
+        )
+        with session_context as session:
+            # =================================
+            # 如果提供了组长学号，确保存在即可继续
+            if infoForm["group_leader_id"] != "":
+                results = (
+                    session.query(SQL_UserProfile)
+                    .filter_by(student_id=infoForm["group_leader_id"])
+                    .all()
+                )
+                if len(results) != 1:
+                    raise IllegalValueError(
+                        "学号不存在，请检查输入的学号信息。",
+                        filename=__file__,
+                        line=sys._getframe().f_lineno,
+                    )
+            # =======================
+            # 确保部门新id不与现有其他部门id重复
+            results = (
+                session.query(SQL_Group).filter_by(id=infoForm["department_id"]).all()
+            )
+            if len(results) > 0:
+                raise IllegalValueError(
+                    "部门ID已存在，请更换其他ID。",
+                    filename=__file__,
+                    line=sys._getframe().f_lineno,
+                )
+            # =======================
+            # 更新部门信息
+            group = SQL_Group(
+                id=infoForm["department_id"],
+                name=infoForm["department_name"],
+                chazao=infoForm["chazao"],
+                chake=infoForm["chake"],
+                datamanager=infoForm["datamanager"],
+                remark=infoForm["remark"],
+            )
+            session.add(group)
+            session.commit()
+            # if ??? not in [0, 1]:
+            #     database.rollback()
+            #     raise DatabaseRuntimeError(
+            #         "Update department info error.",
+            #         filename=__file__,
+            #         line=sys._getframe().f_lineno,
+            #     )
+
+            # =======================================
+            # 对新任组长分配岗位信息、权限信息
+            if infoForm["group_leader_id"] != "":
+                workInfo = SQL_GroupMember(
+                    group_id=infoForm["department_id"],
+                    student_id=infoForm["group_leader_id"],
+                    role="manager",
+                    wage=350,
+                    display_title=["组长", "队长"][infoForm["department_id"] == 1],
+                    remark="",
+                )
+                session.add(workInfo)
+                # if DBAffectRows not in [0, 1]:
+                #     database.rollback()
+                #     raise DatabaseRuntimeError(
+                #         "Insert work info error.",
+                #         filename=__file__,
+                #         line=sys._getframe().f_lineno,
+                #     )
+            # ========
+            # 提交事务
+            session.commit()
+
+    @staticmethod
+    def deleteDepartment(infoForm: dict, db_session: Session | None = None) -> None:
+        # =====================================
+        # 如果提供已经建立的数据库连接，则直接使用
+        session_context = (
+            SessionLocal() if db_session is None else nullcontext(db_session)
+        )
+        with session_context as session:
+            # =================================
+            # 查询是否存在所在组，如果存在连带组长组员信息一并删除
+            results = (
+                session.query(SQL_Group).filter_by(id=infoForm["department_id"]).all()
+            )
+            if len(results) < 1:
+                raise IllegalValueError(
+                    "部门ID不存在，请检查输入的部门ID信息。",
+                    filename=__file__,
+                    line=sys._getframe().f_lineno,
+                )
+            elif len(results) > 1:
+                raise DatabaseRuntimeError(
+                    "Department ID duplicate error.",
+                    filename=__file__,
+                    line=sys._getframe().f_lineno,
+                )
+            session.delete(results[0])
             # ========
             # 提交事务
             session.commit()

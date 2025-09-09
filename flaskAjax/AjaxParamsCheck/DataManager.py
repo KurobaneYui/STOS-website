@@ -28,23 +28,81 @@ class DataManagerCheck:
                 line=sys._getframe().f_lineno,
             )
 
-    # TODO: 实现此函数
     @staticmethod
-    def deleteSchoolParamsCheck(flaskRequest: Request) -> None:
-        raise MaintenanceError(
-            "Function has not been developed yet.",
-            filename=__file__,
-            line=sys._getframe().f_lineno,
-        )
+    def deleteSchoolParamsCheck(infoForm: dict) -> None:
+        if "school_id" not in infoForm.keys():
+            raise IllegalValueError(
+                "Not all required data received.",
+                filename=__file__,
+                line=sys._getframe().f_lineno,
+            )
 
-    # TODO: 实现此函数
     @staticmethod
-    def addSchoolParamsCheck(flaskRequest: Request) -> None:
-        raise MaintenanceError(
-            "Function has not been developed yet.",
-            filename=__file__,
-            line=sys._getframe().f_lineno,
-        )
+    def addSchoolParamsCheck(infoForm: dict) -> None:
+        if "name" not in infoForm.keys() or "school_id" not in infoForm.keys():
+            raise IllegalValueError(
+                "Not all required data received.",
+                filename=__file__,
+                line=sys._getframe().f_lineno,
+            )
+
+    @staticmethod
+    def deleteClassroomParamsCheck(infoForm: dict) -> None:
+        if "id" not in infoForm.keys():
+            raise IllegalValueError(
+                "Not all required data received.",
+                filename=__file__,
+                line=sys._getframe().f_lineno,
+            )
+
+    @staticmethod
+    def addClassroomParamsCheck(
+        infoForm: dict,
+    ) -> None:
+        if (
+            "id" not in infoForm.keys()
+            or "capacity" not in infoForm.keys()
+            or "campus" not in infoForm.keys()
+            or "building" not in infoForm.keys()
+            or "area" not in infoForm.keys()
+            or "room_number" not in infoForm.keys()
+        ):
+            raise IllegalValueError(
+                "Not all required data received.",
+                filename=__file__,
+                line=sys._getframe().f_lineno,
+            )
+        if infoForm["capacity"] < 0 or infoForm["capacity"] > 500:
+            raise IllegalValueError(
+                "教室容量目前支持0~500之间",
+                filename=__file__,
+                line=sys._getframe().f_lineno,
+            )
+
+    @staticmethod
+    def updateClassroomParamsCheck(
+        infoForm: dict,
+    ) -> None:
+        if (
+            "id" not in infoForm.keys()
+            or "old_id" not in infoForm.keys()
+            or "capacity" not in infoForm.keys()
+            or "campus" not in infoForm.keys()
+            or "building" not in infoForm.keys()
+            or "area" not in infoForm.keys()
+            or "room_number" not in infoForm.keys()
+        ):
+            raise IllegalValueError(
+                "Not all required data received.",
+                filename=__file__,
+                line=sys._getframe().f_lineno,
+            )
+        if infoForm["capacity"] < 0 or infoForm["capacity"] > 500:
+            raise IllegalValueError(
+                "教室容量目前支持0~500之间",
+                filename=__file__,
+                line=sys._getframe().f_lineno,
+            )
 
     # @staticmethod
     # def uploadSelfstudyClassroomParamsCheck(infoForm: dict) -> None:

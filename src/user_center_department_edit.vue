@@ -54,7 +54,6 @@ function change_to_editable_row(dept) {
 }
 
 async function upload_department(dept) {
-    // validate & prepare
     const old_department_id = dept._tmp.old_department_id
     const department_id = dept._tmp.department_id
     const department_name = dept._tmp.department_name
@@ -65,11 +64,11 @@ async function upload_department(dept) {
     let remark = dept._tmp.remark || ''
 
     if (department_id === "") {
-        swal({ title: "请检查编号", icon: "error" })
+        showToast('error', "请检查编号")
         return
     }
     if (department_name === "") {
-        swal({ title: "请检查部门名称", icon: "error" })
+        showToast('error', "请检查部门名称")
         return
     }
     const tmp = group_leader_id.indexOf("-")
@@ -88,11 +87,11 @@ async function upload_department(dept) {
         } else if (returnCode === 401) {
             showToast('error', "权限错误", data.message)
         } else if (returnCode === 404) {
-            swal({ title: "功能不存在，请联系管理员", icon: "warning" })
+            showToast('warning', "功能不存在，请联系管理员")
         } else if (returnCode === 417) {
-            swal({ title: "功能错误，请联系管理员", icon: "warning" })
+            showToast('warning', "功能错误，请联系管理员")
         } else if (returnCode === 498) {
-            swal({ title: "数据库异常，请联系管理员", icon: "warning" })
+            showToast('warning', "数据库异常，请联系管理员")
         } else if (returnCode === 499) {
             swal({ title: "功能维护中，暂不允许修改部门信息", icon: "warning" })
         } else if (returnCode === 200 || returnCode === 301) {
@@ -102,6 +101,103 @@ async function upload_department(dept) {
         }
     } catch (e) {
         swal({ title: '请检查网络连接，或稍后再试', icon: "error" })
+    }
+}
+
+function add_department() {
+    // 若已存在未提交的新增行，则不再新增
+    if (departments.value.some(d => d.isNew)) return;
+    departments.value.push({
+        department_id: '',
+        department_name: '',
+        student_name: '',
+        student_id: '',
+        chazao: false,
+        chake: false,
+        datamanager: false,
+        remark: '',
+        editing: true,
+        isNew: true,
+        _tmp: {
+            department_id: '',
+            department_name: '',
+            group_leader: '',
+            remark: ''
+        }
+    })
+}
+
+// 新增部门上传
+async function confirm_add_department(dept) {
+    const { department_id, department_name, group_leader, remark } = dept._tmp
+    let group_leader_id = (dept._tmp.group_leader || '').toString()
+    let chazao = dept.chazao
+    let chake = dept.chake
+    let datamanager = dept.datamanager
+
+    if (department_id === "") {
+        showToast('error', "请检查编号")
+        return
+    }
+    if (department_name === "") {
+        showToast('error', "请检查部门名称")
+        return
+    }
+    const tmp = group_leader_id.indexOf("-")
+    if (tmp !== -1) {
+        group_leader_id = group_leader_id.slice(tmp + 2)
+    }
+    if (group_leader_id === 'null') group_leader_id = ""
+
+    try {
+        const { data } = await axios.post('/Ajax/TeamManager/add_department', {
+            department_id, department_name, group_leader_id, remark, chazao, chake, datamanager
+        })
+        const code = data.code
+        if (code === 200 || code === 301) {
+            showToast('success', "成功", "部门已添加")
+            await get_department()
+        } else if (code === 499) {
+            swal({ title: "功能维护中，暂不允许添加部门信息", icon: "warning" })
+        } else {
+            showToast('error', "添加失败", data.message)
+        }
+    } catch (e) {
+        swal({ title: '网络异常，请稍后再试', icon: "error" })
+    }
+}
+
+function cancel_add_department(index) {
+    // 移除新增行
+    departments.value.splice(index, 1)
+}
+
+async function delete_department(dept) {
+    // 确认操作
+    const willDel = await swal({
+        title: "确认要删除该部门？",
+        text: "删除后不可恢复，请谨慎操作！另：删除部门将同时移除组长和组员相关权限。",
+        icon: "warning",
+        buttons: ["取消", "确定删除"],
+        dangerMode: true
+    })
+    if (!willDel) return
+
+    try {
+        const { data } = await axios.post('/Ajax/TeamManager/delete_department', {
+            department_id: dept.department_id
+        })
+        const code = data.code
+        if (code === 200 || code === 301) {
+            showToast('success', "成功", "数据已删除")
+            await get_department()
+        } else if (code === 499) {
+            swal({ title: "功能维护中，暂不允许删除部门信息", icon: "warning" })
+        } else {
+            showToast('error', "删除失败", data.message)
+        }
+    } catch (e) {
+        swal({ title: '网络异常，请稍后再试', icon: "error" })
     }
 }
 
@@ -177,7 +273,6 @@ onMounted(() => {
                         <!-- main content -->
                         <div class="alert alert-danger" role="alert">
                             * 权限系统限制队长组权限赋予id为1的组，请确保<span class="fw-bold">队长组编号为1</span><br />
-                            * 由于权限系统设计暂未完工，本页面暂不支持增删功能，只可修改备注、调整组长、名称和编号。
                         </div>
                         <div class="alert alert-primary" role="alert">
                             建议配置：查早组、沙河组分配<span class="fw-bold">查早任务</span>；查课组、沙河组分配<span
@@ -196,7 +291,6 @@ onMounted(() => {
                                     数据管理配置：配置<span class="text-primary fw-bold">数据管理</span>则对应组具备数据组职能，可以管理相关数据<br />
                                     组长修改：点击“编辑”后输入完整学号即可，请勿输入其他内容<br />
                                     备注修改：只能输入单行内容<br />
-                                    ** 现在也支持编号、名称编辑。**<br />
                                     保存反馈：修改成功与否会通过右侧气泡展示
                                 </p>
                             </div>
@@ -204,7 +298,7 @@ onMounted(() => {
                                 <table class="table table-hover table-striped mb-3 text-center">
                                     <thead>
                                         <tr>
-                                            <th>#</th>
+                                            <th>ID</th>
                                             <th>名称</th>
                                             <th>组长</th>
                                             <th>查早任务</th>
@@ -215,11 +309,13 @@ onMounted(() => {
                                         </tr>
                                     </thead>
                                     <tbody id="department-table-body">
-                                        <tr v-for="dept in departments" :key="dept.department_id">
+                                        <tr v-for="(dept, index) in departments"
+                                            :key="dept.isNew ? 'new_' + index : dept.department_id">
                                             <td>
                                                 <span v-if="!dept.editing">{{ dept.department_id }}</span>
-                                                <input v-else type="number" min="1" max="30" class="form-control text-center"
-                                                    style="min-width:80px;" v-model="dept._tmp.department_id" />
+                                                <input v-else type="number" min="1" max="30"
+                                                    class="form-control text-center" style="min-width:80px;"
+                                                    v-model="dept._tmp.department_id" />
                                             </td>
                                             <td>
                                                 <span v-if="!dept.editing">{{ dept.department_name }}</span>
@@ -259,16 +355,27 @@ onMounted(() => {
                                                     style="min-width:150px;" v-model="dept._tmp.remark" />
                                             </td>
                                             <td>
-                                                <button v-if="!dept.editing" class="btn btn-warning btn-sm rounded-pill"
-                                                    @click="change_to_editable_row(dept)">编辑</button>
-                                                <button v-else class="btn btn-primary btn-sm rounded-pill"
-                                                    @click="upload_department(dept)">提交</button>
-                                                <button class="btn btn-danger btn-sm rounded-pill" disabled>删除</button>
+                                                <template v-if="dept.isNew">
+                                                    <button class="btn btn-primary btn-sm rounded-pill"
+                                                        @click="confirm_add_department(dept)">保存</button>
+                                                    <button class="btn btn-secondary btn-sm rounded-pill"
+                                                        @click="cancel_add_department(index)">取消</button>
+                                                </template>
+                                                <template v-else>
+                                                    <button v-if="!dept.editing"
+                                                        class="btn btn-warning btn-sm rounded-pill"
+                                                        @click="change_to_editable_row(dept)">编辑</button>
+                                                    <button v-else class="btn btn-primary btn-sm rounded-pill"
+                                                        @click="upload_department(dept)">提交</button>
+                                                    <button class="btn btn-danger btn-sm rounded-pill"
+                                                        @click="delete_department(dept)">删除</button>
+                                                </template>
                                             </td>
                                         </tr>
                                     </tbody>
                                 </table>
-                                <button class="btn btn-primary btn-sm rounded-pill mb-3 ms-3">添加</button>
+                                <button class="btn btn-primary btn-sm rounded-pill mb-3 ms-3"
+                                    @click="add_department">添加</button>
                             </div>
                         </div>
                         <!--/ Layout Demo -->

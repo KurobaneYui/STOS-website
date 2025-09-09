@@ -6,9 +6,10 @@ import datetime
 from sqlalchemy.orm import Session
 from contextlib import nullcontext
 from flask import Request
-from flaskAjax.BaseComponents.CustomError import IllegalValueError
+from flaskAjax.BaseComponents.CustomError import DatabaseRuntimeError, IllegalValueError
 from flaskAjax.BaseComponents.DatabaseConnector import (
     SQL_Campus,
+    SQL_Classroom,
     SQL_College,
     SQL_UserProfile,
     SessionLocal,
@@ -36,6 +37,168 @@ class DataManagerDatabase:
             return results
 
     @staticmethod
+    def getClassroom(
+        db_session: Session | None = None,
+    ) -> tuple[dict] | list[dict]:
+        # =====================================
+        # 如果提供已经建立的数据库连接，则直接使用
+        session_context = (
+            SessionLocal() if db_session is None else nullcontext(db_session)
+        )
+        with session_context as session:
+            # ================================================
+            # 获取教室信息：楼、区域、教室编号和座位容纳量
+            results = session.query(SQL_Classroom).all()
+            results = [
+                {
+                    "id": i.id,
+                    "campus": i.campus.name,
+                    "building": i.building,
+                    "area": i.area,
+                    "room_number": i.room_number,
+                    "capacity": i.capacity,
+                }
+                for i in results
+            ]
+            return results
+
+    @staticmethod
+    def deleteClassroom(
+        infoForm: dict,
+        db_session: Session | None = None,
+    ) -> None:
+        # =====================================
+        # 如果提供已经建立的数据库连接，则直接使用
+        session_context = (
+            SessionLocal() if db_session is None else nullcontext(db_session)
+        )
+        with session_context as session:
+            # ================================================
+            # 确认教室信息是否存在
+            results = session.query(SQL_Classroom).filter_by(id=infoForm["id"]).all()
+            if len(results) < 1:
+                raise IllegalValueError(
+                    "教室ID不存在，请确认",
+                    filename=__file__,
+                    line=sys._getframe().f_lineno,
+                )
+            if len(results) > 1:
+                raise DatabaseRuntimeError(
+                    "classroom id duplicated error",
+                    filename=__file__,
+                    line=sys._getframe().f_lineno,
+                )
+            session.delete(results[0])
+            # ========
+            # 提交修改
+            session.commit()
+
+    @staticmethod
+    def addClassroom(
+        infoForm: dict,
+        db_session: Session | None = None,
+    ) -> None:
+        # =====================================
+        # 如果提供已经建立的数据库连接，则直接使用
+        session_context = (
+            SessionLocal() if db_session is None else nullcontext(db_session)
+        )
+        with session_context as session:
+            # ================================================
+            # 确保新添加教室ID不与现有重复
+            results = session.query(SQL_Classroom).filter_by(id=infoForm["id"]).all()
+            if len(results) > 0:
+                raise IllegalValueError(
+                    "教室ID重复，请确认",
+                    filename=__file__,
+                    line=sys._getframe().f_lineno,
+                )
+            # ====================
+            # 获取学院ID和名称与校区
+            results = session.query(SQL_Campus).filter_by(name=infoForm["campus"]).all()
+            if len(results) != 1:
+                raise IllegalValueError(
+                    "校区名称不存在或不唯一，请确认",
+                    filename=__file__,
+                    line=sys._getframe().f_lineno,
+                )
+            campus = results[0]
+            session.add(
+                SQL_Classroom(
+                    id=infoForm["id"],
+                    campus_id=campus.id,
+                    building=infoForm["building"],
+                    area=infoForm["area"],
+                    room_number=infoForm["room_number"],
+                    capacity=infoForm["capacity"],
+                )
+            )
+            # ========
+            # 提交修改
+            session.commit()
+
+    @staticmethod
+    def updateClassroom(
+        infoForm: dict,
+        db_session: Session | None = None,
+    ) -> None:
+        # =====================================
+        # 如果提供已经建立的数据库连接，则直接使用
+        session_context = (
+            SessionLocal() if db_session is None else nullcontext(db_session)
+        )
+        with session_context as session:
+            # ================================================
+            # 确保更新的教室ID不与现有重复
+            if infoForm["old_id"] != infoForm["id"]:
+                results = (
+                    session.query(SQL_Classroom).filter_by(id=infoForm["id"]).all()
+                )
+                if len(results) > 0:
+                    raise IllegalValueError(
+                        "教室新ID重复，请确认",
+                        filename=__file__,
+                        line=sys._getframe().f_lineno,
+                    )
+            results = (
+                session.query(SQL_Classroom).filter_by(id=infoForm["old_id"]).all()
+            )
+            if len(results) < 1:
+                raise IllegalValueError(
+                    "教室原有ID不存在，请确认",
+                    filename=__file__,
+                    line=sys._getframe().f_lineno,
+                )
+            if len(results) > 1:
+                raise DatabaseRuntimeError(
+                    "classroom id duplicated error",
+                    filename=__file__,
+                    line=sys._getframe().f_lineno,
+                )
+            classroom = results[0]
+            # ====================
+            # 获取学院ID和名称与校区
+            results = session.query(SQL_Campus).filter_by(name=infoForm["campus"]).all()
+            if len(results) != 1:
+                raise IllegalValueError(
+                    "校区名称不存在或不唯一，请确认",
+                    filename=__file__,
+                    line=sys._getframe().f_lineno,
+                )
+            campus = results[0]
+            # ====================
+            # 更新信息
+            classroom.id = infoForm["id"]
+            classroom.campus_id = campus.id
+            classroom.building = infoForm["building"]
+            classroom.area = infoForm["area"]
+            classroom.room_number = infoForm["room_number"]
+            classroom.capacity = infoForm["capacity"]
+            # ========
+            # 提交修改
+            session.commit()
+
+    @staticmethod
     def getSchool(
         db_session: Session | None = None,
     ) -> tuple[dict] | list[dict]:
@@ -49,25 +212,6 @@ class DataManagerDatabase:
             # 获取学院ID和名称与校区
             results = session.query(SQL_College).all()
             return [{"school_id": i.id, "name": i.name} for i in results]
-
-    # @staticmethod
-    # def getClassroom(
-    #     flaskRequest: Request, databaseConnector: Session | None = None
-    # ) -> tuple[dict] | list[dict]:
-    #     # =====================================
-    #     # 如果提供已经建立的数据库连接，则直接使用
-    #     if databaseConnector is None:
-    #         database = DatabaseConnector()
-    #         database.startCursor()
-    #     else:
-    #         database = databaseConnector
-    #     # ================================================
-    #     # 获取某校区的教室信息：楼、区域、教室编号和座位容纳量
-    #     _ = database.execute(
-    #         "SELECT building,area,room,sit_available FROM `Classroom` WHERE campus=%(campus)s;",
-    #         flaskRequest.form,
-    #     )
-    #     return database.fetchall()
 
     @staticmethod
     def updateSchool(infoForm: dict, db_session: Session | None = None) -> None:
@@ -95,11 +239,12 @@ class DataManagerDatabase:
             )
             results.id = infoForm["school_id"]
             results.name = infoForm["name"]
+            # ========
+            # 提交修改
             session.commit()
 
-    # TODO: 实现此函数
     @staticmethod
-    def deleteSchool(flaskRequest: Request, db_session: Session | None = None) -> None:
+    def deleteSchool(infoForm: dict, db_session: Session | None = None) -> None:
         # =====================================
         # 如果提供已经建立的数据库连接，则直接使用
         session_context = (
@@ -107,11 +252,27 @@ class DataManagerDatabase:
         )
         with session_context as session:
             # ================================================
-            return
+            # 检查学院id是否存在
+            results = (
+                session.query(SQL_College).filter_by(id=infoForm["school_id"]).all()
+            )
+            if len(results) < 1:
+                raise IllegalValueError(
+                    "学院ID不存在，请确认",
+                    filename=__file__,
+                    line=sys._getframe().f_lineno,
+                )
+            if len(results) > 1:
+                raise DatabaseRuntimeError(
+                    "College ID duplicated error.",
+                    filename=__file__,
+                    line=sys._getframe().f_lineno,
+                )
+            session.delete(results[0])
+            session.commit()
 
-    # TODO: 实现此函数
     @staticmethod
-    def addSchool(flaskRequest: Request, db_session: Session | None = None) -> None:
+    def addSchool(infoForm: dict, db_session: Session | None = None) -> None:
         # =====================================
         # 如果提供已经建立的数据库连接，则直接使用
         session_context = (
@@ -119,7 +280,23 @@ class DataManagerDatabase:
         )
         with session_context as session:
             # ================================================
-            return
+            # 检查学院id是否重复
+            results = (
+                session.query(SQL_College).filter_by(id=infoForm["school_id"]).all()
+            )
+            if len(results) > 0:
+                raise IllegalValueError(
+                    "学院ID已存在，请确认",
+                    filename=__file__,
+                    line=sys._getframe().f_lineno,
+                )
+            # ==========
+            # 插入新学院
+            school = SQL_College(id=infoForm["school_id"], name=infoForm["name"])
+            session.add(school)
+            # ========
+            # 提交修改
+            session.commit()
 
     # @staticmethod
     # def getSubmittedSelfstudyDate(

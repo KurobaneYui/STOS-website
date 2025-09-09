@@ -44,7 +44,7 @@ async function get_school() {
 }
 
 function change_to_editable_row(school) {
-    draggable_disable.value=true
+    draggable_disable.value = true
     school.editing = true
     school._tmp = {
         school_id: school.school_id,
@@ -53,7 +53,6 @@ function change_to_editable_row(school) {
 }
 
 async function upload_school(school) {
-    draggable_disable.value=false
     const school_id = Number(school._tmp.school_id)
     const name = (school._tmp.name || '').toString()
     const old_school_id = school.old_school_id
@@ -63,6 +62,7 @@ async function upload_school(school) {
         return
     }
 
+    draggable_disable.value = false
     try {
         const { data } = await axios.post('/Ajax/DataManager/update_school', {
             school_id, name, old_school_id
@@ -91,7 +91,7 @@ async function upload_school(school) {
 }
 
 function add_row_for_add_school() {
-    draggable_disable.value=true
+    draggable_disable.value = true
     schools.value.push({
         school_id: null,
         name: '',
@@ -121,6 +121,7 @@ async function add_school(school) {
         return
     }
 
+    draggable_disable.value = false
     try {
         const { data } = await axios.post('/Ajax/DataManager/add_school', { school_id, name })
         const returnCode = data.code
@@ -147,6 +148,16 @@ async function add_school(school) {
 }
 
 async function delete_school(school) {
+    // 确认操作
+    const willDel = await swal({
+        title: "确认要删除该学院？",
+        text: "删除后不可恢复，请谨慎操作！另：删除学院将同时影响成员个人信息、任务数据信息。",
+        icon: "warning",
+        buttons: ["取消", "确定删除"],
+        dangerMode: true
+    })
+    if (!willDel) return
+
     const school_id = Number(school._tmp.school_id)
     const name = (school._tmp.name || '').toString()
     const old_school_id = school.old_school_id
@@ -156,6 +167,7 @@ async function delete_school(school) {
         return
     }
 
+    draggable_disable.value = false
     try {
         const { data } = await axios.post('/Ajax/DataManager/delete_school', { school_id, name, old_school_id })
         const returnCode = data.code
@@ -265,12 +277,18 @@ onMounted(() => {
                             <h5 class="card-header">学院管理</h5>
                             <div class="card-body">
                                 <p class="card-subtitle text-muted">
-                                    学院名称：<span class="text-primary fw-bold">学院名称完整填写，如：英才实验学院（未来技术学院）</span><br />
+                                    学院名称：<span class="text-primary fw-bold">学院名称完整填写</span>，如：英才实验学院（未来技术学院）<br />
                                     保存反馈：修改成功与否会通过右侧气泡展示
                                 </p>
                             </div>
+                            <div class="form-check form-switch ms-3">
+                                <label for="draggableButton" class="form-check-label">禁用拖动</label>
+                                <input type="checkbox" class="form-check-input" id="draggableButton"
+                                    name="draggableButton" required v-model="draggable_disable" />
+                            </div>
                             <div class="table-responsive text-nowrap">
-                                <VueDraggable v-model="schools" target=".sort-target" :animation="150" :disabled="draggable_disable">
+                                <VueDraggable v-model="schools" target=".sort-target" :animation="150"
+                                    :disabled="draggable_disable">
                                     <table class="table table-hover table-striped mb-3 text-center">
                                         <thead>
                                             <tr>
@@ -313,6 +331,11 @@ onMounted(() => {
                                         </tbody>
                                     </table>
                                 </VueDraggable>
+                                <div class="form-check form-switch ms-3 mb-3">
+                                    <label for="draggableButton" class="form-check-label">禁用拖动</label>
+                                    <input type="checkbox" class="form-check-input" id="draggableButton"
+                                        name="draggableButton" required v-model="draggable_disable" />
+                                </div>
                                 <button class="btn btn-primary btn-sm rounded-pill mb-3 ms-3"
                                     @click="add_row_for_add_school()">添加</button>
                             </div>
