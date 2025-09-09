@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import axios from 'axios'
 import swal from 'sweetalert'
 import * as bootstrap from 'bootstrap'
@@ -209,6 +209,47 @@ async function delete_classroom(classroom) {
     }
 }
 
+function calcClassroomId({ campus, building, area, room_number }) {
+    // 校区编码
+    const campus_code = campus === '清水河' ? 1 : 2;
+    // 楼宇编码
+    const building_code = (building === '品学楼' || building === '一教') ? 1 : 2;
+    // 区域编码
+    const area_map = { 'A': 1, 'B': 2, 'C': 3, '-': 0 };
+    const area_code = area_map[area] ?? 0;
+    // 房间号编码
+    let roomDigits = (room_number ?? '').replace(/\D/g, '').slice(0, 3).padEnd(3, '0');
+    // 是否有字母
+    const letterMatch = (room_number ?? '').match(/[a-zA-Z]/);
+    let letter_num = 0;
+    if (letterMatch) {
+        const letter = letterMatch[0].toUpperCase();
+        letter_num = letter.charCodeAt(0) - 'A'.charCodeAt(0) + 1;
+    }
+    // 拼接
+    return `${campus_code}${building_code}${area_code}${roomDigits}${letter_num}`;
+}
+
+function updateTmpId(room) {
+    if (room.editing) {
+        room._tmp.id = calcClassroomId(room._tmp)
+    }
+}
+
+// 监听 classrooms，自动设置字段监听
+watch(classrooms, (rooms) => {
+    rooms.forEach(room => {
+        if (room.editing && !room._tmp._isWatching) {
+            room._tmp._isWatching = true // 防止重复 watch
+            watch(
+                () => [room._tmp.campus, room._tmp.building, room._tmp.area, room._tmp.room_number],
+                () => updateTmpId(room),
+                { immediate: true }
+            )
+        }
+    })
+}, { deep: true })
+
 function showToast(status, title, text) {
     const container = document.getElementById('toast-container')
     if (!container) return
@@ -291,8 +332,8 @@ onMounted(() => {
                                 * 比如一个教室信息已经关联了查早且有数据提交，删除此教室将同步删除相应查早排班和数据，哪怕重新添加了同样的教室。此时应选择修改教室信息以避免上述情况发生。
                             </div>
                             <div class="col-12">
-                                <div aria-live="polite" aria-atomic="true" class="position-fixed top-1 end-0 p-3 zindex-5"
-                                    id="toast-container"></div>
+                                <div aria-live="polite" aria-atomic="true"
+                                    class="position-fixed top-1 end-0 p-3 zindex-5" id="toast-container"></div>
                                 <div class="card">
                                     <h5 class="card-header">编辑早自习教室</h5>
                                     <div class="card-body">
@@ -303,8 +344,8 @@ onMounted(() => {
                                         </div>
                                         <div class="row g-2">
                                             <div class="col-12 table-responsive text-nowrap">
-                                                <VueDraggable v-model="classrooms" target=".sort-target" :animation="150"
-                                                    :disabled="draggable_disable">
+                                                <VueDraggable v-model="classrooms" target=".sort-target"
+                                                    :animation="150" :disabled="draggable_disable">
                                                     <table class="table table-striped table-hover text-center">
                                                         <thead>
                                                             <tr>
@@ -322,36 +363,44 @@ onMounted(() => {
                                                                 :key="room.isNew ? `new-${idx}` : room.id">
                                                                 <td>
                                                                     <span v-if="!room.editing">{{ room.id }}</span>
-                                                                    <input v-else type="text" class="form-control text-center"
-                                                                        style="min-width: 40px;"
-                                                                        v-model="room._tmp.id" />
+                                                                    <input v-else type="text"
+                                                                        class="form-control text-center"
+                                                                        style="min-width: 40px;" v-model="room._tmp.id"
+                                                                        disabled />
                                                                 </td>
                                                                 <td>
                                                                     <span v-if="!room.editing">{{ room.campus }}</span>
-                                                                    <input v-else type="text" class="form-control text-center"
+                                                                    <input v-else type="text"
+                                                                        class="form-control text-center"
                                                                         style="min-width: 60px;"
                                                                         v-model="room._tmp.campus" />
                                                                 </td>
                                                                 <td>
-                                                                    <span v-if="!room.editing">{{ room.building }}</span>
-                                                                    <input v-else type="text" class="form-control text-center"
+                                                                    <span v-if="!room.editing">{{ room.building
+                                                                        }}</span>
+                                                                    <input v-else type="text"
+                                                                        class="form-control text-center"
                                                                         style="min-width: 60px;"
                                                                         v-model="room._tmp.building" />
                                                                 </td>
                                                                 <td>
                                                                     <span v-if="!room.editing">{{ room.area }}</span>
-                                                                    <input v-else type="text" class="form-control text-center"
+                                                                    <input v-else type="text"
+                                                                        class="form-control text-center"
                                                                         style="min-width: 60px;"
                                                                         v-model="room._tmp.area" />
                                                                 </td>
                                                                 <td>
-                                                                    <span v-if="!room.editing">{{ room.room_number }}</span>
-                                                                    <input v-else type="text" class="form-control text-center"
+                                                                    <span v-if="!room.editing">{{ room.room_number
+                                                                        }}</span>
+                                                                    <input v-else type="text"
+                                                                        class="form-control text-center"
                                                                         style="min-width: 40px;"
                                                                         v-model="room._tmp.room_number" />
                                                                 </td>
                                                                 <td>
-                                                                    <span v-if="!room.editing">{{ room.capacity }}</span>
+                                                                    <span v-if="!room.editing">{{ room.capacity
+                                                                        }}</span>
                                                                     <input v-else type="number" min="0" max="300"
                                                                         class="form-control text-center"
                                                                         style="min-width: 50px;"
@@ -367,7 +416,8 @@ onMounted(() => {
                                                                             @click="delete_classroom(room)">删除</button>
                                                                     </template>
                                                                     <template v-else>
-                                                                        <button class="btn btn-primary btn-sm rounded-pill me-1"
+                                                                        <button
+                                                                            class="btn btn-primary btn-sm rounded-pill me-1"
                                                                             @click="room.isNew ? add_classroom(room) : upload_classroom(room)">{{
                                                                                 room.isNew ? '提交' : '提交'
                                                                             }}</button>
@@ -396,6 +446,11 @@ onMounted(() => {
                                                 </VueDraggable>
                                             </div>
                                             <div class="col">
+                                                <div class="form-check form-switch ms-3 mb-3">
+                                                    <label for="draggableButton" class="form-check-label">禁用拖动</label>
+                                                    <input type="checkbox" class="form-check-input" id="draggableButton"
+                                                        name="draggableButton" required v-model="draggable_disable" />
+                                                </div>
                                                 <button class="btn btn-sm btn-warning rounded-pill mb-3"
                                                     @click="add_row_for_add_classroom()">添加</button>
                                             </div>

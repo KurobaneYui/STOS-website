@@ -1,7 +1,44 @@
+import re
 import sys
 import datetime
 from flask import Request
 from flaskAjax.BaseComponents.CustomError import IllegalValueError, MaintenanceError
+
+
+def encode_infoForm(infoForm: dict) -> str:
+    # 校区编码
+    campus_code = 1 if infoForm["campus"] == "清水河" else 2
+
+    # 楼宇编码
+    if infoForm["building"] in ["品学楼", "一教"]:
+        building_code = 1
+    else:
+        building_code = 2
+
+    # 区域编码
+    area_map = {"A": 1, "B": 2, "C": 3, "-": 0}
+    area_code = area_map.get(infoForm["area"], 0)
+
+    # 房间号编码
+    room = infoForm["room_number"]
+    room_digits = "".join([c for c in room if c.isdigit()])[:3]
+    if len(room_digits) < 3:
+        room_digits = room_digits.ljust(3, "0")  # 不足3位补0
+
+    # 检查是否有字母
+    room_alpha = [c for c in room if c.isalpha()]
+    if room_alpha:
+        letter = room_alpha[0].upper()
+        letter_num = ord(letter) - ord("A") + 1
+    else:
+        letter_num = 0
+
+    # 拼接编码字符串
+    return f"{campus_code}{building_code}{area_code}{room_digits}{letter_num}"
+
+
+def is_id_valid(infoForm: dict) -> bool:
+    return infoForm["id"] == encode_infoForm(infoForm)
 
 
 class DataManagerCheck:
@@ -78,6 +115,36 @@ class DataManagerCheck:
                 filename=__file__,
                 line=sys._getframe().f_lineno,
             )
+        if infoForm["campus"] not in ["清水河", "沙河"]:
+            raise IllegalValueError(
+                "校区非清水河/沙河",
+                filename=__file__,
+                line=sys._getframe().f_lineno,
+            )
+        if infoForm["building"] not in ["品学楼", "立人楼", "一教", "二教"]:
+            raise IllegalValueError(
+                "教学楼不属于品学楼/立人楼/一教/二教",
+                filename=__file__,
+                line=sys._getframe().f_lineno,
+            )
+        if infoForm["area"] not in ["A", "B", "C", "-"]:
+            raise IllegalValueError(
+                "区域暂支持：A/B/C/-",
+                filename=__file__,
+                line=sys._getframe().f_lineno,
+            )
+        if not re.match(r"^\d{3}[A-Za-z]?$", infoForm["room_number"]):
+            raise IllegalValueError(
+                "教室编号暂支持：3位数字+可选1位英文字母",
+                filename=__file__,
+                line=sys._getframe().f_lineno,
+            )
+        if is_id_valid(infoForm) is False:
+            raise IllegalValueError(
+                "教室ID与其他信息不匹配，请检查",
+                filename=__file__,
+                line=sys._getframe().f_lineno,
+            )
 
     @staticmethod
     def updateClassroomParamsCheck(
@@ -100,6 +167,36 @@ class DataManagerCheck:
         if infoForm["capacity"] < 0 or infoForm["capacity"] > 500:
             raise IllegalValueError(
                 "教室容量目前支持0~500之间",
+                filename=__file__,
+                line=sys._getframe().f_lineno,
+            )
+        if infoForm["campus"] not in ["清水河", "沙河"]:
+            raise IllegalValueError(
+                "校区非清水河/沙河",
+                filename=__file__,
+                line=sys._getframe().f_lineno,
+            )
+        if infoForm["building"] not in ["品学楼", "立人楼", "一教", "二教"]:
+            raise IllegalValueError(
+                "教学楼不属于品学楼/立人楼/一教/二教",
+                filename=__file__,
+                line=sys._getframe().f_lineno,
+            )
+        if infoForm["area"] not in ["A", "B", "C", "-"]:
+            raise IllegalValueError(
+                "区域暂支持：A/B/C/-",
+                filename=__file__,
+                line=sys._getframe().f_lineno,
+            )
+        if not re.match(r"^\d{3}[A-Za-z]?$", infoForm["room_number"]):
+            raise IllegalValueError(
+                "教室编号暂支持：3位数字+可选1位英文字母",
+                filename=__file__,
+                line=sys._getframe().f_lineno,
+            )
+        if is_id_valid(infoForm) is False:
+            raise IllegalValueError(
+                "教室ID与其他信息不匹配，请检查",
                 filename=__file__,
                 line=sys._getframe().f_lineno,
             )
