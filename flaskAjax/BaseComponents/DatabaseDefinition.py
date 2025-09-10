@@ -317,6 +317,7 @@ class StudySchedule(Base):
         ForeignKey("colleges.id", ondelete="CASCADE", onupdate="CASCADE"), nullable=False
     )
     expected_headcount: Mapped[Optional[int]]
+    remark: Mapped[str] = mapped_column(Text, nullable=False)
     created_at: Mapped[datetime.datetime] = mapped_column(server_default=func.now())
     updated_at: Mapped[datetime.datetime] = mapped_column(
         server_default=func.now(),

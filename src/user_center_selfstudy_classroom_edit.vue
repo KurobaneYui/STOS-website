@@ -70,8 +70,10 @@ async function fetchSelfStudyClassroomDetails(targetDate) {
                 area: r.area,
                 room: r.room,
                 classroom_name: r.building + r.area + r.room,
-                sit_available: r.sit_available,
+                classroom_id: r.classroom_id,
+                capacity: r.capacity,
                 school_name: r.school_name,
+                school_id: r.school_id,
                 student_supposed: r.student_supposed,
                 remark: r.remark,
                 editing: false,
@@ -101,19 +103,21 @@ function addEditableRow() {
         selfstudy_id: null,
         campus: '',
         classroom_name: '',
+        classroom_id: '', // 新增classroom_id字段
         building: '',
         area: '',
         room: '',
         sit_available: '',
         school_name: '',
+        school_id: '', // 新增school_id字段
         student_supposed: '',
         remark: '',
         editing: true,
         isNew: true,
         _tmp: {
             campus: '',
-            classroom_name: '',
-            school_name: '',
+            classroom_id: '', // 新增classroom_id字段
+            school_id: '', // 新增school_id字段
             student_supposed: '',
             remark: ''
         }
@@ -128,8 +132,8 @@ function changeToEditable() {
         row.editing = true
         row._tmp = {
             campus: row.campus,
-            classroom_name: row.classroom_name,
-            school_name: row.school_name,
+            classroom_id: row.classroom_id, // 修改为classroom_id
+            school_id: row.school_id, // 修改为school_id
             student_supposed: row.student_supposed,
             remark: row.remark
         }
@@ -192,8 +196,16 @@ function onSubmitClick() {
                 value: date.value
             }
         },
-        buttons: true
+        buttons: {
+            cancel: "取消",
+            confirm: "确认"
+        }
     }).then(async (val) => {
+        // 修复：检查用户是否点击了取消按钮
+        if (val === null) {
+            return // 用户点击了取消，直接返回
+        }
+
         const submitDate = document.getElementById('swal-date-input')?.value
         if (!submitDate) {
             swal({ title: "未选择日期！", icon: "error" })
@@ -202,20 +214,19 @@ function onSubmitClick() {
         await submitTable(submitDate)
     })
 }
-
 // 提交数据
 async function submitTable(submitDate) {
     // 数据校验
     const classrooms = classroomTable.value.map(row => ({
         campus: row.editing ? row._tmp.campus : row.campus,
-        classroom_name: row.editing ? row._tmp.classroom_name : row.classroom_name,
-        school_name: row.editing ? row._tmp.school_name : row.school_name,
+        classroom_id: row.editing ? row._tmp.classroom_id : row.classroom_id, // 修改为classroom_id
+        school_id: row.editing ? row._tmp.school_id : row.school_id, // 修改为school_id
         student_supposed: Number(row.editing ? row._tmp.student_supposed : row.student_supposed),
         remark: row.editing ? (row._tmp.remark ?? '') : (row.remark ?? '')
     }))
     // 校验主字段
     for (let r of classrooms) {
-        if (!r.campus || !r.classroom_name || !r.school_name || !r.student_supposed) {
+        if (!r.campus || !r.classroom_id || !r.school_id || !r.student_supposed) {
             swal({ title: "请完善所有必填字段", icon: "error" })
             return
         }
@@ -243,6 +254,7 @@ async function submitTable(submitDate) {
 onMounted(() => {
     fetchCampus()
     fetchSchools()
+    fetchClassrooms()
 })
 
 // 渲染校区名徽章
@@ -292,7 +304,7 @@ function renderCampus(campus) {
                                             aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
-                                        <p class="text-muted">只列出最近15次提交记录</p>
+                                        <p class="text-muted">只列出最近10次提交记录</p>
                                         <form>
                                             <div class="table-responsive text-nowrap mb-3">
                                                 <table class="table table-sm table-hover table-striped">
@@ -323,17 +335,17 @@ function renderCampus(campus) {
 
                         <div class="alert alert-primary" role="alert">
                             * 直接添加新教室、选择日期后点击提交即可，如果选择的日期下已有提交数据则覆盖。<br />
-                            * 如需要编辑以往数据，请点击“导入已有数据”选择并导入所需日期的数据，编辑后提交即可。<br />
+                            * 如需要编辑以往数据，请点击"导入已有数据"选择并导入所需日期的数据，编辑后提交即可。<br />
                             * 请为每日查早均提交一份教室数据。
                         </div>
                         <div class="alert alert-danger" role="alert">
                             * 修改将实时反映在组员查早表单中。建议修改数据而非删除再添加，否则会导致对应排班被删除。<br />
-                            * 修改数据请点击“编辑”按钮，对所需行进行编辑后点击“提交”保存
+                            * 修改数据请点击"编辑"按钮，对所需行进行编辑后点击"提交"保存
                         </div>
                         <div class="card">
                             <h5 class="card-header">编辑早自习教室</h5>
                             <div class="card-body">
-                                <div class="d-flex gap-2 mb-3 flex-wrap">
+                                <div class="d-flex gap-2 mb-3 flex-wrap align-items-center">
                                     <button class="btn btn-sm btn-info rounded-pill" data-bs-toggle="modal"
                                         data-bs-target="#select-saved-selfstudy-classroom"
                                         @click="loadImportDates">导入已有数据</button>
@@ -341,6 +353,9 @@ function renderCampus(campus) {
                                         @click="changeToEditable">编辑</button>
                                     <button class="btn btn-sm btn-success rounded-pill" :disabled="!isEditMode"
                                         @click="onSubmitClick">提交</button>
+                                    <span v-if="!isEditMode && date" class="text-muted ms-2">
+                                        当前显示日期：ss
+                                    </span>
                                 </div>
 
                                 <div class="form-check form-switch ms-3 mb-2">
@@ -348,75 +363,79 @@ function renderCampus(campus) {
                                     <input type="checkbox" class="form-check-input" id="draggableButton2"
                                         name="draggableButton" required v-model="draggable_disable" />
                                 </div>
-
-                                <VueDraggable v-model="classroomTable" target=".sort-target" :animation="150"
-                                    :disabled="draggable_disable || !isEditMode">
-                                    <table class="table table-hover table-striped mb-3 text-center">
-                                        <thead>
-                                            <tr>
-                                                <th>#</th>
-                                                <th>校区</th>
-                                                <th>教室</th>
-                                                <th>容纳人数</th>
-                                                <th>学院</th>
-                                                <th>应到人数</th>
-                                                <th>备注</th>
-                                                <th>操作</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody class="sort-target">
-                                            <tr v-for="(row, idx) in classroomTable" :key="row.selfstudy_id ?? idx">
-                                                <td>{{ idx + 1 }}</td>
-                                                <td v-if="row.editing">
-                                                    <select class="form-select" v-model="row._tmp.campus"
-                                                        @change="onCampusChange(row)">
-                                                        <option value="" disabled>请选择</option>
-                                                        <option v-for="c in campusList" :value="c.campus">{{ c.campus }}
-                                                        </option>
-                                                    </select>
-                                                </td>
-                                                <td v-else v-html="renderCampus(row.campus)"></td>
-                                                <td v-if="row.editing">
-                                                    <select class="form-select" v-model="row._tmp.classroom_name">
-                                                        <option value="" disabled>请选择教室</option>
-                                                        <option
-                                                            v-for="c in classroomList.filter(r => r.campus === row._tmp.campus)"
-                                                            :value="c.id">
-                                                            {{ c.building + c.area + c.room_number }}
-                                                        </option>
-                                                    </select>
-                                                </td>
-                                                <td v-else>{{ row.classroom_name }}</td>
-                                                <td>{{row.editing ? (classroomList.find(t => t.building + t.area +
-                                                    t.room_number === row._tmp.classroom_name)?.capacity ?? '-') :
-                                                    row.capacity }}</td>
-                                                <td v-if="row.editing">
-                                                    <select class="form-select" v-model="row._tmp.school_name">
-                                                        <option value="" disabled>请选择学院</option>
-                                                        <option v-for="school in schoolList" :value="school.school_id">
-                                                            {{ school.name }}</option>
-                                                    </select>
-                                                </td>
-                                                <td v-else>{{ row.school_name }}</td>
-                                                <td v-if="row.editing">
-                                                    <input class="form-control text-center" type="number" min="1"
-                                                        v-model="row._tmp.student_supposed" />
-                                                </td>
-                                                <td v-else>{{ row.student_supposed }}</td>
-                                                <td v-if="row.editing">
-                                                    <input class="form-control text-center" type="text"
-                                                        v-model="row._tmp.remark" />
-                                                </td>
-                                                <td v-else>{{ row.remark }}</td>
-                                                <td>
-                                                    <button v-if="isEditMode && (row.editing || row.isNew)"
-                                                        class="btn btn-danger btn-sm rounded-pill"
-                                                        @click="row.isNew ? cancelAddRow(idx) : deleteRow(idx)">删除</button>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </VueDraggable>
+                                <div class="table-responsive text-nowrap">
+                                    <VueDraggable v-model="classroomTable" target=".sort-target" :animation="150"
+                                        :disabled="draggable_disable || !isEditMode">
+                                        <table class="table table-hover table-striped mb-3 text-center">
+                                            <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>校区</th>
+                                                    <th>教室</th>
+                                                    <th>容纳人数</th>
+                                                    <th>学院</th>
+                                                    <th>应到人数</th>
+                                                    <th>备注</th>
+                                                    <th>操作</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody class="sort-target">
+                                                <tr v-for="(row, idx) in classroomTable" :key="row.selfstudy_id ?? idx">
+                                                    <td>{{ idx + 1 }}</td>
+                                                    <td v-if="row.editing">
+                                                        <select class="form-select campus-min-width"
+                                                            v-model="row._tmp.campus" @change="onCampusChange(row)">
+                                                            <option value="" disabled>请选择</option>
+                                                            <option v-for="c in campusList" :value="c.campus">{{
+                                                                c.campus }}
+                                                            </option>
+                                                        </select>
+                                                    </td>
+                                                    <td v-else v-html="renderCampus(row.campus)"></td>
+                                                    <td v-if="row.editing">
+                                                        <select class="form-select classroom-min-width"
+                                                            v-model="row._tmp.classroom_id"> <!-- 修改为classroom_id -->
+                                                            <option value="" disabled>请选择教室</option>
+                                                            <option
+                                                                v-for="c in classroomList.filter(r => r.campus === row._tmp.campus)"
+                                                                :value="c.id"> <!-- 修改为c.id -->
+                                                                {{ c.building + c.area + c.room_number }}
+                                                            </option>
+                                                        </select>
+                                                    </td>
+                                                    <td v-else>{{ row.classroom_name }}</td>
+                                                    <td>{{row.editing ? (classroomList.find(t => t.id ===
+                                                        row._tmp.classroom_id)?.capacity ?? '-') : row.capacity}}</td>
+                                                    <td v-if="row.editing">
+                                                        <select class="form-select school-min-width"
+                                                            v-model="row._tmp.school_id"> <!-- 修改为school_id -->
+                                                            <option value="" disabled>请选择学院</option>
+                                                            <option v-for="school in schoolList"
+                                                                :value="school.school_id"> <!-- 修改为school.school_id -->
+                                                                {{ school.name }}</option>
+                                                        </select>
+                                                    </td>
+                                                    <td v-else>{{ row.school_name }}</td>
+                                                    <td v-if="row.editing">
+                                                        <input class="form-control campus-min-width text-center"
+                                                            type="number" min="1" v-model="row._tmp.student_supposed" />
+                                                    </td>
+                                                    <td v-else>{{ row.student_supposed }}</td>
+                                                    <td v-if="row.editing">
+                                                        <input class="form-control text-center school-min-width"
+                                                            type="text" v-model="row._tmp.remark" />
+                                                    </td>
+                                                    <td v-else>{{ row.remark }}</td>
+                                                    <td>
+                                                        <button v-if="isEditMode && (row.editing || row.isNew)"
+                                                            class="btn btn-danger btn-sm rounded-pill"
+                                                            @click="row.isNew ? cancelAddRow(idx) : deleteRow(idx)">删除</button>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </VueDraggable>
+                                </div>
                                 <button class="btn btn-sm btn-success rounded-pill mb-3 ms-3" :disabled="!isEditMode"
                                     @click="addEditableRow">新增</button>
                             </div>
@@ -440,3 +459,17 @@ function renderCampus(campus) {
         <div class="layout-overlay layout-menu-toggle"></div>
     </div>
 </template>
+
+<style scoped>
+.campus-min-width {
+    min-width: 90px;
+}
+
+.school-min-width {
+    min-width: 180px;
+}
+
+.classroom-min-width {
+    min-width: 140px;
+}
+</style>

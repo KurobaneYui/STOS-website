@@ -201,55 +201,72 @@ class DataManagerCheck:
                 line=sys._getframe().f_lineno,
             )
 
-    # @staticmethod
-    # def uploadSelfstudyClassroomParamsCheck(infoForm: dict) -> None:
-    #     # "date" and "data" should be infoForm's keys
-    #     # infoForm["date"] should be "YYYY-MM-DD"
-    #     # infoForm["data"] is an array of dict which has unique campus+classroom_name and student_supposed must not negative
-    #     if "date" not in infoForm.keys() or "data" not in infoForm.keys():
-    #         raise IllegalValueError(
-    #             "Not all required data received.",
-    #             filename=__file__,
-    #             line=sys._getframe().f_lineno,
-    #         )
-    #     try:
-    #         infoForm["date"] = datetime.datetime.strptime(
-    #             infoForm["date"], "%Y-%m-%d"
-    #         ).strftime("%Y-%m-%d")
-    #     except:
-    #         raise IllegalValueError(
-    #             "Date is wrong or in wrong format. Should be YYYY-MM-DD.",
-    #             filename=__file__,
-    #             line=sys._getframe().f_lineno,
-    #         )
-    #     campus_set = set()
-    #     for item in infoForm["data"]:
-    #         if (
-    #             "campus" not in item.keys()
-    #             or "classroom_name" not in item.keys()
-    #             or "school_name" not in item.keys()
-    #             or "student_supposed" not in item.keys()
-    #             or "remark" not in item.keys()
-    #         ):
-    #             raise IllegalValueError(
-    #                 "Not all required data received.",
-    #                 filename=__file__,
-    #                 line=sys._getframe().f_lineno,
-    #             )
-    #         if (item["campus"] + item["classroom_name"]) in campus_set:
-    #             raise IllegalValueError(
-    #                 "Classroom must be unique.",
-    #                 filename=__file__,
-    #                 line=sys._getframe().f_lineno,
-    #             )
-    #         else:
-    #             campus_set.add(item["campus"] + item["classroom_name"])
-    #         if not 0 <= int(item["student_supposed"]) <= 300:
-    #             raise IllegalValueError(
-    #                 "学生人数目前支持1~300之间",
-    #                 filename=__file__,
-    #                 line=sys._getframe().f_lineno,
-    #             )
+    @staticmethod
+    def uploadSelfstudyClassroomParamsCheck(infoForm: dict) -> None:
+        # "date" and "data" should be infoForm's keys
+        # infoForm["date"] should be "YYYY-MM-DD"
+        # infoForm["data"] is an array of dict which has unique campus+classroom_name and student_supposed must not negative
+        if "date" not in infoForm.keys() or "data" not in infoForm.keys():
+            raise IllegalValueError(
+                "Not all required data received.",
+                filename=__file__,
+                line=sys._getframe().f_lineno,
+            )
+        try:
+            infoForm["date"] = datetime.date.fromisoformat(infoForm["date"])
+        except Exception:
+            raise IllegalValueError(
+                "Date is wrong or in wrong format. Should be YYYY-MM-DD.",
+                filename=__file__,
+                line=sys._getframe().f_lineno,
+            )
+        campus_set = set()
+        for item in infoForm["data"]:
+            if (
+                "campus" not in item.keys()
+                or "classroom_id" not in item.keys()
+                or "school_id" not in item.keys()
+                or "student_supposed" not in item.keys()
+                or "remark" not in item.keys()
+            ):
+                raise IllegalValueError(
+                    "Not all required data received.",
+                    filename=__file__,
+                    line=sys._getframe().f_lineno,
+                )
+            if (item["classroom_id"]) in campus_set:
+                raise IllegalValueError(
+                    "Classroom must be unique.",
+                    filename=__file__,
+                    line=sys._getframe().f_lineno,
+                )
+            else:
+                campus_set.add(item["classroom_id"])
+            if not 0 <= int(item["student_supposed"]) <= 300:
+                raise IllegalValueError(
+                    "学生人数目前支持1~300之间",
+                    filename=__file__,
+                    line=sys._getframe().f_lineno,
+                )
+
+    @staticmethod
+    def getSelfstudyClassroomDetailsParamsCheck(infoForm: dict) -> None:
+        # "date" and "data" should be infoForm's keys
+        # infoForm["date"] should be "YYYY-MM-DD"
+        if "date" not in infoForm.keys():
+            raise IllegalValueError(
+                "Not all required data received.",
+                filename=__file__,
+                line=sys._getframe().f_lineno,
+            )
+        try:
+            infoForm["date"] = datetime.date.fromisoformat(infoForm["date"])
+        except Exception:
+            raise IllegalValueError(
+                "Date is wrong or in wrong format. Should be YYYY-MM-DD.",
+                filename=__file__,
+                line=sys._getframe().f_lineno,
+            )
 
     # @staticmethod
     # def submitSelfstudyScheduleParamsCheck(infoForm: dict) -> None:

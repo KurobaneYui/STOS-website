@@ -253,74 +253,88 @@ def DataManager(app: flask.Flask) -> None:
                 logger.funcReturns = returns
         return customResponse.getResponse()
 
-    # @app.route("/Ajax/DataManager/get_submitted_selfstudy_date", methods=["GET"])
-    # def getSubmittedSelfstudyDate():
-    #     with CustomResponse() as customResponse:
-    #         with Logger(funcName="DataManager.getSubmittedSelfstudyDate()") as logger:
-    #             # ===============
-    #             # 检查接口调用权限
-    #             Authorization.check(
-    #                 rightsNeeded=({"department_id": 0, "actor": 0},), needLogin=True
-    #             )
-    #             # =========================================
-    #             # 执行接口流程，并获取用户名信息以完成会话建立
-    #             results = DataManagerDatabase.getSubmittedSelfstudyDate()
-    #             # ========================
-    #             # 准备函数返回值和响应与日志
-    #             returns = {"message": "", "data": results}
-    #             customResponse.setMessageAndData(**returns)
-    #             logger.funcReturns = returns
-    #     return customResponse.getResponse()
+    @app.route("/Ajax/DataManager/get_submitted_selfstudy_date", methods=["GET"])
+    def getSubmittedSelfstudyDate():
+        with CustomResponse() as customResponse:
+            with Logger(funcName="DataManager.getSubmittedSelfstudyDate()") as logger:
+                # ===============
+                # 检查接口调用权限
+                Authorization.check(
+                    rightsNeeded=(
+                        {"department_id": 9, "actor": "manager"},
+                        {"department_id": 9, "actor": "member"},
+                    ),
+                    needLogin=True,
+                )
+                # =========================================
+                # 执行接口流程，并获取用户名信息以完成会话建立
+                results = DataManagerDatabase.getSubmittedSelfstudyDate()
+                # ========================
+                # 准备函数返回值和响应与日志
+                returns = {"message": "", "data": results}
+                customResponse.setMessageAndData(**returns)
+                logger.funcReturns = returns
+        return customResponse.getResponse()
 
-    # @app.route("/Ajax/DataManager/get_selfstudy_classroom_details", methods=["POST"])
-    # def getSelfstudyClassroomDetails():
-    #     with CustomResponse() as customResponse:
-    #         with Logger(
-    #             funcName="DataManager.getSelfstudyClassroomDetails()"
-    #         ) as logger:
-    #             # ===============
-    #             # 检查接口调用权限
-    #             Authorization.check(
-    #                 rightsNeeded=({"department_id": 0, "actor": 0},), needLogin=True
-    #             )
-    #             # =========================================
-    #             # 执行接口流程，并获取用户名信息以完成会话建立
-    #             results = DataManagerDatabase.getSelfstudyClassroomDetails(request)
-    #             # ========================
-    #             # 准备函数返回值和响应与日志
-    #             returns = {"message": "", "data": results}
-    #             customResponse.setMessageAndData(**returns)
-    #             logger.funcReturns = returns
-    #     return customResponse.getResponse()
+    @app.route("/Ajax/DataManager/get_selfstudy_classroom_details", methods=["POST"])
+    def getSelfstudyClassroomDetails():
+        with CustomResponse() as customResponse:
+            with Logger(
+                funcName="DataManager.getSelfstudyClassroomDetails()"
+            ) as logger:
+                # ===============
+                # 检查接口调用权限
+                Authorization.check(
+                    rightsNeeded=(
+                        {"department_id": 9, "actor": "manager"},
+                        {"department_id": 9, "actor": "member"},
+                    ),
+                    needLogin=True,
+                )
+                # ========================
+                # 检查接口输入参数并记录日志
+                assert request.json is not None
+                infoForm = dict(request.json)
+                DataManagerCheck.getSelfstudyClassroomDetailsParamsCheck(infoForm)
+                logger.funcArgs = request.json
+                # =========================================
+                # 执行接口流程，并获取用户名信息以完成会话建立
+                results = DataManagerDatabase.getSelfstudyClassroomDetails(infoForm)
+                # ========================
+                # 准备函数返回值和响应与日志
+                returns = {"message": "", "data": results}
+                customResponse.setMessageAndData(**returns)
+                logger.funcReturns = returns
+        return customResponse.getResponse()
 
-    # @app.route("/Ajax/DataManager/upload_selfstudy_classroom", methods=["POST"])
-    # def uploadSelfstudyClassroom():
-    #     with CustomResponse() as customResponse:
-    #         with Logger(funcName="DataManager.uploadSelfstudyClassroom()") as logger:
-    #             # ===============
-    #             # 检查接口调用权限
-    #             Authorization.check(
-    #                 rightsNeeded=(
-    #                     {"department_id": 0, "actor": 1},
-    #                     {"department_id": 3, "actor": 0},
-    #                     {"department_id": 3, "actor": 1},
-    #                 ),
-    #                 needLogin=True,
-    #             )
-    #             # ========================
-    #             # 检查接口输入参数并记录日志
-    #             infoForm = request.get_json()
-    #             DataManagerCheck.uploadSelfstudyClassroomParamsCheck(infoForm)
-    #             logger.funcArgs = request.get_json()
-    #             # =========================================
-    #             # 执行接口流程，并获取用户名信息以完成会话建立
-    #             DataManagerDatabase.uploadSelfstudyClassroom(infoForm)
-    #             # ========================
-    #             # 准备函数返回值和响应与日志
-    #             returns = {"message": "", "data": ""}
-    #             customResponse.setMessageAndData(**returns)
-    #             logger.funcReturns = returns
-    #     return customResponse.getResponse()
+    @app.route("/Ajax/DataManager/upload_selfstudy_classroom", methods=["POST"])
+    def uploadSelfstudyClassroom():
+        with CustomResponse() as customResponse:
+            with Logger(funcName="DataManager.uploadSelfstudyClassroom()") as logger:
+                # ===============
+                # 检查接口调用权限
+                Authorization.check(
+                    rightsNeeded=(
+                        {"department_id": 9, "actor": "manager"},
+                        {"department_id": 9, "actor": "member"},
+                    ),
+                    needLogin=True,
+                )
+                # ========================
+                # 检查接口输入参数并记录日志
+                assert request.json is not None
+                infoForm = request.json
+                DataManagerCheck.uploadSelfstudyClassroomParamsCheck(infoForm)
+                logger.funcArgs = request.json
+                # =========================================
+                # 执行接口流程，并获取用户名信息以完成会话建立
+                DataManagerDatabase.uploadSelfstudyClassroom(infoForm)
+                # ========================
+                # 准备函数返回值和响应与日志
+                returns: dict = {"message": "", "data": ""}
+                customResponse.setMessageAndData(**returns)
+                logger.funcReturns = returns
+        return customResponse.getResponse()
 
     # @app.route("/Ajax/DataManager/submit_selfstudy_schedule", methods=["POST"])
     # def submitSelfstudySchedule():

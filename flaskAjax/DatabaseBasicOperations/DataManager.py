@@ -3,6 +3,7 @@ import sys
 import time
 import random
 import datetime
+from sqlalchemy import desc as DESC
 from sqlalchemy.orm import Session
 from contextlib import nullcontext
 from flask import Request
@@ -12,6 +13,7 @@ from flaskAjax.BaseComponents.DatabaseConnector import (
     SQL_Classroom,
     SQL_College,
     SQL_UserProfile,
+    SQL_StudySchedule,
     SessionLocal,
 )
 # import Program.python.SelfstudyExportProcess as SelfstudyExportProcess
@@ -298,147 +300,175 @@ class DataManagerDatabase:
             # 提交修改
             session.commit()
 
-    # @staticmethod
-    # def getSubmittedSelfstudyDate(
-    #     databaseConnector: DatabaseConnector | None = None,
-    # ) -> tuple[dict] | list[dict]:
-    #     # =====================================
-    #     # 如果提供已经建立的数据库连接，则直接使用
-    #     if databaseConnector is None:
-    #         database = DatabaseConnector()
-    #         database.startCursor()
-    #     else:
-    #         database = databaseConnector
-    #     # =======================
-    #     # 获取提交的早自习检查安排
-    #     _ = database.execute(
-    #         "SELECT DISTINCT date FROM SelfstudyInfo ORDER BY date DESC LIMIT 15;"
-    #     )
-    #     results = database.fetchall()
-    #     for i in results:
-    #         i["date"] = str(i["date"])
-    #     return results
+    @staticmethod
+    def getSubmittedSelfstudyDate(
+        db_session: Session | None = None,
+    ) -> tuple[dict] | list[dict]:
+        # =====================================
+        # 如果提供已经建立的数据库连接，则直接使用
+        session_context = (
+            SessionLocal() if db_session is None else nullcontext(db_session)
+        )
+        with session_context as session:
+            # =======================
+            # 获取提交的早自习检查安排
+            results = (
+                session.query(SQL_StudySchedule.date)
+                .distinct()  # 应用 DISTINCT 关键字
+                .order_by(DESC(SQL_StudySchedule.date))
+                .limit(10)  # 限制结果为前10条
+                .all()  # 执行查询并获取所有结果
+            )
+            results = [{"date": i.isoformat()} for (i,) in results]
+            return results
 
-    # @staticmethod
-    # def getSelfstudyClassroomDetails(
-    #     flaskRequest: Request, databaseConnector: DatabaseConnector | None = None
-    # ) -> tuple[dict] | list[dict]:
-    #     # =====================================
-    #     # 如果提供已经建立的数据库连接，则直接使用
-    #     if databaseConnector is None:
-    #         database = DatabaseConnector()
-    #         database.startCursor()
-    #     else:
-    #         database = databaseConnector
-    #     # =======================
-    #     # 获取提交的早自习教室详情
-    #     _ = database.execute(
-    #         "SELECT Classroom.campus AS campus,building,area,room,sit_available, \
-    #                             School.name AS school_name,selfstudy_id,student_supposed,remark \
-    #                          FROM SelfstudyInfo \
-    #                          LEFT JOIN Classroom ON SelfstudyInfo.classroom_id=Classroom.classroom_id \
-    #                          LEFT JOIN School ON SelfstudyInfo.school_id=School.school_id AND School.campus=Classroom.campus \
-    #                          WHERE date=%(date)s \
-    #                          ORDER BY campus,building,area,room;",
-    #         flaskRequest.form,
-    #     )
-    #     return database.fetchall()
+    @staticmethod
+    def getSelfstudyClassroomDetails(
+        infoForm: dict, db_session: Session | None = None
+    ) -> tuple[dict] | list[dict]:
+        # =====================================
+        # 如果提供已经建立的数据库连接，则直接使用
+        session_context = (
+            SessionLocal() if db_session is None else nullcontext(db_session)
+        )
+        with session_context as session:
+            # =======================
+            # 获取提交的早自习教室详情
+            results = (
+                session.query(
+                    SQL_Campus.name.label("campus"),
+                    SQL_Classroom.id.label("classroom_id"),
+                    SQL_Classroom.building,
+                    SQL_Classroom.area,
+                    SQL_Classroom.room_number.label("room"),
+                    SQL_Classroom.capacity.label("capacity"),
+                    SQL_College.id.label("school_id"),
+                    SQL_College.name.label("school_name"),
+                    SQL_StudySchedule.id.label("selfstudy_id"),
+                    SQL_StudySchedule.expected_headcount.label("student_supposed"),
+                    SQL_StudySchedule.remark,
+                )
+                .join(SQL_Classroom, SQL_StudySchedule.classroom_id == SQL_Classroom.id)
+                .join(
+                    SQL_Campus, SQL_Classroom.campus_id == SQL_Campus.id
+                )  # 添加Campus的join
+                .join(
+                    SQL_College,
+                    SQL_StudySchedule.college_id == SQL_College.id,
+                    isouter=True,
+                )
+                .filter(SQL_StudySchedule.date == infoForm["date"])
+                .order_by(
+                    SQL_Classroom.id,
+                    SQL_Classroom.building,
+                    SQL_Classroom.area,
+                    SQL_Classroom.room_number,
+                )
+            ).all()
+            resutls = [
+                {
+                    "campus": campus,
+                    "classroom_id": classroom_id,
+                    "building": building,
+                    "area": area,
+                    "room": room,
+                    "capacity": capacity,
+                    "school_id": school_id,
+                    "school_name": school_name,
+                    "selfstudy_id": selfstudy_id,
+                    "student_supposed": student_supposed,
+                    "remark": remark,
+                }
+                for (
+                    campus,
+                    classroom_id,
+                    building,
+                    area,
+                    room,
+                    capacity,
+                    school_id,
+                    school_name,
+                    selfstudy_id,
+                    student_supposed,
+                    remark,
+                ) in results
+            ]
+            return resutls
 
-    # @staticmethod
-    # def uploadSelfstudyClassroom(
-    #     infoForm: dict, databaseConnector: DatabaseConnector | None = None
-    # ) -> None:
-    #     # =====================================
-    #     # 如果提供已经建立的数据库连接，则直接使用
-    #     if databaseConnector is None:
-    #         database = DatabaseConnector()
-    #         database.startCursor()
-    #     else:
-    #         database = databaseConnector
-    #     # =====================
-    #     # 删除指定日期的已有数据
-    #     _ = database.execute(
-    #         sql="DELETE FROM SelfstudyInfo WHERE date = %s;",
-    #         data=infoForm["date"],
-    #         autoCommit=False,
-    #     )
-    #     # ===================================
-    #     # 遍历每一条数据，检查数据，存储到列表中
-    #     data_upload = list()
-    #     for row in infoForm["data"]:
-    #         # ==============
-    #         # 检查教室ID存在
-    #         pattern = r"^([\u4e00-\u9fa5]{2,})(A|B|C|-)(\d{3}[A-Za-z]?)$"
-    #         match = re.match(pattern, row["classroom_name"])
-    #         if match is None:
-    #             database.rollback()
-    #             raise IllegalValueError(
-    #                 "教室名称不符合要求，请检查或联系管理员。",
-    #                 filename=__file__,
-    #                 line=sys._getframe().f_lineno,
-    #             )
-    #         else:
-    #             campus = row["campus"]
-    #             building = match.group(1)
-    #             area = match.group(2)
-    #             room = match.group(3)
-    #         DBAffectedRows = database.execute(
-    #             sql="SELECT classroom_id, sit_available FROM Classroom WHERE campus=%s AND building=%s AND area=%s AND room=%s;",
-    #             data=(campus, building, area, room),
-    #             autoCommit=False,
-    #         )
-    #         if DBAffectedRows != 1:
-    #             database.rollback()
-    #             raise IllegalValueError(
-    #                 "教室不存在或不唯一，请检查数据或联系管理员。",
-    #                 filename=__file__,
-    #                 line=sys._getframe().f_lineno,
-    #             )
-    #         classroom_info = database.fetchall()[0]
-    #         # ==============
-    #         # 检查学院ID存在
-    #         DBAffectedRows = database.execute(
-    #             sql="SELECT school_id FROM School WHERE campus=%s AND name=%s;",
-    #             data=(campus, row["school_name"]),
-    #             autoCommit=False,
-    #         )
-    #         if DBAffectedRows != 1:
-    #             database.rollback()
-    #             raise IllegalValueError(
-    #                 "学院不存在或不唯一，请检查数据或联系管理员。",
-    #                 filename=__file__,
-    #                 line=sys._getframe().f_lineno,
-    #             )
-    #         school_info = database.fetchall()[0]
-    #         # ==========================
-    #         # 检查应到人数小于等于教室容纳
-    #         if row["student_supposed"] > classroom_info["sit_available"]:
-    #             database.rollback()
-    #             raise IllegalValueError(
-    #                 "应到人数大于教室容纳人数。",
-    #                 filename=__file__,
-    #                 line=sys._getframe().f_lineno,
-    #             )
-    #         # ========
-    #         # 存储数据
-    #         data_upload.append(
-    #             (
-    #                 school_info["school_id"],
-    #                 classroom_info["classroom_id"],
-    #                 row["student_supposed"],
-    #                 infoForm["date"],
-    #                 row["remark"],
-    #             )
-    #         )
-    #     # ============
-    #     # 提交所有数据
-    #     if len(data_upload) > 0:
-    #         database.execute(
-    #             sql="INSERT INTO SelfstudyInfo (school_id,classroom_id,student_supposed,date,remark) VALUES (%s,%s,%s,%s,%s);",
-    #             data=data_upload,
-    #             autoCommit=False,
-    #         )
-    #     database.commit()
+    @staticmethod
+    def uploadSelfstudyClassroom(
+        infoForm: dict, db_session: Session | None = None
+    ) -> None:
+        # =====================================
+        # 如果提供已经建立的数据库连接，则直接使用
+        session_context = (
+            SessionLocal() if db_session is None else nullcontext(db_session)
+        )
+        with session_context as session:
+            # =====================
+            # 删除指定日期的已有数据
+            session.query(SQL_StudySchedule).filter_by(date=infoForm["date"]).delete()
+            # ===================================
+            # 遍历每一条数据，检查数据，存储到列表中
+            data_upload = list()
+            for row in infoForm["data"]:
+                # ==============
+                # 检查教室ID存在
+                results = (
+                    session.query(SQL_Classroom).filter_by(id=row["classroom_id"]).all()
+                )
+                if len(results) != 1:
+                    session.rollback()
+                    raise IllegalValueError(
+                        "教室不存在或不唯一，请检查数据或联系管理员。",
+                        filename=__file__,
+                        line=sys._getframe().f_lineno,
+                    )
+                elif results[0].campus.name != row["campus"]:
+                    session.rollback()
+                    raise IllegalValueError(
+                        "当前校区不存在对应教室，请检查数据或联系管理员。",
+                        filename=__file__,
+                        line=sys._getframe().f_lineno,
+                    )
+                classroom_info = results[0]
+                # ==============
+                # 检查学院ID存在
+                results = (
+                    session.query(SQL_College).filter_by(id=row["school_id"]).all()
+                )
+                if len(results) != 1:
+                    session.rollback()
+                    raise IllegalValueError(
+                        "学院不存在或不唯一，请检查数据或联系管理员。",
+                        filename=__file__,
+                        line=sys._getframe().f_lineno,
+                    )
+                # ==========================
+                # 检查应到人数小于等于教室容纳
+                if row["student_supposed"] > classroom_info.capacity:
+                    session.rollback()
+                    raise IllegalValueError(
+                        "应到人数大于教室容纳人数。",
+                        filename=__file__,
+                        line=sys._getframe().f_lineno,
+                    )
+                # ========
+                # 存储数据
+                data_upload.append(
+                    SQL_StudySchedule(
+                        date=infoForm["date"],
+                        classroom_id=row["classroom_id"],
+                        college_id=row["school_id"],
+                        expected_headcount=row["student_supposed"],
+                        remark=row["remark"],
+                    )
+                )
+            # ============
+            # 提交所有数据
+            for i in data_upload:
+                session.add(i)
+            session.commit()
 
     # @staticmethod
     # def submitSelfstudySchedule(
