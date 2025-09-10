@@ -32,9 +32,7 @@ async function fetchCampus() {
 }
 async function fetchSchools(campusVal = '') {
     try {
-        const { data } = await axios.get('/Ajax/DataManager/get_school', {
-            params: { campus: campusVal }
-        })
+        const { data } = await axios.get('/Ajax/DataManager/get_school')
         if (data.code === 200) {
             schoolList.value = data.data
         }
@@ -44,9 +42,7 @@ async function fetchSchools(campusVal = '') {
 }
 async function fetchClassrooms(campusVal = '') {
     try {
-        const { data } = await axios.get('/Ajax/DataManager/get_classroom', {
-            params: { campus: campusVal }
-        })
+        const { data } = await axios.get('/Ajax/DataManager/get_classroom')
         if (data.code === 200) {
             classroomList.value = data.data
         }
@@ -246,6 +242,7 @@ async function submitTable(submitDate) {
 
 onMounted(() => {
     fetchCampus()
+    fetchSchools()
 })
 
 // 渲染校区名徽章
@@ -266,7 +263,8 @@ function renderCampus(campus) {
             <!-- / Menu -->
 
             <div class="layout-page">
-                <nav class="layout-navbar container-fluid navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme rounded-pill">
+                <nav
+                    class="layout-navbar container-fluid navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme rounded-pill">
                     <Topbar />
                 </nav>
                 <LoginWork />
@@ -274,7 +272,8 @@ function renderCampus(campus) {
                 <div class="content-wrapper">
                     <div class="container-fluid flex-grow-1 container-p-y">
                         <!-- Breadcrumb -->
-                        <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);" aria-label="breadcrumb">
+                        <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);"
+                            aria-label="breadcrumb">
                             <ol class="breadcrumb">
                                 <li class="breadcrumb-item"><a href="./index.html">个人中心</a></li>
                                 <li class="breadcrumb-item"><a href="./index.html">后台数据管理</a></li>
@@ -282,12 +281,15 @@ function renderCampus(campus) {
                             </ol>
                         </nav>
 
-                        <div class="modal fade" id="select-saved-selfstudy-classroom" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal fade" id="select-saved-selfstudy-classroom" tabindex="-1"
+                            data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="exampleModalLabel"
+                            aria-hidden="true">
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <div class="modal-header">
                                         <h5 class="modal-title">选择源日期数据</h5>
-                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                            aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
                                         <p class="text-muted">只列出最近15次提交记录</p>
@@ -304,7 +306,10 @@ function renderCampus(campus) {
                                                         <tr v-for="item in importDates" :key="item.date">
                                                             <td>{{ item.date }}</td>
                                                             <td>
-                                                                <button type="button" class="btn btn-sm btn-primary rounded-pill" data-bs-dismiss="modal" @click="importData(item)">导入</button>
+                                                                <button type="button"
+                                                                    class="btn btn-sm btn-primary rounded-pill"
+                                                                    data-bs-dismiss="modal"
+                                                                    @click="importData(item)">导入</button>
                                                             </td>
                                                         </tr>
                                                     </tbody>
@@ -329,17 +334,23 @@ function renderCampus(campus) {
                             <h5 class="card-header">编辑早自习教室</h5>
                             <div class="card-body">
                                 <div class="d-flex gap-2 mb-3 flex-wrap">
-                                    <button class="btn btn-sm btn-info rounded-pill" data-bs-toggle="modal" data-bs-target="#select-saved-selfstudy-classroom" @click="loadImportDates">导入已有数据</button>
-                                    <button class="btn btn-sm btn-warning rounded-pill" :disabled="isEditMode" @click="changeToEditable">编辑</button>
-                                    <button class="btn btn-sm btn-success rounded-pill" :disabled="!isEditMode" @click="onSubmitClick">提交</button>
+                                    <button class="btn btn-sm btn-info rounded-pill" data-bs-toggle="modal"
+                                        data-bs-target="#select-saved-selfstudy-classroom"
+                                        @click="loadImportDates">导入已有数据</button>
+                                    <button class="btn btn-sm btn-warning rounded-pill" :disabled="isEditMode"
+                                        @click="changeToEditable">编辑</button>
+                                    <button class="btn btn-sm btn-success rounded-pill" :disabled="!isEditMode"
+                                        @click="onSubmitClick">提交</button>
                                 </div>
 
                                 <div class="form-check form-switch ms-3 mb-2">
                                     <label for="draggableButton2" class="form-check-label">禁用拖动</label>
-                                    <input type="checkbox" class="form-check-input" id="draggableButton2" name="draggableButton" required v-model="draggable_disable" />
+                                    <input type="checkbox" class="form-check-input" id="draggableButton2"
+                                        name="draggableButton" required v-model="draggable_disable" />
                                 </div>
 
-                                <VueDraggable v-model="classroomTable" target=".sort-target" :animation="150" :disabled="draggable_disable || !isEditMode">
+                                <VueDraggable v-model="classroomTable" target=".sort-target" :animation="150"
+                                    :disabled="draggable_disable || !isEditMode">
                                     <table class="table table-hover table-striped mb-3 text-center">
                                         <thead>
                                             <tr>
@@ -357,54 +368,68 @@ function renderCampus(campus) {
                                             <tr v-for="(row, idx) in classroomTable" :key="row.selfstudy_id ?? idx">
                                                 <td>{{ idx + 1 }}</td>
                                                 <td v-if="row.editing">
-                                                    <select class="form-select" v-model="row._tmp.campus" @change="onCampusChange(row)">
+                                                    <select class="form-select" v-model="row._tmp.campus"
+                                                        @change="onCampusChange(row)">
                                                         <option value="" disabled>请选择</option>
-                                                        <option v-for="c in campusList" :value="c">{{ c }}</option>
+                                                        <option v-for="c in campusList" :value="c.campus">{{ c.campus }}
+                                                        </option>
                                                     </select>
                                                 </td>
                                                 <td v-else v-html="renderCampus(row.campus)"></td>
                                                 <td v-if="row.editing">
                                                     <select class="form-select" v-model="row._tmp.classroom_name">
                                                         <option value="" disabled>请选择教室</option>
-                                                        <option v-for="c in classroomList.filter(r => r.campus === row._tmp.campus)" :value="c.building + c.area + c.room">
-                                                            {{ c.building + c.area + c.room }}
+                                                        <option
+                                                            v-for="c in classroomList.filter(r => r.campus === row._tmp.campus)"
+                                                            :value="c.id">
+                                                            {{ c.building + c.area + c.room_number }}
                                                         </option>
                                                     </select>
                                                 </td>
                                                 <td v-else>{{ row.classroom_name }}</td>
-                                                <td>{{ row.editing ? (classroomList.find(t => t.building + t.area + t.room === row._tmp.classroom_name)?.sit_available ?? '-') : row.sit_available }}</td>
+                                                <td>{{row.editing ? (classroomList.find(t => t.building + t.area +
+                                                    t.room_number === row._tmp.classroom_name)?.capacity ?? '-') :
+                                                    row.capacity }}</td>
                                                 <td v-if="row.editing">
                                                     <select class="form-select" v-model="row._tmp.school_name">
                                                         <option value="" disabled>请选择学院</option>
-                                                        <option v-for="school in schoolList" :value="school.name">{{ school.name }}</option>
+                                                        <option v-for="school in schoolList" :value="school.school_id">
+                                                            {{ school.name }}</option>
                                                     </select>
                                                 </td>
                                                 <td v-else>{{ row.school_name }}</td>
                                                 <td v-if="row.editing">
-                                                    <input class="form-control text-center" type="number" min="1" v-model="row._tmp.student_supposed" />
+                                                    <input class="form-control text-center" type="number" min="1"
+                                                        v-model="row._tmp.student_supposed" />
                                                 </td>
                                                 <td v-else>{{ row.student_supposed }}</td>
                                                 <td v-if="row.editing">
-                                                    <input class="form-control text-center" type="text" v-model="row._tmp.remark" />
+                                                    <input class="form-control text-center" type="text"
+                                                        v-model="row._tmp.remark" />
                                                 </td>
                                                 <td v-else>{{ row.remark }}</td>
                                                 <td>
-                                                    <button v-if="isEditMode && (row.editing || row.isNew)" class="btn btn-danger btn-sm rounded-pill" @click="row.isNew ? cancelAddRow(idx) : deleteRow(idx)">删除</button>
+                                                    <button v-if="isEditMode && (row.editing || row.isNew)"
+                                                        class="btn btn-danger btn-sm rounded-pill"
+                                                        @click="row.isNew ? cancelAddRow(idx) : deleteRow(idx)">删除</button>
                                                 </td>
                                             </tr>
                                         </tbody>
                                     </table>
                                 </VueDraggable>
-                                <button class="btn btn-sm btn-success rounded-pill mb-3 ms-3" :disabled="!isEditMode" @click="addEditableRow">新增</button>
+                                <button class="btn btn-sm btn-success rounded-pill mb-3 ms-3" :disabled="!isEditMode"
+                                    @click="addEditableRow">新增</button>
                             </div>
                         </div>
                     </div>
 
                     <footer class="content-footer footer bg-footer-theme">
-                        <div class="container-fluid d-flex flex-wrap justify-content-between py-2 flex-md-row flex-column">
+                        <div
+                            class="container-fluid d-flex flex-wrap justify-content-between py-2 flex-md-row flex-column">
                             <div class="mb-2 mb-md-0">
                                 &copy; <span>{{ new Date().getFullYear() }}</span>
-                                <a href="javascript:void(0);" class="footer-link fw-bolder">学工部学风督导队：罗寅松、赵创日、涂芷荇、张舒涵、谢骁巍</a>
+                                <a href="javascript:void(0);"
+                                    class="footer-link fw-bolder">学工部学风督导队：罗寅松、赵创日、涂芷荇、张舒涵、谢骁巍</a>
                             </div>
                         </div>
                     </footer>
