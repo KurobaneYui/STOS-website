@@ -565,48 +565,59 @@ class DataManagerDatabase:
             }
             # ==========================
             # 获取排班和未排班的队员信息
-            results = (
-                session.query(SQL_GroupMember, SQL_User.name, SQL_Group.name)
-                .join(SQL_Group, SQL_GroupMember.group_id == SQL_Group.id)
-                .filter(SQL_Group.chazao, SQL_GroupMember.role == "member")
-                .join(SQL_User, SQL_User.student_id == SQL_GroupMember.student_id)
-                .join(
-                    SQL_CheckInTask,
-                    SQL_CheckInTask.student_id == SQL_GroupMember.student_id,
-                    isouter=True,
+            # 子查询：当天打卡任务 schedule
+            task_schedule_subq = (
+                session.query(
+                    SQL_CheckInTask.student_id.label("student_id"),
+                    SQL_CheckInTask.schedule_id.label("schedule_id"),
                 )
                 .join(
                     SQL_StudySchedule,
                     SQL_CheckInTask.schedule_id == SQL_StudySchedule.id,
-                    isouter=True,
                 )
-                .filter(
-                    OR(
-                        SQL_StudySchedule.date == infoForm["date"],
-                        SQL_StudySchedule.date.is_(None),  # 显式处理 NULL
-                    )
+                .filter(SQL_StudySchedule.date == infoForm["date"])
+                .subquery()
+            )
+            results = (
+                session.query(
+                    SQL_GroupMember,
+                    SQL_User.name,
+                    SQL_Group.name,
+                    task_schedule_subq.c.schedule_id,
                 )
-                .order_by(SQL_StudySchedule.id, SQL_Group.id, SQL_User.student_id)
+                .join(SQL_Group, SQL_GroupMember.group_id == SQL_Group.id)
+                .filter(SQL_Group.chazao, SQL_GroupMember.role == "member")
+                .join(SQL_User, SQL_User.student_id == SQL_GroupMember.student_id)
+                .outerjoin(
+                    task_schedule_subq,
+                    task_schedule_subq.c.student_id == SQL_GroupMember.student_id,
+                )
+                .order_by(
+                    task_schedule_subq.c.schedule_id, SQL_Group.id, SQL_User.student_id
+                )
                 .all()
             )
             unassigned = list()
-            for i, name, group_name in results:
-                if len(i.profile.check_in_tasks) < 1:
+            for i, name, group_name, schedule_id in results:
+                if schedule_id is None:
                     unassigned.append(
                         {
                             "student_id": i.student_id,
                             "name": name,
                             "group_name": group_name,
+                            "campus": i.profile.campus.name,
                         }
                     )
                 else:
-                    schedule[i.profile.check_in_tasks[0].schedule_id].update(
+                    schedule[schedule_id].update(
                         {
                             "student_id": i.student_id,
                             "name": name,
                             "group_name": group_name,
+                            "campus": i.profile.campus.name,
                         }
                     )
+            # ============
             # 返回结果字典
             results = {
                 "date": infoForm["date"].isoformat(),
@@ -621,111 +632,272 @@ class DataManagerDatabase:
     ) -> None:
         # =====================================
         # 如果提供已经建立的数据库连接，则直接使用
-        if databaseConnector is None:
-            database = DatabaseConnector()
-            database.startCursor()
-        else:
-            database = databaseConnector
-        # =====================
-        # 删除指定日期的已有数据
-        _ = database.execute(
-            sql="DELETE FROM SelfstudyCheckSchedule \
-                WHERE selfstudy_id IN (SELECT selfstudy_id FROM SelfstudyInfo WHERE date=%s);",
-            data=infoForm["date"],
-            autoCommit=False,
+        session_context = (
+            SessionLocal() if db_session is None else nullcontext(db_session)
         )
-        # =========================================================
-        # 遍历每一条数据，检查数据，存储到列表中。先处理沙河再处理清水河
-        data_upload = list()
-        for row in infoForm["data"]["shahe"]:
-            # ==============
-            # 检查自习表ID存在
-            DBAffectedRows = database.execute(
-                sql="SELECT SelfstudyInfo.selfstudy_id FROM SelfstudyInfo \
-                    LEFT JOIN School ON SelfstudyInfo.school_id = School.school_id \
-                    WHERE selfstudy_id = %s AND School.campus = '沙河' AND date=%s;",
-                data=(row["selfstudy_id"], infoForm["date"]),
-                autoCommit=False,
-            )
-            if DBAffectedRows != 1:
-                database.rollback()
-                raise IllegalValueError(
-                    "早自习表不存在或不唯一，请检查数据或联系管理员。",
-                    filename=__file__,
-                    line=sys._getframe().f_lineno,
+        with session_context as session:
+            # =======================
+            # 删除指定日期的早自习排班
+            results = (
+                session.query(SQL_CheckInTask)
+                .join(
+                    SQL_StudySchedule,
+                    SQL_StudySchedule.id == SQL_CheckInTask.schedule_id,
                 )
-            database.fetchall()
-            # ==============
-            # 检查学生ID存在
-            DBAffectedRows = database.execute(
-                sql="SELECT student_id FROM Work \
-                    LEFT JOIN Department ON Work.department_id = Department.department_id \
-                    WHERE student_id = %s AND job = 0 AND Department.name LIKE %s;",
-                data=(row["student_id"], "现场组%"),
-                autoCommit=False,
+                .filter(SQL_StudySchedule.date == infoForm["date"])
+                .all()
             )
-            if DBAffectedRows != 1:
-                database.rollback()
-                raise IllegalValueError(
-                    "学号不存在或不唯一，请检查数据或联系管理员。",
-                    filename=__file__,
-                    line=sys._getframe().f_lineno,
+            for i in results:
+                session.delete(i)
+            # =========================================================
+            # 遍历每一条数据，检查数据，存储到列表中。先处理沙河再处理清水河
+            data_upload = list()
+            for row in infoForm["data"]["shahe"]:
+                # ================
+                # 检查自习表ID存在
+                results = (
+                    session.query(SQL_StudySchedule)
+                    .join(
+                        SQL_Classroom,
+                        SQL_StudySchedule.classroom_id == SQL_Classroom.id,
+                    )
+                    .join(SQL_Campus, SQL_Campus.id == SQL_Classroom.campus_id)
+                    .filter(
+                        SQL_StudySchedule.date == infoForm["date"],
+                        SQL_StudySchedule.id == row["selfstudy_id"],
+                        SQL_Campus.name == "沙河",
+                    )
+                    .all(),
                 )
-            database.fetchall()
-            # ========
-            # 存储数据
-            data_upload.append(
-                (row["selfstudy_id"], row["student_id"], row["student_id"], "")
-            )
-        for row in infoForm["data"]["qingshuihe"]:
-            # ==============
-            # 检查自习表ID存在
-            DBAffectedRows = database.execute(
-                sql="SELECT SelfstudyInfo.selfstudy_id FROM SelfstudyInfo \
-                    LEFT JOIN School ON SelfstudyInfo.school_id = School.school_id \
-                    WHERE selfstudy_id = %s AND School.campus = '清水河' AND date=%s;",
-                data=(row["selfstudy_id"], infoForm["date"]),
-                autoCommit=False,
-            )
-            if DBAffectedRows != 1:
-                database.rollback()
-                raise IllegalValueError(
-                    "早自习表不存在或不唯一，请检查数据或联系管理员。",
-                    filename=__file__,
-                    line=sys._getframe().f_lineno,
+                if len(results) != 1:
+                    session.rollback()
+                    raise IllegalValueError(
+                        "早自习表不存在或不唯一，请检查数据或联系管理员。",
+                        filename=__file__,
+                        line=sys._getframe().f_lineno,
+                    )
+                # ==============
+                # 检查学生ID存在
+                if row["student_id"] == "":
+                    continue
+                results = (
+                    session.query(SQL_GroupMember)
+                    .filter_by(role="member")
+                    .join(SQL_Group, SQL_Group.id == SQL_GroupMember.group_id)
+                    .filter(SQL_Group.chazao)
+                    .join(
+                        SQL_UserProfile,
+                        SQL_UserProfile.student_id == SQL_GroupMember.student_id,
+                    )
+                    .filter(SQL_UserProfile.student_id == row["student_id"])
+                    .join(SQL_Campus, SQL_Campus.id == SQL_UserProfile.campus_id)
+                    .filter(SQL_Campus.name == "沙河")
+                    .all()
                 )
-            database.fetchall()
-            # ==============
-            # 检查学生ID存在
-            DBAffectedRows = database.execute(
-                sql="SELECT student_id FROM Work \
-                    LEFT JOIN Department ON Work.department_id = Department.department_id \
-                    WHERE student_id = %s AND job = 0 AND Department.name LIKE %s;",
-                data=(row["student_id"], "现场组%"),
-                autoCommit=False,
-            )
-            if DBAffectedRows != 1:
-                database.rollback()
-                raise IllegalValueError(
-                    "学号不存在或不唯一，请检查数据或联系管理员。",
-                    filename=__file__,
-                    line=sys._getframe().f_lineno,
+                if len(results) < 1:
+                    session.rollback()
+                    raise IllegalValueError(
+                        "学号不存在或不唯一，请检查数据或联系管理员。",
+                        filename=__file__,
+                        line=sys._getframe().f_lineno,
+                    )
+                # ========
+                # 存储数据
+                data_upload.append(
+                    {
+                        "schedule_ie": row["selfstudy_id"],
+                        "student_id": row["student_id"],
+                    }
                 )
-            database.fetchall()
-            # ========
-            # 存储数据
-            data_upload.append(
-                (int(row["selfstudy_id"]), row["student_id"], row["student_id"], "")
+            for row in infoForm["data"]["qingshuihe"]:
+                # ================
+                # 检查自习表ID存在
+                results = (
+                    session.query(SQL_StudySchedule)
+                    .join(
+                        SQL_Classroom,
+                        SQL_StudySchedule.classroom_id == SQL_Classroom.id,
+                    )
+                    .join(SQL_Campus, SQL_Campus.id == SQL_Classroom.campus_id)
+                    .filter(
+                        SQL_StudySchedule.date == infoForm["date"],
+                        SQL_StudySchedule.id == row["selfstudy_id"],
+                        SQL_Campus.name == "清水河",
+                    )
+                    .all(),
+                )
+                if len(results) != 1:
+                    session.rollback()
+                    raise IllegalValueError(
+                        "早自习表不存在或不唯一，请检查数据或联系管理员。",
+                        filename=__file__,
+                        line=sys._getframe().f_lineno,
+                    )
+                # ==============
+                # 检查学生ID存在
+                if row["student_id"] == "":
+                    continue
+                results = (
+                    session.query(SQL_GroupMember)
+                    .filter_by(role="member")
+                    .join(SQL_Group, SQL_Group.id == SQL_GroupMember.group_id)
+                    .filter(SQL_Group.chazao)
+                    .join(
+                        SQL_UserProfile,
+                        SQL_UserProfile.student_id == SQL_GroupMember.student_id,
+                    )
+                    .filter(SQL_UserProfile.student_id == row["student_id"])
+                    .join(SQL_Campus, SQL_Campus.id == SQL_UserProfile.campus_id)
+                    .filter(SQL_Campus.name == "清水河")
+                    .all()
+                )
+                if len(results) < 1:
+                    session.rollback()
+                    raise IllegalValueError(
+                        "学号不存在或不唯一，请检查数据或联系管理员。",
+                        filename=__file__,
+                        line=sys._getframe().f_lineno,
+                    )
+                # ========
+                # 存储数据
+                data_upload.append(
+                    {
+                        "schedule_ie": row["selfstudy_id"],
+                        "student_id": row["student_id"],
+                    }
+                )
+            # ============
+            # 提交所有数据
+            session.commit()
+            for i in data_upload:
+                session.add(
+                    SQL_CheckInTask(
+                        schedule_id=i["schedule_ie"], student_id=i["student_id"]
+                    )
+                )
+            session.commit()
+
+    @staticmethod
+    def lastScheduleOnDate(infoForm: dict, db_session: Session | None = None) -> dict:
+        # =====================================
+        # 如果提供已经建立的数据库连接，则直接使用
+        session_context = (
+            SessionLocal() if db_session is None else nullcontext(db_session)
+        )
+        with session_context as session:
+            # ====================================
+            # 获取此日期之前最近一次已提交排班信息
+            results = (
+                session.query(SQL_StudySchedule.date)
+                .join(
+                    SQL_CheckInTask,
+                    SQL_StudySchedule.id == SQL_CheckInTask.schedule_id,
+                    isouter=True,
+                )
+                .filter(
+                    SQL_StudySchedule.date < infoForm["date"],
+                    SQL_CheckInTask.created_at.is_not(None),
+                )
+                .distinct()
+                .order_by(DESC(SQL_StudySchedule.date))
+                .limit(1)  # 限制结果为前1条
+                .all()  # 执行查询并获取所有结果
             )
-        # ============
-        # 提交所有数据
-        if len(data_upload) > 0:
-            database.execute(
-                sql="INSERT INTO SelfstudyCheckSchedule (selfstudy_id,schedule_student_id,actual_student_id,remark) VALUES (%s,%s,%s,%s);",
-                data=data_upload,
-                autoCommit=False,
+            if len(results) < 1:
+                # ============
+                # 返回结果字典
+                results = {
+                    "qingshuihe": list(),
+                    "shahe": list(),
+                }
+                return results
+            infoForm["date"] = results[0][0]
+            # results = [
+            #     {
+            #         "date": date.isoformat(),
+            #         "submitted_at": None
+            #         if created_at is None
+            #         else created_at.isoformat(),
+            #     }
+            #     for (date, created_at) in results
+            # ]
+            # ==========================
+            # 获取当日早自习安排教室信息
+            results = (
+                session.query(SQL_StudySchedule)
+                .join(SQL_Classroom, SQL_Classroom.id == SQL_StudySchedule.classroom_id)
+                .filter(SQL_StudySchedule.date == infoForm["date"])
+                .order_by(SQL_Classroom.id)
+                .all()
             )
-        database.commit()
+            schedule = {
+                i.id: {
+                    "schedule_id": i.id,
+                    "campus": i.classroom.campus.name,
+                    "classroom_id": i.classroom_id,
+                    "classroom_name": i.classroom.building
+                    + i.classroom.area
+                    + i.classroom.room_number,
+                    "remark": i.remark,
+                }
+                for i in results
+            }
+            # ==========================
+            # 获取已排班的队员信息
+            results = (
+                session.query(
+                    SQL_GroupMember,
+                    SQL_User.name,
+                    SQL_Group.name,
+                    SQL_CheckInTask.schedule_id,
+                )
+                .join(SQL_Group, SQL_GroupMember.group_id == SQL_Group.id)
+                .filter(SQL_Group.chazao, SQL_GroupMember.role == "member")
+                .join(SQL_User, SQL_User.student_id == SQL_GroupMember.student_id)
+                .join(
+                    SQL_CheckInTask,
+                    SQL_CheckInTask.student_id == SQL_GroupMember.student_id,
+                    isouter=True,
+                )
+                .join(
+                    SQL_StudySchedule,
+                    SQL_CheckInTask.schedule_id == SQL_StudySchedule.id,
+                    isouter=True,
+                )
+                .filter(
+                    SQL_StudySchedule.date == infoForm["date"],
+                )
+                .order_by(SQL_StudySchedule.id, SQL_Group.id, SQL_User.student_id)
+                .all()
+            )
+            for i, name, group_name, schedule_id in results:
+                if schedule_id is not None:
+                    schedule[schedule_id].update(
+                        {
+                            "student_id": i.student_id,
+                            "name": name,
+                            "group_name": group_name,
+                            "campus": i.profile.campus.name,
+                        }
+                    )
+            # ========================================================================
+            # 剔除没有排班的教室，将键从schedule_id转为classroom_id，拆分清水河和沙河
+            qingshuihe = list()
+            shahe = list()
+            for i in schedule.values():
+                if "student_id" not in i.keys():
+                    continue
+                if i["campus"] == "清水河":
+                    qingshuihe.append({i["classroom_id"]: i["student_id"]})
+                elif i["campus"] == "沙河":
+                    shahe.append({i["classroom_id"]: i["student_id"]})
+            # ============
+            # 返回结果字典
+            results = {
+                "qingshuihe": qingshuihe,
+                "shahe": shahe,
+            }
+            return results
 
     # @staticmethod
     # def downloadSelfstudyAllData(

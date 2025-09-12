@@ -317,9 +317,7 @@ class DataManagerCheck:
                 line=sys._getframe().f_lineno,
             )
         try:
-            infoForm["date"] = datetime.datetime.strptime(
-                infoForm["date"], "%Y-%m-%d"
-            ).strftime("%Y-%m-%d")
+            infoForm["date"] = datetime.date.fromisoformat(infoForm["date"])
         except Exception:
             raise IllegalValueError(
                 "Date is wrong or in wrong format. Should be YYYY-MM-DD.",
@@ -338,7 +336,7 @@ class DataManagerCheck:
                 )
             if item["selfstudy_id"] in selfstudy_id_set:
                 raise IllegalValueError(
-                    "沙河 selfstudy_id must be unique.",
+                    "沙河排班日期与教室组合必须唯一.",
                     filename=__file__,
                     line=sys._getframe().f_lineno,
                 )
@@ -355,12 +353,38 @@ class DataManagerCheck:
                 )
             if item["selfstudy_id"] in selfstudy_id_set:
                 raise IllegalValueError(
-                    "清水河 selfstudy_id must be unique.",
+                    "清水河排班日期与教室组合必须唯一.",
                     filename=__file__,
                     line=sys._getframe().f_lineno,
                 )
             else:
                 selfstudy_id_set.add(item["selfstudy_id"])
+
+    @staticmethod
+    def lastScheduleOnDateCheck(infoForm: dict) -> None:
+        # "date" and "data" should be infoForm's keys
+        # infoForm["date"] should be "YYYY-MM-DD"
+        # infoForm["data"] is an array of dict which has unique campus+classroom_name and student_supposed must not negative
+        if "date" not in infoForm.keys() or "campus" not in infoForm.keys():
+            raise IllegalValueError(
+                "Not all required data received.",
+                filename=__file__,
+                line=sys._getframe().f_lineno,
+            )
+        try:
+            infoForm["date"] = datetime.date.fromisoformat(infoForm["date"])
+        except Exception:
+            raise IllegalValueError(
+                "Date is wrong or in wrong format. Should be YYYY-MM-DD.",
+                filename=__file__,
+                line=sys._getframe().f_lineno,
+            )
+        if infoForm["campus"] not in ["清水河", "沙河"]:
+            raise IllegalValueError(
+                "提供的校区信息有误.",
+                filename=__file__,
+                line=sys._getframe().f_lineno,
+            )
 
     # @staticmethod
     # def downloadSelfstudyAllDataParamsCheck(infoForm: dict) -> None:

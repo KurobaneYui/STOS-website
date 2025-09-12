@@ -128,14 +128,30 @@ class GroupManagerDatabase:
                 session.query(SQL_UserProfile).filter_by(student_id=student_id).all()
             )
             if len(results) < 1:
-                ...
+                raise IllegalValueError(
+                    "不存在该学号成员",
+                    filename=__file__,
+                    line=sys._getframe().f_lineno,
+                )
             if len(results) > 1:
-                ...
+                raise DatabaseRuntimeError(
+                    "匹配多条成员数据，请联系管理员处理",
+                    filename=__file__,
+                    line=sys._getframe().f_lineno,
+                )
             results = session.query(SQL_Group).filter_by(id=group_id).all()
             if len(results) < 1:
-                ...
+                raise IllegalValueError(
+                    "不存在该组号",
+                    filename=__file__,
+                    line=sys._getframe().f_lineno,
+                )
             if len(results) > 1:
-                ...
+                raise DatabaseRuntimeError(
+                    "组号匹配多条小组信息，请联系管理员处理",
+                    filename=__file__,
+                    line=sys._getframe().f_lineno,
+                )
             # ============
             # 更新岗位信息
             # DBAffectedRows = database.execute(

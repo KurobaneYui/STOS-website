@@ -437,9 +437,6 @@ def DataManager(app: flask.Flask) -> None:
                 # ========================
                 # 检查接口输入参数并记录日志
                 infoForm = request.get_json()
-                # {'data': {'qingshuihe': [{'selfstudy_id': 1, 'student_id': '202411012150'}],
-                #         'shahe': [{'selfstudy_id': 2, 'student_id': '202411012149'}]},
-                # 'date': '2025-09-13'}
                 DataManagerCheck.submitSelfstudyScheduleParamsCheck(infoForm)
                 logger.funcArgs = request.get_json()
                 # =========================================
@@ -448,6 +445,34 @@ def DataManager(app: flask.Flask) -> None:
                 # ========================
                 # 准备函数返回值和响应与日志
                 returns: dict = {"message": "", "data": ""}
+                customResponse.setMessageAndData(**returns)
+                logger.funcReturns = returns
+        return customResponse.getResponse()
+
+    @app.route("/Ajax/DataManager/last_schedule_on_date", methods=["POST"])
+    def lastScheduleOnDate():
+        with CustomResponse() as customResponse:
+            with Logger(funcName="DataManager.lastScheduleOnDate()") as logger:
+                # ===============
+                # 检查接口调用权限
+                Authorization.check(
+                    rightsNeeded=(
+                        {"department_id": 9, "actor": "manager"},
+                        {"department_id": 9, "actor": "member"},
+                    ),
+                    needLogin=True,
+                )
+                # ========================
+                # 检查接口输入参数并记录日志
+                infoForm = request.get_json()
+                DataManagerCheck.lastScheduleOnDateCheck(infoForm)
+                logger.funcArgs = request.get_json()
+                # =========================================
+                # 执行接口流程，并获取用户名信息以完成会话建立
+                returns = DataManagerDatabase.lastScheduleOnDate(infoForm)
+                # ========================
+                # 准备函数返回值和响应与日志
+                returns = {"message": "", "data": returns}
                 customResponse.setMessageAndData(**returns)
                 logger.funcReturns = returns
         return customResponse.getResponse()

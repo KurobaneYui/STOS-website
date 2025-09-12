@@ -25,7 +25,8 @@ function buildSourceStudentDict(scheduleArr, unassignedArr) {
             dict[item.student_id] = {
                 student_id: item.student_id,
                 name: item.name,
-                group_name: item.group_name
+                group_name: item.group_name,
+                campus: item.campus
             }
         }
     })
@@ -34,7 +35,8 @@ function buildSourceStudentDict(scheduleArr, unassignedArr) {
             dict[item.student_id] = {
                 student_id: item.student_id,
                 name: item.name,
-                group_name: item.group_name
+                group_name: item.group_name,
+                campus: item.campus
             }
         }
     })
@@ -91,7 +93,7 @@ async function importData(d) {
         if (response.code === 200) {
             const { date, schedule, unassigned } = response.data
             currentDate.value = date
-
+console.log(response.data)
             // 提取所有成员构建索引字典
             sourceStudentDict.value = buildSourceStudentDict(schedule, unassigned)
 
@@ -182,30 +184,179 @@ async function submitTable(data) {
     }
 }
 
-// 随机打乱校区排班
-async function randomMember(campus) {
+// 使用上次按钮功能
+async function useLastSchedule(campus) {
     if (!currentDate.value) {
         swal({ title: "请先选择日期！", icon: "warning" })
         return
     }
     try {
-        const { data } = await axios.post('/Ajax/DataManager/random_schedule_on_date', {
+        const { data } = await axios.post('/Ajax/DataManager/last_schedule_on_date', {
             date: currentDate.value,
             campus: campus
-        })
+        });
         if (data.code === 200) {
-            if (campus === '清水河') {
-                qingshuiheList.value = data.data
-            } else {
-                shaheList.value = data.data
+            const mapping = {};
+            // 补充：同一学号仅分配一次，其余跳过
+            const assignedStudentIdSetForCampus = new Set();
+            // 取接口返回的分配表
+            let classroomMapArr = [];
+            if (campus === "清水河") classroomMapArr = data.data.qingshuihe || [];
+            else classroomMapArr = data.data.shahe || [];
+
+            // 把 [{cid:id},...] 转为 {cid:student_id,...}
+            const classroomIdToStudentId = {};
+            classroomMapArr.forEach(obj => {
+                for (const cid in obj) {
+                    // 找出该 student_id 是否已分配过
+                    const sid = obj[cid];
+                    if (sid && !assignedStudentIdSetForCampus.has(sid)) {
+                        classroomIdToStudentId[cid] = sid;
+                        assignedStudentIdSetForCampus.add(sid);
+                    }
+                }
+            });
+
+            // 获得当前表
+            const listRef = campus === "清水河" ? qingshuiheList : shaheList;
+            for (let row of listRef.value) {
+                // 仅处理有classroom_id的行
+                const cid = row.classroom_id;
+                if (!cid) continue;
+                // 若接口没有此教室映射 或学号无效，置空
+                const sid = classroomIdToStudentId.hasOwnProperty(cid) ? classroomIdToStudentId[cid] : '';
+                if (!sid || !(sid in sourceStudentDict.value)) {
+                    row.student_id = '';
+                    row.name = '';
+                    row.group_name = '';
+                } else {
+                    row.student_id = sid;
+                    row.name = sourceStudentDict.value[sid].name;
+                    row.group_name = sourceStudentDict.value[sid].group_name;
+                }
             }
-            swal({ title: "随机排序成功", icon: "success" })
         } else {
-            errorAlert(data.code)
+            errorAlert(data.code);
         }
     } catch {
-        swal({ title: '请检查网络连接，或稍后再试', icon: "error" })
+        swal({ title: '请检查网络连接，或稍后再试', icon: "error" });
     }
+}
+
+// 洗牌算法
+function shuffleArray(arr) {
+    // 完全乱序复制
+    for (let i = arr.length - 1; i > 0; i--) {
+        let j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+}
+
+// 随机打乱校区排班，本地实现
+function randomMember(campus) {
+    if (!currentDate.value) {
+        swal({ title: "请先选择日期！", icon: "warning" });
+        return;
+    }
+    // 指针
+    const listRef = campus === "清水河" ? qingshuiheList : shaheList;
+    // 深拷贝业务数据
+    const table = listRef.value;
+
+    // 找出现分配成员的行（有student_id），并统计每个学号出现次数
+    const assignedRows = [];
+    const sidCountMap = {}; // {student_id: 出现次数}
+    table.forEach((row, idx) => {
+        if (row.student_id) {
+            assignedRows.push({
+                idx,
+                group_name: row.group_name,
+                student_id: row.student_id
+            });
+            sidCountMap[row.student_id] = (sidCountMap[row.student_id] || 0) + 1;
+        }
+    });
+
+    // 获取组顺序（有成员分配的行），不可重复
+    const groupOrdered = [];
+    assignedRows.forEach(r => {
+        if (r.group_name && !groupOrdered.includes(r.group_name)) {
+            groupOrdered.push(r.group_name);
+        }
+    });
+
+    if (groupOrdered.length === 0) {
+        swal({ title: "无可分配成员，无法轮替", icon: "warning" });
+        return;
+    }
+    // 1. 轮替组顺序：第一个丢到最后，其余顺序前推
+    if (groupOrdered.length > 1) {
+        const first = groupOrdered.shift();
+        groupOrdered.push(first);
+    }
+
+    // 2. 按新顺序，组名=>成员池（每个成员出现多次的话要多次入池）
+    const groupToMembers = {};
+    groupOrdered.forEach(g => { groupToMembers[g] = []; });
+    assignedRows.forEach(r => {
+        groupToMembers[r.group_name].push(r.student_id);
+    });
+
+    // 3. 对每组成员池乱序
+    for (const g in groupToMembers) {
+        shuffleArray(groupToMembers[g]);
+    }
+
+    // 4. 组成员依次安放到assignedRows，每个学号出现次数必须不变
+    // 探索要填多少分配次数，先建全部要填的学号池：组1的全部打乱成员，组2的全部打乱成员...
+    const fillStudentIDs = [];
+    groupOrdered.forEach(g => {
+        fillStudentIDs.push(...groupToMembers[g]);
+    });
+
+    // 学号出现次数不能改变，需要校验
+    const fillSidCountMap = {};
+    fillStudentIDs.forEach(sid => {
+        fillSidCountMap[sid] = (fillSidCountMap[sid] || 0) + 1;
+    });
+    // 若数量不对，应不会出现，但保底…
+    if (Object.keys(sidCountMap).length !== Object.keys(fillSidCountMap).length) {
+        swal({ title: "分配成员异常，轮替失败", icon: "error" });
+        return;
+    }
+    for (const sid in sidCountMap) {
+        if (sidCountMap[sid] !== fillSidCountMap[sid]) {
+            swal({ title: "分配成员异常，轮替失败", icon: "error" });
+            return;
+        }
+    }
+
+    // 重新分配填回assignedRows
+    let ptr = 0;
+    assignedRows.forEach(r => {
+        const sid = fillStudentIDs[ptr++];
+        r._new_sid = sid;
+    });
+
+    // 刷新table中实际的数据
+    let fillIdx = 0;
+    table.forEach((row, idx) => {
+        if (row.student_id) {
+            const sid = assignedRows[fillIdx]._new_sid;
+            if (sid && sourceStudentDict.value[sid]) {
+                row.student_id = sid;
+                row.name = sourceStudentDict.value[sid].name;
+                row.group_name = sourceStudentDict.value[sid].group_name;
+            } else {
+                row.student_id = '';
+                row.name = '';
+                row.group_name = '';
+            }
+            fillIdx++;
+        }
+    });
+
+    swal({ title: "轮替排序成功", icon: "success" });
 }
 
 // 删除行
@@ -335,12 +486,12 @@ watch(shaheList, (nv) => {
                             </div>
                         </div>
                         <div class="alert alert-primary" role="alert">
-                            * 点击导入按钮导入教室和排班<br />
-                            &nbsp;&nbsp;&nbsp;&nbsp;* “自习日期+提交于”表明日期已提交排班，导入时会带入排班数据<br />
-                            &nbsp;&nbsp;&nbsp;&nbsp;* “自习日期”表明日期仅有早自习安排，无查早排班，导入时仅导入教室信息<br />
-                            <!-- 已移除与重置相关注释 -->
-                            * 导入信息后点击"随机"按钮打乱排班。清水河校区分别刷新组顺序和组内人员顺序<br />
-                            * 由于教室、人员变动， 加载过往排班时会删除当前不存在的教室、人员，并尽量匹配教室与组员。
+                            * 点击导入按钮导入教室和已提交排班<br />
+                            &nbsp;&nbsp;&nbsp;&nbsp;* "自习日期+提交于"表明日期已提交排班，导入时会带入排班数据<br />
+                            &nbsp;&nbsp;&nbsp;&nbsp;* "自习日期"表明日期仅有早自习安排，无查早排班，导入时仅导入教室信息<br />
+                            &nbsp;&nbsp;&nbsp;&nbsp;* "删除"可以清除错误提交的排班数据<br />
+                            * 对于暂未排班的早自习，点击“使用上次”可以用过往最近一次的排班方案，并尽量匹配所有教室和成员。<br />
+                            * 导入排班后点击"轮替"按钮打乱现有排班，分别轮替组顺序且打乱组内人员顺序<br />
                         </div>
                         <div class="card">
                             <h5 class="card-header">早自习排班</h5>
@@ -348,7 +499,7 @@ watch(shaheList, (nv) => {
                                 <div class="d-flex gap-2 mb-3 flex-wrap align-items-center">
                                     <button class="btn btn-sm btn-info rounded-pill" data-bs-toggle="modal"
                                         data-bs-target="#select-saved-selfstudy-classroom"
-                                        @click="loadImportDates">导入已有数据</button>
+                                        @click="loadImportDates">导入</button>
                                     <button class="btn btn-sm btn-warning rounded-pill" :disabled="isEditMode"
                                         @click="enterEditMode">编辑</button>
                                     <button class="btn btn-sm btn-success rounded-pill" :disabled="!isEditMode"
@@ -362,9 +513,10 @@ watch(shaheList, (nv) => {
                                     <div class="d-flex justify-content-between align-items-center mb-3">
                                         <h5 class="mb-0">沙河</h5>
                                         <div>
-                                            <!-- 重置按钮已移除 -->
+                                            <button type="button" class="btn btn-sm btn-outline-info rounded-pill ms-2"
+                                                :disabled="!isEditMode" @click="useLastSchedule('沙河')">使用上次</button>
                                             <button type="button" class="btn btn-sm btn-primary rounded-pill ms-2"
-                                                :disabled="!isEditMode" @click="randomMember('沙河')">随机</button>
+                                                :disabled="!isEditMode" @click="randomMember('沙河')">轮替</button>
                                         </div>
                                     </div>
                                     <div class="table-responsive text-nowrap">
@@ -388,7 +540,8 @@ watch(shaheList, (nv) => {
                                                     <td>{{ row.name }}</td>
                                                     <td>
                                                         <template v-if="isEditMode">
-                                                            <input class="form-control form-control-sm"
+                                                            <input
+                                                                class="form-control form-control-sm studentID-min-width"
                                                                 v-model="row.student_id" />
                                                         </template>
                                                         <template v-else>{{ row.student_id }}</template>
@@ -409,9 +562,10 @@ watch(shaheList, (nv) => {
                                     <div class="d-flex justify-content-between align-items-center mb-3">
                                         <h5 class="mb-0">清水河</h5>
                                         <div>
-                                            <!-- 重置按钮已移除 -->
+                                            <button type="button" class="btn btn-sm btn-outline-info rounded-pill ms-2"
+                                                :disabled="!isEditMode" @click="useLastSchedule('清水河')">使用上次</button>
                                             <button type="button" class="btn btn-sm btn-primary rounded-pill ms-2"
-                                                :disabled="!isEditMode" @click="randomMember('清水河')">随机</button>
+                                                :disabled="!isEditMode" @click="randomMember('清水河')">轮替</button>
                                         </div>
                                     </div>
                                     <div class="table-responsive text-nowrap">
@@ -435,7 +589,8 @@ watch(shaheList, (nv) => {
                                                     <td>{{ row.name }}</td>
                                                     <td>
                                                         <template v-if="isEditMode">
-                                                            <input class="form-control form-control-sm"
+                                                            <input
+                                                                class="form-control form-control-sm studentID-min-width"
                                                                 v-model="row.student_id" />
                                                         </template>
                                                         <template v-else>{{ row.student_id }}</template>
@@ -461,6 +616,7 @@ watch(shaheList, (nv) => {
                                             <thead>
                                                 <tr>
                                                     <th>#</th>
+                                                    <th>校区</th>
                                                     <th>姓名</th>
                                                     <th>学号</th>
                                                     <th>组</th>
@@ -469,6 +625,7 @@ watch(shaheList, (nv) => {
                                             <tbody>
                                                 <tr v-for="(person, idx) in unassignedList" :key="person.student_id">
                                                     <td>{{ idx + 1 }}</td>
+                                                    <td v-html="renderCampus(person.campus)"></td>
                                                     <td> {{ person.name }} </td>
                                                     <td> {{ person.student_id }} </td>
                                                     <td> {{ person.group_name }} </td>
@@ -500,15 +657,7 @@ watch(shaheList, (nv) => {
 </template>
 
 <style scoped>
-.table-responsive {
-    margin-bottom: 1rem;
-}
-
-.table th {
-    white-space: nowrap;
-}
-
-.btn-group {
-    gap: 0.5rem;
+.studentID-min-width {
+    min-width: 100px;
 }
 </style>
