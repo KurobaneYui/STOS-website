@@ -43,6 +43,7 @@ export default defineConfig({
         user_center_school_edit: resolve(__dirname, 'user_center/school_edit.html'),
         user_center_classroom_edit: resolve(__dirname, 'user_center/classroom_edit.html'),
         user_center_selfstudy_classroom_edit: resolve(__dirname, 'user_center/selfstudy_classroom_edit.html'),
+        user_center_selfstudy_schedule: resolve(__dirname, 'user_center/selfstudy_schedule.html'),
         user_center_finance_export: resolve(__dirname, 'user_center/finance_export.html'),
       },
     },

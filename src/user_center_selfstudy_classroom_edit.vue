@@ -103,21 +103,21 @@ function addEditableRow() {
         selfstudy_id: null,
         campus: '',
         classroom_name: '',
-        classroom_id: '', // 新增classroom_id字段
+        classroom_id: '',
         building: '',
         area: '',
         room: '',
         sit_available: '',
         school_name: '',
-        school_id: '', // 新增school_id字段
+        school_id: '',
         student_supposed: '',
         remark: '',
         editing: true,
         isNew: true,
         _tmp: {
             campus: '',
-            classroom_id: '', // 新增classroom_id字段
-            school_id: '', // 新增school_id字段
+            classroom_id: '',
+            school_id: '',
             student_supposed: '',
             remark: ''
         }
@@ -219,8 +219,8 @@ async function submitTable(submitDate) {
     // 数据校验
     const classrooms = classroomTable.value.map(row => ({
         campus: row.editing ? row._tmp.campus : row.campus,
-        classroom_id: row.editing ? row._tmp.classroom_id : row.classroom_id, // 修改为classroom_id
-        school_id: row.editing ? row._tmp.school_id : row.school_id, // 修改为school_id
+        classroom_id: row.editing ? row._tmp.classroom_id : row.classroom_id,
+        school_id: row.editing ? row._tmp.school_id : row.school_id,
         student_supposed: Number(row.editing ? row._tmp.student_supposed : row.student_supposed),
         remark: row.editing ? (row._tmp.remark ?? '') : (row.remark ?? '')
     }))
@@ -304,7 +304,7 @@ function renderCampus(campus) {
                                             aria-label="Close"></button>
                                     </div>
                                     <div class="modal-body">
-                                        <p class="text-muted">只列出最近10次提交记录</p>
+                                        <p class="text-muted">只列出最近15次提交记录</p>
                                         <form>
                                             <div class="table-responsive text-nowrap mb-3">
                                                 <table class="table table-sm table-hover table-striped">
@@ -354,7 +354,7 @@ function renderCampus(campus) {
                                     <button class="btn btn-sm btn-success rounded-pill" :disabled="!isEditMode"
                                         @click="onSubmitClick">提交</button>
                                     <span v-if="!isEditMode && date" class="text-muted ms-2">
-                                        当前显示日期：ss
+                                        当前显示日期：{{ date }}
                                     </span>
                                 </div>
 
@@ -380,7 +380,8 @@ function renderCampus(campus) {
                                                 </tr>
                                             </thead>
                                             <tbody class="sort-target">
-                                                <tr v-for="(row, idx) in classroomTable" :key="row.selfstudy_id ?? idx">
+                                                <tr v-for="(row, idx) in classroomTable"
+                                                    :key="row.isNew ? `new-${idx}` : row.selfstudy_id">
                                                     <td>{{ idx + 1 }}</td>
                                                     <td v-if="row.editing">
                                                         <select class="form-select campus-min-width"

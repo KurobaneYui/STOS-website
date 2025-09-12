@@ -336,6 +336,33 @@ def DataManager(app: flask.Flask) -> None:
                 logger.funcReturns = returns
         return customResponse.getResponse()
 
+    @app.route(
+        "/Ajax/DataManager/get_submitted_selfstudy_schedule_date", methods=["GET"]
+    )
+    def getSubmittedSelfstudyScheduleDate():
+        with CustomResponse() as customResponse:
+            with Logger(
+                funcName="DataManager.getSubmittedSelfstudyScheduleDate()"
+            ) as logger:
+                # ===============
+                # 检查接口调用权限
+                Authorization.check(
+                    rightsNeeded=(
+                        {"department_id": 9, "actor": "manager"},
+                        {"department_id": 9, "actor": "member"},
+                    ),
+                    needLogin=True,
+                )
+                # =========================================
+                # 执行接口流程，并获取用户名信息以完成会话建立
+                results = DataManagerDatabase.getSubmittedSelfstudyScheduleDate()
+                # ========================
+                # 准备函数返回值和响应与日志
+                returns = {"message": "", "data": results}
+                customResponse.setMessageAndData(**returns)
+                logger.funcReturns = returns
+        return customResponse.getResponse()
+
     # @app.route("/Ajax/DataManager/submit_selfstudy_schedule", methods=["POST"])
     # def submitSelfstudySchedule():
     #     with CustomResponse() as customResponse:
@@ -394,34 +421,34 @@ def DataManager(app: flask.Flask) -> None:
     #             logger.funcReturns = returns
     #     return customResponse.getResponse()
 
-    # @app.route("/Ajax/DataManager/get_schedule_on_date", methods=["POST"])
-    # def getScheduleOnDate():
-    #     with CustomResponse() as customResponse:
-    #         with Logger(funcName="DataManager.getScheduleOnDate()") as logger:
-    #             # ===============
-    #             # 检查接口调用权限
-    #             Authorization.check(
-    #                 rightsNeeded=(
-    #                     {"department_id": 0, "actor": 1},
-    #                     {"department_id": 3, "actor": 0},
-    #                     {"department_id": 3, "actor": 1},
-    #                 ),
-    #                 needLogin=True,
-    #             )
-    #             # ========================
-    #             # 检查接口输入参数并记录日志
-    #             infoForm = dict(request.form)
-    #             DataManagerCheck.getScheduleOnDateParamsCheck(infoForm)
-    #             logger.funcArgs = request.form
-    #             # =========================================
-    #             # 执行接口流程，并获取用户名信息以完成会话建立
-    #             results = DataManagerDatabase.getScheduleOnDate(infoForm)
-    #             # ========================
-    #             # 准备函数返回值和响应与日志
-    #             returns = {"message": "", "data": results}
-    #             customResponse.setMessageAndData(**returns)
-    #             logger.funcReturns = returns
-    #     return customResponse.getResponse()
+    @app.route("/Ajax/DataManager/get_schedule_on_date", methods=["POST"])
+    def getScheduleOnDate():
+        with CustomResponse() as customResponse:
+            with Logger(funcName="DataManager.getScheduleOnDate()") as logger:
+                # ===============
+                # 检查接口调用权限
+                Authorization.check(
+                    rightsNeeded=(
+                        {"department_id": 9, "actor": "manager"},
+                        {"department_id": 9, "actor": "member"},
+                    ),
+                    needLogin=True,
+                )
+                # ========================
+                # 检查接口输入参数并记录日志
+                assert request.json is not None
+                infoForm = dict(request.json)
+                DataManagerCheck.getScheduleOnDateParamsCheck(infoForm)
+                logger.funcArgs = request.json
+                # =========================================
+                # 执行接口流程，并获取用户名信息以完成会话建立
+                results = DataManagerDatabase.getScheduleOnDate(infoForm)
+                # ========================
+                # 准备函数返回值和响应与日志
+                returns = {"message": "", "data": results}
+                customResponse.setMessageAndData(**returns)
+                logger.funcReturns = returns
+        return customResponse.getResponse()
 
     # @app.route("/Ajax/DataManager/reset_schedule_on_date", methods=["POST"])
     # def resetScheduleOnDate():

@@ -53,7 +53,7 @@ const adminDataSubMenuPaths = [
     '/user_center/data_export.html',
     '/user_center/classroom_edit.html',
     '/user_center/selfstudy_classroom_edit.html',
-    '/user_center/selfstudy_scheduler.html',
+    '/user_center/selfstudy_schedule.html',
 ];
 const isAdminDataOpen = ref(false);
 
@@ -274,8 +274,8 @@ onUnmounted(() => {
                         <div data-i18n="早自习教室信息">早自习教室信息</div>
                     </a>
                 </li>
-                <li class="menu-item" :class="{ 'active': currentPath === '/user_center/selfstudy_scheduler.html' }">
-                    <a href="/user_center/selfstudy_scheduler.html" class="menu-link">
+                <li class="menu-item" :class="{ 'active': currentPath === '/user_center/selfstudy_schedule.html' }">
+                    <a href="/user_center/selfstudy_schedule.html" class="menu-link">
                         <div data-i18n="早自习排班">早自习排班</div>
                     </a>
                 </li>

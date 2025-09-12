@@ -3,15 +3,19 @@ import sys
 import time
 import random
 import datetime
-from sqlalchemy import desc as DESC
+from sqlalchemy import desc as DESC, or_ as OR
 from sqlalchemy.orm import Session
 from contextlib import nullcontext
 from flask import Request
+from flaskAjax.BaseComponents.Authorization import SQL_GroupMember
 from flaskAjax.BaseComponents.CustomError import DatabaseRuntimeError, IllegalValueError
 from flaskAjax.BaseComponents.DatabaseConnector import (
     SQL_Campus,
+    SQL_CheckInTask,
     SQL_Classroom,
     SQL_College,
+    SQL_Group,
+    SQL_User,
     SQL_UserProfile,
     SQL_StudySchedule,
     SessionLocal,
@@ -316,7 +320,7 @@ class DataManagerDatabase:
                 session.query(SQL_StudySchedule.date)
                 .distinct()  # 应用 DISTINCT 关键字
                 .order_by(DESC(SQL_StudySchedule.date))
-                .limit(10)  # 限制结果为前10条
+                .limit(15)  # 限制结果为前15条
                 .all()  # 执行查询并获取所有结果
             )
             results = [{"date": i.isoformat()} for (i,) in results]
@@ -470,6 +474,41 @@ class DataManagerDatabase:
                 session.add(i)
             session.commit()
 
+    @staticmethod
+    def getSubmittedSelfstudyScheduleDate(
+        db_session: Session | None = None,
+    ) -> tuple[dict] | list[dict]:
+        # =====================================
+        # 如果提供已经建立的数据库连接，则直接使用
+        session_context = (
+            SessionLocal() if db_session is None else nullcontext(db_session)
+        )
+        with session_context as session:
+            # =======================
+            # 获取提交的早自习检查安排
+            results = (
+                session.query(SQL_StudySchedule.date, SQL_CheckInTask.created_at)
+                .join(
+                    SQL_CheckInTask,
+                    SQL_StudySchedule.id == SQL_CheckInTask.schedule_id,
+                    isouter=True,
+                )
+                .distinct()  # 应用 DISTINCT 关键字
+                .order_by(DESC(SQL_StudySchedule.date))
+                .limit(15)  # 限制结果为前15条
+                .all()  # 执行查询并获取所有结果
+            )
+            results = [
+                {
+                    "date": date.isoformat(),
+                    "submitted_at": None
+                    if created_at is None
+                    else created_at.isoformat(),
+                }
+                for (date, created_at) in results
+            ]
+            return results
+
     # @staticmethod
     # def submitSelfstudySchedule(
     #     infoForm: dict, databaseConnector: DatabaseConnector | None = None
@@ -604,50 +643,82 @@ class DataManagerDatabase:
     #         data=infoForm,
     #     )
 
-    # @staticmethod
-    # def getScheduleOnDate(
-    #     infoForm: dict, databaseConnector: DatabaseConnector | None = None
-    # ) -> dict:
-    #     # =====================================
-    #     # 如果提供已经建立的数据库连接，则直接使用
-    #     if databaseConnector is None:
-    #         database = DatabaseConnector()
-    #         database.startCursor()
-    #     else:
-    #         database = databaseConnector
-    #     # ==============
-    #     # 准备返回值字典
-    #     results = {"date": infoForm["date"]}
-    #     # ==========================
-    #     # 获取排班信息和对应的队员信息
-    #     _ = database.execute(
-    #         sql="SELECT selfstudy_id, classroom_name,campus,school_name,selfstudy_info_remark,schedule_student_name,schedule_student_id,schedule_student_department_name \
-    #             FROM SelfstudyCheckScheduleView \
-    #             WHERE date = %s;",
-    #         data=(infoForm["date"],),
-    #     )
-    #     results["scheduled"] = database.fetchall()
-    #     # ========================
-    #     # 获取没有安排排班的队员信息
-    #     _ = database.execute(
-    #         sql="SELECT School.campus AS campus, Work.student_id AS student_id, MemberBasic.name AS student_name, Department.name AS student_department_name \
-    #             FROM Work \
-    #             LEFT JOIN Department ON Work.department_id = Department.department_id \
-    #             LEFT JOIN MemberBasic ON Work.student_id = MemberBasic.student_id \
-    #             LEFT JOIN MemberExtend ON Work.student_id = MemberExtend.student_id \
-    #             LEFT JOIN School ON School.school_id = MemberExtend.school_id \
-    #             WHERE Work.job = 0 AND Department.name LIKE %s \
-    #                 AND Work.student_id NOT IN ( \
-    #                     SELECT DISTINCT schedule_student_id \
-    #                     FROM SelfstudyCheckScheduleView \
-    #                     WHERE date = %s AND schedule_student_id IS NOT NULL) \
-    #             ORDER BY School.campus ASC, Department.name ASC, Work.student_id ASC;",
-    #         data=("现场组%", infoForm["date"]),
-    #     )
-    #     results["unscheduled"] = database.fetchall()
-    #     # ============
-    #     # 返回结果字典
-    #     return results
+    @staticmethod
+    def getScheduleOnDate(infoForm: dict, db_session: Session | None = None) -> dict:
+        # =====================================
+        # 如果提供已经建立的数据库连接，则直接使用
+        session_context = (
+            SessionLocal() if db_session is None else nullcontext(db_session)
+        )
+        with session_context as session:
+            # ==========================
+            # 获取当日早自习安排教室信息
+            results = (
+                session.query(SQL_StudySchedule).filter_by(date=infoForm["date"]).all()
+            )
+            schedule = {
+                i.id: {
+                    "schedule_id": i.id,
+                    "campus": i.classroom.campus.name,
+                    "classroom_id": i.classroom_id,
+                    "classroom_name": i.classroom.building
+                    + i.classroom.area
+                    + i.classroom.room_number,
+                    "remark": i.remark,
+                }
+                for i in results
+            }
+            # ==========================
+            # 获取排班和未排班的队员信息
+            results = (
+                session.query(SQL_GroupMember, SQL_User.name, SQL_Group.name)
+                .join(SQL_Group, SQL_GroupMember.group_id == SQL_Group.id)
+                .filter(SQL_Group.chazao, SQL_GroupMember.role == "member")
+                .join(SQL_User, SQL_User.student_id == SQL_GroupMember.student_id)
+                .join(
+                    SQL_CheckInTask,
+                    SQL_CheckInTask.student_id == SQL_GroupMember.student_id,
+                    isouter=True,
+                )
+                .join(
+                    SQL_StudySchedule,
+                    SQL_CheckInTask.schedule_id == SQL_StudySchedule.id,
+                    isouter=True,
+                )
+                .filter(
+                    OR(
+                        SQL_StudySchedule.date == infoForm["date"],
+                        SQL_StudySchedule.date.is_(None),  # 显式处理 NULL
+                    )
+                )
+                .order_by(SQL_StudySchedule.id, SQL_Group.id, SQL_User.student_id)
+                .all()
+            )
+            unassigned = list()
+            for i, name, group_name in results:
+                if len(i.profile.check_in_tasks) < 1:
+                    unassigned.append(
+                        {
+                            "student_id": i.student_id,
+                            "name": name,
+                            "group_name": group_name,
+                        }
+                    )
+                else:
+                    schedule[i.profile.check_in_tasks[0].schedule_id].update(
+                        {
+                            "student_id": i.student_id,
+                            "name": name,
+                            "group_name": group_name,
+                        }
+                    )
+            # 返回结果字典
+            results = {
+                "date": infoForm["date"].isoformat(),
+                "schedule": schedule,
+                "unassigned": unassigned,
+            }
+            return results
 
     # @staticmethod
     # def resetScheduleOnDate(

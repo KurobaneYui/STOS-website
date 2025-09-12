@@ -348,23 +348,21 @@ class DataManagerCheck:
     #             line=sys._getframe().f_lineno,
     #         )
 
-    # @staticmethod
-    # def getScheduleOnDateParamsCheck(infoForm: dict) -> None:
-    #     if "date" not in infoForm.keys():
-    #         raise IllegalValueError(
-    #             "Date is required.", filename=__file__, line=sys._getframe().f_lineno
-    #         )
+    @staticmethod
+    def getScheduleOnDateParamsCheck(infoForm: dict) -> None:
+        if "date" not in infoForm.keys():
+            raise IllegalValueError(
+                "Date is required.", filename=__file__, line=sys._getframe().f_lineno
+            )
 
-    #     try:
-    #         infoForm["date"] = datetime.datetime.strptime(
-    #             infoForm["date"], "%Y-%m-%d"
-    #         ).strftime("%Y-%m-%d")
-    #     except:
-    #         raise IllegalValueError(
-    #             "Date is wrong or in wrong format. Should be YYYY-MM-DD.",
-    #             filename=__file__,
-    #             line=sys._getframe().f_lineno,
-    #         )
+        try:
+            infoForm["date"] = datetime.date.fromisoformat(infoForm["date"])
+        except Exception:
+            raise IllegalValueError(
+                "Date is wrong or in wrong format. Should be YYYY-MM-DD.",
+                filename=__file__,
+                line=sys._getframe().f_lineno,
+            )
 
     # @staticmethod
     # def resetScheduleOnDateParamsCheck(infoForm: dict) -> None:

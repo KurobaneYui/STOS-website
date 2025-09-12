@@ -44,6 +44,7 @@ class GroupManagerDatabase:
                     .filter_by(
                         role="manager",
                         student_id=CustomSession().getSession()["userID"],
+                        group_id=CustomSession().getSession()["department_id"],
                     )
                     .all()
                 )
