@@ -168,7 +168,7 @@ class UsersDatabase:
                 results = [
                     {
                         "department_id": work.group_id,
-                        "job": work.role,
+                        "job": work.role.value,
                         "name": work.group.name,
                         "display_title": work.display_title,
                     }
@@ -269,40 +269,28 @@ class UsersDatabase:
         with session_context as session:
             # =====================
             # 利用提供的信息匹配用户
-            # DBAffectRows = database.execute(
-            #     "SELECT `MemberBasic`.student_id FROM `MemberBasic` \
-            #     LEFT JOIN `MemberExtend` ON `MemberExtend`.student_id = `MemberBasic`.student_id \
-            #     LEFT JOIN `School` ON `School`.school_id = `MemberExtend`.school_id \
-            #     WHERE MemberBasic.student_id = %(StudentID)s and MemberBasic.name = %(Name)s \
-            #         and School.name = %(School)s and hometown = %(Hometown)s;",
-            #     flaskRequest.form
-            # )
             assert flaskRequest.json is not None
             student_id = flaskRequest.json["StudentID"]
             name = flaskRequest.json["Name"]
             school = flaskRequest.json["School"]
             hometown = flaskRequest.json["Hometown"]
-            stmt = (
-                select(
-                    SQL_User.student_id,
-                )
-                .join(
-                    SQL_User.profile,
-                )
-                .join(
-                    SQL_UserProfile.college,
-                )
-                .where(
-                    SQL_User.student_id == student_id,
-                    SQL_User.name == name,
-                    SQL_UserProfile.hometown == hometown,
-                    SQL_College.name == school,
-                )
-            )
-            results = session.scalars(stmt).all()
             # ===================
             # 匹配结果不唯一则报错
+            results = (
+                session.query(SQL_UserProfile).filter_by(student_id=student_id).all()
+            )
             if len(results) != 1:
+                raise PermissionDenyError(
+                    "Information is wrong.",
+                    filename=__file__,
+                    line=sys._getframe().f_lineno,
+                )
+            results = session.query(SQL_User).filter_by(student_id=student_id).one()
+            if (
+                results.name != name
+                or results.profile.college.name != school
+                or results.profile.hometown != hometown
+            ):
                 raise PermissionDenyError(
                     "Information is wrong.",
                     filename=__file__,
@@ -649,7 +637,7 @@ class UsersDatabase:
                 {
                     "name": i.group.name,
                     "department_id": i.group.id,
-                    "job": i.role,
+                    "job": i.role.value,
                     "wage": i.wage,
                     "remark": i.remark,
                 }

@@ -8,45 +8,71 @@ import Topbar from './components/Topbar.vue'
 import LoginWork from './components/Loginwork.vue'
 import "/src/assets/demo.css"
 
-const currentPath = window.location.pathname
-
-const userInfo = ref({
+const formData = ref({
+    date: '',
     name: '',
-    department_id: 0,
-    department_name: '',
-    job: 'member'
+    gender: 'male',
+    student_id: '',
+    reason: '',
 })
-const formalMember = ref('')
-const badges = ref([])
 const blacklist = ref([])
 
-async function getTopbarInfo() {
+const loading = ref(false)
+
+async function addToBlacklist() {
+    loading.value = true;
     try {
-        const { data } = await axios.get('/Ajax/Users/topbarInfo')
-        const code = data.code
-        if ([400, 401, 404, 417, 498, 499].includes(code)) {
-            if (data.msg) swal({ title: data.msg, icon: "warning" })
-            else swal({ title: '出错了，如刷新无效请尝试重新登录', icon: 'error' })
-            return
+        const postData = { ...formData.value };
+        postData.gender = postData.gender === 'male' ? '男' : '女';
+        const { data } = await axios.post('/Ajax/TeamManager/add_blocked', postData);
+        const returnCode = data.code;
+
+        if (returnCode === 400) {
+            swal({ title: "请求参数错误，请联系管理员", icon: "error" });
+            return;
         }
-        if (code === 200 || code === 301) {
-            const info = data.data
-            userInfo.value = info
-            updateFormalMember(info)
-            updateBadges(info)
+        if (returnCode === 401) {
+            swal({ title: "权限不足", text: "暂无加入黑名单的权限", icon: "error" });
+            return;
+        }
+        if (returnCode === 404) {
+            swal({ title: "功能不存在", text: "请联系管理员", icon: "warning" });
+            return;
+        }
+        if (returnCode === 417) {
+            swal({ title: "功能错误", text: "请联系管理员", icon: "warning" });
+            return;
+        }
+        if (returnCode === 498) {
+            swal({ title: "数据库异常", text: "请联系管理员", icon: "warning" });
+            return;
+        }
+        if (returnCode === 499) {
+            swal({ title: "功能维护中", text: "暂不允许操作黑名单", icon: "warning" });
+            return;
+        }
+        if (returnCode === 200) {
+            await getBlacklist();
+            // 只清空以下三个字段
+            formData.value.name = '';
+            formData.value.student_id = '';
+            formData.value.reason = '';
+        } else {
+            // 其它未覆盖的异常
+            swal({
+                title: "添加失败",
+                text: data.msg || "未知错误，请联系管理员",
+                icon: "error"
+            });
         }
     } catch (e) {
-        swal({ title: '请检查网络连接，或稍后再试', icon: "error" })
-    }
-}
-
-function updateFormalMember(info) {
-    if (info.department_id === 0) {
-        formalMember.value = info.department_name
-    } else if (info.department_id === 1) {
-        formalMember.value = `${info.department_name} - ${info.job === "manager" ? '队长' : '副队长'}`
-    } else {
-        formalMember.value = `${info.department_name} - ${info.job === "manager" ? '组长' : '组员'}`
+        swal({
+            title: "网络出错",
+            text: e.message || "请检查网络或稍后重试",
+            icon: "error"
+        });
+    } finally {
+        loading.value = false;
     }
 }
 
@@ -55,16 +81,6 @@ function getGenderBadge(gender) {
     if (gender === '女') return 'bg-label-danger'
     return 'bg-label-dark'
 }
-
-function updateBadges(info) {
-    badges.value = [
-        { text: '查早：XXX', type: 'success' },
-        { text: '查课：XXX', type: 'warning' },
-        // ...
-    ]
-}
-
-
 
 async function getBlacklist() {
     try {
@@ -96,18 +112,16 @@ async function getBlacklist() {
 }
 
 onMounted(() => {
-    getTopbarInfo()
     getBlacklist()
 });
 </script>
-
 
 <template>
     <div class="layout-wrapper layout-content-navbar">
         <div class="layout-container">
             <!-- Menu -->
             <aside class="layout-menu menu-vertical menu bg-menu-theme">
-                <Sidebar :current-path="currentPath" :user-info="userInfo" />
+                <Sidebar />
             </aside>
             <!-- / Menu -->
 
@@ -115,7 +129,7 @@ onMounted(() => {
             <div class="layout-page">
                 <nav
                     class="layout-navbar container-fluid navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme rounded-pill">
-                    <Topbar :user-info="userInfo" :formal-member="formalMember" :badges="badges" />
+                    <Topbar />
                 </nav>
                 <div>
                     <LoginWork />
@@ -124,7 +138,6 @@ onMounted(() => {
                 <!-- Content wrapper -->
                 <div class="content-wrapper">
                     <!-- Content -->
-
                     <div class="container-fluid flex-grow-1 container-p-y">
                         <!-- Breadcrumb -->
                         <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);"
@@ -136,44 +149,100 @@ onMounted(() => {
                         </nav>
                         <!-- main content -->
                         <div class="col-12 alert alert-primary" role="alert">
-                            * 按队伍规范，原则上被清退（不包含请假、自行退出、因事离队等）人员两年内不再招入队伍。此处记录相关事由以供参考。
+                            * 按队伍规范，原则上被清退（不包含请假、自行退出、因事离队等）人员两年内不再招入队伍。此处记录相关事由以供参考。<br />
+                            * 添加人员仅供查阅，此处记录不影响人员在网站中的功能。<br />
+                            * 添加人员如已注册，则姓名和性别会同步已有信息而非本页提交的信息。<br />
+                            * 添加学号已存在条目，则更新时间、事由的记录，请添加前校对学号。
                         </div>
-                        <div class="card">
-                            <h5 class="card-header">清退记录</h5>
-                            <div class="table-responsive text-nowrap">
-                                <table class="table table-hover table-striped">
-                                    <thead>
-                                        <tr>
-                                            <th>#</th>
-                                            <th>姓名</th>
-                                            <th>性别</th>
-                                            <th>学号</th>
-                                            <th>事由</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr v-for="blockedOne in blacklist" :key="blockedOne.rowNum">
-                                            <td>{{ blockedOne.rowNum }}</td>
-                                            <td>{{ blockedOne.name }}</td>
-                                            <td>
-                                                <span class="badge" :class="getGenderBadge(blockedOne.gender)">
-                                                    {{ blockedOne.gender || '-' }}
-                                                </span>
-                                            </td>
-                                            <td>{{ blockedOne.student_id }}</td>
-                                            <td>{{ blockedOne.reason }}</td>
-                                        </tr>
-                                    </tbody>
-                                    <tfoot class="table-border-bottom-0">
-                                        <tr>
-                                            <th>#</th>
-                                            <th>姓名</th>
-                                            <th>性别</th>
-                                            <th>学号</th>
-                                            <th>事由</th>
-                                        </tr>
-                                    </tfoot>
-                                </table>
+                        <div class="row mb-2">
+                            <div class="card">
+                                <h5 class="card-header">添加人员</h5>
+                                <div class="card-body">
+                                    <div class="row">
+                                        <div class="col-12 col-sm-6 col-lg-3 col-xl-3 mb-3">
+                                            <label class="form-label" for="date">选择年月日</label>
+                                            <input class="form-control" type="date" id="date" v-model="formData.date"
+                                                required />
+                                        </div>
+                                        <div class="col-12 col-sm-6 col-lg-4 col-xl-3 mb-3">
+                                            <label class="form-label" for="name">姓名</label>
+                                            <input class="form-control" type="text" id="name" v-model="formData.name"
+                                                required>
+                                        </div>
+                                        <div class="col-12 col-sm-6 col-lg-4 col-xl-2 mb-3">
+                                            <label class="form-label">性别</label>
+                                            <div class="row">
+                                                <div class="form-check col-2 offset-1">
+                                                    <label for="gender_male" class="form-check-label">男</label>
+                                                    <input type="radio" class="form-check-input" id="gender_male"
+                                                        name="gender" value="male" v-model="formData.gender" />
+                                                </div>
+                                                <div class="form-check col-2">
+                                                    <label for="gender_female" class="form-check-label">女</label>
+                                                    <input type="radio" class="form-check-input" id="gender_female"
+                                                        name="gender" value="female" v-model="formData.gender" />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-12 col-sm-6 col-lg-4 col-xl-3 mb-3">
+                                            <label class="form-label" for="student_id">学号</label>
+                                            <input class="form-control" type="text" id="student_id"
+                                                v-model="formData.student_id" required>
+                                        </div>
+                                        <div class="col-12 col-sm-6 col-lg-6 col-xl-3 mb-3">
+                                            <label class="form-label" for="reason">事由</label>
+                                            <input class="form-control" type="text" id="reason"
+                                                v-model="formData.reason" required>
+                                        </div>
+                                        <div class="col-12 d-flex justify-content-center">
+                                            <button type="button" class="btn btn-primary rounded-pill"
+                                                :disabled="loading" @click="addToBlacklist">添加</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="card">
+                                <h5 class="card-header">清退记录</h5>
+                                <div class="table-responsive text-nowrap">
+                                    <table class="table table-hover table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th>#</th>
+                                                <th>姓名</th>
+                                                <th>性别</th>
+                                                <th>学号</th>
+                                                <th>事由</th>
+                                                <th>时间</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr v-for="blockedOne in blacklist" :key="blockedOne.rowNum">
+                                                <td>{{ blockedOne.rowNum }}</td>
+                                                <td>{{ blockedOne.name }}</td>
+                                                <td>
+                                                    <span class="badge" :class="getGenderBadge(blockedOne.gender)">
+                                                        {{ blockedOne.gender || '-' }}
+                                                    </span>
+                                                </td>
+                                                <td>{{ blockedOne.student_id }}</td>
+                                                <td>{{ blockedOne.reason }}</td>
+                                                <td>{{ blockedOne.start_time }}</td>
+                                            </tr>
+                                        </tbody>
+                                        <tfoot class="table-border-bottom-0">
+                                            <tr>
+                                                <th>#</th>
+                                                <th>姓名</th>
+                                                <th>性别</th>
+                                                <th>学号</th>
+                                                <th>事由</th>
+                                                <th>时间</th>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                         <!--/ Layout Demo -->

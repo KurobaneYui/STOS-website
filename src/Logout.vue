@@ -7,10 +7,8 @@ import * as bootstrap from 'bootstrap'
 function logout() {
     axios.get('/Ajax/Users/logout')
         .then(function (response) {
-            // 这里 response.data 就相当于 jQuery 的 data
         })
         .catch(function (error) {
-            // 这里你可以处理错误
         });
 }
 

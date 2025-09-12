@@ -18,7 +18,6 @@ async function getWorkList() {
         loading.value = false
     }
 }
-onMounted(getWorkList)
 
 async function loginAsSpecifiedWork(department_id, job) {
     try {
@@ -41,6 +40,12 @@ function getJobName(department_id, job, name) {
     if (department_id === 0) return name
     return name + ' - ' + (job === "manager" ? "组长" : "组员")
 }
+
+// 确保每次打开模态窗时获取最新的岗位列表
+onMounted(() => {
+    const modalElement = document.getElementById('select-login-work');
+    modalElement.addEventListener('show.bs.modal', getWorkList);
+});
 </script>
 
 <template>

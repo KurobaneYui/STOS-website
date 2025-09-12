@@ -17,3 +17,4 @@ certbot
 certbot-nginx
 flask_apscheduler
 sqlalchemy
+eralchemy2

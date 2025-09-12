@@ -1,5 +1,6 @@
 import os
 import json
+import datetime
 import sqlite3
 
 from sqlalchemy import create_engine, event, text
@@ -15,16 +16,16 @@ from .DatabaseDefinition import CollectedInfo as SQL_CollectedInfo  # noqa
 from .DatabaseDefinition import Blacklist as SQL_Blacklist  # noqa
 from .DatabaseDefinition import Group as SQL_Group  # noqa
 from .DatabaseDefinition import GroupMember as SQL_GroupMember  # noqa
-from .DatabaseDefinition import DataGroupPermission as SQL_DataGroupPermission  # noqa
 from .DatabaseDefinition import Campus as SQL_Campus  # noqa
 from .DatabaseDefinition import College as SQL_College  # noqa
 from .DatabaseDefinition import Classroom as SQL_Classroom  # noqa
 from .DatabaseDefinition import StudySchedule as SQL_StudySchedule  # noqa
 from .DatabaseDefinition import CheckInTask as SQL_CheckInTask  # noqa
 from .DatabaseDefinition import CheckInData as SQL_CheckInData  # noqa
-from .DatabaseDefinition import InspectionTask as SQL_InspectionTask  # noqa
+from .DatabaseDefinition import CourseSchedule as SQL_InspectionTask  # noqa
 from .DatabaseDefinition import InspectionData as SQL_InspectionData  # noqa
-from .DatabaseDefinition import ContactView as SQL_ContactView, create_view_sql  # noqa
+from .DatabaseDefinition import ContactView as SQL_ContactView, contact_view_sql  # noqa
+from .DatabaseDefinition import WageView as SQL_WageView, wage_view_sql  # noqa
 
 # --- 1. 数据库设置 ---
 # 定义数据库文件路径和连接URL
@@ -91,7 +92,8 @@ def initialize_database():
         # 显式执行视图 SQL（若已存在则忽略错误），避免调用 DDL.execute 导致 lint 警告
         try:
             with engine.begin() as conn:
-                conn.execute(text(create_view_sql))
+                conn.execute(text(contact_view_sql))
+                conn.execute(text(wage_view_sql))
         except Exception:
             pass
 
@@ -123,17 +125,18 @@ def initialize_database():
                 "格拉斯哥学院",
                 "英才实验学院（未来技术学院）",
                 "集成电路科学与工程学院（示范性微电子学院）",
+                "外国语学院预科班",
             ]
-            group_name = [
-                "队长组",
-                "现场组一组",
-                "现场组二组",
-                "现场组三组",
-                "查课组一组",
-                "查课组二组",
-                "沙河组",
-                "督导组",
-                "数据组",
+            group_prof = [
+                ("队长组", False, False, False),
+                ("现场组一组", False, True, False),
+                ("现场组二组", False, True, False),
+                ("现场组三组", False, True, False),
+                ("查课组一组", True, False, False),
+                ("查课组二组", True, False, False),
+                ("沙河组", True, True, False),
+                ("督导组", False, False, False),
+                ("数据组", False, False, True),
             ]
             classroom_info = [
                 (1111010, "清水河", "品学楼", "A", "101", 143),
@@ -196,6 +199,7 @@ def initialize_database():
                 (1122050, "清水河", "品学楼", "B", "205", 114),
                 (1122060, "清水河", "品学楼", "B", "206", 113),
                 (1122070, "清水河", "品学楼", "B", "207", 113),
+                (1122130, "清水河", "品学楼", "B", "213", 113),
                 (1123010, "清水河", "品学楼", "B", "301", 145),
                 (1123020, "清水河", "品学楼", "B", "302", 142),
                 (1123030, "清水河", "品学楼", "B", "303", 164),
@@ -219,14 +223,19 @@ def initialize_database():
                 (2202050, "沙河", "二教", "-", "205", 176),
                 (2202060, "沙河", "二教", "-", "206", 176),
                 (2202070, "沙河", "二教", "-", "207", 176),
+                (2203030, "沙河", "二教", "-", "303", 280),
             ]
 
             for name in campus_name:
                 session.add(SQL_Campus(name=name))
             for name in college_name:
                 session.add(SQL_College(name=name))
-            for name in group_name:
-                session.add(SQL_Group(name=name))
+            for name, chake, chazao, datamanager in group_prof:
+                session.add(
+                    SQL_Group(
+                        name=name, chake=chake, chazao=chazao, datamanager=datamanager
+                    )
+                )
             session.flush()  # 确保上面新增的数据已写入
             campus_name_to_id = {c.name: c.id for c in session.query(SQL_Campus).all()}
             college_name_to_id = {
@@ -295,10 +304,16 @@ def initialize_database():
             session.add(membership2)
             session.commit()
 
-            new_user = SQL_User(student_id="202411223355", name="BlackSquirrel", gender="女")
+            new_user = SQL_User(
+                student_id="202411223355", name="BlackSquirrel", gender="女"
+            )
             session.add(new_user)
             session.commit()
 
-            black_one = SQL_Blacklist(student_id="202411223355", reason="数据造假")
+            black_one = SQL_Blacklist(
+                student_id="202411223355",
+                reason="数据造假",
+                start_time=datetime.date.today(),
+            )
             session.add(black_one)
             session.commit()

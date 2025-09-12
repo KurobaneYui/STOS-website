@@ -1,18 +1,35 @@
 <script setup>
 import { ref, onMounted, onUnmounted, watch, nextTick } from 'vue'
+import axios from 'axios';
 import "/src/assets/vendor/fonts/boxicons.css"
 import PerfectScrollbar from 'perfect-scrollbar';
 import "perfect-scrollbar/css/perfect-scrollbar.css";
 
-const props = defineProps({
-    currentPath: String,
-    userInfo: {
-        department_id: Number,
-        department_name: String,
-        job: String,
-        name: String,
-    }
+const currentPath = window.location.pathname
+const userInfo = ref({
+    name: '',
+    department_id: 0,
+    department_name: '',
+    job: 'member'
 })
+
+async function getTopbarInfo() {
+    try {
+        const { data } = await axios.get('/Ajax/Users/topbarInfo')
+        const code = data.code
+        if ([400, 401, 404, 417, 498, 499].includes(code)) {
+            if (data.msg) swal({ title: data.msg, icon: "warning" })
+            else swal({ title: '出错了，如刷新无效请尝试重新登录', icon: 'error' })
+            return
+        }
+        if (code === 200 || code === 301) {
+            const info = data.data
+            userInfo.value = info
+        }
+    } catch (e) {
+        swal({ title: '请检查网络连接，或稍后再试', icon: "error" })
+    }
+}
 
 const workInfoSubMenuPaths = [
     '/user_center/work_basic_info.html',
@@ -34,23 +51,22 @@ const isDataConfirmOpen = ref(false);
 
 const adminDataSubMenuPaths = [
     '/user_center/data_export.html',
-    '/user_center/classroom_editor.html',
-    '/user_center/selfstudy_classroom_editor.html',
-    '/user_center/selfstudy_scheduler.html',
+    '/user_center/classroom_edit.html',
+    '/user_center/selfstudy_classroom_edit.html',
+    '/user_center/selfstudy_schedule.html',
 ];
 const isAdminDataOpen = ref(false);
 
 const otherDataSubMenuPaths = [
     '/user_center/department_edit.html',
     '/user_center/school_edit.html',
-    '/user_center/finance_EXCEL_export.html',
+    '/user_center/finance_export.html',
 ];
 const isOtherDataOpen = ref(false);
 
-// 新增：组内管理 子路径与 open 控制
 const groupSubMenuPaths = [
-    '/user_center/empty_time_editor.html',
-    '/user_center/member_management.html',
+    '/user_center/empty_time_edit.html',
+    '/user_center/member_edit.html',
 ];
 const isGroupOpen = ref(false);
 
@@ -62,24 +78,28 @@ const updatePerfectScrollbar = async () => {
     if (ps) ps.update()
 }
 
+// 监听子菜单 open 状态，展开/收起后更新滚动条
+watch([isWorkInfoOpen, isDataEntryOpen, isDataConfirmOpen, isAdminDataOpen, isOtherDataOpen, isGroupOpen], updatePerfectScrollbar)
+
 onMounted(() => {
+    getTopbarInfo();
     // 保留并执行原有的子菜单初始展开逻辑
-    if (workInfoSubMenuPaths.includes(props.currentPath)) {
+    if (workInfoSubMenuPaths.includes(currentPath)) {
         isWorkInfoOpen.value = true;
     }
-    if (dataEntrySubMenuPaths.includes(props.currentPath)) {
+    if (dataEntrySubMenuPaths.includes(currentPath)) {
         isDataEntryOpen.value = true;
     }
-    if (dataConfirmSubMenuPaths.includes(props.currentPath)) {
+    if (dataConfirmSubMenuPaths.includes(currentPath)) {
         isDataConfirmOpen.value = true;
     }
-    if (adminDataSubMenuPaths.includes(props.currentPath)) {
+    if (adminDataSubMenuPaths.includes(currentPath)) {
         isAdminDataOpen.value = true;
     }
-    if (otherDataSubMenuPaths.includes(props.currentPath)) {
+    if (otherDataSubMenuPaths.includes(currentPath)) {
         isOtherDataOpen.value = true;
     }
-    if (groupSubMenuPaths.includes(props.currentPath)) {
+    if (groupSubMenuPaths.includes(currentPath)) {
         isGroupOpen.value = true;
     }
 
@@ -90,9 +110,6 @@ onMounted(() => {
     // 当窗口大小或子菜单展开状态变化时刷新滚动条
     window.addEventListener('resize', updatePerfectScrollbar)
 })
-
-// 监听子菜单 open 状态，展开/收起后更新滚动条
-watch([isWorkInfoOpen, isDataEntryOpen, isDataConfirmOpen, isAdminDataOpen, isOtherDataOpen, isGroupOpen], updatePerfectScrollbar)
 
 onUnmounted(() => {
     if (ps) {
@@ -246,19 +263,19 @@ onUnmounted(() => {
                         <div data-i18n="数据导出">数据导出</div>
                     </a>
                 </li>
-                <li class="menu-item" :class="{ 'active': currentPath === '/user_center/classroom_editor.html' }">
-                    <a href="/user_center/classroom_editor.html" class="menu-link">
+                <li class="menu-item" :class="{ 'active': currentPath === '/user_center/classroom_edit.html' }">
+                    <a href="/user_center/classroom_edit.html" class="menu-link">
                         <div data-i18n="全校教室信息">全校教室信息</div>
                     </a>
                 </li>
                 <li class="menu-item"
-                    :class="{ 'active': currentPath === '/user_center/selfstudy_classroom_editor.html' }">
-                    <a href="/user_center/selfstudy_classroom_editor.html" class="menu-link">
+                    :class="{ 'active': currentPath === '/user_center/selfstudy_classroom_edit.html' }">
+                    <a href="/user_center/selfstudy_classroom_edit.html" class="menu-link">
                         <div data-i18n="早自习教室信息">早自习教室信息</div>
                     </a>
                 </li>
-                <li class="menu-item" :class="{ 'active': currentPath === '/user_center/selfstudy_scheduler.html' }">
-                    <a href="/user_center/selfstudy_scheduler.html" class="menu-link">
+                <li class="menu-item" :class="{ 'active': currentPath === '/user_center/selfstudy_schedule.html' }">
+                    <a href="/user_center/selfstudy_schedule.html" class="menu-link">
                         <div data-i18n="早自习排班">早自习排班</div>
                     </a>
                 </li>
@@ -292,13 +309,13 @@ onUnmounted(() => {
                 <div data-i18n="组内管理">组内管理</div>
             </a>
             <ul class="menu-sub">
-                <li class="menu-item" :class="{ 'active': currentPath === '/user_center/empty_time_editor.html' }">
-                    <a href="/user_center/empty_time_editor.html" class="menu-link">
+                <li class="menu-item" :class="{ 'active': currentPath === '/user_center/empty_time_edit.html' }">
+                    <a href="/user_center/empty_time_edit.html" class="menu-link">
                         <div data-i18n="空课表变更">空课表变更</div>
                     </a>
                 </li>
-                <li class="menu-item" :class="{ 'active': currentPath === '/user_center/member_management.html' }">
-                    <a href="/user_center/member_management.html" class="menu-link">
+                <li class="menu-item" :class="{ 'active': currentPath === '/user_center/member_edit.html' }">
+                    <a href="/user_center/member_edit.html" class="menu-link">
                         <div data-i18n="人员增删">人员增删</div>
                     </a>
                 </li>
@@ -327,8 +344,8 @@ onUnmounted(() => {
                         <div data-i18n="学院管理">学院管理</div>
                     </a>
                 </li>
-                <li class="menu-item" :class="{ 'active': currentPath === '/user_center/finance_EXCEL_export.html' }">
-                    <a href="/user_center/finance_EXCEL_export.html" class="menu-link">
+                <li class="menu-item" :class="{ 'active': currentPath === '/user_center/finance_export.html' }">
+                    <a href="/user_center/finance_export.html" class="menu-link">
                         <div data-i18n="财务报表导出">财务报表导出</div>
                     </a>
                 </li>

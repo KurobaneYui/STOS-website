@@ -209,21 +209,18 @@ def Users(app: flask.Flask) -> None:  # noqa: C901
             logger.funcReturns = returns
         return customResponse.getResponse()
 
-    @app.route("/Ajax/Users/get_contact", methods=['GET'])
+    @app.route("/Ajax/Users/get_contact", methods=["GET"])
     def getContact():
         with CustomResponse() as customResponse:
             with Logger(funcName="Users.getContact()") as logger:
                 # ===============
                 # 检查接口调用权限
                 Authorization.check(
-                    rightsNeeded=({
-                        "department_id": None,
-                        "actor": "member"
-                    }, {
-                        "department_id": None,
-                        "actor": "manager"
-                    }),
-                    needLogin=True
+                    rightsNeeded=(
+                        {"department_id": None, "actor": "member"},
+                        {"department_id": None, "actor": "manager"},
+                    ),
+                    needLogin=True,
                 )
                 # ===========
                 # 执行接口流程
@@ -252,7 +249,7 @@ def Users(app: flask.Flask) -> None:  # noqa: C901
                 logger.funcReturns = returns
         return customResponse.getResponse()
 
-    @app.route("/Ajax/Users/change_personal_info", methods=['POST'])
+    @app.route("/Ajax/Users/change_personal_info", methods=["POST"])
     def changePersonalInfo():
         with CustomResponse() as customResponse:
             with Logger(funcName="Users.changePersonalInfo()") as logger:
@@ -275,7 +272,7 @@ def Users(app: flask.Flask) -> None:  # noqa: C901
                 logger.funcReturns = returns
         return customResponse.getResponse()
 
-    @app.route("/Ajax/Users/get_empty_time_info", methods=['GET'])
+    @app.route("/Ajax/Users/get_empty_time_info", methods=["GET"])
     def getEmptyTimeInfo():
         with CustomResponse() as customResponse:
             with Logger(funcName="Users.getEmptyTimeInfo()") as logger:
@@ -292,21 +289,18 @@ def Users(app: flask.Flask) -> None:  # noqa: C901
                 logger.funcReturns = returns
         return customResponse.getResponse()
 
-    @app.route("/Ajax/Users/get_work_basic_info", methods=['GET'])
+    @app.route("/Ajax/Users/get_work_basic_info", methods=["GET"])
     def getWorkBasicInfo():
         with CustomResponse() as customResponse:
             with Logger(funcName="Users.getWorkBasicInfo()") as logger:
                 # ===============
                 # 检查接口调用权限
                 Authorization.check(
-                    rightsNeeded=({
-                        "department_id": None,
-                        "actor": "manager"
-                    }, {
-                        "department_id": None,
-                        "actor": "member"
-                    }),
-                    needLogin=True
+                    rightsNeeded=(
+                        {"department_id": None, "actor": "manager"},
+                        {"department_id": None, "actor": "member"},
+                    ),
+                    needLogin=True,
                 )
                 # ===========
                 # 执行接口流程

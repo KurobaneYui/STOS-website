@@ -8,55 +8,6 @@ import Topbar from './components/Topbar.vue'
 import LoginWork from './components/Loginwork.vue'
 import "/src/assets/demo.css"
 
-const currentPath = window.location.pathname
-
-const userInfo = ref({
-    name: '',
-    department_id: 0,
-    department_name: '',
-    job: 'member'
-})
-const formalMember = ref('')
-const badges = ref([])
-
-async function getTopbarInfo() {
-    try {
-        const { data } = await axios.get('/Ajax/Users/topbarInfo')
-        const code = data.code
-        if ([400, 401, 404, 417, 498, 499].includes(code)) {
-            if (data.msg) swal({ title: data.msg, icon: "warning" })
-            else swal({ title: '出错了，如刷新无效请尝试重新登录', icon: 'error' })
-            return
-        }
-        if (code === 200 || code === 301) {
-            const info = data.data
-            userInfo.value = info
-            updateFormalMember(info)
-            updateBadges(info)
-        }
-    } catch (e) {
-        swal({ title: '请检查网络连接，或稍后再试', icon: "error" })
-    }
-}
-
-function updateFormalMember(info) {
-    if (info.department_id === 0) {
-        formalMember.value = info.department_name
-    } else if (info.department_id === 1) {
-        formalMember.value = `${info.department_name} - ${info.job === "manager" ? '队长' : '副队长'}`
-    } else {
-        formalMember.value = `${info.department_name} - ${info.job === "manager" ? '组长' : '组员'}`
-    }
-}
-
-function updateBadges(info) {
-    badges.value = [
-        { text: '查早：XXX', type: 'success' },
-        { text: '查课：XXX', type: 'warning' },
-        // ...
-    ]
-}
-
 const departments = ref([])
 
 async function get_department() {
@@ -73,16 +24,18 @@ async function get_department() {
             return
         }
         if (code === 200 || code === 301) {
-            // map data into reactive rows, add editing helpers
+            if (code === 301) { console.log('获取部门信息函数移至新位置'); }
             departments.value = data.data.map(d => ({
                 ...d,
                 editing: false,
                 _tmp: {
+                    old_department_id: d.department_id,
+                    department_id: d.department_id,
+                    department_name: d.department_name,
                     group_leader: d.student_id ? `${d.student_name}--${d.student_id}` : '',
                     remark: d.remark ?? ''
                 }
             }))
-            if (code === 301) { console.log('获取部门信息函数移至新位置'); }
         }
     } catch (e) {
         swal({ title: '请检查网络连接，或稍后再试', icon: "error" })
@@ -92,19 +45,30 @@ async function get_department() {
 function change_to_editable_row(dept) {
     dept.editing = true
     dept._tmp = {
+        old_department_id: dept.department_id,
+        department_id: dept.department_id,
+        department_name: dept.department_name,
         group_leader: dept.student_id ? `${dept.student_name}--${dept.student_id}` : '',
         remark: dept.remark ?? ''
     }
 }
 
 async function upload_department(dept) {
-    // validate & prepare
-    const department_id = dept.department_id
+    const old_department_id = dept._tmp.old_department_id
+    const department_id = dept._tmp.department_id
+    const department_name = dept._tmp.department_name
     let group_leader_id = (dept._tmp.group_leader || '').toString()
+    let chazao = dept.chazao
+    let chake = dept.chake
+    let datamanager = dept.datamanager
     let remark = dept._tmp.remark || ''
 
     if (department_id === "") {
-        swal({ title: "请检查编号", icon: "error" })
+        showToast('error', "请检查编号")
+        return
+    }
+    if (department_name === "") {
+        showToast('error', "请检查部门名称")
         return
     }
     const tmp = group_leader_id.indexOf("-")
@@ -115,7 +79,7 @@ async function upload_department(dept) {
 
     try {
         const { data } = await axios.post('/Ajax/TeamManager/update_department', {
-            department_id, group_leader_id, remark
+            old_department_id, department_id, department_name, group_leader_id, remark, chazao, chake, datamanager
         })
         const returnCode = data.code
         if (returnCode === 400) {
@@ -123,11 +87,11 @@ async function upload_department(dept) {
         } else if (returnCode === 401) {
             showToast('error', "权限错误", data.message)
         } else if (returnCode === 404) {
-            swal({ title: "功能不存在，请联系管理员", icon: "warning" })
+            showToast('warning', "功能不存在，请联系管理员")
         } else if (returnCode === 417) {
-            swal({ title: "功能错误，请联系管理员", icon: "warning" })
+            showToast('warning', "功能错误，请联系管理员")
         } else if (returnCode === 498) {
-            swal({ title: "数据库异常，请联系管理员", icon: "warning" })
+            showToast('warning', "数据库异常，请联系管理员")
         } else if (returnCode === 499) {
             swal({ title: "功能维护中，暂不允许修改部门信息", icon: "warning" })
         } else if (returnCode === 200 || returnCode === 301) {
@@ -137,6 +101,103 @@ async function upload_department(dept) {
         }
     } catch (e) {
         swal({ title: '请检查网络连接，或稍后再试', icon: "error" })
+    }
+}
+
+function add_department() {
+    // 若已存在未提交的新增行，则不再新增
+    if (departments.value.some(d => d.isNew)) return;
+    departments.value.push({
+        department_id: '',
+        department_name: '',
+        student_name: '',
+        student_id: '',
+        chazao: false,
+        chake: false,
+        datamanager: false,
+        remark: '',
+        editing: true,
+        isNew: true,
+        _tmp: {
+            department_id: '',
+            department_name: '',
+            group_leader: '',
+            remark: ''
+        }
+    })
+}
+
+// 新增部门上传
+async function confirm_add_department(dept) {
+    const { department_id, department_name, group_leader, remark } = dept._tmp
+    let group_leader_id = (dept._tmp.group_leader || '').toString()
+    let chazao = dept.chazao
+    let chake = dept.chake
+    let datamanager = dept.datamanager
+
+    if (department_id === "") {
+        showToast('error', "请检查编号")
+        return
+    }
+    if (department_name === "") {
+        showToast('error', "请检查部门名称")
+        return
+    }
+    const tmp = group_leader_id.indexOf("-")
+    if (tmp !== -1) {
+        group_leader_id = group_leader_id.slice(tmp + 2)
+    }
+    if (group_leader_id === 'null') group_leader_id = ""
+
+    try {
+        const { data } = await axios.post('/Ajax/TeamManager/add_department', {
+            department_id, department_name, group_leader_id, remark, chazao, chake, datamanager
+        })
+        const code = data.code
+        if (code === 200 || code === 301) {
+            showToast('success', "成功", "部门已添加")
+            await get_department()
+        } else if (code === 499) {
+            swal({ title: "功能维护中，暂不允许添加部门信息", icon: "warning" })
+        } else {
+            showToast('error', "添加失败", data.message)
+        }
+    } catch (e) {
+        swal({ title: '网络异常，请稍后再试', icon: "error" })
+    }
+}
+
+function cancel_add_department(index) {
+    // 移除新增行
+    departments.value.splice(index, 1)
+}
+
+async function delete_department(dept) {
+    // 确认操作
+    const willDel = await swal({
+        title: "确认要删除该部门？",
+        text: "删除后不可恢复，请谨慎操作！另：删除部门将同时移除组长和组员相关权限。",
+        icon: "warning",
+        buttons: ["取消", "确定删除"],
+        dangerMode: true
+    })
+    if (!willDel) return
+
+    try {
+        const { data } = await axios.post('/Ajax/TeamManager/delete_department', {
+            department_id: dept.department_id
+        })
+        const code = data.code
+        if (code === 200 || code === 301) {
+            showToast('success', "成功", "数据已删除")
+            await get_department()
+        } else if (code === 499) {
+            swal({ title: "功能维护中，暂不允许删除部门信息", icon: "warning" })
+        } else {
+            showToast('error', "删除失败", data.message)
+        }
+    } catch (e) {
+        swal({ title: '网络异常，请稍后再试', icon: "error" })
     }
 }
 
@@ -171,20 +232,17 @@ function showToast(status, title, text) {
     toast.show()
 }
 
-// call both on mount
 onMounted(() => {
-    getTopbarInfo()
     get_department()
 })
 </script>
-
 
 <template>
     <div class="layout-wrapper layout-content-navbar">
         <div class="layout-container">
             <!-- Menu -->
             <aside class="layout-menu menu-vertical menu bg-menu-theme">
-                <Sidebar :current-path="currentPath" :user-info="userInfo" />
+                <Sidebar />
             </aside>
             <!-- / Menu -->
 
@@ -192,7 +250,7 @@ onMounted(() => {
             <div class="layout-page">
                 <nav
                     class="layout-navbar container-fluid navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme rounded-pill">
-                    <Topbar :user-info="userInfo" :formal-member="formalMember" :badges="badges" />
+                    <Topbar />
                 </nav>
                 <div>
                     <LoginWork />
@@ -214,17 +272,23 @@ onMounted(() => {
                         </nav>
                         <!-- main content -->
                         <div class="alert alert-danger" role="alert">
-                            由于权限系统设计，本页面暂不支持增删功能，只可修改备注、调整组长。
+                            * 权限系统限制队长组权限赋予id为1的组，请确保<span class="fw-bold">队长组编号为1</span><br />
                         </div>
-
+                        <div class="alert alert-primary" role="alert">
+                            建议配置：查早组、沙河组分配<span class="fw-bold">查早任务</span>；查课组、沙河组分配<span
+                                class="fw-bold">查课任务</span>；数据组分配<span class="fw-bold">数据管理</span>
+                        </div>
                         <div aria-live="polite" aria-atomic="true" class="position-fixed top-1 end-0 p-3 zindex-5"
-                            id="toast-container"></div>
-
+                            id="toast-container">
+                        </div>
                         <div class="card">
                             <h5 class="card-header">部门管理</h5>
                             <div class="card-body">
                                 <p class="card-subtitle text-muted">
-                                    人数上限修改：<span class="text-primary fw-bold">注意：人数上限包括组长</span><br />
+                                    任务配置：配置<span
+                                        class="text-primary fw-bold">查早任务</span>则对应组成员可以分配查早计划，对应组组长可以管理查早数据；配置<span
+                                        class="text-primary fw-bold">查课任务</span>类似<br />
+                                    数据管理配置：配置<span class="text-primary fw-bold">数据管理</span>则对应组具备数据组职能，可以管理相关数据<br />
                                     组长修改：点击“编辑”后输入完整学号即可，请勿输入其他内容<br />
                                     备注修改：只能输入单行内容<br />
                                     保存反馈：修改成功与否会通过右侧气泡展示
@@ -234,40 +298,84 @@ onMounted(() => {
                                 <table class="table table-hover table-striped mb-3 text-center">
                                     <thead>
                                         <tr>
-                                            <th>#</th>
+                                            <th>ID</th>
                                             <th>名称</th>
-                                            <th>组长</th>
+                                            <th>队长/组长</th>
+                                            <th>查早任务</th>
+                                            <th>查课任务</th>
+                                            <th>数据管理</th>
                                             <th>备注</th>
                                             <th>操作</th>
                                         </tr>
                                     </thead>
                                     <tbody id="department-table-body">
-                                        <!-- replaced manual DOM fill with Vue rendering -->
-                                        <tr v-for="dept in departments" :key="dept.department_id">
-                                            <td>{{ dept.department_id }}</td>
-                                            <td>{{ dept.department_name }}</td>
+                                        <tr v-for="(dept, index) in departments"
+                                            :key="dept.isNew ? 'new_' + index : dept.department_id">
+                                            <td>
+                                                <span v-if="!dept.editing">{{ dept.department_id }}</span>
+                                                <input v-else type="number" min="1" max="30"
+                                                    class="form-control text-center" style="min-width:80px;"
+                                                    v-model="dept._tmp.department_id" />
+                                            </td>
+                                            <td>
+                                                <span v-if="!dept.editing">{{ dept.department_name }}</span>
+                                                <input v-else type="text" class="form-control text-center"
+                                                    style="min-width:120px;" v-model="dept._tmp.department_name" />
+                                            </td>
                                             <td>
                                                 <span v-if="!dept.editing">{{ dept.student_name }}<span
                                                         v-if="dept.student_id">--{{ dept.student_id }}</span></span>
                                                 <input v-else type="text" class="form-control text-center"
-                                                    style="min-width: 120px;" v-model="dept._tmp.group_leader" />
+                                                    style="min-width:120px;" v-model="dept._tmp.group_leader" />
+                                            </td>
+                                            <td>
+                                                <div class="form-switch">
+                                                    <input type="checkbox" class="form-check-input" id="chazao"
+                                                        name="chazao" :disabled="!dept.editing" required
+                                                        v-model="dept.chazao" />
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="form-switch">
+                                                    <input type="checkbox" class="form-check-input" id="chake"
+                                                        name="chake" :disabled="!dept.editing" required
+                                                        v-model="dept.chake" />
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <div class="form-switch">
+                                                    <input type="checkbox" class="form-check-input" id="datamanager"
+                                                        name="datamanager" :disabled="!dept.editing" required
+                                                        v-model="dept.datamanager" />
+                                                </div>
                                             </td>
                                             <td>
                                                 <span v-if="!dept.editing">{{ dept.remark }}</span>
                                                 <input v-else type="text" class="form-control text-center"
-                                                    style="min-width: 150px;" v-model="dept._tmp.remark" />
+                                                    style="min-width:150px;" v-model="dept._tmp.remark" />
                                             </td>
                                             <td>
-                                                <button v-if="!dept.editing" class="btn btn-warning btn-sm rounded-pill"
-                                                    @click="change_to_editable_row(dept)">编辑</button>
-                                                <button v-else class="btn btn-primary btn-sm rounded-pill"
-                                                    @click="upload_department(dept)">提交</button>
-                                                <button class="btn btn-danger btn-sm rounded-pill" disabled>删除</button>
+                                                <template v-if="dept.isNew">
+                                                    <button class="btn btn-primary btn-sm rounded-pill"
+                                                        @click="confirm_add_department(dept)">保存</button>
+                                                    <button class="btn btn-secondary btn-sm rounded-pill"
+                                                        @click="cancel_add_department(index)">取消</button>
+                                                </template>
+                                                <template v-else>
+                                                    <button v-if="!dept.editing"
+                                                        class="btn btn-warning btn-sm rounded-pill"
+                                                        @click="change_to_editable_row(dept)">编辑</button>
+                                                    <button v-else class="btn btn-primary btn-sm rounded-pill"
+                                                        @click="upload_department(dept)">提交</button>
+                                                    <button class="btn btn-danger btn-sm rounded-pill"
+                                                        @click="delete_department(dept)">删除</button>
+                                                </template>
                                             </td>
                                         </tr>
                                     </tbody>
                                 </table>
-                                <button class="btn btn-primary btn-sm rounded-pill mb-3 ms-3">添加</button>
+                                <button class="btn btn-primary btn-sm rounded-pill mb-3 ms-3"
+                                    @click="add_department">添加</button>
                             </div>
                         </div>
                         <!--/ Layout Demo -->

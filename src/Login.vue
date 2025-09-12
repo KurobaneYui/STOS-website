@@ -105,12 +105,6 @@ function hideWorkModal() {
     bsModalInstance && bsModalInstance.hide();
 }
 
-// 可选操作实现（如注销）
-function logout() {
-    // 可补充具体注销逻辑
-    hideWorkModal();
-}
-
 // 用于动态渲染按钮Pill内容
 function getWorkPillContent(work) {
     if (work.department_id === 0) return work.name;
@@ -132,7 +126,7 @@ onMounted(() => {
                 <div class="modal-header">
                     <h5 class="modal-title">选择登录岗位</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
-                        @click="logout"></button>
+                        @click="hideWorkModal"></button>
                 </div>
                 <div class="modal-body">
                     <div class="row g-2" id="work-list-container">

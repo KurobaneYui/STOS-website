@@ -6,57 +6,11 @@ import * as bootstrap from 'bootstrap'
 import Sidebar from './components/Sidebar.vue'
 import Topbar from './components/Topbar.vue'
 import LoginWork from './components/Loginwork.vue'
+import { VueDraggable } from 'vue-draggable-plus'
 import "/src/assets/demo.css"
 
-const currentPath = window.location.pathname
-
-const userInfo = ref({
-    name: '',
-    department_id: 0,
-    department_name: '',
-    job: 'member'
-})
-const formalMember = ref('')
-const badges = ref([])
 const schools = ref([])
-
-async function getTopbarInfo() {
-    try {
-        const { data } = await axios.get('/Ajax/Users/topbarInfo')
-        const code = data.code
-        if ([400, 401, 404, 417, 498, 499].includes(code)) {
-            if (data.msg) swal({ title: data.msg, icon: "warning" })
-            else swal({ title: '出错了，如刷新无效请尝试重新登录', icon: 'error' })
-            return
-        }
-        if (code === 200 || code === 301) {
-            const info = data.data
-            userInfo.value = info
-            updateFormalMember(info)
-            updateBadges(info)
-        }
-    } catch (e) {
-        swal({ title: '请检查网络连接，或稍后再试', icon: "error" })
-    }
-}
-
-function updateFormalMember(info) {
-    if (info.department_id === 0) {
-        formalMember.value = info.department_name
-    } else if (info.department_id === 1) {
-        formalMember.value = `${info.department_name} - ${info.job === "manager" ? '队长' : '副队长'}`
-    } else {
-        formalMember.value = `${info.department_name} - ${info.job === "manager" ? '组长' : '组员'}`
-    }
-}
-
-function updateBadges(info) {
-    badges.value = [
-        { text: '查早：XXX', type: 'success' },
-        { text: '查课：XXX', type: 'warning' },
-        // ...
-    ]
-}
+const draggable_disable = ref(false)
 
 async function get_school() {
     try {
@@ -90,6 +44,7 @@ async function get_school() {
 }
 
 function change_to_editable_row(school) {
+    draggable_disable.value = true
     school.editing = true
     school._tmp = {
         school_id: school.school_id,
@@ -107,6 +62,7 @@ async function upload_school(school) {
         return
     }
 
+    draggable_disable.value = false
     try {
         const { data } = await axios.post('/Ajax/DataManager/update_school', {
             school_id, name, old_school_id
@@ -135,6 +91,7 @@ async function upload_school(school) {
 }
 
 function add_row_for_add_school() {
+    draggable_disable.value = true
     schools.value.push({
         school_id: null,
         name: '',
@@ -143,6 +100,16 @@ function add_row_for_add_school() {
         old_school_id: null,
         _tmp: { school_id: null, name: '' }
     })
+}
+
+function cancel_add_school(school) {
+    // 去掉当前school
+    schools.value = schools.value.filter(s => s !== school)
+    // 检查还有没有“新建而且未保存”（isNew 且 editing为true）的行
+    const stillAdding = schools.value.some(s => s.isNew && s.editing)
+    if (!stillAdding) {
+        draggable_disable.value = false
+    }
 }
 
 async function add_school(school) {
@@ -154,6 +121,7 @@ async function add_school(school) {
         return
     }
 
+    draggable_disable.value = false
     try {
         const { data } = await axios.post('/Ajax/DataManager/add_school', { school_id, name })
         const returnCode = data.code
@@ -180,6 +148,16 @@ async function add_school(school) {
 }
 
 async function delete_school(school) {
+    // 确认操作
+    const willDel = await swal({
+        title: "确认要删除该学院？",
+        text: "删除后不可恢复，请谨慎操作！另：删除学院将同时影响成员个人信息、任务数据信息。",
+        icon: "warning",
+        buttons: ["取消", "确定删除"],
+        dangerMode: true
+    })
+    if (!willDel) return
+
     const school_id = Number(school._tmp.school_id)
     const name = (school._tmp.name || '').toString()
     const old_school_id = school.old_school_id
@@ -189,6 +167,7 @@ async function delete_school(school) {
         return
     }
 
+    draggable_disable.value = false
     try {
         const { data } = await axios.post('/Ajax/DataManager/delete_school', { school_id, name, old_school_id })
         const returnCode = data.code
@@ -246,18 +225,16 @@ function showToast(status, title, text) {
 }
 
 onMounted(() => {
-    getTopbarInfo()
     get_school()
 });
 </script>
-
 
 <template>
     <div class="layout-wrapper layout-content-navbar">
         <div class="layout-container">
             <!-- Menu -->
             <aside class="layout-menu menu-vertical menu bg-menu-theme">
-                <Sidebar :current-path="currentPath" :user-info="userInfo" />
+                <Sidebar />
             </aside>
             <!-- / Menu -->
 
@@ -265,7 +242,7 @@ onMounted(() => {
             <div class="layout-page">
                 <nav
                     class="layout-navbar container-fluid navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme rounded-pill">
-                    <Topbar :user-info="userInfo" :formal-member="formalMember" :badges="badges" />
+                    <Topbar />
                 </nav>
                 <div>
                     <LoginWork />
@@ -287,9 +264,10 @@ onMounted(() => {
                         </nav>
                         <!-- main content -->
                         <div class="alert alert-danger" role="alert">
-                            成员学院数据和后台工作数据的学院信息均和本页信息绑定（通过学院id关联）。编辑学院名称、校区会同步影响到相关的信息。<br />
-                            除非添加学院信息后发现错误且暂未有其他信息关联到此学院，可以直接删除信息外，请不要随意点击删除按钮。<br />
-                            如果需要修改信息，请直接修改而不是删除后重新添加，否则会导致所有关联此学院的数据出错。
+                            * 成员学院数据和后台工作数据的学院信息均和本页信息绑定（通过学院id关联）。编辑学院名称会同步影响到成员信息、查课、查早、早读数据等相关的信息。<br />
+                            * 除非添加学院信息后发现错误且暂未有其他信息关联到此学院，可以直接删除信息外，请不要随意点击删除按钮。<br />
+                            * 如果需要修改信息，请直接修改而不是删除后重新添加，否则会导致所有关联此学院的数据出现不可恢复的错误。<br />
+                            * 更新学院ID不会导致关联数据错误，但请尽量避免在数据处理高峰期（早自习、查课期间）修改。
                         </div>
 
                         <div aria-live="polite" aria-atomic="true" class="position-fixed top-1 end-0 p-3 zindex-5"
@@ -299,52 +277,65 @@ onMounted(() => {
                             <h5 class="card-header">学院管理</h5>
                             <div class="card-body">
                                 <p class="card-subtitle text-muted">
-                                    学院名称：<span class="text-primary fw-bold">学院名称完整填写，如：英才实验学院（未来技术学院）</span><br />
+                                    学院名称：<span class="text-primary fw-bold">学院名称完整填写</span>，如：英才实验学院（未来技术学院）<br />
                                     保存反馈：修改成功与否会通过右侧气泡展示
                                 </p>
                             </div>
+                            <div class="form-check form-switch ms-3">
+                                <label for="draggableButton" class="form-check-label">禁用拖动</label>
+                                <input type="checkbox" class="form-check-input" id="draggableButton"
+                                    name="draggableButton" required v-model="draggable_disable" />
+                            </div>
                             <div class="table-responsive text-nowrap">
-                                <table class="table table-hover table-striped mb-3 text-center">
-                                    <thead>
-                                        <tr>
-                                            <th>#</th>
-                                            <th>名称</th>
-                                            <th>操作</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody id="school-table-body">
-                                        <tr v-for="(school, idx) in schools"
-                                            :key="school.isNew ? `new-${idx}` : school.school_id">
-                                            <td>
-                                                <span v-if="!school.editing">{{ school.school_id }}</span>
-                                                <input v-else type="number" min="1" max="50"
-                                                    class="form-control text-center" style="min-width: 20px;"
-                                                    v-model.number="school._tmp.school_id" />
-                                            </td>
-                                            <td>
-                                                <span v-if="!school.editing">{{ school.name }}</span>
-                                                <input v-else type="text" class="form-control text-center"
-                                                    style="min-width: 120px;" v-model="school._tmp.name" />
-                                            </td>
-                                            <td>
-                                                <template v-if="!school.editing">
-                                                    <button class="btn btn-warning btn-sm rounded-pill"
-                                                        @click="change_to_editable_row(school)">编辑</button>
-                                                </template>
-                                                <template v-else>
-                                                    <button class="btn btn-primary btn-sm rounded-pill me-1"
-                                                        @click="school.isNew ? add_school(school) : upload_school(school)">{{
-                                                            school.isNew ? '确定' : '提交' }}</button>
-                                                    <button v-if="!school.isNew"
-                                                        class="btn btn-danger btn-sm rounded-pill"
-                                                        @click="delete_school(school)">删除</button>
-                                                    <button v-else class="btn btn-secondary btn-sm rounded-pill"
-                                                        @click="schools = schools.filter(s => s !== school)">取消</button>
-                                                </template>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                                <VueDraggable v-model="schools" target=".sort-target" :animation="150"
+                                    :disabled="draggable_disable">
+                                    <table class="table table-hover table-striped mb-3 text-center">
+                                        <thead>
+                                            <tr>
+                                                <th>ID</th>
+                                                <th>名称</th>
+                                                <th>操作</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="school-table-body" class="sort-target">
+                                            <tr v-for="(school, idx) in schools"
+                                                :key="school.isNew ? `new-${idx}` : school.school_id">
+                                                <td>
+                                                    <span v-if="!school.editing">{{ school.school_id }}</span>
+                                                    <input v-else type="number" min="1" max="50"
+                                                        class="form-control text-center" style="min-width: 20px;"
+                                                        v-model.number="school._tmp.school_id" />
+                                                </td>
+                                                <td>
+                                                    <span v-if="!school.editing">{{ school.name }}</span>
+                                                    <input v-else type="text" class="form-control text-center"
+                                                        style="min-width: 120px;" v-model="school._tmp.name" />
+                                                </td>
+                                                <td>
+                                                    <template v-if="!school.editing">
+                                                        <button class="btn btn-warning btn-sm rounded-pill"
+                                                            @click="change_to_editable_row(school)">编辑</button>
+                                                    </template>
+                                                    <template v-else>
+                                                        <button class="btn btn-primary btn-sm rounded-pill me-1"
+                                                            @click="school.isNew ? add_school(school) : upload_school(school)">{{
+                                                                school.isNew ? '确定' : '提交' }}</button>
+                                                        <button v-if="!school.isNew"
+                                                            class="btn btn-danger btn-sm rounded-pill"
+                                                            @click="delete_school(school)">删除</button>
+                                                        <button v-else class="btn btn-secondary btn-sm rounded-pill"
+                                                            @click="cancel_add_school(school)">取消</button>
+                                                    </template>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </VueDraggable>
+                                <div class="form-check form-switch ms-3 mb-3">
+                                    <label for="draggableButton" class="form-check-label">禁用拖动</label>
+                                    <input type="checkbox" class="form-check-input" id="draggableButton"
+                                        name="draggableButton" required v-model="draggable_disable" />
+                                </div>
                                 <button class="btn btn-primary btn-sm rounded-pill mb-3 ms-3"
                                     @click="add_row_for_add_school()">添加</button>
                             </div>
