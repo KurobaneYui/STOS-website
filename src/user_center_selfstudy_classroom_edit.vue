@@ -437,7 +437,7 @@ function renderCampus(campus) {
                                         </table>
                                     </VueDraggable>
                                 </div>
-                                <button class="btn btn-sm btn-success rounded-pill mb-3 ms-3" :disabled="!isEditMode"
+                                <button class="btn btn-sm btn-primary rounded-pill mb-3 ms-3" :disabled="!isEditMode"
                                     @click="addEditableRow">新增</button>
                             </div>
                         </div>
