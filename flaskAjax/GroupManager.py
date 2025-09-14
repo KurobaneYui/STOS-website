@@ -21,7 +21,10 @@ def GroupManager(app: flask.Flask) -> None:
                 # ===============
                 # 检查接口调用权限
                 Authorization.check(
-                    rightsNeeded=({"department_id": None, "actor": "manager"},),
+                    rightsNeeded=(
+                        {"department_id": None, "actor": "manager"},
+                        {"department_id": 1, "actor": "member"},
+                    ),
                     needLogin=True,
                 )
                 # =========================================
@@ -73,8 +76,7 @@ def GroupManager(app: flask.Flask) -> None:
                 infoForm = dict(request.json)
                 Authorization.check(
                     rightsNeeded=(
-                        {"department_id": 1, "actor": "member"},
-                        {"department_id": 1, "actor": "manager"},
+                        {"department_id": 1, "actor": None},
                         {
                             "department_id": infoForm["group_id"],
                             "actor": "manager",
@@ -106,8 +108,7 @@ def GroupManager(app: flask.Flask) -> None:
                 infoForm = dict(request.json)
                 Authorization.check(
                     rightsNeeded=(
-                        {"department_id": 1, "actor": "member"},
-                        {"department_id": 1, "actor": "manager"},
+                        {"department_id": 1, "actor": None},
                         {
                             "department_id": infoForm["group_id"],
                             "actor": "manager",
@@ -136,7 +137,10 @@ def GroupManager(app: flask.Flask) -> None:
                 # ===============
                 # 检查接口调用权限
                 Authorization.check(
-                    rightsNeeded=({"department_id": None, "actor": "manager"},),
+                    rightsNeeded=(
+                        {"department_id": 1, "actor": None},
+                        {"department_id": "chazao", "actor": "manager"},
+                    ),
                     needLogin=True,
                 )
                 # ===========
@@ -156,7 +160,10 @@ def GroupManager(app: flask.Flask) -> None:
                 # ===============
                 # 检查接口调用权限
                 Authorization.check(
-                    rightsNeeded=({"department_id": None, "actor": "manager"},),
+                    rightsNeeded=(
+                        {"department_id": 1, "actor": None},
+                        {"department_id": "chazao", "actor": "manager"},
+                    ),
                     needLogin=True,
                 )
                 # ========================

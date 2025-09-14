@@ -39,10 +39,8 @@ def DataManager(app: flask.Flask) -> None:
                 # 检查接口调用权限
                 Authorization.check(
                     rightsNeeded=(
-                        {"department_id": 1, "actor": "manager"},
-                        {"department_id": 1, "actor": "member"},
-                        {"department_id": 9, "actor": "manager"},
-                        {"department_id": 9, "actor": "member"},
+                        {"department_id": 1, "actor": None},
+                        {"department_id": "datamanager", "actor": None},
                     ),
                     needLogin=True,
                 )
@@ -64,10 +62,8 @@ def DataManager(app: flask.Flask) -> None:
                 # 检查接口调用权限
                 Authorization.check(
                     rightsNeeded=(
-                        {"department_id": 1, "actor": "manager"},
-                        {"department_id": 1, "actor": "member"},
-                        {"department_id": 9, "actor": "manager"},
-                        {"department_id": 9, "actor": "member"},
+                        {"department_id": 1, "actor": None},
+                        {"department_id": "datamanager", "actor": None},
                     ),
                     needLogin=True,
                 )
@@ -95,10 +91,8 @@ def DataManager(app: flask.Flask) -> None:
                 # 检查接口调用权限
                 Authorization.check(
                     rightsNeeded=(
-                        {"department_id": 1, "actor": "manager"},
-                        {"department_id": 1, "actor": "member"},
-                        {"department_id": 9, "actor": "manager"},
-                        {"department_id": 9, "actor": "member"},
+                        {"department_id": 1, "actor": None},
+                        {"department_id": "datamanager", "actor": None},
                     ),
                     needLogin=True,
                 )
@@ -126,10 +120,8 @@ def DataManager(app: flask.Flask) -> None:
                 # 检查接口调用权限
                 Authorization.check(
                     rightsNeeded=(
-                        {"department_id": 1, "actor": "manager"},
-                        {"department_id": 1, "actor": "member"},
-                        {"department_id": 9, "actor": "manager"},
-                        {"department_id": 9, "actor": "member"},
+                        {"department_id": 1, "actor": None},
+                        {"department_id": "datamanager", "actor": None},
                     ),
                     needLogin=True,
                 )
@@ -175,7 +167,7 @@ def DataManager(app: flask.Flask) -> None:
                 Authorization.check(
                     rightsNeeded=(
                         {"department_id": 1, "actor": "manager"},
-                        {"department_id": 9, "actor": "manager"},
+                        {"department_id": "datamanager", "actor": "manager"},
                     ),
                     needLogin=True,
                 )
@@ -204,7 +196,7 @@ def DataManager(app: flask.Flask) -> None:
                 Authorization.check(
                     rightsNeeded=(
                         {"department_id": 1, "actor": "manager"},
-                        {"department_id": 9, "actor": "manager"},
+                        {"department_id": "datamanager", "actor": "manager"},
                     ),
                     needLogin=True,
                 )
@@ -233,7 +225,7 @@ def DataManager(app: flask.Flask) -> None:
                 Authorization.check(
                     rightsNeeded=(
                         {"department_id": 1, "actor": "manager"},
-                        {"department_id": 9, "actor": "manager"},
+                        {"department_id": "datamanager", "actor": "manager"},
                     ),
                     needLogin=True,
                 )
@@ -260,10 +252,7 @@ def DataManager(app: flask.Flask) -> None:
                 # ===============
                 # 检查接口调用权限
                 Authorization.check(
-                    rightsNeeded=(
-                        {"department_id": 9, "actor": "manager"},
-                        {"department_id": 9, "actor": "member"},
-                    ),
+                    rightsNeeded=({"department_id": "datamanager", "actor": None},),
                     needLogin=True,
                 )
                 # =========================================
@@ -285,10 +274,7 @@ def DataManager(app: flask.Flask) -> None:
                 # ===============
                 # 检查接口调用权限
                 Authorization.check(
-                    rightsNeeded=(
-                        {"department_id": 9, "actor": "manager"},
-                        {"department_id": 9, "actor": "member"},
-                    ),
+                    rightsNeeded=({"department_id": "datamanager", "actor": None},),
                     needLogin=True,
                 )
                 # ========================
@@ -314,10 +300,7 @@ def DataManager(app: flask.Flask) -> None:
                 # ===============
                 # 检查接口调用权限
                 Authorization.check(
-                    rightsNeeded=(
-                        {"department_id": 9, "actor": "manager"},
-                        {"department_id": 9, "actor": "member"},
-                    ),
+                    rightsNeeded=({"department_id": "datamanager", "actor": None},),
                     needLogin=True,
                 )
                 # ========================
@@ -347,10 +330,7 @@ def DataManager(app: flask.Flask) -> None:
                 # ===============
                 # 检查接口调用权限
                 Authorization.check(
-                    rightsNeeded=(
-                        {"department_id": 9, "actor": "manager"},
-                        {"department_id": 9, "actor": "member"},
-                    ),
+                    rightsNeeded=({"department_id": "datamanager", "actor": None},),
                     needLogin=True,
                 )
                 # =========================================
@@ -370,10 +350,7 @@ def DataManager(app: flask.Flask) -> None:
                 # ===============
                 # 检查接口调用权限
                 Authorization.check(
-                    rightsNeeded=(
-                        {"department_id": 9, "actor": "manager"},
-                        {"department_id": 9, "actor": "member"},
-                    ),
+                    rightsNeeded=({"department_id": "datamanager", "actor": None},),
                     needLogin=True,
                 )
                 # ========================
@@ -399,10 +376,7 @@ def DataManager(app: flask.Flask) -> None:
                 # ===============
                 # 检查接口调用权限
                 Authorization.check(
-                    rightsNeeded=(
-                        {"department_id": 9, "actor": "manager"},
-                        {"department_id": 9, "actor": "member"},
-                    ),
+                    rightsNeeded=({"department_id": "datamanager", "actor": None},),
                     needLogin=True,
                 )
                 # ========================
@@ -428,10 +402,7 @@ def DataManager(app: flask.Flask) -> None:
                 # ===============
                 # 检查接口调用权限
                 Authorization.check(
-                    rightsNeeded=(
-                        {"department_id": 9, "actor": "manager"},
-                        {"department_id": 9, "actor": "member"},
-                    ),
+                    rightsNeeded=({"department_id": "datamanager", "actor": None},),
                     needLogin=True,
                 )
                 # ========================
@@ -456,10 +427,7 @@ def DataManager(app: flask.Flask) -> None:
                 # ===============
                 # 检查接口调用权限
                 Authorization.check(
-                    rightsNeeded=(
-                        {"department_id": 9, "actor": "manager"},
-                        {"department_id": 9, "actor": "member"},
-                    ),
+                    rightsNeeded=({"department_id": "datamanager", "actor": None},),
                     needLogin=True,
                 )
                 # ========================
