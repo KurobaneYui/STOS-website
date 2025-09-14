@@ -111,6 +111,68 @@ async function getBlacklist() {
     }
 }
 
+async function delete_blocked(blockedOne) {
+    loading.value = true;
+    if (!(await swal({
+        title: "确定要删除？",
+        text: "删除后不可恢复，确认？",
+        icon: "warning",
+        buttons: true,
+        dangerMode: true,
+    }))) {
+        loading.value = false;
+        return;
+    }
+    try {
+        const { data } = await axios.post('/Ajax/TeamManager/delete_blocked', { student_id: blockedOne.student_id });
+        const returnCode = data.code;
+
+        if (returnCode === 400) {
+            swal({ title: "请求参数错误，请联系管理员", icon: "error" });
+            return;
+        }
+        if (returnCode === 401) {
+            swal({ title: "权限不足", text: "暂无删除黑名单的权限", icon: "error" });
+            return;
+        }
+        if (returnCode === 404) {
+            swal({ title: "功能不存在", text: "请联系管理员", icon: "warning" });
+            return;
+        }
+        if (returnCode === 417) {
+            swal({ title: "功能错误", text: "请联系管理员", icon: "warning" });
+            return;
+        }
+        if (returnCode === 498) {
+            swal({ title: "数据库异常", text: "请联系管理员", icon: "warning" });
+            return;
+        }
+        if (returnCode === 499) {
+            swal({ title: "功能维护中", text: "暂不允许操作黑名单", icon: "warning" });
+            return;
+        }
+        if (returnCode === 200) {
+            // 删除成功，从列表移除
+            blacklist.value = blacklist.value.filter(row => row.student_id !== blockedOne.student_id);
+            swal({ title: "删除成功", icon: "success" });
+        } else {
+            swal({
+                title: "删除失败",
+                text: data.msg || "未知错误，请联系管理员",
+                icon: "error"
+            });
+        }
+    } catch (e) {
+        swal({
+            title: "网络出错",
+            text: e.message || "请检查网络或稍后重试",
+            icon: "error"
+        });
+    } finally {
+        loading.value = false;
+    }
+}
+
 onMounted(() => {
     getBlacklist()
 });
@@ -215,6 +277,7 @@ onMounted(() => {
                                                 <th>学号</th>
                                                 <th>事由</th>
                                                 <th>时间</th>
+                                                <th>操作</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -229,6 +292,8 @@ onMounted(() => {
                                                 <td>{{ blockedOne.student_id }}</td>
                                                 <td>{{ blockedOne.reason }}</td>
                                                 <td>{{ blockedOne.start_time }}</td>
+                                                <td><button class="btn btn-danger btn-sm rounded-pill"
+                                                        @click="delete_blocked(blockedOne)">删除</button></td>
                                             </tr>
                                         </tbody>
                                         <tfoot class="table-border-bottom-0">
@@ -239,6 +304,7 @@ onMounted(() => {
                                                 <th>学号</th>
                                                 <th>事由</th>
                                                 <th>时间</th>
+                                                <th>操作</th>
                                             </tr>
                                         </tfoot>
                                     </table>

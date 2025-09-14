@@ -216,10 +216,7 @@ def Users(app: flask.Flask) -> None:  # noqa: C901
                 # ===============
                 # 检查接口调用权限
                 Authorization.check(
-                    rightsNeeded=(
-                        {"department_id": None, "actor": "member"},
-                        {"department_id": None, "actor": "manager"},
-                    ),
+                    rightsNeeded=({"department_id": None, "actor": None},),
                     needLogin=True,
                 )
                 # ===========
@@ -296,10 +293,7 @@ def Users(app: flask.Flask) -> None:  # noqa: C901
                 # ===============
                 # 检查接口调用权限
                 Authorization.check(
-                    rightsNeeded=(
-                        {"department_id": None, "actor": "manager"},
-                        {"department_id": None, "actor": "member"},
-                    ),
+                    rightsNeeded=({"department_id": None, "actor": None},),
                     needLogin=True,
                 )
                 # ===========
@@ -345,7 +339,10 @@ def Users(app: flask.Flask) -> None:  # noqa: C901
                 # ===============
                 # 检查接口调用权限
                 Authorization.check(
-                    rightsNeeded=({"department_id": None, "actor": "member"},),
+                    rightsNeeded=(
+                        {"department_id": "chazao", "actor": "member"},
+                        {"department_id": "chake", "actor": "member"},
+                    ),
                     needLogin=True,
                 )
                 # ===========
@@ -365,7 +362,7 @@ def Users(app: flask.Flask) -> None:  # noqa: C901
                 # ===============
                 # 检查接口调用权限
                 Authorization.check(
-                    rightsNeeded=({"department_id": None, "actor": "member"},),
+                    rightsNeeded=({"department_id": "chazao", "actor": "member"},),
                     needLogin=True,
                 )
                 # ===========
@@ -385,7 +382,7 @@ def Users(app: flask.Flask) -> None:  # noqa: C901
                 # ===============
                 # 检查接口调用权限
                 Authorization.check(
-                    rightsNeeded=({"department_id": None, "actor": "member"},),
+                    rightsNeeded=({"department_id": "chazao", "actor": "member"},),
                     needLogin=True,
                 )
                 # ========================

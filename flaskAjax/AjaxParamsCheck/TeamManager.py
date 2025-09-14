@@ -22,6 +22,15 @@ class TeamManagerCheck:
         infoForm["date"] = datetime.date.fromisoformat(infoForm["date"])
 
     @staticmethod
+    def deleteBlockedParamsCheck(infoForm: dict) -> None:
+        if "student_id" not in infoForm.keys():
+            raise IllegalValueError(
+                "Not all required data received.",
+                filename=__file__,
+                line=sys._getframe().f_lineno,
+            )
+
+    @staticmethod
     def updateDepartmentParamsCheck(infoForm: dict) -> None:
         if (
             "department_id" not in infoForm.keys()

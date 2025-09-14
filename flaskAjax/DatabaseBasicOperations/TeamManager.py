@@ -47,6 +47,21 @@ class TeamManagerDatabase:
             return results
 
     @staticmethod
+    def deleteBlocked(infoForm: dict, db_session: Session | None = None) -> None:
+        # =====================================
+        # 如果提供已经建立的数据库连接，则直接使用
+        session_context = (
+            SessionLocal() if db_session is None else nullcontext(db_session)
+        )
+        with session_context as session:
+            # ==============
+            # 查询黑名单数据
+            session.query(SQL_Blacklist).filter_by(
+                student_id=infoForm["student_id"]
+            ).delete()
+            session.commit()
+
+    @staticmethod
     def addBlocked(infoForm: dict, db_session: Session | None = None) -> None:
         # =====================================
         # 如果提供已经建立的数据库连接，则直接使用

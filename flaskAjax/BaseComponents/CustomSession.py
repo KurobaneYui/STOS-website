@@ -8,6 +8,9 @@ class CustomSession:
         name: str,
         logTime: str,
         department_id: int = 0,
+        chazao: bool = False,
+        chake: bool = False,
+        datamanager: bool = False,
         job: str = "member",
         department_name="预备队员",
     ) -> None:
@@ -16,6 +19,9 @@ class CustomSession:
         session["logTime"] = logTime
         session["department_id"] = department_id
         session["department_name"] = department_name
+        session["chazao"] = chazao
+        session["chake"] = chake
+        session["datamanager"] = datamanager
         session["job"] = job
 
         session["isLogin"] = hash(
@@ -30,6 +36,9 @@ class CustomSession:
             "userID": session.get("userID", None),
             "logTime": session.get("logTime", None),
             "department_id": session.get("department_id", None),
+            "chazao": session.get("chazao", None),
+            "chake": session.get("chake", None),
+            "datamanager": session.get("datamanager", None),
             "job": session.get("job", None),
             "department_name": session.get("department_name", None),
             "userName": session.get("userName", None),
@@ -43,6 +52,9 @@ class CustomSession:
             or "logTime" not in session
             or "department_id" not in session
             or "department_name" not in session
+            or "chazao" not in session
+            or "chake" not in session
+            or "datamanager" not in session
             or "job" not in session
             or "isLogin" not in session
         ):
@@ -70,4 +82,7 @@ class CustomSession:
         session.pop("logTime", None)
         session.pop("department_id", None)
         session.pop("department_name", None)
+        session.pop("chazao", None)
+        session.pop("chake", None)
+        session.pop("datamanager", None)
         session.pop("job", None)

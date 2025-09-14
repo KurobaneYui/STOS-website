@@ -4,7 +4,10 @@ from flaskAjax.BaseComponents.Logger import Logger
 from flaskAjax.BaseComponents.DatabaseConnector import SessionLocal
 from flaskAjax.BaseComponents.CustomSession import CustomSession
 from flaskAjax.BaseComponents.CustomError import PermissionDenyError
-from flaskAjax.BaseComponents.DatabaseDefinition import GroupMember as SQL_GroupMember
+from flaskAjax.BaseComponents.DatabaseDefinition import (
+    GroupMember as SQL_GroupMember,
+    Group as SQL_Group,
+)
 
 
 def checkIfLogin() -> bool:
@@ -63,43 +66,89 @@ class Authorization:
         ):
             logger.funcArgs = {"rightsNeeded": rightsNeeded, "needLogin": needLogin}
 
-            # check whether user has login or not
-            if needLogin and not checkIfLogin():
+            if not needLogin:
+                logger.funcReturns = "Authority check pass."
+                return
+
+            if not checkIfLogin():
                 raise PermissionDenyError(
                     "Please login first.",
                     filename=__file__,
                     line=sys._getframe().f_lineno,
                 )
 
-            if needLogin and len(rightsNeeded) > 0:
-                # Check function_auth
-                for auth_required in rightsNeeded:
-                    if auth_required["department_id"] is None:
-                        DataFetched = (
-                            session.query(SQL_GroupMember)
-                            .filter_by(
-                                student_id=CustomSession.getSession()["userID"],
-                                role=auth_required["actor"],
+            if len(rightsNeeded) <= 0:
+                logger.funcReturns = "Authority check pass."
+                return
+
+            for auth_required in rightsNeeded:
+                if auth_required["department_id"] is None:
+                    department_list = [
+                        i for (i,) in (session.query(SQL_Group.id).all())
+                    ]
+                elif auth_required["department_id"] == "chazao":
+                    department_list = [
+                        i
+                        for (i,) in (
+                            session.query(SQL_Group.id)
+                            .filter(
+                                SQL_Group.chazao,
                             )
                             .all()
                         )
-                    else:
-                        DataFetched = (
-                            session.query(SQL_GroupMember)
-                            .filter_by(
-                                group_id=auth_required["department_id"],
-                                student_id=CustomSession.getSession()["userID"],
-                                role=auth_required["actor"],
+                    ]
+                elif auth_required["department_id"] == "chake":
+                    department_list = [
+                        i
+                        for (i,) in (
+                            session.query(SQL_Group.id)
+                            .filter(
+                                SQL_Group.chake,
                             )
                             .all()
                         )
-                    if len(DataFetched) > 0:
-                        break
+                    ]
+                elif auth_required["department_id"] == "datamanager":
+                    department_list = [
+                        i
+                        for (i,) in (
+                            session.query(SQL_Group.id)
+                            .filter(
+                                SQL_Group.datamanager,
+                            )
+                            .all()
+                        )
+                    ]
                 else:
+                    department_list = [auth_required["department_id"]]
+
+                actor_list = (
+                    ["manager", "member"]
+                    if auth_required["actor"] is None
+                    else [auth_required["actor"]]
+                )
+                DataFetched = (
+                    session.query(SQL_GroupMember)
+                    .filter(
+                        SQL_GroupMember.student_id
+                        == CustomSession.getSession()["userID"],
+                        SQL_GroupMember.group_id.in_(department_list),
+                        SQL_GroupMember.role.in_(actor_list),
+                    )
+                    .all()
+                )
+                if len(DataFetched) < 0:
                     raise PermissionDenyError(
                         "Authority check error. Have no rights to execute function.",
                         filename=__file__,
                         line=sys._getframe().f_lineno,
                     )
 
-            logger.funcReturns = "Authority check pass."
+                logger.funcReturns = "Authority check pass."
+                return
+
+            raise PermissionDenyError(
+                "Authority check error. Have no rights to execute function.",
+                filename=__file__,
+                line=sys._getframe().f_lineno,
+            )

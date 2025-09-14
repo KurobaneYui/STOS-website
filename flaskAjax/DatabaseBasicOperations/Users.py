@@ -227,17 +227,29 @@ class UsersDatabase:
                 .all()
             )
             if len(results) <= 0:
-                name = "预备队员"
+                CustomSession.setSession(
+                    studentID=infoForm["StudentID"],
+                    name=infoForm["StudentName"],
+                    logTime=datetime.datetime.now().isoformat(),
+                    department_id=infoForm["department_id"],
+                    chazao=infoForm["job"],
+                    chake=infoForm["job"],
+                    datamanager=infoForm["job"],
+                    job=infoForm["job"],
+                    department_name="预备队员",
+                )
             else:
-                name = results[0].name
-            CustomSession.setSession(
-                studentID=infoForm["StudentID"],
-                name=infoForm["StudentName"],
-                logTime=datetime.datetime.now().isoformat(),
-                department_id=infoForm["department_id"],
-                job=infoForm["job"],
-                department_name=name,
-            )
+                CustomSession.setSession(
+                    studentID=infoForm["StudentID"],
+                    name=infoForm["StudentName"],
+                    logTime=datetime.datetime.now().isoformat(),
+                    department_id=infoForm["department_id"],
+                    chazao=results[0].chazao,
+                    chake=results[0].chake,
+                    datamanager=results[0].datamanager,
+                    job=infoForm["job"],
+                    department_name=results[0].name,
+                )
             flask.g.isLogin = True
 
         return "/user_center/index.html"
@@ -437,6 +449,9 @@ class UsersDatabase:
             "name": info["userName"],
             "department_id": info["department_id"],
             "department_name": info["department_name"],
+            "chazao": info["chazao"],
+            "chake": info["chake"],
+            "datamanager": info["datamanager"],
             "job": info["job"],
         }
 

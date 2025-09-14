@@ -10,6 +10,9 @@ const userInfo = ref({
     name: '',
     department_id: 0,
     department_name: '',
+    chazao: false,
+    chake: false,
+    datamanager: false,
     job: 'member'
 })
 
@@ -25,6 +28,7 @@ async function getTopbarInfo() {
         if (code === 200 || code === 301) {
             const info = data.data
             userInfo.value = info
+            console.log(userInfo.value)
         }
     } catch (e) {
         swal({ title: '请检查网络连接，或稍后再试', icon: "error" })
@@ -152,7 +156,7 @@ onUnmounted(() => {
             </a>
         </li>
 
-        <li v-if="userInfo.department_id === 1" class="menu-item"
+        <li v-if="userInfo.department_id == 1 || userInfo.job == 'manager'" class="menu-item"
             :class="{ 'active': currentPath === '/user_center/blacklist.html' }">
             <a href="/user_center/blacklist.html" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-upside-down"></i>
@@ -184,8 +188,8 @@ onUnmounted(() => {
             </ul>
         </li>
 
-        <li v-if="userInfo.job === 'member' && (userInfo.department_name.includes('现场组') || userInfo.department_name.includes('查课组') || userInfo.department_name.includes('沙河组'))"
-            class="menu-item" :class="{ 'active': currentPath === '/user_center/recent_task.html' }">
+        <li v-if="userInfo.job === 'member' && (userInfo.chazao || userInfo.chake)" class="menu-item"
+            :class="{ 'active': currentPath === '/user_center/recent_task.html' }">
             <a href="/user_center/recent_task.html" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-collection"></i>
                 <div data-i18n="近期任务总览">近期任务总览</div>
@@ -193,13 +197,12 @@ onUnmounted(() => {
         </li>
 
         <!-- 任务数据 -->
-        <li v-if="userInfo.department_id == 1 || userInfo.department_name.includes('现场组') || userInfo.department_name.includes('查课组') || userInfo.department_name.includes('沙河组') || userInfo.department_name.includes('数据组')"
+        <li v-if="userInfo.department_id == 1 || userInfo.chazao || userInfo.chake || userInfo.datamanager"
             class="menu-header small text-uppercase">
             <span class="menu-header-text">任务数据</span>
         </li>
 
-        <li v-if="(userInfo.department_name.includes('现场组') || userInfo.department_name.includes('查课组') || userInfo.department_name.includes('沙河组')) && userInfo.job == 'member'"
-            class="menu-item"
+        <li v-if="(userInfo.chazao || userInfo.chake) && userInfo.job == 'member'" class="menu-item"
             :class="{ 'active': dataEntrySubMenuPaths.includes(currentPath), 'open': isDataEntryOpen }">
             <a href="javascript:void(0);" class="menu-link menu-toggle" @click="isDataEntryOpen = !isDataEntryOpen">
                 <i class="menu-icon tf-icons bx bx-notepad"></i>
@@ -218,7 +221,7 @@ onUnmounted(() => {
                 </li>
             </ul>
         </li>
-        <li v-if="userInfo.department_id == 1 || (userInfo.job == 'manager' && (userInfo.department_name.includes('现场组') || userInfo.department_name.includes('查课组') || userInfo.department_name.includes('沙河组')))"
+        <li v-if="userInfo.department_id == 1 || (userInfo.job == 'manager' && (userInfo.chazao || userInfo.chake))"
             class="menu-item"
             :class="{ 'active': dataConfirmSubMenuPaths.includes(currentPath), 'open': isDataConfirmOpen }"
             auth_require="x1">
@@ -239,7 +242,7 @@ onUnmounted(() => {
                 </li>
             </ul>
         </li>
-        <li v-if="userInfo.department_name.includes('数据组')" class="menu-item"
+        <li v-if="userInfo.datamanager" class="menu-item"
             :class="{ 'active': adminDataSubMenuPaths.includes(currentPath), 'open': isAdminDataOpen }"
             auth_require="01">
             <a href="javascript:void(0);" class="menu-link menu-toggle" @click="isAdminDataOpen = !isAdminDataOpen">
