@@ -93,11 +93,13 @@ async function importData(d) {
         if (response.code === 200) {
             const { date, schedule, unassigned } = response.data
             currentDate.value = date
-console.log(response.data)
             // 提取所有成员构建索引字典
             sourceStudentDict.value = buildSourceStudentDict(schedule, unassigned)
 
             const scheduleArray = schedule;
+            scheduleArray.forEach(item => {
+                if (!('student_id' in item)) item.student_id = '';
+            });
             // 过滤校区
             qingshuiheList.value = scheduleArray.filter(item => item.campus === '清水河')
             shaheList.value = scheduleArray.filter(item => item.campus === '沙河')
