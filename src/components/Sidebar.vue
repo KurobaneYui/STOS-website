@@ -44,8 +44,8 @@ const dataEntrySubMenuPaths = [
 const isDataEntryOpen = ref(false);
 
 const dataConfirmSubMenuPaths = [
-    '/user_center/selfstudy_record_recheck.html',
-    '/user_center/courses_record_recheck.html',
+    '/user_center/selfstudy_recheck.html',
+    '/user_center/courses_recheck.html',
 ];
 const isDataConfirmOpen = ref(false);
 
@@ -185,8 +185,8 @@ onUnmounted(() => {
         </li>
 
         <li v-if="userInfo.job === 'member' && (userInfo.department_name.includes('现场组') || userInfo.department_name.includes('查课组') || userInfo.department_name.includes('沙河组'))"
-            class="menu-item" :class="{ 'active': currentPath === '/user_center/task_recent.html' }">
-            <a href="/user_center/task_recent.html" class="menu-link">
+            class="menu-item" :class="{ 'active': currentPath === '/user_center/recent_task.html' }">
+            <a href="/user_center/recent_task.html" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-collection"></i>
                 <div data-i18n="近期任务总览">近期任务总览</div>
             </a>
@@ -227,14 +227,13 @@ onUnmounted(() => {
                 <div data-i18n="数据确认">数据确认</div>
             </a>
             <ul class="menu-sub">
-                <li class="menu-item"
-                    :class="{ 'active': currentPath === '/user_center/selfstudy_record_recheck.html' }">
-                    <a href="/user_center/selfstudy_record_recheck.html" class="menu-link">
+                <li class="menu-item" :class="{ 'active': currentPath === '/user_center/selfstudy_recheck.html' }">
+                    <a href="/user_center/selfstudy_recheck.html" class="menu-link">
                         <div data-i18n="查早">查早</div>
                     </a>
                 </li>
-                <li class="menu-item" :class="{ 'active': currentPath === '/user_center/courses_record_recheck.html' }">
-                    <a href="/user_center/courses_record_recheck.html" class="menu-link">
+                <li class="menu-item" :class="{ 'active': currentPath === '/user_center/courses_recheck.html' }">
+                    <a href="/user_center/courses_recheck.html" class="menu-link">
                         <div data-i18n="查课">查课</div>
                     </a>
                 </li>

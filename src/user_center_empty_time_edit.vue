@@ -153,7 +153,6 @@ async function loadTable() {
             weekTabs.value[stu.student_id] = 'odd'
         })
     } catch (err) {
-        console.log(err)
         let data = err.response?.data ?? err
         switch (data.code) {
             case 400:

@@ -216,15 +216,9 @@ class Group(Base):
     __tablename__ = "groups"
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(100), nullable=False, unique=True)
-    chazao: Mapped[bool] = mapped_column(
-        Boolean, nullable=False, default=False
-    )
-    chake: Mapped[bool] = mapped_column(
-        Boolean, nullable=False, default=False
-    )
-    datamanager: Mapped[bool] = mapped_column(
-        Boolean, nullable=False, default=False
-    )
+    chazao: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    chake: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    datamanager: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     remark: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     created_at: Mapped[datetime.datetime] = mapped_column(server_default=func.now())
     updated_at: Mapped[datetime.datetime] = mapped_column(
@@ -233,6 +227,10 @@ class Group(Base):
     )
     members: Mapped[List["GroupMember"]] = relationship(
         back_populates="group", cascade="all, delete-orphan"
+    )
+    check_in_tasks: Mapped[List["CheckInTask"]] = relationship(back_populates="group")
+    inspection_tasks: Mapped[List["InspectionTask"]] = relationship(
+        back_populates="group"
     )
 
 
@@ -286,12 +284,13 @@ class Classroom(Base):
     __tablename__ = "classrooms"
     id: Mapped[str] = mapped_column(String(50), primary_key=True)
     campus_id: Mapped[int] = mapped_column(
-        ForeignKey("campuses.id", ondelete="CASCADE", onupdate="CASCADE"), nullable=False
+        ForeignKey("campuses.id", ondelete="CASCADE", onupdate="CASCADE"),
+        nullable=False,
     )
     building: Mapped[str] = mapped_column(String(20), nullable=False)
     area: Mapped[str] = mapped_column(String(10), nullable=False)
     room_number: Mapped[str] = mapped_column(String(10), nullable=False)
-    capacity: Mapped[Optional[int]]
+    capacity: Mapped[int] = mapped_column(Integer, nullable=False)
     campus: Mapped["Campus"] = relationship(back_populates="classrooms")
     study_schedules: Mapped[List["StudySchedule"]] = relationship(
         back_populates="classroom"
@@ -311,12 +310,14 @@ class StudySchedule(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     date: Mapped[datetime.date] = mapped_column(nullable=False)
     classroom_id: Mapped[str] = mapped_column(
-        ForeignKey("classrooms.id", ondelete="CASCADE", onupdate="CASCADE"), nullable=False
+        ForeignKey("classrooms.id", ondelete="CASCADE", onupdate="CASCADE"),
+        nullable=False,
     )
     college_id: Mapped[int] = mapped_column(
-        ForeignKey("colleges.id", ondelete="CASCADE", onupdate="CASCADE"), nullable=False
+        ForeignKey("colleges.id", ondelete="CASCADE", onupdate="CASCADE"),
+        nullable=False,
     )
-    expected_headcount: Mapped[Optional[int]]
+    expected_headcount: Mapped[int] = mapped_column(Integer, nullable=False)
     remark: Mapped[str] = mapped_column(Text, nullable=False)
     created_at: Mapped[datetime.datetime] = mapped_column(server_default=func.now())
     updated_at: Mapped[datetime.datetime] = mapped_column(
@@ -333,17 +334,21 @@ class StudySchedule(Base):
 class CheckInTask(Base):
     __tablename__ = "check_in_tasks"
     id: Mapped[int] = mapped_column(primary_key=True)
+    student_id: Mapped[str] = mapped_column(
+        ForeignKey("user_profiles.student_id", ondelete="SET NULL"), nullable=False
+    )
+    group_id: Mapped[int] = mapped_column(
+        ForeignKey("groups.id", ondelete="SET NULL", onupdate="CASCADE"), nullable=False
+    )
     schedule_id: Mapped[int] = mapped_column(
         ForeignKey("study_schedules.id", ondelete="CASCADE", onupdate="CASCADE"),
         nullable=False,
         unique=True,
     )
-    student_id: Mapped[str] = mapped_column(
-        ForeignKey("user_profiles.student_id", ondelete="CASCADE"), nullable=False
-    )
     created_at: Mapped[datetime.datetime] = mapped_column(server_default=func.now())
     schedule: Mapped["StudySchedule"] = relationship(back_populates="check_in_task")
     profile: Mapped["UserProfile"] = relationship(back_populates="check_in_tasks")
+    group: Mapped["Group"] = relationship(back_populates="check_in_tasks")
     data: Mapped["CheckInData"] = relationship(
         back_populates="task", cascade="all, delete-orphan"
     )
@@ -353,10 +358,18 @@ class CheckInData(Base):
     __tablename__ = "check_in_data"
     id: Mapped[int] = mapped_column(primary_key=True)
     task_id: Mapped[int] = mapped_column(
-        ForeignKey("check_in_tasks.id", ondelete="CASCADE", onupdate="CASCADE"), nullable=False, unique=True
+        ForeignKey("check_in_tasks.id", ondelete="CASCADE", onupdate="CASCADE"),
+        nullable=False,
+        unique=True,
     )
-    data1: Mapped[Optional[str]] = mapped_column(Text)
-    data2: Mapped[Optional[str]] = mapped_column(Text)
+    first_count: Mapped[int] = mapped_column(Integer, nullable=False)
+    second_count: Mapped[int] = mapped_column(Integer, nullable=False)
+    leave: Mapped[int] = mapped_column(Integer, nullable=False)
+    late: Mapped[int] = mapped_column(Integer, nullable=False)
+    absentee: Mapped[int] = mapped_column(Integer, nullable=False)
+    early_leave: Mapped[int] = mapped_column(Integer, nullable=False)
+    absent_list: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    leave_list: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     remarks: Mapped[Optional[str]] = mapped_column(Text)
     status: Mapped[str] = mapped_column(String(20), nullable=False, default="pending")
     created_at: Mapped[datetime.datetime] = mapped_column(server_default=func.now())
@@ -373,16 +386,22 @@ class CourseSchedule(Base):
     date: Mapped[datetime.date] = mapped_column(nullable=False)
     time_slot: Mapped[str] = mapped_column(String(20), nullable=False)
     classroom_id: Mapped[str] = mapped_column(
-        ForeignKey("classrooms.id", ondelete="CASCADE", onupdate="CASCADE"), nullable=False
+        ForeignKey("classrooms.id", ondelete="CASCADE", onupdate="CASCADE"),
+        nullable=False,
     )
     college_id: Mapped[int] = mapped_column(
-        ForeignKey("colleges.id", ondelete="CASCADE", onupdate="CASCADE"), nullable=False
+        ForeignKey("colleges.id", ondelete="CASCADE", onupdate="CASCADE"),
+        nullable=False,
     )
-    expected_headcount: Mapped[Optional[int]]
+    expected_headcount: Mapped[int] = mapped_column(Integer, nullable=False)
     created_at: Mapped[datetime.datetime] = mapped_column(server_default=func.now())
+    updated_at: Mapped[datetime.datetime] = mapped_column(
+        server_default=func.now(),
+        onupdate=func.now(),
+    )
     classroom: Mapped["Classroom"] = relationship(back_populates="course_schedules")
     college: Mapped["College"] = relationship(back_populates="course_schedules")
-    inspection_tasks: Mapped["InspectionTask"] = relationship(
+    inspection_task: Mapped["InspectionTask"] = relationship(
         back_populates="schedule", cascade="all, delete-orphan", uselist=False
     )
 
@@ -391,7 +410,10 @@ class InspectionTask(Base):
     __tablename__ = "inspection_tasks"
     id: Mapped[int] = mapped_column(primary_key=True)
     student_id: Mapped[str] = mapped_column(
-        ForeignKey("user_profiles.student_id", ondelete="CASCADE"), nullable=False
+        ForeignKey("user_profiles.student_id", ondelete="SET NULL"), nullable=False
+    )
+    group_id: Mapped[int] = mapped_column(
+        ForeignKey("groups.id", ondelete="SET NULL", onupdate="CASCADE"), nullable=False
     )
     schedule_id: Mapped[int] = mapped_column(
         ForeignKey("course_schedules.id", ondelete="CASCADE", onupdate="CASCADE"),
@@ -399,8 +421,9 @@ class InspectionTask(Base):
         unique=True,
     )
     created_at: Mapped[datetime.datetime] = mapped_column(server_default=func.now())
-    schedule: Mapped["CourseSchedule"] = relationship(back_populates="inspection_tasks")
+    schedule: Mapped["CourseSchedule"] = relationship(back_populates="inspection_task")
     profile: Mapped["UserProfile"] = relationship(back_populates="inspection_tasks")
+    group: Mapped["Group"] = relationship(back_populates="inspection_tasks")
     data: Mapped["InspectionData"] = relationship(
         back_populates="task", cascade="all, delete-orphan"
     )
@@ -414,9 +437,11 @@ class InspectionData(Base):
         nullable=False,
         unique=True,
     )
-    data1: Mapped[Optional[str]] = mapped_column(Text)
-    data2: Mapped[Optional[str]] = mapped_column(Text)
-    remarks: Mapped[Optional[str]] = mapped_column(Text)
+    first_count: Mapped[int] = mapped_column(Integer, nullable=False)
+    second_count: Mapped[int] = mapped_column(Integer, nullable=False)
+    first_absentee: Mapped[int] = mapped_column(Integer, nullable=False)
+    second_absentee: Mapped[int] = mapped_column(Integer, nullable=False)
+    remarks: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     status: Mapped[str] = mapped_column(String(20), nullable=False, default="pending")
     created_at: Mapped[datetime.datetime] = mapped_column(server_default=func.now())
     updated_at: Mapped[datetime.datetime] = mapped_column(

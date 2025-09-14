@@ -3,7 +3,7 @@ import sys
 import time
 import random
 import datetime
-from sqlalchemy import desc as DESC, or_ as OR
+from sqlalchemy import desc as DESC, or_ as OR, func
 from sqlalchemy.orm import Session
 from contextlib import nullcontext
 from flask import Request
@@ -486,17 +486,25 @@ class DataManagerDatabase:
         with session_context as session:
             # =======================
             # 获取提交的早自习检查安排
-            results = (
-                session.query(SQL_StudySchedule.date, SQL_CheckInTask.created_at)
-                .join(
-                    SQL_CheckInTask,
-                    SQL_StudySchedule.id == SQL_CheckInTask.schedule_id,
-                    isouter=True,
+            # 子查询，找到每个date下最大（非空）的created_at
+            subq = (
+                session.query(
+                    SQL_StudySchedule.date,
+                    func.max(SQL_CheckInTask.created_at).label("created_at"),
                 )
-                .distinct()  # 应用 DISTINCT 关键字
-                .order_by(DESC(SQL_StudySchedule.date))
-                .limit(15)  # 限制结果为前15条
-                .all()  # 执行查询并获取所有结果
+                .outerjoin(
+                    SQL_CheckInTask, SQL_StudySchedule.id == SQL_CheckInTask.schedule_id
+                )
+                .group_by(SQL_StudySchedule.date)
+                .subquery()
+            )
+
+            # 再排序并限制数量
+            results = (
+                session.query(subq.c.date, subq.c.created_at)
+                .order_by(DESC(subq.c.date))
+                .limit(15)
+                .all()
             )
             results = [
                 {
@@ -701,12 +709,14 @@ class DataManagerDatabase:
                         filename=__file__,
                         line=sys._getframe().f_lineno,
                     )
+                row["group_id"] = results[0].group_id
                 # ========
                 # 存储数据
                 data_upload.append(
                     {
-                        "schedule_ie": row["selfstudy_id"],
+                        "schedule_id": row["selfstudy_id"],
                         "student_id": row["student_id"],
+                        "group_id": row["group_id"],
                     }
                 )
             for row in infoForm["data"]["qingshuihe"]:
@@ -758,12 +768,14 @@ class DataManagerDatabase:
                         filename=__file__,
                         line=sys._getframe().f_lineno,
                     )
+                row["group_id"] = results[0].group_id
                 # ========
                 # 存储数据
                 data_upload.append(
                     {
-                        "schedule_ie": row["selfstudy_id"],
+                        "schedule_id": row["selfstudy_id"],
                         "student_id": row["student_id"],
+                        "group_id": row["group_id"],
                     }
                 )
             # ============
@@ -772,7 +784,9 @@ class DataManagerDatabase:
             for i in data_upload:
                 session.add(
                     SQL_CheckInTask(
-                        schedule_id=i["schedule_ie"], student_id=i["student_id"]
+                        schedule_id=i["schedule_id"],
+                        student_id=i["student_id"],
+                        group_id=i["group_id"],
                     )
                 )
             session.commit()
