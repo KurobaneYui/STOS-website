@@ -8,7 +8,7 @@
     <meta name="viewport"
         content="width=device-width, initial-scale=1.0, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0" />
 
-    <title>学风督导队-首页</title>
+    <title>通讯录</title>
 
     <meta name="description" content="电子科技大学学风督导队" />
     <meta name="author" content="罗寅松，学风督导队数据组">
@@ -24,21 +24,24 @@
 </head>
 
 <body>
+    <!-- Vue 应用将挂载在这里 -->
     <div id="app"></div>
+
+    <!-- Vue 应用的入口脚本 -->
     <script type="module">
         // Core CSS
         import "/src/assets/vendor/css/core.css";
         import "/src/assets/vendor/css/theme-default.css";
         // Page CSS
-        import "/src/assets/vendor/css/pages/page-auth.css";
-        // Page JS
-        // import "../UserCenter/get_campus_school.js";
+        // import "/src/assets/css/demo.css";
 
         import { createApp } from 'vue';
-        import App from '/src/App.vue';
+        import UserCenterContact from '/src/user_center_contact.vue';
 
-        createApp(App).mount('#app');
+        createApp(UserCenterContact).mount('#app');
     </script>
+    <script defer src="/js/helpers.js"></script>
+    <script defer src="/js/main.js"></script>
 </body>
 
 </html>

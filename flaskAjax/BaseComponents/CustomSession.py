@@ -1,0 +1,93 @@
+from flask import session
+
+
+class CustomSession:
+    @staticmethod
+    def setSession(
+        studentID: str,
+        name: str,
+        logTime: str,
+        department_id: int = 0,
+        chazao: bool = False,
+        chake: bool = False,
+        datamanager: bool = False,
+        job: str = "member",
+        department_name="预备队员",
+        display_title="",
+    ) -> None:
+        session["userID"] = studentID
+        session["userName"] = name
+        session["logTime"] = logTime
+        session["department_id"] = department_id
+        session["department_name"] = department_name
+        session["chazao"] = chazao
+        session["chake"] = chake
+        session["datamanager"] = datamanager
+        session["job"] = job
+        session["display_title"] = display_title
+
+        session["isLogin"] = hash(
+            studentID + logTime + str(department_id) + department_name + str(job)
+        )
+
+        session.permanent = True
+
+    @staticmethod
+    def getSession() -> dict:
+        return {
+            "userID": session.get("userID", None),
+            "logTime": session.get("logTime", None),
+            "department_id": session.get("department_id", None),
+            "chazao": session.get("chazao", None),
+            "chake": session.get("chake", None),
+            "datamanager": session.get("datamanager", None),
+            "job": session.get("job", None),
+            "display_title": session.get("display_title", None),
+            "department_name": session.get("department_name", None),
+            "userName": session.get("userName", None),
+        }
+
+    @staticmethod
+    def checkSession() -> bool:
+        if (
+            "userID" not in session
+            or "userName" not in session
+            or "logTime" not in session
+            or "department_id" not in session
+            or "department_name" not in session
+            or "chazao" not in session
+            or "chake" not in session
+            or "datamanager" not in session
+            or "job" not in session
+            or "display_title" not in session
+            or "isLogin" not in session
+        ):
+            return False
+
+        if (
+            hash(
+                session["userID"]
+                + session["logTime"]
+                + str(session["department_id"])
+                + session["department_name"]
+                + str(session["job"])
+            )
+            != session["isLogin"]
+        ):
+            return False
+
+        return True
+
+    @staticmethod
+    def clearSession() -> None:
+        session.pop("userID", None)
+        session.pop("userName", None)
+        session.pop("isLogin", None)
+        session.pop("logTime", None)
+        session.pop("department_id", None)
+        session.pop("department_name", None)
+        session.pop("chazao", None)
+        session.pop("chake", None)
+        session.pop("datamanager", None)
+        session.pop("job", None)
+        session.pop("display_title", None)
