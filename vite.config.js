@@ -16,11 +16,11 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
-  server: {
-    proxy: {
-      '/Ajax': 'http://localhost:8008'
-    }
-  },
+  // server: {
+  //   proxy: {
+  //     '/Ajax': 'http://localhost:8008'
+  //   }
+  // },
   build: {
     rollupOptions: {
       input: {

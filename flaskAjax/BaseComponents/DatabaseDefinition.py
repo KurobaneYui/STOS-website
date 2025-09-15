@@ -466,6 +466,7 @@ class ContactView(Base):
     department: Mapped[str] = mapped_column(String)
     department_id: Mapped[int] = mapped_column(Integer)
     job: Mapped[str] = mapped_column(String)
+    display_title: Mapped[Optional[str]] = mapped_column(String(100))
 
 
 class WageView(Base):
@@ -478,6 +479,7 @@ class WageView(Base):
     department_name: Mapped[str] = mapped_column(String)
     department_id: Mapped[int] = mapped_column(Integer)
     job: Mapped[str] = mapped_column(String)
+    display_title: Mapped[Optional[str]] = mapped_column(String(100))
     wage: Mapped[float] = mapped_column(Float)
     work_remark: Mapped[Optional[str]] = mapped_column(Text)
     application_name: Mapped[Optional[str]] = mapped_column(String)
@@ -488,31 +490,33 @@ class WageView(Base):
 
 
 # DDL for creating the view
-contact_view_sql = """
+create_contact_view_sql = """
 CREATE VIEW IF NOT EXISTS contact_view AS
 SELECT
-    ROW_NUMBER() OVER (ORDER BY gm.group_id, gm.role DESC) AS id,
+    ROW_NUMBER() OVER (ORDER BY gm.group_id, gm.role) AS id,
     u.name,
     u.gender,
     up.qq,
     up.phone,
     g.name AS department,
     g.id AS department_id,
-    gm.role AS job
+    gm.role AS job,
+    gm.display_title AS display_title
 FROM group_members AS gm
 JOIN user_profiles AS up ON gm.student_id = up.student_id
 JOIN users AS u ON up.student_id = u.student_id
 JOIN groups AS g ON gm.group_id = g.id
 """
-wage_view_sql = """
+create_wage_view_sql = """
 CREATE VIEW IF NOT EXISTS wage_view AS
 SELECT
-    ROW_NUMBER() OVER (ORDER BY gm.role DESC, g.id) AS row_number,
+    ROW_NUMBER() OVER (ORDER BY gm.role, g.id) AS row_number,
     u.name,
     up.student_id,
     g.name AS department_name,
     g.id AS department_id,
     gm.role AS job,
+    gm.display_title AS display_title,
     gm.wage,
     g.remark AS work_remark,
     pi.recipient_name AS application_name,
@@ -526,12 +530,14 @@ LEFT JOIN user_profiles AS up ON gm.student_id = up.student_id
 LEFT JOIN users AS u ON up.student_id = u.student_id
 LEFT JOIN payment_info AS pi ON up.student_id = pi.student_id
 """
-create_contact_view_ddl = DDL(contact_view_sql)
-create_wage_view_ddl = DDL(wage_view_sql)
+create_contact_view_ddl = DDL(create_contact_view_sql)
+create_wage_view_ddl = DDL(create_wage_view_sql)
 
 # DDL for dropping the view
-drop_contact_view_ddl = DDL("DROP VIEW IF EXISTS contact_view")
-drop_wage_view_ddl = DDL("DROP VIEW IF EXISTS wage_view")
+drop_contact_view_sql = "DROP VIEW IF EXISTS contact_view"
+drop_wage_view_sql = "DROP VIEW IF EXISTS wage_view"
+drop_contact_view_ddl = DDL(drop_contact_view_sql)
+drop_wage_view_ddl = DDL(drop_wage_view_sql)
 
 
 # Event listeners to create and drop the view

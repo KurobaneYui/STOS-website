@@ -35,12 +35,6 @@ async function loginAsSpecifiedWork(department_id, job) {
     }
 }
 
-function getJobName(department_id, job, name) {
-    if (department_id === 1) return name + ' - ' + (job === "manager" ? "队长" : "副队长")
-    if (department_id === 0) return name
-    return name + ' - ' + (job === "manager" ? "组长" : "组员")
-}
-
 // 确保每次打开模态窗时获取最新的岗位列表
 onMounted(() => {
     const modalElement = document.getElementById('select-login-work');
@@ -62,7 +56,7 @@ onMounted(() => {
                         <div class="col-auto" v-for="work in workList" :key="work.department_id + '-' + work.job">
                             <button class="btn btn-outline-primary rounded-pill"
                                 @click="loginAsSpecifiedWork(work.department_id, work.job)">
-                                {{ getJobName(work.department_id, work.job, work.name) }}
+                                {{ work.department_id != 0 ? work.name + " - " + work.display_title : work.name }}
                             </button>
                         </div>
                     </div>

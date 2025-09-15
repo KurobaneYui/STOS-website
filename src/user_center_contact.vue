@@ -108,11 +108,8 @@ onMounted(() => {
                                             </td>
                                             <td>{{ contact.phone }}</td>
                                             <td>{{ contact.qq }}</td>
-                                            <td>
-                                                {{ contact.job == "manager" ? (contact.department_id == 1 ? "队长" : "组长")
-                                                    :
-                                                    (contact.department_id == 1 ? "副队长" : "组员") }}
-                                            </td>
+                                            <td :class="{ 'text-primary fw-bold': contact.job === 'manager' }"> {{
+                                                contact.display_title }} </td>
                                         </tr>
                                     </tbody>
                                     <tfoot class="table-border-bottom-0">

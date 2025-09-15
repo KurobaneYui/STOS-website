@@ -204,6 +204,7 @@ def TeamManager(app: flask.Flask) -> None:
                 infoForm = dict(request.json)
                 TeamManagerCheck.downloadFinanceEXCELParamsCheck(infoForm)
                 logger.funcArgs = request.json
+                infoForm["root_path"] = app.root_path
                 # =========================================
                 # 执行接口流程，并获取用户名信息以完成会话建立
                 results = TeamManagerDatabase.downloadFinanceEXCEL(infoForm)

@@ -21,9 +21,7 @@ def wageView2dict(wage_view) -> dict:
         "student_id": wage_view.student_id,
         "department_id": wage_view.department_id,
         "department_name": wage_view.department_name,
-        "job": [["组员", "组长"], ["副队长", "队长"]][bool(wage_view.department_id)][
-            wage_view.job == "manager"
-        ],
+        "job": wage_view.display_title,
         "wage": wage_view.wage,
         "work_remark": wage_view.work_remark,
         "application_name": wage_view.application_name,

@@ -375,10 +375,11 @@ class TeamManagerDatabase:
             # 调用python程序处理财务信息并导出财务表
             # 整理调用参数
             path = f"tmpFiles/finance_EXCEL_{str(int(random.random() * 10e5))}.xlsx"
-            infoForm["path"] = path
+            infoForm["path"] = f"{infoForm['root_path'] + path}"
             infoForm["database"] = session
+            del infoForm["root_path"]
             # 开始调用
             FinanceProcess.writedata(**infoForm)
-            FinanceProcess.SetStyle(path)
+            FinanceProcess.SetStyle(infoForm["path"])
 
             return "/" + path

@@ -453,6 +453,7 @@ class UsersDatabase:
             "chake": info["chake"],
             "datamanager": info["datamanager"],
             "job": info["job"],
+            "display_title": info["display_title"],
         }
 
     @staticmethod
@@ -475,6 +476,7 @@ class UsersDatabase:
                     "phone": i.phone,
                     "qq": i.qq,
                     "job": i.job,
+                    "display_title": i.display_title,
                     "department_id": i.department_id,
                 }
                 for i in results
@@ -867,8 +869,8 @@ class UsersDatabase:
                     "late": late,
                     "early_leave": early_leave,
                     "absentee": absentee,
-                    "absent_list": json.loads(absent_list),
-                    "leave_list": json.loads(leave_list),
+                    "absent_list": json.loads(absent_list) if absent_list else None,
+                    "leave_list": json.loads(leave_list) if leave_list else None,
                     "task_remark": task_remark,
                     "remark": remark,
                     "status": status,

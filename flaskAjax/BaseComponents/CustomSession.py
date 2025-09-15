@@ -13,6 +13,7 @@ class CustomSession:
         datamanager: bool = False,
         job: str = "member",
         department_name="预备队员",
+        display_title="",
     ) -> None:
         session["userID"] = studentID
         session["userName"] = name
@@ -23,6 +24,7 @@ class CustomSession:
         session["chake"] = chake
         session["datamanager"] = datamanager
         session["job"] = job
+        session["display_title"] = display_title
 
         session["isLogin"] = hash(
             studentID + logTime + str(department_id) + department_name + str(job)
@@ -40,6 +42,7 @@ class CustomSession:
             "chake": session.get("chake", None),
             "datamanager": session.get("datamanager", None),
             "job": session.get("job", None),
+            "display_title": session.get("display_title", None),
             "department_name": session.get("department_name", None),
             "userName": session.get("userName", None),
         }
@@ -56,6 +59,7 @@ class CustomSession:
             or "chake" not in session
             or "datamanager" not in session
             or "job" not in session
+            or "display_title" not in session
             or "isLogin" not in session
         ):
             return False
@@ -86,3 +90,4 @@ class CustomSession:
         session.pop("chake", None)
         session.pop("datamanager", None)
         session.pop("job", None)
+        session.pop("display_title", None)
