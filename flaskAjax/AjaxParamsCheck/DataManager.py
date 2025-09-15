@@ -386,28 +386,24 @@ class DataManagerCheck:
                 line=sys._getframe().f_lineno,
             )
 
-    # @staticmethod
-    # def downloadSelfstudyAllDataParamsCheck(infoForm: dict) -> None:
-    #     if "startDate" not in infoForm.keys() or "endDate" not in infoForm.keys():
-    #         raise IllegalValueError(
-    #             "startDate and endDate is required.",
-    #             filename=__file__,
-    #             line=sys._getframe().f_lineno,
-    #         )
+    @staticmethod
+    def downloadSelfstudyAllDataParamsCheck(infoForm: dict) -> None:
+        if "startDate" not in infoForm.keys() or "endDate" not in infoForm.keys():
+            raise IllegalValueError(
+                "startDate and endDate is required.",
+                filename=__file__,
+                line=sys._getframe().f_lineno,
+            )
 
-    #     try:
-    #         infoForm["startDate"] = datetime.datetime.strptime(
-    #             infoForm["startDate"], "%Y-%m-%d"
-    #         ).strftime("%Y-%m-%d")
-    #         infoForm["endDate"] = datetime.datetime.strptime(
-    #             infoForm["endDate"], "%Y-%m-%d"
-    #         ).strftime("%Y-%m-%d")
-    #     except:
-    #         raise IllegalValueError(
-    #             "Date is wrong or in wrong format. Should be YYYY-MM-DD.",
-    #             filename=__file__,
-    #             line=sys._getframe().f_lineno,
-    #         )
+        try:
+            infoForm["startDate"] = datetime.date.fromisoformat(infoForm["startDate"])
+            infoForm["endDate"] = datetime.date.fromisoformat(infoForm["endDate"])
+        except Exception:
+            raise IllegalValueError(
+                "Date is wrong or in wrong format. Should be YYYY-MM-DD.",
+                filename=__file__,
+                line=sys._getframe().f_lineno,
+            )
 
     # @staticmethod
     # def downloadCoursesAllDataParamsCheck(infoForm: dict) -> None:

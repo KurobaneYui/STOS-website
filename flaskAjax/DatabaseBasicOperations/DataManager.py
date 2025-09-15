@@ -20,9 +20,10 @@ from flaskAjax.BaseComponents.DatabaseConnector import (
     SQL_StudySchedule,
     SessionLocal,
 )
-# import Program.python.SelfstudyExportProcess as SelfstudyExportProcess
+import flaskAjax.Program.SelfstudyExportProcess as SelfstudyExportProcess
+
 # import Program.python.CourseExportProcess as CourseExportProcess
-# import Program.python.EmptyTimeTableProcess as EmptyTimeTableProcess
+import flaskAjax.Program.EmptyTimeTableProcess as EmptyTimeTableProcess
 
 
 class DataManagerDatabase:
@@ -913,79 +914,69 @@ class DataManagerDatabase:
             }
             return results
 
-    # @staticmethod
-    # def downloadSelfstudyAllData(
-    #     infoForm: dict, databaseConnector: DatabaseConnector | None = None
-    # ) -> str:
-    #     # =====================================
-    #     # 如果提供已经建立的数据库连接，则直接使用
-    #     if databaseConnector is None:
-    #         database = DatabaseConnector()
-    #         database.startCursor()
-    #     else:
-    #         database = databaseConnector
-    #     # ====================================
-    #     # 调用python程序处理财务信息并导出财务表
-    #     # 整理调用参数
-    #     path = f"tmpFiles/selfstudy_export_{str(int(random.random() * 10e5))}.xlsx"
-    #     infoForm["path"] = path
-    #     infoForm["database"] = database
-    #     infoForm["startDate"] = datetime.datetime.strptime(
-    #         infoForm["startDate"], "%Y-%m-%d"
-    #     )
-    #     infoForm["endDate"] = datetime.datetime.strptime(
-    #         infoForm["endDate"], "%Y-%m-%d"
-    #     )
-    #     # 开始调用
-    #     SelfstudyExportProcess.writedata(**infoForm)
+    @staticmethod
+    def downloadSelfstudyAllData(
+        infoForm: dict, db_session: Session | None = None
+    ) -> str:
+        # =====================================
+        # 如果提供已经建立的数据库连接，则直接使用
+        session_context = (
+            SessionLocal() if db_session is None else nullcontext(db_session)
+        )
+        with session_context as session:
+            # ====================================
+            # 调用python程序处理财务信息并导出财务表
+            # 整理调用参数
+            path = f"tmpFiles/selfstudy_export_{str(int(random.random() * 10e5))}.xlsx"
+            infoForm["path"] = f"{infoForm['root_path'] + path}"
+            infoForm["database"] = session
+            del infoForm["root_path"]
+            # 开始调用
+            SelfstudyExportProcess.writedata(**infoForm)
 
-    #     return "/" + path
+            return "/" + path
 
     # @staticmethod
     # def downloadCoursesAllData(
-    #     infoForm: dict, databaseConnector: DatabaseConnector | None = None
+    #     infoForm: dict, db_session: Session | None = None
     # ) -> str:
     #     # =====================================
     #     # 如果提供已经建立的数据库连接，则直接使用
-    #     if databaseConnector is None:
-    #         database = DatabaseConnector()
-    #         database.startCursor()
-    #     else:
-    #         database = databaseConnector
-    #     # ====================================
-    #     # 调用python程序处理财务信息并导出财务表
-    #     # 整理调用参数
-    #     path = f"tmpFiles/courses_export_{str(int(random.random() * 10e5))}.xlsx"
-    #     infoForm["path"] = path
-    #     infoForm["database"] = database
-    #     infoForm["startDate"] = datetime.datetime.strptime(
-    #         infoForm["startDate"], "%Y-%m-%d"
+    #     session_context = (
+    #         SessionLocal() if db_session is None else nullcontext(db_session)
     #     )
-    #     infoForm["endDate"] = datetime.datetime.strptime(
-    #         infoForm["endDate"], "%Y-%m-%d"
-    #     )
-    #     # 开始调用
-    #     CourseExportProcess.writedata(**infoForm)
+    #     with session_context as session:
+    #         # ====================================
+    #         # 调用python程序处理财务信息并导出财务表
+    #         # 整理调用参数
+    #         path = f"tmpFiles/finance_EXCEL_{str(int(random.random() * 10e5))}.xlsx"
+    #         infoForm["path"] = f"{infoForm['root_path'] + path}"
+    #         infoForm["database"] = session
+    #         del infoForm["root_path"]
+    #         # 开始调用
+    #         CourseExportProcess.writedata(**infoForm)
 
-    #     return "/" + path
+    #         return "/" + path
 
-    # @staticmethod
-    # def downloadEmptyTimeAllData(
-    #     databaseConnector: DatabaseConnector | None = None,
-    # ) -> str:
-    #     # =====================================
-    #     # 如果提供已经建立的数据库连接，则直接使用
-    #     if databaseConnector is None:
-    #         database = DatabaseConnector()
-    #         database.startCursor()
-    #     else:
-    #         database = databaseConnector
-    #     # ====================================
-    #     # 调用python程序处理财务信息并导出财务表
-    #     # 整理调用参数
-    #     path = f"tmpFiles/empty_time_table_export_{str(int(random.random() * 10e5))}.7z"
-    #     infoForm = {"path": path, "database": database}
-    #     # 开始调用
-    #     EmptyTimeTableProcess.writedata(**infoForm)
+    @staticmethod
+    def downloadEmptyTimeAllData(
+        infoForm: dict,
+        db_session: Session | None = None,
+    ) -> str:
+        # =====================================
+        # 如果提供已经建立的数据库连接，则直接使用
+        session_context = (
+            SessionLocal() if db_session is None else nullcontext(db_session)
+        )
+        with session_context as session:
+            # ====================================
+            # 调用python程序处理财务信息并导出财务表
+            # 整理调用参数
+            path = f"tmpFiles/empty_time_table_export_{str(int(random.random() * 10e5))}.7z"
+            infoForm["path"] = f"{infoForm['root_path'] + path}"
+            infoForm["database"] = session
+            del infoForm["root_path"]
+            # 开始调用
+            EmptyTimeTableProcess.writedata(**infoForm)
 
-    #     return "/" + path
+            return "/" + path

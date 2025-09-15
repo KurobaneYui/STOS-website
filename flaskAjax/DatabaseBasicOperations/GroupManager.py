@@ -357,6 +357,7 @@ class GroupManagerDatabase:
                             "date": schedule.date.isoformat(),
                             "task_remark": schedule.remark,
                             "task_id": task_id,
+                            "expected_headcount": schedule.expected_headcount,
                             "first_count": checkin_data.first_count
                             if checkin_data
                             else None,

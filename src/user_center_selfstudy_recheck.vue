@@ -91,7 +91,7 @@ function fillSelfstudyData(data) {
                     department_name: dep.department_name,
                     classroom_name: `${row.classroom_building}${row.classroom_area}${row.classroom_room_number}`,
                     school_name: row.classroom_building,
-                    student_supposed: row.classroom_capacity ?? '',
+                    student_supposed: row.expected_headcount ?? '',
                     status: (row.status !== null && row.status !== undefined) ? row.status :
                         (row.first_count === null ? 'unsubmitted' : 'pending'),
                     selfstudy_id: row.task_id,
