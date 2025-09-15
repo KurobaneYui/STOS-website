@@ -158,7 +158,7 @@ if __name__ == "__main__":
     # set secret_key for starting the session
     app.secret_key = config["secret_key"].encode()
     # create necessary directories
-    os.makedirs("./tmpFiles", exist_ok=True)
+    os.makedirs(f"./{app.root_path}tmpFiles", exist_ok=True)
     os.makedirs("./log", exist_ok=True)
     # set scheduler
     scheduler.init_app(app)

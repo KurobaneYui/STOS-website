@@ -453,6 +453,7 @@ class UsersDatabase:
             "chake": info["chake"],
             "datamanager": info["datamanager"],
             "job": info["job"],
+            "display_title": info["display_title"],
         }
 
     @staticmethod
@@ -475,6 +476,7 @@ class UsersDatabase:
                     "phone": i.phone,
                     "qq": i.qq,
                     "job": i.job,
+                    "display_title": i.display_title,
                     "department_id": i.department_id,
                 }
                 for i in results
