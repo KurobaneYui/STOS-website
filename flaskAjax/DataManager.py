@@ -445,34 +445,31 @@ def DataManager(app: flask.Flask) -> None:
                 logger.funcReturns = returns
         return customResponse.getResponse()
 
-    # @app.route("/Ajax/DataManager/download_selfstudy_all_data", methods=["POST"])
-    # def downloadSelfstudyAllData():
-    #     with CustomResponse() as customResponse:
-    #         with Logger(funcName="DataManager.downloadSelfstudyAllData()") as logger:
-    #             # ===============
-    #             # 检查接口调用权限
-    #             Authorization.check(
-    #                 rightsNeeded=(
-    #                     {"department_id": 0, "actor": 1},
-    #                     {"department_id": 3, "actor": 0},
-    #                     {"department_id": 3, "actor": 1},
-    #                 ),
-    #                 needLogin=True,
-    #             )
-    #             # ========================
-    #             # 检查接口输入参数并记录日志
-    #             infoForm = dict(request.form)
-    #             DataManagerCheck.downloadSelfstudyAllDataParamsCheck(infoForm)
-    #             logger.funcArgs = request.form
-    #             # =========================================
-    #             # 执行接口流程，并获取用户名信息以完成会话建立
-    #             results = DataManagerDatabase.downloadSelfstudyAllData(infoForm)
-    #             # ========================
-    #             # 准备函数返回值和响应与日志
-    #             returns = {"message": "", "data": results}
-    #             customResponse.setMessageAndData(**returns)
-    #             logger.funcReturns = returns
-    #     return customResponse.getResponse()
+    @app.route("/Ajax/DataManager/download_selfstudy_all_data", methods=["POST"])
+    def downloadSelfstudyAllData():
+        with CustomResponse() as customResponse:
+            with Logger(funcName="DataManager.downloadSelfstudyAllData()") as logger:
+                # ===============
+                # 检查接口调用权限
+                Authorization.check(
+                    rightsNeeded=({"department_id": "datamanager", "actor": None},),
+                    needLogin=True,
+                )
+                # ========================
+                # 检查接口输入参数并记录日志
+                infoForm = dict(request.get_json())
+                DataManagerCheck.downloadSelfstudyAllDataParamsCheck(infoForm)
+                logger.funcArgs = request.get_json()
+                infoForm["root_path"] = app.root_path
+                # =========================================
+                # 执行接口流程，并获取用户名信息以完成会话建立
+                results = DataManagerDatabase.downloadSelfstudyAllData(infoForm)
+                # ========================
+                # 准备函数返回值和响应与日志
+                returns: dict = {"message": "", "data": results}
+                customResponse.setMessageAndData(**returns)
+                logger.funcReturns = returns
+        return customResponse.getResponse()
 
     # @app.route("/Ajax/DataManager/download_courses_all_data", methods=["POST"])
     # def downloadCoursesAllData():
@@ -482,17 +479,16 @@ def DataManager(app: flask.Flask) -> None:
     #             # 检查接口调用权限
     #             Authorization.check(
     #                 rightsNeeded=(
-    #                     {"department_id": 0, "actor": 1},
-    #                     {"department_id": 3, "actor": 0},
-    #                     {"department_id": 3, "actor": 1},
+    #                     {"department_id": "datamanager", "actor": None},
     #                 ),
     #                 needLogin=True,
     #             )
     #             # ========================
     #             # 检查接口输入参数并记录日志
-    #             infoForm = dict(request.form)
+    #             infoForm = dict(request.get_json())
     #             DataManagerCheck.downloadCoursesAllDataParamsCheck(infoForm)
-    #             logger.funcArgs = request.form
+    #             logger.funcArgs = request.get_json()
+    #             infoForm["root_path"] = app.root_path
     #             # =========================================
     #             # 执行接口流程，并获取用户名信息以完成会话建立
     #             results = DataManagerDatabase.downloadCoursesAllData(infoForm)
@@ -503,26 +499,24 @@ def DataManager(app: flask.Flask) -> None:
     #             logger.funcReturns = returns
     #     return customResponse.getResponse()
 
-    # @app.route("/Ajax/DataManager/download_empty_time_all_data", methods=["GET"])
-    # def downloadEmptyTimeAllData():
-    #     with CustomResponse() as customResponse:
-    #         with Logger(funcName="DataManager.downloadEmptyTimeAllData()") as logger:
-    #             # ===============
-    #             # 检查接口调用权限
-    #             Authorization.check(
-    #                 rightsNeeded=(
-    #                     {"department_id": 0, "actor": 1},
-    #                     {"department_id": 3, "actor": 0},
-    #                     {"department_id": 3, "actor": 1},
-    #                 ),
-    #                 needLogin=True,
-    #             )
-    #             # =========================================
-    #             # 执行接口流程，并获取用户名信息以完成会话建立
-    #             results = DataManagerDatabase.downloadEmptyTimeAllData()
-    #             # ========================
-    #             # 准备函数返回值和响应与日志
-    #             returns = {"message": "", "data": results}
-    #             customResponse.setMessageAndData(**returns)
-    #             logger.funcReturns = returns
-    #     return customResponse.getResponse()
+    @app.route("/Ajax/DataManager/download_empty_time_all_data", methods=["GET"])
+    def downloadEmptyTimeAllData():
+        with CustomResponse() as customResponse:
+            with Logger(funcName="DataManager.downloadEmptyTimeAllData()") as logger:
+                # ===============
+                # 检查接口调用权限
+                Authorization.check(
+                    rightsNeeded=({"department_id": "datamanager", "actor": None},),
+                    needLogin=True,
+                )
+                # =========================================
+                # 执行接口流程，并获取用户名信息以完成会话建立
+                infoForm = dict()
+                infoForm["root_path"] = app.root_path
+                results = DataManagerDatabase.downloadEmptyTimeAllData(infoForm)
+                # ========================
+                # 准备函数返回值和响应与日志
+                returns: dict = {"message": "", "data": results}
+                customResponse.setMessageAndData(**returns)
+                logger.funcReturns = returns
+        return customResponse.getResponse()
