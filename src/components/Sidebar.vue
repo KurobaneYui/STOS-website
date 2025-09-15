@@ -28,7 +28,6 @@ async function getTopbarInfo() {
         if (code === 200 || code === 301) {
             const info = data.data
             userInfo.value = info
-            console.log(userInfo.value)
         }
     } catch (e) {
         swal({ title: '请检查网络连接，或稍后再试', icon: "error" })

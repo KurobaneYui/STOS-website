@@ -114,20 +114,16 @@ function openModal(row) {
     absentForm.student_name = ''
     absentForm.student_id = ''
     absentListTable.value = []
-    try {
-        const absentList = JSON.parse(AllAbsentListData[row.task_id] || '[]')
-        absentListTable.value = Array.isArray(absentList) ? absentList : []
-    } catch { absentListTable.value = [] }
+    const absentList = AllAbsentListData[row.task_id]
+    absentListTable.value = Array.isArray(absentList) ? absentList : []
 
     // 请假名单
     leaveForm.student_name = ''
     leaveForm.student_id = ''
     leaveForm.reason = ''
     leaveListTable.value = []
-    try {
-        const leaveList = JSON.parse(AllLeaveListData[row.task_id] || '[]')
-        leaveListTable.value = Array.isArray(leaveList) ? leaveList : []
-    } catch { leaveListTable.value = [] }
+    const leaveList = AllLeaveListData[row.task_id]
+    leaveListTable.value = Array.isArray(leaveList) ? leaveList : []
 
     modalTab.value = 'fill-data'
     modalShow.value = true

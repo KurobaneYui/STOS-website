@@ -62,6 +62,7 @@ engine = create_engine(DATABASE_URL, echo=False)
 def set_sqlite_pragma(dbapi_connection, connection_record):
     if isinstance(dbapi_connection, sqlite3.Connection):
         cursor = dbapi_connection.cursor()
+        cursor.execute("PRAGMA journal_mode=WAL;")
         cursor.execute("PRAGMA foreign_keys=ON;")
         cursor.execute("PRAGMA encoding='UTF-8';")
         cursor.close()
@@ -318,3 +319,73 @@ def initialize_database():
             )
             session.add(black_one)
             session.commit()
+
+            import_users_from_json(session)
+
+
+# 从database/data.json数据导入用户信息，且重置密码为学号
+def get_or_create(model, session, defaults=None, **kwargs):
+    instance = session.query(model).filter_by(**kwargs).first()
+    if instance:
+        return instance
+    else:
+        params = dict(**kwargs)
+        if defaults:
+            params.update(defaults)
+        instance = model(**params)
+        session.add(instance)
+        session.flush()  # 获取自增主键
+        return instance
+
+
+# 从database/data.json数据导入用户信息，且重置密码为学号
+def import_users_from_json(session):
+    import hashlib
+
+    # 从json文件加载
+    with open("database/data.json", "r", encoding="utf-8") as f:
+        user_list = json.load(f)
+
+    for record in user_list:
+        # 1. 先保证 campus & college 存在，然后得到其 id
+        campus = get_or_create(SQL_Campus, session, name=record["campus"])
+        college = get_or_create(SQL_College, session, name=record["school_name"])
+
+        # 2. 构造用户及其“级联关系”对象
+        user = SQL_User(
+            student_id=record["student_id"],
+            name=record["name"],
+            gender=record["gender"],
+            profile=SQL_UserProfile(
+                campus_id=campus.id,
+                college_id=college.id,
+                dormitory_yuan=record["dormitory_yuan"],
+                dormitory_dong=int(record["dormitory_dong"]),
+                dormitory_hao=int(record["dormitory_hao"]),
+                hometown=record["hometown"],
+                ethnicity=record["ethnicity"],
+                phone=record["phone"],
+                qq=record["qq"],
+                # 增加初始密码（sha512，明文为学号）
+                credential=SQL_UserCredential(
+                    password_hash=hashlib.sha512(record["student_id"].encode()).digest()
+                ),
+                payment_info=SQL_PaymentInfo(
+                    recipient_id=record["application_student_id"],
+                    recipient_name=record["application_name"],
+                    card_number=record["application_bankcard"],
+                    is_registered_poor=bool(record.get("subsidy_dossier", 0)),
+                ),
+                empty_time=SQL_EmptyTime(
+                    mon=record["mon"],
+                    tue=record["tue"],
+                    wed=record["wed"],
+                    thu=record["thu"],
+                    fri=record["fri"],
+                    sat=record["sat"],
+                    sun=record["sun"],
+                ),
+            ),
+        )
+        session.add(user)
+    session.commit()

@@ -171,19 +171,6 @@ if __name__ == "__main__":
     GroupManager(app)
     DataManager(app)
 
-    @app.route("/shutdown", methods=["POST"])
-    def shutdown():
-        try:
-            if request.get_json()["shutdown"] == config["shutdown"]:
-                func = request.environ.get("werkzeug.server.shutdown")
-                if func is None:
-                    return "服务无法从此环境下关闭", 500
-                func()  # 触发安全关闭
-        except Exception:
-            pass
-        finally:
-            return "服务关闭中…已接到关机指令。"
-
     # start a request
     if config["ssl_context"]:
         app.run(

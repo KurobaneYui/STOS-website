@@ -158,21 +158,8 @@ function openModal(record) {
     reasonAskForLeave.value = ''
     recheck.value = false
 
-    // 兼容JSON字符串和null
-    try {
-        absentList.value = Array.isArray(allAbsentListData.value[record.selfstudy_id])
-            ? allAbsentListData.value[record.selfstudy_id] || []
-            : (allAbsentListData.value[record.selfstudy_id] ? JSON.parse(allAbsentListData.value[record.selfstudy_id]) : [])
-    } catch {
-        absentList.value = []
-    }
-    try {
-        askForLeaveList.value = Array.isArray(allAskForLeaveListData.value[record.selfstudy_id])
-            ? allAskForLeaveListData.value[record.selfstudy_id] || []
-            : (allAskForLeaveListData.value[record.selfstudy_id] ? JSON.parse(allAskForLeaveListData.value[record.selfstudy_id]) : [])
-    } catch {
-        askForLeaveList.value = []
-    }
+    absentList.value = allAbsentListData.value[record.selfstudy_id] || [];
+    askForLeaveList.value = allAskForLeaveListData.value[record.selfstudy_id] || [];
 
     const modalEl = document.getElementById('recheck-selfstudy-record')
     modal.value = new bootstrap.Modal(modalEl)

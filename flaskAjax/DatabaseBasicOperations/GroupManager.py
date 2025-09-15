@@ -177,7 +177,7 @@ class GroupManagerDatabase:
                     student_id=student_id,
                     role="member",
                     wage=300,
-                    display_title="副队长" if group_id == 1 else "组员",
+                    display_title="副队长" if int(group_id) == 1 else "组员",
                 )
                 session.add(work)
             # if DBAffectedRows not in [0, 1]:
@@ -369,10 +369,10 @@ class GroupManagerDatabase:
                             "early_leave": checkin_data.early_leave
                             if checkin_data
                             else None,
-                            "absent_list": checkin_data.absent_list
+                            "absent_list": json.loads(checkin_data.absent_list)
                             if checkin_data
                             else None,
-                            "leave_list": checkin_data.leave_list
+                            "leave_list": json.loads(checkin_data.leave_list)
                             if checkin_data
                             else None,
                             "remarks": checkin_data.remarks if checkin_data else None,
@@ -447,15 +447,15 @@ class GroupManagerDatabase:
             )
             check_data = SQL_CheckInData(
                 task_id=task_id,
-                first_count=infoForm.get("first_count", 0),
-                second_count=infoForm.get("second_count", 0),
-                leave=infoForm.get("leave", 0),
-                late=infoForm.get("late", 0),
-                absentee=infoForm.get("absentee", 0),
-                early_leave=infoForm.get("early_leave", 0),
+                first_count=infoForm["record"].get("first_count", 0),
+                second_count=infoForm["record"].get("second_count", 0),
+                leave=infoForm["record"].get("leave", 0),
+                late=infoForm["record"].get("late", 0),
+                absentee=infoForm["record"].get("absentee", 0),
+                early_leave=infoForm["record"].get("early_leave", 0),
                 absent_list=absent_list_str,
                 leave_list=leave_list_str,
-                remarks=infoForm.get("remark", ""),
+                remarks=infoForm["record"].get("remark", ""),
                 status="checked",
             )
 
