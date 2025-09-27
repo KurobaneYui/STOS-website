@@ -456,7 +456,7 @@ class GroupManagerDatabase:
                 early_leave=infoForm["record"].get("early_leave", 0),
                 absent_list=absent_list_str,
                 leave_list=leave_list_str,
-                remarks=infoForm["record"].get("remark", ""),
+                remarks=infoForm["record"].get("remarks", ""),
                 status="checked",
             )
 
